@@ -4,7 +4,8 @@ _Building interfaces since 2021._
 
 `interfaces` is a builder-style user interface library designed to make creation of user interfaces as easy as possible.
 
-`interfaces-paper` implements `interfaces` using the [Paper Minecraft server API](https://papermc.io).
+`interfaces-paper` implements `interfaces` using the [Paper Minecraft server API](https://papermc.io). This package provides 
+the capability to construct a variety of Minecraft-based interfaces, including text, inventory (i.e. chests), and books.
 
 ### Terminology
 
