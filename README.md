@@ -6,6 +6,30 @@ _Building interfaces since 2021._
 
 `interfaces-paper` implements `interfaces` using the [Paper Minecraft server API](https://papermc.io).
 
+### Terminology
+
+##### Interface
+
+An interface is the main class that you'll be interacting with. Interfaces hold a series of transformations and other values 
+that can be used to construct an InterfaceView.
+
+##### InterfaceView ("view")
+
+An InterfaceView represents a 'rendered' interface. An InterfaceView holds one pane and one InterfaceViewer.
+
+##### InterfaceViewer ("viewer")
+
+An InterfaceViewer represents an object that can view an interface. InterfaceViewers are provided panes to view.
+
+##### Pane
+
+A pane holds a collection of elements that make up the visual aspect of an interface.
+
+##### Transform
+
+A transformation ("transform") operates on a type of pane to add, remove, or change elements. Transformations are used to 
+interact with panes.
+
 # Usage
 
 _Gradle instructions coming soon._
