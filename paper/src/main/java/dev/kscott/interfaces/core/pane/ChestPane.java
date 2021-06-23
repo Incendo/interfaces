@@ -54,11 +54,33 @@ public class ChestPane implements Pane {
     public @NonNull Collection<Element> elements() {
         final @NonNull List<Element> elementsList = new ArrayList<>();
 
-        for (int x = 0; x < this.elements.length; x++) {
-            elementsList.addAll(Arrays.asList(this.elements[x]));
+        for (final ItemStackElement[] element : this.elements) {
+            elementsList.addAll(Arrays.asList(element));
         }
 
         return List.copyOf(elementsList);
+    }
+
+    /**
+     * Sets an element at the given position.
+     *
+     * @param element the element
+     * @param x the x coordinate
+     * @param y the y coordinate
+     */
+    public void element(final @NonNull ItemStackElement element, final int x, final int y) {
+        this.elements[x][y] = element;
+    }
+
+    /**
+     * Returns the element at the given position.
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @return the element
+     */
+    public @NonNull ItemStackElement element(final int x, final int y) {
+        return this.elements[x][y];
     }
 
 }
