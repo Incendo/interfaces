@@ -1,6 +1,6 @@
 package dev.kscott.interfaces.core;
 
-import dev.kscott.interfaces.core.arguments.InterfaceArguments;
+import dev.kscott.interfaces.core.arguments.InterfaceArgument;
 import dev.kscott.interfaces.core.pane.Pane;
 import dev.kscott.interfaces.core.view.InterfaceView;
 import dev.kscott.interfaces.core.view.InterfaceViewer;
@@ -30,6 +30,6 @@ public interface Interface<T extends Pane> {
      * @return the view
      */
     @NonNull InterfaceView open(final @NonNull InterfaceViewer viewer,
-                                final @NonNull InterfaceArguments arguments);
+                                final @NonNull InterfaceArgument arguments);
 
 }

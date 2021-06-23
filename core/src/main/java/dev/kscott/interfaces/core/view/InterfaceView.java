@@ -1,5 +1,6 @@
 package dev.kscott.interfaces.core.view;
 
+import dev.kscott.interfaces.core.arguments.InterfaceArgument;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -28,6 +29,13 @@ public interface InterfaceView {
      * @return true if viewing, false if not
      */
     boolean viewing();
+
+    /**
+     * Returns the argument provided to this view.
+     *
+     * @return the view's argument
+     */
+    @NonNull InterfaceArgument argument();
 
 
 }
