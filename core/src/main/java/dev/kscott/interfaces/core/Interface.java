@@ -3,6 +3,7 @@ package dev.kscott.interfaces.core;
 import dev.kscott.interfaces.core.arguments.InterfaceArguments;
 import dev.kscott.interfaces.core.pane.Pane;
 import dev.kscott.interfaces.core.view.InterfaceView;
+import dev.kscott.interfaces.core.view.InterfaceViewer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**

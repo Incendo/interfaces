@@ -1,4 +1,4 @@
-package dev.kscott.interfaces.core;
+package dev.kscott.interfaces.core.view;
 
 import dev.kscott.interfaces.core.pane.Pane;
 import org.checkerframework.checker.nullness.qual.NonNull;

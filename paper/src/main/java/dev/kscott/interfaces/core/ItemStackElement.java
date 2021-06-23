@@ -1,4 +1,4 @@
-package dev.kscott.interfaces.core.pane.element;
+package dev.kscott.interfaces.core;
 
 import dev.kscott.interfaces.core.element.Element;
 import org.bukkit.Material;

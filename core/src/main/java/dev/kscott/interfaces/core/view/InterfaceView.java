@@ -1,6 +1,5 @@
 package dev.kscott.interfaces.core.view;
 
-import dev.kscott.interfaces.core.InterfaceViewer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
