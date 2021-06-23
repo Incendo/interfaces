@@ -6,11 +6,11 @@ _Building interfaces since 2021._
 
 `interfaces-paper` implements `interfaces` using the [Paper Minecraft server API](https://papermc.io).
 
-# Example
-
 # Usage
 
 _Gradle instructions coming soon._
+
+# Examples
 
 ### Creating an interface with an updating clock.
 
