@@ -1,6 +1,7 @@
 package dev.kscott.interfaces.core.pane;
 
 import dev.kscott.interfaces.core.element.Element;
+import dev.kscott.interfaces.core.ItemStackElement;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class ChestPane implements Pane {
     /**
      * The 2d elements array.
      */
-    private final @NonNull Element[][] elements;
+    private final @NonNull ItemStackElement[][] elements;
 
     /**
      * The amount of rows this inventory has.
@@ -31,7 +32,22 @@ public class ChestPane implements Pane {
     public ChestPane(final int rows) {
         this.rows = rows;
 
-        this.elements = new Element[9][this.rows];
+        this.elements = new ItemStackElement[9][this.rows];
+
+        // Fill the arrays with empty elements.
+        for (final ItemStackElement[] element : this.elements) {
+            Arrays.fill(element, ItemStackElement.empty());
+        }
+
+    }
+
+    /**
+     * Returns the amount of rows this pane has.
+     *
+     * @return the amount of rows
+     */
+    public int rows() {
+        return this.rows;
     }
 
     @Override
