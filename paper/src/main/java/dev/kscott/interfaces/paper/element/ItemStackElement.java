@@ -1,5 +1,7 @@
-package dev.kscott.interfaces.core.element;
+package dev.kscott.interfaces.paper.element;
 
+import dev.kscott.interfaces.core.element.Element;
+import dev.kscott.interfaces.paper.pane.ChestPane;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -7,7 +9,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 /**
  * Holds an {@link ItemStack} in an element.
  *
- * @see dev.kscott.interfaces.core.pane.ChestPane
+ * @see ChestPane
  */
 public class ItemStackElement implements Element {
 

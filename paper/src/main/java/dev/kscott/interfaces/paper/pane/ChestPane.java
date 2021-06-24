@@ -1,7 +1,8 @@
-package dev.kscott.interfaces.core.pane;
+package dev.kscott.interfaces.paper.pane;
 
 import dev.kscott.interfaces.core.element.Element;
-import dev.kscott.interfaces.core.ItemStackElement;
+import dev.kscott.interfaces.paper.element.ItemStackElement;
+import dev.kscott.interfaces.core.pane.Pane;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
