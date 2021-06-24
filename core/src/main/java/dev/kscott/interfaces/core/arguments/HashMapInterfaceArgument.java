@@ -5,19 +5,32 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
+/**
+ * An InterfaceArgument backed by a HashMap. Accepts providers as arguments.
+ */
 public class HashMapInterfaceArgument implements InterfaceArgument {
 
     /**
      * The argument map.
      */
-    private final @NonNull Map<String, Object> argumentMap;
+    private final @NonNull Map<String, Supplier<Object>> argumentMap;
 
     /**
      * Constructs {@code HashMapInterfaceArgument}.
      */
     public HashMapInterfaceArgument() {
         this.argumentMap = new HashMap<>();
+    }
+
+    /**
+     * Returns an empty {@code HashMapInterfaceArgument}.
+     *
+     * @return an empty {@code HashMapInterfaceArgument}
+     */
+    public static @NonNull HashMapInterfaceArgument empty() {
+        return new HashMapInterfaceArgument();
     }
 
     /**
@@ -28,7 +41,39 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
      * @param argumentMap the argument map
      */
     public HashMapInterfaceArgument(final @NonNull Map<String, Object> argumentMap) {
-        this.argumentMap = Map.copyOf(argumentMap);
+        this.argumentMap = new HashMap<>();
+
+        for (final var entry : argumentMap.entrySet()) {
+            this.argumentMap.put(entry.getKey(), entry::getValue);
+        }
+    }
+
+    /**
+     * Constructs a new argument builder.
+     *
+     * @param key the key
+     * @param value the value
+     * @return the argument
+     */
+    public static HashMapInterfaceArgument.@NonNull Builder with(
+            final @NonNull String key,
+            final @NonNull Object value
+    ) {
+        return new Builder().with(key, value);
+    }
+
+    /**
+     * Constructs a new argument builder.
+     *
+     * @param key the key
+     * @param value the value supplier
+     * @return the argument
+     */
+    public static HashMapInterfaceArgument.@NonNull Builder with(
+            final @NonNull String key,
+            final @NonNull Supplier<Object> value
+    ) {
+        return new Builder().with(key, value);
     }
 
     /**
@@ -52,6 +97,41 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
 
     @Override
     public void set(final @NonNull String key, final @NonNull Object value) {
+
+    }
+
+    /**
+     * A utility class to build an InterfaceArgument.
+     */
+    static class Builder {
+
+        /**
+         * The argument map.
+         */
+        private final @NonNull Map<String, Object> argumentMap;
+
+        /**
+         * The builder.
+         */
+        public Builder() {
+            this.argumentMap = new HashMap<>();
+        }
+
+        /**
+         * Puts a value at the given key.
+         *
+         * @param key   the key
+         * @param value the value
+         * @return the builder
+         */
+        public HashMapInterfaceArgument.@NonNull Builder with(final @NonNull String key, final @NonNull Object value) {
+            this.argumentMap.put(key, value);
+            return this;
+        }
+
+        public @NonNull HashMapInterfaceArgument build() {
+            return new HashMapInterfaceArgument(this.argumentMap);
+        }
 
     }
 
