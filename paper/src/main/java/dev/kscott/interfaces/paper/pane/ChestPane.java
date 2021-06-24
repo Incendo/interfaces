@@ -119,7 +119,7 @@ public class ChestPane implements Pane {
 
         newElements.get(x).set(y, element);
 
-        return new ChestPane(this.rows);
+        return new ChestPane(this.rows, newElements);
     }
 
     /**
