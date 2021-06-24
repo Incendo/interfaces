@@ -37,5 +37,12 @@ public interface InterfaceView {
      */
     @NonNull InterfaceArgument argument();
 
+    /**
+     * Opens the view to the viewer.
+     *
+     * @see #viewer()
+     */
+    void open();
+
 
 }

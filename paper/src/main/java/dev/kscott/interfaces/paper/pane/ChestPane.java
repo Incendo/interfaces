@@ -1,8 +1,8 @@
 package dev.kscott.interfaces.paper.pane;
 
 import dev.kscott.interfaces.core.element.Element;
-import dev.kscott.interfaces.paper.element.ItemStackElement;
 import dev.kscott.interfaces.core.pane.Pane;
+import dev.kscott.interfaces.paper.element.ItemStackElement;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -43,6 +43,15 @@ public class ChestPane implements Pane {
     }
 
     /**
+     * Returns the elements of the chest as a 2d array.
+     *
+     * @return the elements
+     */
+    public @NonNull ItemStackElement[][] chestElements() {
+        return this.elements;
+    }
+
+    /**
      * Returns the amount of rows this pane has.
      *
      * @return the amount of rows
@@ -51,6 +60,11 @@ public class ChestPane implements Pane {
         return this.rows;
     }
 
+    /**
+     * Returns the elements, where the first 9 elements are row 1, the second 9 elements are row 2, etc...
+     *
+     * @return the elements collection
+     */
     @Override
     public @NonNull Collection<Element> elements() {
         final @NonNull List<Element> elementsList = new ArrayList<>();
@@ -66,8 +80,8 @@ public class ChestPane implements Pane {
      * Sets an element at the given position.
      *
      * @param element the element
-     * @param x the x coordinate
-     * @param y the y coordinate
+     * @param x       the x coordinate
+     * @param y       the y coordinate
      */
     public void element(final @NonNull ItemStackElement element, final int x, final int y) {
         this.elements[x][y] = element;

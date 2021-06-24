@@ -10,10 +10,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public interface InterfaceViewer {
 
     /**
-     * Displays a pane to the viewer.
+     * Displays a view to the viewer.
      *
      * @param pane the pane
      */
-    void open(final @NonNull Pane pane);
+    void open(final @NonNull InterfaceView pane);
 
 }

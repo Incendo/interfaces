@@ -5,8 +5,16 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public interface PaperInventoryView extends InterfaceView, InventoryHolder {
+/**
+ * An InterfaceView containing a Bukkit inventory.
+ */
+public interface InventoryView extends InterfaceView, InventoryHolder {
 
+    /**
+     * Returns the inventory.
+     *
+     * @return the inventory
+     */
     @NonNull Inventory inventory();
 
 }
