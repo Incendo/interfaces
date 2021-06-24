@@ -79,11 +79,13 @@ public class ChestView implements InventoryView {
         this.parent = parent;
         this.argument = argument;
 
-        this.pane = new ChestPane(parent.rows());
+        @NonNull ChestPane pane = new ChestPane(parent.rows());
 
         for (final var transform : this.parent.transformations()) {
-            transform.apply(this.pane, this);
+            pane = transform.apply(pane, this);
         }
+
+        this.pane = pane;
 
         this.inventory = this.createInventory();
     }
