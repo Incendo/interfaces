@@ -103,7 +103,7 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
     /**
      * A utility class to build an InterfaceArgument.
      */
-    static class Builder {
+    public static class Builder {
 
         /**
          * The argument map.
