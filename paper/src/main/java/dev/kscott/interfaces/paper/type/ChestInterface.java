@@ -164,7 +164,8 @@ public class ChestInterface implements Interface<ChestPane>, TitledInterface, Up
      */
     @Override
     public void updates(final boolean updates, final int delay) {
-
+        this.updates = updates;
+        this.updateDelay = delay;
     }
 
     /**
