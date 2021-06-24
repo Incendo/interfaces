@@ -6,7 +6,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 /**
  * Represents a titled interface. A title should never be null, rather returning an empty component if necessary.
  */
-public interface Titled {
+public interface TitledInterface {
 
     /**
      * Sets the title of a component.

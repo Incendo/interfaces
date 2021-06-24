@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * An interface using a chest.
  */
-public class ChestInterface implements Interface<ChestPane>, Titled {
+public class ChestInterface implements Interface<ChestPane>, TitledInterface {
 
     /**
      * The interface's rows.
