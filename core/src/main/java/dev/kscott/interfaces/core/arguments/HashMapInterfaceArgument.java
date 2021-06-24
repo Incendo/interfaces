@@ -25,15 +25,6 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
     }
 
     /**
-     * Returns an empty {@code HashMapInterfaceArgument}.
-     *
-     * @return an empty {@code HashMapInterfaceArgument}
-     */
-    public static @NonNull HashMapInterfaceArgument empty() {
-        return new HashMapInterfaceArgument();
-    }
-
-    /**
      * Constructs {@code HashMapInterfaceArgument}.
      * <p>
      * Changes to the provided map will not be reflected in the arguments.
@@ -49,9 +40,18 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
     }
 
     /**
+     * Returns an empty {@code HashMapInterfaceArgument}.
+     *
+     * @return an empty {@code HashMapInterfaceArgument}
+     */
+    public static @NonNull HashMapInterfaceArgument empty() {
+        return new HashMapInterfaceArgument();
+    }
+
+    /**
      * Constructs a new argument builder.
      *
-     * @param key the key
+     * @param key   the key
      * @param value the value
      * @return the argument
      */
@@ -65,7 +65,7 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
     /**
      * Constructs a new argument builder.
      *
-     * @param key the key
+     * @param key   the key
      * @param value the value supplier
      * @return the argument
      */
@@ -86,18 +86,34 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
      */
     @Override
     public <T> T get(final @NonNull String key) {
-        final @Nullable Object object = this.argumentMap.get(key);
+        final @Nullable Supplier<Object> supplier = this.argumentMap.get(key);
 
-        if (object == null) {
+        if (supplier == null) {
             throw new NullPointerException("The value at " + key + " cannot be null.");
         }
 
-        return (T) object;
+        return (T) supplier.get();
     }
 
+    /**
+     * Sets the value of the key.
+     *
+     * @param key   the key
+     * @param value the value
+     */
     @Override
     public void set(final @NonNull String key, final @NonNull Object value) {
+        this.argumentMap.put(key, () -> value);
+    }
 
+    /**
+     * Sets the value supplier of the key.
+     *
+     * @param key   the key
+     * @param supplier the value supplier
+     */
+    public void set(final @NonNull String key, final @NonNull Supplier<Object> supplier) {
+        this.argumentMap.put(key, supplier);
     }
 
     /**

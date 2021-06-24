@@ -42,10 +42,10 @@ public class ChestPane implements Pane {
         this.elements = new ArrayList<>();
 
         // Fill the arrays with empty elements.
-        for (int i = 0; i < rows; i++) {
+        for (int i = 0; i < MINECRAFT_CHEST_WIDTH; i++) {
             final @NonNull List<ItemStackElement> deepElements = new ArrayList<>();
 
-            for (int j = 0; j < 9; j++) {
+            for (int j = 0; j < this.rows; j++) {
                 deepElements.add(j, ItemStackElement.empty());
             }
 
@@ -92,8 +92,8 @@ public class ChestPane implements Pane {
         final @NonNull List<Element> tempElements = new ArrayList<>();
 
         // Fill the temp elements list with the elements.
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < 9; j++) {
+        for (int i = 0; i < MINECRAFT_CHEST_WIDTH; i++) {
+            for (int j = 0; j < this.rows; j++) {
                 tempElements.add(this.elements.get(i).get(rows));
             }
         }
@@ -114,7 +114,7 @@ public class ChestPane implements Pane {
         final @NonNull List<List<ItemStackElement>> newElements = new ArrayList<>();
 
         for (final @NonNull List<ItemStackElement> elements : this.elements) {
-            newElements.add(List.copyOf(elements));
+            newElements.add(new ArrayList<>(elements));
         }
 
         newElements.get(x).set(y, element);
