@@ -14,6 +14,40 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public class ItemStackElement implements Element {
 
     /**
+     * The {@link ItemStack}.
+     */
+    private final @NonNull ItemStack itemStack;
+    /**
+     * The click handler.
+     */
+    private final @NonNull ClickHandler handler;
+
+    /**
+     * Constructs {@code ItemStackElement}.
+     *
+     * @param itemStack the {@link ItemStack}
+     */
+    public ItemStackElement(final @NonNull ItemStack itemStack) {
+        this.itemStack = itemStack;
+        this.handler = (event, view) -> {
+        };
+    }
+
+    /**
+     * Constructs {@code ItemStackElement}.
+     *
+     * @param itemStack    the {@link ItemStack}
+     * @param clickHandler the click handler
+     */
+    public ItemStackElement(
+            final @NonNull ItemStack itemStack,
+            final @NonNull ClickHandler clickHandler
+    ) {
+        this.itemStack = itemStack;
+        this.handler = clickHandler;
+    }
+
+    /**
      * Returns an empty {@code ItemStackElement}.
      *
      * @return an empty {@code ItemStackElement}.
@@ -31,36 +65,19 @@ public class ItemStackElement implements Element {
     public static @NonNull ItemStackElement of(final @NonNull ItemStack itemStack) {
         return new ItemStackElement(itemStack);
     }
-    /**
-     * The {@link ItemStack}.
-     */
-    private final @NonNull ItemStack itemStack;
 
     /**
-     * The click handler.
-     */
-    private final @NonNull ClickHandler handler;
-
-    /**
-     * Constructs {@code ItemStackElement}.
+     * Returns an {@code ItemStackElement} with the provided ItemStack.
      *
-     * @param itemStack the {@link ItemStack}
+     * @param itemStack the ItemStack
+     * @param handler   the handler
+     * @return the element
      */
-    public ItemStackElement(final @NonNull ItemStack itemStack) {
-        this.itemStack = itemStack;
-        this.handler = (event, view) -> {};
-    }
-
-    /**
-     * Constructs {@code ItemStackElement}.
-     *
-     * @param itemStack the {@link ItemStack}
-     * @param clickHandler the click handler
-     */
-    public ItemStackElement(final @NonNull ItemStack itemStack,
-                            final @NonNull ClickHandler clickHandler) {
-        this.itemStack = itemStack;
-        this.handler = clickHandler;
+    public static @NonNull ItemStackElement of(
+            final @NonNull ItemStack itemStack,
+            final @NonNull ClickHandler handler
+    ) {
+        return new ItemStackElement(itemStack, handler);
     }
 
     /**
