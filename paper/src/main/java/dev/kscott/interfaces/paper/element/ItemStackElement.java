@@ -23,6 +23,15 @@ public class ItemStackElement implements Element {
     }
 
     /**
+     * Returns an {@code ItemStackElement} with the provided ItemStack.
+     *
+     * @param itemStack the ItemStack
+     * @return the element
+     */
+    public static @NonNull ItemStackElement of(final @NonNull ItemStack itemStack) {
+        return new ItemStackElement(itemStack);
+    }
+    /**
      * The {@link ItemStack}.
      */
     private final @NonNull ItemStack itemStack;
