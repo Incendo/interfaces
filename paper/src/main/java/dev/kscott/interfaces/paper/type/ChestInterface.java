@@ -99,7 +99,7 @@ public class ChestInterface implements Interface<ChestPane>, TitledInterface, Up
      * @return the view
      */
     @Override
-    public @NonNull InterfaceView<ChestPane> open(final @NonNull InterfaceViewer viewer) {
+    public @NonNull InterfaceView<ChestPane, ChestInterface> open(final @NonNull InterfaceViewer viewer) {
         return this.open(viewer, HashMapInterfaceArgument.empty());
     }
 
@@ -111,7 +111,7 @@ public class ChestInterface implements Interface<ChestPane>, TitledInterface, Up
      * @return the view
      */
     @Override
-    public @NonNull InterfaceView<ChestPane> open(
+    public @NonNull InterfaceView<ChestPane, ChestInterface> open(
             final @NonNull InterfaceViewer viewer,
             final @NonNull InterfaceArgument arguments
     ) {

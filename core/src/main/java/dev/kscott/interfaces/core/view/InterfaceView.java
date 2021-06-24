@@ -1,5 +1,6 @@
 package dev.kscott.interfaces.core.view;
 
+import dev.kscott.interfaces.core.Interface;
 import dev.kscott.interfaces.core.arguments.InterfaceArgument;
 import dev.kscott.interfaces.core.pane.Pane;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -10,7 +11,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @param <T> the type of pane this view can view
  * @apiNote take a shot whenever you read "view" in these docs.
  */
-public interface InterfaceView<T extends Pane> {
+public interface InterfaceView<T extends Pane, U extends Interface<T>> {
+
+    /**
+     * Returns the parent interface.
+     *
+     * @return the interface
+     */
+    @NonNull Interface<T> parent();
 
     /**
      * Returns the viewer of this view.

@@ -1,5 +1,6 @@
 package dev.kscott.interfaces.paper;
 
+import dev.kscott.interfaces.core.UpdatingInterface;
 import dev.kscott.interfaces.core.element.Element;
 import dev.kscott.interfaces.core.view.InterfaceView;
 import dev.kscott.interfaces.paper.element.ItemStackElement;
@@ -12,9 +13,12 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.text.spi.CollatorProvider;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,10 +35,16 @@ public class PaperInterfaceListeners implements Listener {
     private final @NonNull Set<InterfaceView> openViews;
 
     /**
+     * The plugin.
+     */
+    private final @NonNull JavaPlugin plugin;
+
+    /**
      * Constructs {@code PaperInterfaceListeners}.
      */
-    public PaperInterfaceListeners() {
+    public PaperInterfaceListeners(final @NonNull JavaPlugin plugin) {
         this.openViews = new HashSet<>();
+        this.plugin = plugin;
     }
 
     /**
@@ -72,6 +82,19 @@ public class PaperInterfaceListeners implements Listener {
 
         if (holder instanceof final @NonNull InterfaceView view) {
             this.openViews.remove(view);
+
+            if (view.parent() instanceof UpdatingInterface updatingInterface) {
+                if (updatingInterface.updates()) {
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if (view.viewing()) {
+                                view.parent().open(view.viewer(), view.argument());
+                            }
+                        }
+                    }.runTaskLater(this.plugin, updatingInterface.updateDelay());
+                }
+            }
         }
     }
 
