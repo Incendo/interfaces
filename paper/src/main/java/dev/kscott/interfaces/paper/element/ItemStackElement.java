@@ -37,12 +37,30 @@ public class ItemStackElement implements Element {
     private final @NonNull ItemStack itemStack;
 
     /**
+     * The click handler.
+     */
+    private final @NonNull ClickHandler handler;
+
+    /**
      * Constructs {@code ItemStackElement}.
      *
      * @param itemStack the {@link ItemStack}
      */
     public ItemStackElement(final @NonNull ItemStack itemStack) {
         this.itemStack = itemStack;
+        this.handler = (event, view) -> {};
+    }
+
+    /**
+     * Constructs {@code ItemStackElement}.
+     *
+     * @param itemStack the {@link ItemStack}
+     * @param clickHandler the click handler
+     */
+    public ItemStackElement(final @NonNull ItemStack itemStack,
+                            final @NonNull ClickHandler clickHandler) {
+        this.itemStack = itemStack;
+        this.handler = clickHandler;
     }
 
     /**
@@ -52,6 +70,15 @@ public class ItemStackElement implements Element {
      */
     public @NonNull ItemStack itemStack() {
         return this.itemStack;
+    }
+
+    /**
+     * Returns the click handler.
+     *
+     * @return the click handler
+     */
+    public @NonNull ClickHandler handler() {
+        return this.handler;
     }
 
 }
