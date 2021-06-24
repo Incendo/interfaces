@@ -23,7 +23,7 @@ public interface Interface<T extends Pane> {
      * @param transform the transformation
      * @return this interface
      */
-    @NonNull Interface<T> transform(final @NonNull Transform<T> transform);
+    @NonNull <U extends Interface<T>> U transform(final @NonNull Transform<T> transform);
 
     /**
      * Returns an immutable collection of transformations.
