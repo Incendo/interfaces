@@ -4,6 +4,7 @@ import dev.kscott.interfaces.core.element.Element;
 import dev.kscott.interfaces.core.pane.Pane;
 import dev.kscott.interfaces.paper.element.ItemStackElement;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,9 +17,14 @@ import java.util.List;
 public class ChestPane implements Pane {
 
     /**
+     * The width of a Minecraft chest.
+     */
+    public static final int MINECRAFT_CHEST_WIDTH = 9;
+
+    /**
      * The 2d elements array.
      */
-    private final @NonNull ItemStackElement[][] elements;
+    private final @NonNull List<List<ItemStackElement>> elements;
 
     /**
      * The amount of rows this inventory has.
@@ -33,13 +39,29 @@ public class ChestPane implements Pane {
     public ChestPane(final int rows) {
         this.rows = rows;
 
-        this.elements = new ItemStackElement[9][this.rows];
+        this.elements = new ArrayList<>();
 
         // Fill the arrays with empty elements.
-        for (final ItemStackElement[] element : this.elements) {
-            Arrays.fill(element, ItemStackElement.empty());
-        }
+        for (int i = 0; i < rows; i++) {
+            final @NonNull List<ItemStackElement> deepElements = new ArrayList<>();
 
+            for (int j = 0; j < 9; j++) {
+                deepElements.add(j, ItemStackElement.empty());
+            }
+
+            this.elements.add(deepElements);
+        }
+    }
+
+    /**
+     * Constructs {@code ChestPane}.
+     *
+     * @param rows amount of rows
+     * @param elements the elements
+     */
+    public ChestPane(final int rows, final @NonNull List<List<ItemStackElement>> elements) {
+        this.rows = rows;
+        this.elements = elements;
     }
 
     /**
@@ -47,7 +69,7 @@ public class ChestPane implements Pane {
      *
      * @return the elements
      */
-    public @NonNull ItemStackElement[][] chestElements() {
+    public @NonNull List<List<ItemStackElement>> chestElements() {
         return this.elements;
     }
 
@@ -67,24 +89,37 @@ public class ChestPane implements Pane {
      */
     @Override
     public @NonNull Collection<Element> elements() {
-        final @NonNull List<Element> elementsList = new ArrayList<>();
+        final @NonNull List<Element> tempElements = new ArrayList<>();
 
-        for (final ItemStackElement[] element : this.elements) {
-            elementsList.addAll(Arrays.asList(element));
+        // Fill the temp elements list with the elements.
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < 9; j++) {
+                tempElements.add(this.elements.get(i).get(rows));
+            }
         }
 
-        return List.copyOf(elementsList);
+        return tempElements;
     }
 
     /**
      * Sets an element at the given position.
+     * <p>
+     * This method returns an updated instance of ChestPane with the new element.
      *
      * @param element the element
      * @param x       the x coordinate
      * @param y       the y coordinate
      */
-    public void element(final @NonNull ItemStackElement element, final int x, final int y) {
-        this.elements[x][y] = element;
+    public @NonNull ChestPane element(final @NonNull ItemStackElement element, final int x, final int y) {
+        final @NonNull List<List<ItemStackElement>> newElements = new ArrayList<>();
+
+        for (final @NonNull List<ItemStackElement> elements : this.elements) {
+            newElements.add(List.copyOf(elements));
+        }
+
+        newElements.get(x).set(y, element);
+
+        return new ChestPane(this.rows);
     }
 
     /**
@@ -95,7 +130,7 @@ public class ChestPane implements Pane {
      * @return the element
      */
     public @NonNull ItemStackElement element(final int x, final int y) {
-        return this.elements[x][y];
+        return this.elements.get(x).get(y);
     }
 
 }
