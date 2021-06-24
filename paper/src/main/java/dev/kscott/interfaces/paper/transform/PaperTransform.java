@@ -41,9 +41,7 @@ public interface PaperTransform {
      * @return the transform
      */
     static @NonNull Transform<ChestPane> chestItem(final @NonNull ItemStackElement element, final int x, final int y) {
-        return (pane, view) -> {
-            return pane.element(element, x, y);
-        };
+        return (pane, view) -> pane.element(element, x, y);
     }
 
 }
