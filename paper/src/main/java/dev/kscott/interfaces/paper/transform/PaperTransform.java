@@ -24,7 +24,6 @@ public interface PaperTransform {
 
             for (int x = 0; x < length; x++) {
                 for (int y = 0; y < height; y++) {
-                    System.out.println("chestFill: x="+x+", y="+y);
                     pane = pane.element(element, x, y);
                 }
             }
