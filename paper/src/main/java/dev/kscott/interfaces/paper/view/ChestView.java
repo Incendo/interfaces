@@ -1,5 +1,6 @@
 package dev.kscott.interfaces.paper.view;
 
+import dev.kscott.interfaces.core.Interface;
 import dev.kscott.interfaces.core.arguments.InterfaceArgument;
 import dev.kscott.interfaces.core.pane.Pane;
 import dev.kscott.interfaces.core.view.InterfaceViewer;
@@ -115,6 +116,16 @@ public class ChestView implements InventoryView<ChestPane> {
         }
 
         return inventory;
+    }
+
+    /**
+     * Returns the parent.
+     *
+     * @return the parent
+     */
+    @Override
+    public @NonNull Interface<ChestPane> parent() {
+        return this.parent;
     }
 
     @Override
