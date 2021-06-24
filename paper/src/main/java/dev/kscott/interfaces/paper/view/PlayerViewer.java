@@ -59,7 +59,7 @@ public class PlayerViewer implements InterfaceViewer {
      * @param chestPane the chest pane
      */
     private void openChestView(final @NonNull ChestView chestPane) {
-
+        this.player.openInventory(chestPane.inventory());
     }
 
     /**
