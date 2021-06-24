@@ -1,6 +1,7 @@
 package dev.kscott.interfaces.paper.view;
 
 import dev.kscott.interfaces.core.arguments.InterfaceArgument;
+import dev.kscott.interfaces.core.pane.Pane;
 import dev.kscott.interfaces.core.view.InterfaceViewer;
 import dev.kscott.interfaces.paper.element.ItemStackElement;
 import dev.kscott.interfaces.paper.pane.ChestPane;
@@ -14,7 +15,7 @@ import java.util.List;
 /**
  * The view of a Bukkit inventory-based interface.
  */
-public class ChestView implements InventoryView {
+public class ChestView implements InventoryView<ChestPane> {
 
     /**
      * Converts a Bukkit slot index to an x/y position.
@@ -138,6 +139,11 @@ public class ChestView implements InventoryView {
     @Override
     public void open() {
         this.viewer.open(this);
+    }
+
+    @Override
+    public Pane pane() {
+        return this.pane;
     }
 
     /**
