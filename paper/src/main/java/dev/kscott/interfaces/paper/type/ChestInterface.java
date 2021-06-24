@@ -1,6 +1,7 @@
 package dev.kscott.interfaces.paper.type;
 
 import dev.kscott.interfaces.core.Interface;
+import dev.kscott.interfaces.core.arguments.HashMapInterfaceArgument;
 import dev.kscott.interfaces.core.arguments.InterfaceArgument;
 import dev.kscott.interfaces.core.transform.Transform;
 import dev.kscott.interfaces.core.view.InterfaceView;
@@ -58,12 +59,12 @@ public class ChestInterface implements Interface<ChestPane>, Titled {
      * Adds a transformation to the list.
      *
      * @param transform the transformation
-     * @return the transformation
+     * @return the interface
      */
     @Override
-    public @NonNull Interface<ChestPane> transform(final @NonNull Transform<ChestPane> transform) {
+    public @NonNull <T extends Interface<ChestPane>> T transform(final @NonNull Transform<ChestPane> transform) {
         this.transformationList.add(transform);
-        return this;
+        return (T) this;
     }
 
     /**
@@ -84,7 +85,7 @@ public class ChestInterface implements Interface<ChestPane>, Titled {
      */
     @Override
     public @NonNull InterfaceView open(final @NonNull InterfaceViewer viewer) {
-        return this.open(viewer, InterfaceArgument.empty());
+        return this.open(viewer, HashMapInterfaceArgument.empty());
     }
 
     /**
