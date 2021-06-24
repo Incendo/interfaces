@@ -8,7 +8,7 @@ import dev.kscott.interfaces.core.view.InterfaceView;
 import dev.kscott.interfaces.core.view.InterfaceViewer;
 import dev.kscott.interfaces.paper.pane.ChestPane;
 import dev.kscott.interfaces.paper.view.ChestView;
-import dev.kscott.interfaces.paper.view.PlayerViewer;
+import dev.kscott.interfaces.paper.PlayerViewer;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 

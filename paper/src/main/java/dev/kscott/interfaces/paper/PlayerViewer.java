@@ -1,8 +1,9 @@
-package dev.kscott.interfaces.paper.view;
+package dev.kscott.interfaces.paper;
 
 import dev.kscott.interfaces.core.view.InterfaceView;
 import dev.kscott.interfaces.core.view.InterfaceViewer;
 import dev.kscott.interfaces.paper.pane.ChestPane;
+import dev.kscott.interfaces.paper.view.ChestView;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 

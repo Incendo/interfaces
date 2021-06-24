@@ -3,6 +3,7 @@ package dev.kscott.interfaces.paper.view;
 import dev.kscott.interfaces.core.arguments.InterfaceArgument;
 import dev.kscott.interfaces.core.pane.Pane;
 import dev.kscott.interfaces.core.view.InterfaceViewer;
+import dev.kscott.interfaces.paper.PlayerViewer;
 import dev.kscott.interfaces.paper.element.ItemStackElement;
 import dev.kscott.interfaces.paper.pane.ChestPane;
 import dev.kscott.interfaces.paper.type.ChestInterface;
