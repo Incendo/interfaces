@@ -20,47 +20,21 @@ import java.util.List;
 public class ChestView implements InventoryView<ChestPane> {
 
     /**
-     * Converts a Bukkit slot index to an x/y position.
-     *
-     * @param slot the slot
-     * @return the x/y position
-     */
-    public static int[] slotToGrid(int slot) {
-        return new int[]{slot % 9, slot / 9};
-    }
-
-
-    /**
-     * Converts the x/y position to a Bukkit slot index.
-     *
-     * @param x the x position
-     * @param y the y position
-     * @return the slot
-     */
-    public static int gridToSlot(int x, int y) {
-        return y * 9 + x;
-    }
-
-    /**
      * The viewer.
      */
     private final @NonNull PlayerViewer viewer;
-
     /**
      * The parent interface.
      */
     private final @NonNull ChestInterface parent;
-
     /**
      * The inventory.
      */
     private final @NonNull Inventory inventory;
-
     /**
      * The argument.
      */
     private final @NonNull InterfaceArgument argument;
-
     /**
      * The chest pane.
      */
@@ -69,9 +43,9 @@ public class ChestView implements InventoryView<ChestPane> {
     /**
      * Constructs {@code InventoryInterfaceView}.
      *
-     * @param viewer          the viewer
-     * @param parent the parent interface
-     * @param argument        the interface argument
+     * @param viewer   the viewer
+     * @param parent   the parent interface
+     * @param argument the interface argument
      */
     public ChestView(
             final @NonNull ChestInterface parent,
@@ -91,6 +65,27 @@ public class ChestView implements InventoryView<ChestPane> {
         this.pane = pane;
 
         this.inventory = this.createInventory();
+    }
+
+    /**
+     * Converts a Bukkit slot index to an x/y position.
+     *
+     * @param slot the slot
+     * @return the x/y position
+     */
+    public static int[] slotToGrid(int slot) {
+        return new int[]{slot % 9, slot / 9};
+    }
+
+    /**
+     * Converts the x/y position to a Bukkit slot index.
+     *
+     * @param x the x position
+     * @param y the y position
+     * @return the slot
+     */
+    public static int gridToSlot(int x, int y) {
+        return y * 9 + x;
     }
 
     /**
@@ -128,11 +123,21 @@ public class ChestView implements InventoryView<ChestPane> {
         return this.parent;
     }
 
+    /**
+     * Returns the viewer.
+     *
+     * @return the viewer
+     */
     @Override
     public @NonNull InterfaceViewer viewer() {
         return this.viewer;
     }
 
+    /**
+     * Returns true if {@link #viewer()} is viewing this view, false if not.
+     *
+     * @return true if {@link #viewer()} is viewing this view, false if not
+     */
     @Override
     public boolean viewing() {
         return this.inventory.getViewers().contains(this.viewer.player());
@@ -148,13 +153,21 @@ public class ChestView implements InventoryView<ChestPane> {
         return this.argument;
     }
 
+    /**
+     * Opens this view to the viewer.
+     */
     @Override
     public void open() {
         this.viewer.open(this);
     }
 
+    /**
+     * Returns this view's pane.
+     *
+     * @return the view's pane
+     */
     @Override
-    public Pane pane() {
+    public @NonNull Pane pane() {
         return this.pane;
     }
 
