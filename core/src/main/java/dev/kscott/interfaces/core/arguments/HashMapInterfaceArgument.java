@@ -31,12 +31,8 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
      *
      * @param argumentMap the argument map
      */
-    public HashMapInterfaceArgument(final @NonNull Map<String, Object> argumentMap) {
-        this.argumentMap = new HashMap<>();
-
-        for (final var entry : argumentMap.entrySet()) {
-            this.argumentMap.put(entry.getKey(), entry::getValue);
-        }
+    public HashMapInterfaceArgument(final @NonNull Map<String, Supplier<Object>> argumentMap) {
+        this.argumentMap = new HashMap<>(argumentMap);
     }
 
     /**
@@ -59,7 +55,7 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
             final @NonNull String key,
             final @NonNull Object value
     ) {
-        return new Builder().with(key, value);
+        return with(key, () -> value);
     }
 
     /**
@@ -103,13 +99,13 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
      */
     @Override
     public void set(final @NonNull String key, final @NonNull Object value) {
-        this.argumentMap.put(key, () -> value);
+        set(key, () -> value);
     }
 
     /**
      * Sets the value supplier of the key.
      *
-     * @param key   the key
+     * @param key      the key
      * @param supplier the value supplier
      */
     public void set(final @NonNull String key, final @NonNull Supplier<Object> supplier) {
@@ -124,7 +120,7 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
         /**
          * The argument map.
          */
-        private final @NonNull Map<String, Object> argumentMap;
+        private final @NonNull Map<String, Supplier<Object>> argumentMap;
 
         /**
          * The builder.
@@ -140,11 +136,34 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
          * @param value the value
          * @return the builder
          */
-        public HashMapInterfaceArgument.@NonNull Builder with(final @NonNull String key, final @NonNull Object value) {
-            this.argumentMap.put(key, value);
+        public HashMapInterfaceArgument.@NonNull Builder with(
+                final @NonNull String key,
+                final @NonNull Object value
+        ) {
+            with(key, () -> value);
             return this;
         }
 
+        /**
+         * Puts a value at the given key.
+         *
+         * @param key      the key
+         * @param supplier the value
+         * @return the builder
+         */
+        public HashMapInterfaceArgument.@NonNull Builder with(
+                final @NonNull String key,
+                final @NonNull Supplier<Object> supplier
+        ) {
+            this.argumentMap.put(key, supplier);
+            return this;
+        }
+
+        /**
+         * Builds the argument.
+         *
+         * @return the argument
+         */
         public @NonNull HashMapInterfaceArgument build() {
             return new HashMapInterfaceArgument(this.argumentMap);
         }
