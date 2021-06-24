@@ -96,7 +96,7 @@ public class ChestView implements InventoryView {
     private @NonNull Inventory createInventory() {
         final @NonNull Inventory inventory = Bukkit.createInventory(
                 this,
-                this.parent.rows(),
+                this.parent.rows() * 9,
                 this.parent.title()
         );
 
