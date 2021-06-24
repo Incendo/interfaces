@@ -1,11 +1,11 @@
 package dev.kscott.interfaces.paper;
 
 import dev.kscott.interfaces.core.UpdatingInterface;
-import dev.kscott.interfaces.core.element.Element;
 import dev.kscott.interfaces.core.view.InterfaceView;
 import dev.kscott.interfaces.paper.element.ItemStackElement;
 import dev.kscott.interfaces.paper.pane.ChestPane;
 import dev.kscott.interfaces.paper.view.ChestView;
+import dev.kscott.interfaces.paper.view.InventoryView;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -18,13 +18,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.text.spi.CollatorProvider;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Handles interface-related events.
- *
+ * <p>
  * Register this from your plugin if you want event handling to function.
  */
 public class PaperInterfaceListeners implements Listener {
@@ -54,6 +53,7 @@ public class PaperInterfaceListeners implements Listener {
      */
     @EventHandler
     public void onInventoryOpen(final @NonNull InventoryOpenEvent event) {
+
         final @NonNull Inventory inventory = event.getInventory();
         final @Nullable InventoryHolder holder = inventory.getHolder();
 
@@ -61,8 +61,21 @@ public class PaperInterfaceListeners implements Listener {
             return;
         }
 
-        if (holder instanceof final @NonNull InterfaceView view) {
+        if (holder instanceof final @NonNull InventoryView view) {
             this.openViews.add(view);
+
+            if (view.parent() instanceof UpdatingInterface updatingInterface) {
+                if (updatingInterface.updates()) {
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if (view.viewing()) {
+                                view.parent().open(view.viewer(), view.argument());
+                            }
+                        }
+                    }.runTaskLater(this.plugin, updatingInterface.updateDelay());
+                }
+            }
         }
     }
 
@@ -80,21 +93,8 @@ public class PaperInterfaceListeners implements Listener {
             return;
         }
 
-        if (holder instanceof final @NonNull InterfaceView view) {
+        if (holder instanceof final @NonNull InventoryView view) {
             this.openViews.remove(view);
-
-            if (view.parent() instanceof UpdatingInterface updatingInterface) {
-                if (updatingInterface.updates()) {
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            if (view.viewing()) {
-                                view.parent().open(view.viewer(), view.argument());
-                            }
-                        }
-                    }.runTaskLater(this.plugin, updatingInterface.updateDelay());
-                }
-            }
         }
     }
 
@@ -114,7 +114,7 @@ public class PaperInterfaceListeners implements Listener {
         }
 
         if (holder instanceof ChestView chestView) {
-            int slot = event.getRawSlot();
+            int slot = event.getSlot();
             int x = slot % 9;
             int y = slot / 9;
 
