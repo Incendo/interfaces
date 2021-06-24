@@ -9,15 +9,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.List;
+
 /**
  * The view of a Bukkit inventory-based interface.
  */
 public class ChestView implements InventoryView {
-
-    /**
-     * The width of a Minecraft chest.
-     */
-    public static final int MINECRAFT_CHEST_WIDTH = 9;
 
     /**
      * Converts a Bukkit slot index to an x/y position.
@@ -49,7 +46,7 @@ public class ChestView implements InventoryView {
     /**
      * The parent interface.
      */
-    private final @NonNull ChestInterface parentInterface;
+    private final @NonNull ChestInterface parent;
 
     /**
      * The inventory.
@@ -70,22 +67,22 @@ public class ChestView implements InventoryView {
      * Constructs {@code InventoryInterfaceView}.
      *
      * @param viewer          the viewer
-     * @param parentInterface the parent interface
+     * @param parent the parent interface
      * @param argument        the interface argument
      */
     public ChestView(
-            final @NonNull ChestInterface parentInterface,
+            final @NonNull ChestInterface parent,
             final @NonNull PlayerViewer viewer,
             final @NonNull InterfaceArgument argument
     ) {
         this.viewer = viewer;
-        this.parentInterface = parentInterface;
+        this.parent = parent;
         this.argument = argument;
 
-        this.pane = new ChestPane(parentInterface.rows());
+        this.pane = new ChestPane(parent.rows());
 
-        for (final var transform : this.parentInterface.transformations()) {
-            transform.accept(this.pane, this);
+        for (final var transform : this.parent.transformations()) {
+            transform.apply(this.pane, this);
         }
 
         this.inventory = this.createInventory();
@@ -99,15 +96,15 @@ public class ChestView implements InventoryView {
     private @NonNull Inventory createInventory() {
         final @NonNull Inventory inventory = Bukkit.createInventory(
                 this,
-                this.parentInterface.rows(),
-                this.parentInterface.title()
+                this.parent.rows(),
+                this.parent.title()
         );
 
-        final @NonNull ItemStackElement[][] elements = this.pane.chestElements();
+        final @NonNull List<List<ItemStackElement>> elements = this.pane.chestElements();
 
-        for (int x = 0; x < ChestView.MINECRAFT_CHEST_WIDTH; x++) {
-            for (int y = 0; y < this.parentInterface.rows(); y++) {
-                final @NonNull ItemStackElement element = elements[x][y];
+        for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
+            for (int y = 0; y < this.parent.rows(); y++) {
+                final @NonNull ItemStackElement element = elements.get(x).get(y);
 
                 inventory.setItem(gridToSlot(x, y), element.itemStack());
             }
