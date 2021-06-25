@@ -8,6 +8,7 @@ import dev.kscott.interfaces.core.transform.Transform;
 import dev.kscott.interfaces.core.view.InterfaceView;
 import dev.kscott.interfaces.core.view.InterfaceViewer;
 import dev.kscott.interfaces.paper.PlayerViewer;
+import dev.kscott.interfaces.paper.element.ClickHandler;
 import dev.kscott.interfaces.paper.pane.ChestPane;
 import dev.kscott.interfaces.paper.view.ChestView;
 import net.kyori.adventure.text.Component;
@@ -49,6 +50,11 @@ public class ChestInterface implements Interface<ChestPane>, TitledInterface, Up
     private int updateDelay;
 
     /**
+     * The click handler for the top part of the menu.
+     */
+    private @NonNull ClickHandler topClickHandler;
+
+    /**
      * Constructs {@code ChestInterface}.
      *
      * @param rows the rows
@@ -59,6 +65,7 @@ public class ChestInterface implements Interface<ChestPane>, TitledInterface, Up
         this.updates = false;
         this.updateDelay = 0;
         this.rows = rows;
+        this.topClickHandler = (pane, view) -> {};
     }
 
     /**
@@ -68,6 +75,24 @@ public class ChestInterface implements Interface<ChestPane>, TitledInterface, Up
      */
     public int rows() {
         return this.rows;
+    }
+
+    /**
+     * Returns the top click handler.
+     *
+     * @return the click handler
+     */
+    public @NonNull ClickHandler topClickHandler() {
+        return this.topClickHandler;
+    }
+
+    /**
+     * Sets the top click handler.
+     *
+     * @param handler the handler
+     */
+    public void topClickHandler(final @NonNull ClickHandler handler) {
+        this.topClickHandler = handler;
     }
 
     /**
