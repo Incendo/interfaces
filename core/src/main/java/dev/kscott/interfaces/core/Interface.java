@@ -40,7 +40,7 @@ public interface Interface<T extends Pane> {
      * @param viewer the viewer
      * @return the view
      */
-    @NonNull InterfaceView open(final @NonNull InterfaceViewer viewer);
+    @NonNull <U extends InterfaceView<T, Interface<T>>> T open(final @NonNull InterfaceViewer viewer);
 
     /**
      * Opens this interface to the viewer.
@@ -49,6 +49,22 @@ public interface Interface<T extends Pane> {
      * @param arguments the interface's arguments
      * @return the view
      */
-    @NonNull InterfaceView open(final @NonNull InterfaceViewer viewer,
+    @NonNull <U extends InterfaceView<T, Interface<T>>> T open(final @NonNull InterfaceViewer viewer,
                                 final @NonNull InterfaceArgument arguments);
+
+    /**
+     * An interface that represents an interface builder.
+     */
+    interface Builder<U extends Interface> {
+
+//        void addTransform(final @NonNull Transform<?>)
+
+        /**
+         * Builds the interface and returns it.
+         *
+         * @return the interface
+         */
+        @NonNull U build();
+
+    }
 }

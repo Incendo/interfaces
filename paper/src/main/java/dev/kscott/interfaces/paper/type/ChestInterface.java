@@ -4,6 +4,7 @@ import dev.kscott.interfaces.core.Interface;
 import dev.kscott.interfaces.core.UpdatingInterface;
 import dev.kscott.interfaces.core.arguments.HashMapInterfaceArgument;
 import dev.kscott.interfaces.core.arguments.InterfaceArgument;
+import dev.kscott.interfaces.core.pane.Pane;
 import dev.kscott.interfaces.core.transform.Transform;
 import dev.kscott.interfaces.core.view.InterfaceView;
 import dev.kscott.interfaces.core.view.InterfaceViewer;
@@ -19,10 +20,12 @@ import java.util.List;
 
 /**
  * An interface using a chest.
- *
- * @implNote {@link UpdatingInterface#updateDelay()} is measured in ticks
  */
-public class ChestInterface implements Interface<ChestPane>, TitledInterface, UpdatingInterface {
+public class ChestInterface implements
+        Interface<ChestPane>,
+        TitledInterface,
+        UpdatingInterface,
+        ClickableInterface {
 
     /**
      * The interface's rows.
@@ -65,7 +68,8 @@ public class ChestInterface implements Interface<ChestPane>, TitledInterface, Up
         this.updates = false;
         this.updateDelay = 0;
         this.rows = rows;
-        this.topClickHandler = (pane, view) -> {};
+        this.topClickHandler = (pane, view) -> {
+        };
     }
 
     /**
@@ -124,7 +128,7 @@ public class ChestInterface implements Interface<ChestPane>, TitledInterface, Up
      * @return the view
      */
     @Override
-    public @NonNull InterfaceView<ChestPane, ChestInterface> open(final @NonNull InterfaceViewer viewer) {
+    public @NonNull ChestView U open(final @NonNull InterfaceViewer viewer) {
         return this.open(viewer, HashMapInterfaceArgument.empty());
     }
 
@@ -136,7 +140,7 @@ public class ChestInterface implements Interface<ChestPane>, TitledInterface, Up
      * @return the view
      */
     @Override
-    public @NonNull InterfaceView<ChestPane, ChestInterface> open(
+    public @NonNull <U extends InterfaceView<ChestPane, Interface<ChestPane>>> U open(
             final @NonNull InterfaceViewer viewer,
             final @NonNull InterfaceArgument arguments
     ) {
