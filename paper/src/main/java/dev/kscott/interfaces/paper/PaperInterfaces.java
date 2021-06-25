@@ -7,7 +7,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 /**
  * Utility methods for Paper interfaces.
  */
-public interface PaperInterface {
+public interface PaperInterfaces {
 
     /**
      * Creates a new {@link ChestInterface}.
