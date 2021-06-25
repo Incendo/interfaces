@@ -74,6 +74,13 @@ public class BookInterface implements Interface<BookPane>, TitledInterface {
         return this.open(viewer, HashMapInterfaceArgument.empty());
     }
 
+    /**
+     * Opens this interface for a viewer.
+     *
+     * @param viewer the viewer
+     * @param arguments the interface's arguments
+     * @return the view
+     */
     @Override
     public @NonNull InterfaceView<BookPane, BookInterface> open(final @NonNull InterfaceViewer viewer,
                                                   final @NonNull InterfaceArgument arguments) {
@@ -88,11 +95,21 @@ public class BookInterface implements Interface<BookPane>, TitledInterface {
         return view;
     }
 
+    /**
+     * Sets the title of this interface.
+     *
+     * @param title the title
+     */
     @Override
     public void title(@NonNull final Component title) {
         this.title = title;
     }
 
+    /**
+     * Returns the title of this interface.
+     *
+     * @return the title
+     */
     @Override
     public @NonNull Component title() {
         return this.title;
