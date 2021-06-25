@@ -27,6 +27,15 @@ public class BookPane implements Pane {
     }
 
     /**
+     * Constructs {@code BookPane}.
+     *
+     * @param pages the pages
+     */
+    public BookPane(final @NonNull List<TextElement> pages) {
+        this.pages = pages;
+    }
+
+    /**
      * Returns the amount of lines in the pane.
      *
      * @return the amount of lines in the pane
@@ -39,9 +48,12 @@ public class BookPane implements Pane {
      * Adds a page.
      *
      * @param element the element
+     * @return a new {@code BookPane}
      */
-    public void add(final @NonNull TextElement element) {
-        this.pages.add(element);
+    public @NonNull BookPane add(final @NonNull TextElement element) {
+        final @NonNull List<TextElement> pages = new ArrayList<>(this.pages);
+        pages.add(element);
+        return new BookPane(pages);
     }
 
     /**
@@ -49,10 +61,13 @@ public class BookPane implements Pane {
      *
      * @param index   the index
      * @param element the element
+     * @return a new {@code BookPane}
      * @throws IndexOutOfBoundsException if index is greater than the pane size or lesser than 0
      */
-    public void add(final int index, final @NonNull TextElement element) {
-        this.pages.add(index, element);
+    public @NonNull BookPane add(final int index, final @NonNull TextElement element) {
+        final @NonNull List<TextElement> pages = new ArrayList<>(this.pages);
+        pages.add(index, element);
+        return new BookPane(pages);
     }
 
     /**
@@ -61,8 +76,10 @@ public class BookPane implements Pane {
      * @param index the index
      * @throws IndexOutOfBoundsException if index is greater than the pane size or lesser than 0
      */
-    public void remove(final int index) {
-        this.pages.remove(index);
+    public @NonNull BookPane remove(final int index) {
+        final @NonNull List<TextElement> pages = new ArrayList<>(this.pages);
+        pages.remove(index);
+        return new BookPane(pages);
     }
 
     /**
