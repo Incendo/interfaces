@@ -3,7 +3,6 @@ package dev.kscott.interfaces.paper.pane;
 import dev.kscott.interfaces.core.element.Element;
 import dev.kscott.interfaces.core.pane.Pane;
 import dev.kscott.interfaces.paper.element.TextElement;
-import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -25,6 +24,40 @@ public class BookPane implements Pane {
      */
     public BookPane() {
         this.text = new ArrayList<>();
+    }
+
+    /**
+     * Returns the amount of lines in the pane.
+     *
+     * @return the amount of lines in the pane
+     */
+    public int lines() {
+        return this.text.size();
+    }
+
+    public void add(final @NonNull TextElement element) {
+        this.text.add(element);
+    }
+
+    /**
+     * Inserts an element at the index.
+     *
+     * @param index   the index
+     * @param element the element
+     * @throws IndexOutOfBoundsException if index is greater than the pane size or lesser than 0
+     */
+    public void add(final int index, final @NonNull TextElement element) {
+        this.text.add(index, element);
+    }
+
+    /**
+     * Removes an element at the given index.
+     *
+     * @param index the index
+     * @throws IndexOutOfBoundsException if index is greater than the pane size or lesser than 0
+     */
+    public void remove(final int index) {
+        this.text.remove(index);
     }
 
     /**
