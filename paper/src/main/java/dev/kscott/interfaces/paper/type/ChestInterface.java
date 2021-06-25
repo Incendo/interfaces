@@ -140,7 +140,7 @@ public class ChestInterface implements
      * @return the view
      */
     @Override
-    public @NonNull <U extends InterfaceView<ChestPane, Interface<ChestPane>>> U open(
+    public @NonNull ChestView open(
             final @NonNull InterfaceViewer viewer,
             final @NonNull InterfaceArgument arguments
     ) {

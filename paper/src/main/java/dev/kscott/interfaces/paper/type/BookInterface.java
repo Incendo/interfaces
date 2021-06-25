@@ -9,7 +9,6 @@ import dev.kscott.interfaces.core.view.InterfaceViewer;
 import dev.kscott.interfaces.paper.PlayerViewer;
 import dev.kscott.interfaces.paper.pane.BookPane;
 import dev.kscott.interfaces.paper.view.BookView;
-import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -19,7 +18,9 @@ import java.util.List;
 /**
  * An interface using a book.
  */
-public class BookInterface implements Interface<BookPane>, TitledInterface {
+public class BookInterface implements
+        Interface<BookPane>,
+        TitledInterface {
 
     /**
      * The list of transforms.
@@ -70,20 +71,22 @@ public class BookInterface implements Interface<BookPane>, TitledInterface {
      * @return the view
      */
     @Override
-    public @NonNull InterfaceView<BookPane, BookInterface> open(final @NonNull InterfaceViewer viewer) {
+    public @NonNull BookView open(final @NonNull InterfaceViewer viewer) {
         return this.open(viewer, HashMapInterfaceArgument.empty());
     }
 
     /**
      * Opens this interface for a viewer.
      *
-     * @param viewer the viewer
+     * @param viewer    the viewer
      * @param arguments the interface's arguments
      * @return the view
      */
     @Override
-    public @NonNull InterfaceView<BookPane, BookInterface> open(final @NonNull InterfaceViewer viewer,
-                                                  final @NonNull InterfaceArgument arguments) {
+    public @NonNull BookView open(
+            final @NonNull InterfaceViewer viewer,
+            final @NonNull InterfaceArgument arguments
+    ) {
         if (!(viewer instanceof PlayerViewer)) {
             throw new UnsupportedOperationException("This interface only supports the PlayerViewer class.");
         }
