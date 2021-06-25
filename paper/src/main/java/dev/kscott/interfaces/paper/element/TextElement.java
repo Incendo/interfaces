@@ -10,6 +10,16 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public class TextElement implements Element {
 
     /**
+     * Creates a new TextElement.
+     *
+     * @param text the text
+     * @return the element
+     */
+    public static @NonNull TextElement of(final @NonNull Component text) {
+        return new TextElement(text);
+    }
+
+    /**
      * This element's text.
      */
     private final @NonNull Component text;
