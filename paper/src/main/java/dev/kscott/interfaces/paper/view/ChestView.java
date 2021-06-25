@@ -167,7 +167,7 @@ public class ChestView implements InventoryView<ChestPane> {
      * @return the view's pane
      */
     @Override
-    public @NonNull Pane pane() {
+    public @NonNull ChestPane pane() {
         return this.pane;
     }
 

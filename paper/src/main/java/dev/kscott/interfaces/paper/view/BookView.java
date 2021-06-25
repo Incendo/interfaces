@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * The view of a Book-based interface.
  */
-public class BookView implements InterfaceView<BookPane, BookInterface> {
+public class BookView implements InterfaceView<BookPane, Interface<BookPane>> {
 
     /**
      * The parent interface.
