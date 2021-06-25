@@ -15,7 +15,7 @@ import java.util.List;
  * @param <T> the pane type
  * @see InterfaceView
  */
-public interface Interface<T extends Pane> {
+public interface Interface<T extends Pane, U extends InterfaceViewer> {
 
     /**
      * Adds a transformation to this interface.
@@ -23,7 +23,7 @@ public interface Interface<T extends Pane> {
      * @param transform the transformation
      * @return this interface
      */
-    @NonNull <U extends Interface<T>> U transform(final @NonNull Transform<T> transform);
+    @NonNull Interface<T, U> transform(final @NonNull Transform<T> transform);
 
     /**
      * Returns an immutable collection of transformations.
@@ -40,7 +40,7 @@ public interface Interface<T extends Pane> {
      * @param viewer the viewer
      * @return the view
      */
-    @NonNull InterfaceView<T, Interface<T>> open(final @NonNull InterfaceViewer viewer);
+    @NonNull InterfaceView<T, U, Interface<T, U>> open(final @NonNull U viewer);
 
     /**
      * Opens this interface to the viewer.
@@ -49,22 +49,22 @@ public interface Interface<T extends Pane> {
      * @param arguments the interface's arguments
      * @return the view
      */
-    @NonNull InterfaceView<T, Interface<T>> open(final @NonNull InterfaceViewer viewer,
+    @NonNull InterfaceView<T, U, Interface<T, U>> open(final @NonNull U viewer,
                                 final @NonNull InterfaceArgument arguments);
 
     /**
      * An interface that represents an interface builder.
      */
-    interface Builder<U extends Interface> {
+    interface Builder<T extends Pane, U extends InterfaceViewer, V extends Interface<T, U>> {
 
-//        void addTransform(final @NonNull Transform<?>)
+        Builder<T, U, V> addTransform(final @NonNull Transform<T> transform);
 
         /**
          * Builds the interface and returns it.
          *
          * @return the interface
          */
-        @NonNull U build();
+        @NonNull V build();
 
     }
 }

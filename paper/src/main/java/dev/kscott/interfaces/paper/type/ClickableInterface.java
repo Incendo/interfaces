@@ -15,11 +15,4 @@ public interface ClickableInterface {
      */
     @NonNull ClickHandler topClickHandler();
 
-    /**
-     * Sets the top click handler.
-     *
-     * @param handler the handler
-     */
-    void topClickHandler(final @NonNull ClickHandler handler);
-
 }

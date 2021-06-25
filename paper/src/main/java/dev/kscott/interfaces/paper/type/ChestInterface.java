@@ -4,10 +4,7 @@ import dev.kscott.interfaces.core.Interface;
 import dev.kscott.interfaces.core.UpdatingInterface;
 import dev.kscott.interfaces.core.arguments.HashMapInterfaceArgument;
 import dev.kscott.interfaces.core.arguments.InterfaceArgument;
-import dev.kscott.interfaces.core.pane.Pane;
 import dev.kscott.interfaces.core.transform.Transform;
-import dev.kscott.interfaces.core.view.InterfaceView;
-import dev.kscott.interfaces.core.view.InterfaceViewer;
 import dev.kscott.interfaces.paper.PlayerViewer;
 import dev.kscott.interfaces.paper.element.ClickHandler;
 import dev.kscott.interfaces.paper.pane.ChestPane;
@@ -22,10 +19,19 @@ import java.util.List;
  * An interface using a chest.
  */
 public class ChestInterface implements
-        Interface<ChestPane>,
+        Interface<ChestPane, PlayerViewer>,
         TitledInterface,
         UpdatingInterface,
         ClickableInterface {
+
+    /**
+     * Returns a new ChestInterface builder.
+     *
+     * @return the builder
+     */
+    public static @NonNull Builder builder() {
+        return new ChestInterface.Builder();
+    }
 
     /**
      * The interface's rows.
@@ -40,36 +46,42 @@ public class ChestInterface implements
     /**
      * The title.
      */
-    private @NonNull Component title;
+    private final @NonNull Component title;
 
     /**
      * True if this is an updating interface, false if not.
      */
-    private boolean updates;
+    private final boolean updates;
 
     /**
      * The amount of ticks between updates.
      */
-    private int updateDelay;
+    private final int updateDelay;
 
     /**
      * The click handler for the top part of the menu.
      */
-    private @NonNull ClickHandler topClickHandler;
+    private final @NonNull ClickHandler topClickHandler;
 
     /**
      * Constructs {@code ChestInterface}.
      *
      * @param rows the rows
      */
-    public ChestInterface(final int rows) {
-        this.title = Component.empty();
-        this.transformationList = new ArrayList<>();
-        this.updates = false;
-        this.updateDelay = 0;
+    public ChestInterface(
+            final int rows,
+            final @NonNull Component title,
+            final @NonNull List<Transform<ChestPane>> transforms,
+            final boolean updates,
+            final int updateDelay,
+            final @NonNull ClickHandler topClickHandler
+    ) {
+        this.title = title;
+        this.transformationList = transforms;
+        this.updates = updates;
+        this.updateDelay = updateDelay;
         this.rows = rows;
-        this.topClickHandler = (pane, view) -> {
-        };
+        this.topClickHandler = topClickHandler;
     }
 
     /**
@@ -91,24 +103,15 @@ public class ChestInterface implements
     }
 
     /**
-     * Sets the top click handler.
-     *
-     * @param handler the handler
-     */
-    public void topClickHandler(final @NonNull ClickHandler handler) {
-        this.topClickHandler = handler;
-    }
-
-    /**
      * Adds a transformation to the list.
      *
      * @param transform the transformation
      * @return the interface
      */
     @Override
-    public @NonNull <T extends Interface<ChestPane>> T transform(final @NonNull Transform<ChestPane> transform) {
+    public @NonNull ChestInterface transform(final @NonNull Transform<ChestPane> transform) {
         this.transformationList.add(transform);
-        return (T) this;
+        return this;
     }
 
     /**
@@ -128,7 +131,7 @@ public class ChestInterface implements
      * @return the view
      */
     @Override
-    public @NonNull ChestView open(final @NonNull InterfaceViewer viewer) {
+    public @NonNull ChestView open(final @NonNull PlayerViewer viewer) {
         return this.open(viewer, HashMapInterfaceArgument.empty());
     }
 
@@ -141,28 +144,14 @@ public class ChestInterface implements
      */
     @Override
     public @NonNull ChestView open(
-            final @NonNull InterfaceViewer viewer,
+            final @NonNull PlayerViewer viewer,
             final @NonNull InterfaceArgument arguments
     ) {
-        if (!(viewer instanceof PlayerViewer)) {
-            throw new UnsupportedOperationException("This interface only supports the PlayerViewer class.");
-        }
-
         final @NonNull ChestView view = new ChestView(this, (PlayerViewer) viewer, arguments);
 
         view.open();
 
         return view;
-    }
-
-    /**
-     * Returns the title of this interface.
-     *
-     * @param title the title
-     */
-    @Override
-    public void title(@NonNull final Component title) {
-        this.title = title;
     }
 
     /**
@@ -173,28 +162,6 @@ public class ChestInterface implements
     @Override
     public @NonNull Component title() {
         return this.title;
-    }
-
-    /**
-     * Controls if this interface updates or not.
-     *
-     * @param updates is updating or not
-     */
-    @Override
-    public void updates(final boolean updates) {
-        this.updates = true;
-    }
-
-    /**
-     * Controls if this interface updates or not.
-     *
-     * @param updates is updating or not
-     * @param delay   the delay between updates in Minecraft ticks
-     */
-    @Override
-    public void updates(final boolean updates, final int delay) {
-        this.updates = updates;
-        this.updateDelay = delay;
     }
 
     /**
@@ -215,6 +182,114 @@ public class ChestInterface implements
     @Override
     public int updateDelay() {
         return this.updateDelay;
+    }
+
+    /**
+     * A class that builds a chest interface.
+     */
+    public static class Builder implements Interface.Builder<ChestPane, PlayerViewer, ChestInterface> {
+
+        /**
+         * The list of transformations.
+         */
+        private final @NonNull List<Transform<ChestPane>> transformsList;
+
+        /**
+         * The argument.
+         */
+        private final @NonNull InterfaceArgument argument;
+
+        /**
+         * The amount of rows.
+         */
+        private int rows;
+
+        /**
+         * The title.
+         */
+        private @NonNull Component title;
+
+        /**
+         * True if updating interface, false if not.
+         */
+        private boolean updates;
+
+        /**
+         * How many ticks to wait between interface updates.
+         */
+        private int updateDelay;
+
+        /**
+         * The top click handler.
+         */
+        private @NonNull ClickHandler topClickHandler;
+
+        /**
+         * Constructs {@code Builder}.
+         */
+        public Builder() {
+            this.transformsList = new ArrayList<>();
+            this.argument = HashMapInterfaceArgument.empty();
+            this.rows = 1;
+            this.title = Component.empty();
+            this.updates = false;
+            this.updateDelay = 1;
+            this.topClickHandler = (event, view) -> {
+            };
+        }
+
+        /**
+         * Sets the number of rows for this interface.
+         *
+         * @param rows the number of rows
+         * @return this
+         */
+        public @NonNull Builder rows(final int rows) {
+            this.rows = rows;
+            return this;
+        }
+
+        /**
+         * Sets the title of the interface.
+         *
+         * @param title the title
+         * @return this
+         */
+        public @NonNull Builder title(final @NonNull Component title) {
+            this.title = title;
+            return this;
+        }
+
+        /**
+         * Adds a transformation to the interface.
+         *
+         * @param transform the transformation
+         * @return this
+         */
+        @Override
+        public @NonNull Builder addTransform(final @NonNull Transform<ChestPane> transform) {
+            this.transformsList.add(transform);
+
+            return this;
+        }
+
+        /**
+         * Constructs and returns the interface.
+         *
+         * @return the interface
+         */
+        @Override
+        public @NonNull ChestInterface build() {
+            return new ChestInterface(
+                    this.rows,
+                    this.title,
+                    this.transformsList,
+                    this.updates,
+                    this.updateDelay,
+                    this.topClickHandler
+            );
+        }
+
     }
 
 }

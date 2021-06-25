@@ -9,10 +9,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public interface TitledInterface {
 
     /**
-     * Sets the title of a component.
+     * Returns the title of this interfface.
+     *
+     * @return the title
      */
-    void title(@NonNull Component title);
-
     @NonNull Component title();
 
 }

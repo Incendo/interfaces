@@ -3,16 +3,13 @@ package dev.kscott.interfaces.paper.view;
 import dev.kscott.interfaces.core.Interface;
 import dev.kscott.interfaces.core.arguments.InterfaceArgument;
 import dev.kscott.interfaces.core.view.InterfaceView;
-import dev.kscott.interfaces.core.view.InterfaceViewer;
 import dev.kscott.interfaces.paper.PlayerViewer;
 import dev.kscott.interfaces.paper.element.TextElement;
 import dev.kscott.interfaces.paper.pane.BookPane;
-import dev.kscott.interfaces.paper.pane.ChestPane;
 import dev.kscott.interfaces.paper.type.BookInterface;
 import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +17,7 @@ import java.util.List;
 /**
  * The view of a Book-based interface.
  */
-public class BookView implements InterfaceView<BookPane, Interface<BookPane>> {
+public class BookView implements InterfaceView<BookPane, PlayerViewer, Interface<BookPane, PlayerViewer>> {
 
     /**
      * The parent interface.
@@ -46,11 +43,6 @@ public class BookView implements InterfaceView<BookPane, Interface<BookPane>> {
      * The book.
      */
     private final @NonNull Book book;
-
-    /**
-     * True if viewing, false if not.
-     */
-    private boolean viewing;
 
     /**
      * Constructs {@code BookView}.
@@ -89,7 +81,8 @@ public class BookView implements InterfaceView<BookPane, Interface<BookPane>> {
      * Always returns false.
      *
      * @return false
-     */    @Override
+     */
+    @Override
     public boolean viewing() {
         // Not sure how to properly implement this, or even if it can be done reliably. Editing a book sends an event,
         // but just closing the book with the ESC key doesn't.
@@ -102,7 +95,7 @@ public class BookView implements InterfaceView<BookPane, Interface<BookPane>> {
      * @return the parent
      */
     @Override
-    public @NonNull Interface<BookPane> parent() {
+    public @NonNull BookInterface parent() {
         return this.parent;
     }
 
@@ -112,7 +105,7 @@ public class BookView implements InterfaceView<BookPane, Interface<BookPane>> {
      * @return the viewer
      */
     @Override
-    public @NonNull InterfaceViewer viewer() {
+    public @NonNull PlayerViewer viewer() {
         return this.viewer;
     }
 

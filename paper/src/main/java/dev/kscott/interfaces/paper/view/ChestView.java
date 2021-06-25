@@ -119,7 +119,7 @@ public class ChestView implements InventoryView<ChestPane> {
      * @return the parent
      */
     @Override
-    public @NonNull Interface<ChestPane> parent() {
+    public @NonNull ChestInterface parent() {
         return this.parent;
     }
 
@@ -129,7 +129,7 @@ public class ChestView implements InventoryView<ChestPane> {
      * @return the viewer
      */
     @Override
-    public @NonNull InterfaceViewer viewer() {
+    public @NonNull PlayerViewer viewer() {
         return this.viewer;
     }
 

@@ -11,14 +11,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @param <T> the type of pane this view can view
  * @apiNote take a shot whenever you read "view" in these docs.
  */
-public interface InterfaceView<T extends Pane, U extends Interface<T>> {
+public interface InterfaceView<T extends Pane, U extends InterfaceViewer, V extends Interface<T, U>> {
 
     /**
      * Returns the parent interface.
      *
      * @return the interface
      */
-    @NonNull Interface<T> parent();
+    @NonNull Interface<T, U> parent();
 
     /**
      * Returns the viewer of this view.

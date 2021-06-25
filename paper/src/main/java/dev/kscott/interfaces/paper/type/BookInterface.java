@@ -19,7 +19,7 @@ import java.util.List;
  * An interface using a book.
  */
 public class BookInterface implements
-        Interface<BookPane>,
+        Interface<BookPane, PlayerViewer>,
         TitledInterface {
 
     /**
@@ -44,14 +44,13 @@ public class BookInterface implements
      * Adds a transform to this interface.
      *
      * @param transform the transformation
-     * @param <U>       the interface's type
      * @return the interface
      */
     @Override
-    public <U extends Interface<BookPane>> @NonNull U transform(final @NonNull Transform<BookPane> transform) {
+    public @NonNull BookInterface transform(final @NonNull Transform<BookPane> transform) {
         this.transforms.add(transform);
 
-        return (U) this;
+        return this;
     }
 
     /**
@@ -71,7 +70,7 @@ public class BookInterface implements
      * @return the view
      */
     @Override
-    public @NonNull BookView open(final @NonNull InterfaceViewer viewer) {
+    public @NonNull BookView open(final @NonNull PlayerViewer viewer) {
         return this.open(viewer, HashMapInterfaceArgument.empty());
     }
 
@@ -84,28 +83,14 @@ public class BookInterface implements
      */
     @Override
     public @NonNull BookView open(
-            final @NonNull InterfaceViewer viewer,
+            final @NonNull PlayerViewer viewer,
             final @NonNull InterfaceArgument arguments
     ) {
-        if (!(viewer instanceof PlayerViewer)) {
-            throw new UnsupportedOperationException("This interface only supports the PlayerViewer class.");
-        }
-
         final @NonNull BookView view = new BookView(this, (PlayerViewer) viewer, arguments);
 
         view.open();
 
         return view;
-    }
-
-    /**
-     * Sets the title of this interface.
-     *
-     * @param title the title
-     */
-    @Override
-    public void title(@NonNull final Component title) {
-        this.title = title;
     }
 
     /**
