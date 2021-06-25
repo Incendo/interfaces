@@ -3,7 +3,10 @@ package dev.kscott.interfaces.paper.transform;
 
 import dev.kscott.interfaces.core.transform.Transform;
 import dev.kscott.interfaces.paper.element.ItemStackElement;
+import dev.kscott.interfaces.paper.element.TextElement;
+import dev.kscott.interfaces.paper.pane.BookPane;
 import dev.kscott.interfaces.paper.pane.ChestPane;
+import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -36,12 +39,30 @@ public interface PaperTransform {
      * Returns a {@link ChestPane} {@link Transform} that adds an ItemStack to the pane.
      *
      * @param element the element
-     * @param x the x coordinate
-     * @param y the y coordinate
+     * @param x       the x coordinate
+     * @param y       the y coordinate
      * @return the transform
      */
     static @NonNull Transform<ChestPane> chestItem(final @NonNull ItemStackElement element, final int x, final int y) {
         return (pane, view) -> pane.element(element, x, y);
+    }
+
+    /**
+     * Returns a {@link Transform} that adds text to the pane.
+     *
+     * @param pages the pages as components
+     * @return the transform
+     */
+    static @NonNull Transform<BookPane> bookText(final @NonNull Component... pages) {
+        return (pane, view) -> {
+            @NonNull BookPane bookPane = pane;
+
+            for (final @NonNull Component page : pages) {
+                bookPane = bookPane.add(TextElement.of(page));
+            }
+
+            return bookPane;
+        };
     }
 
 }
