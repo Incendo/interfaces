@@ -3,6 +3,7 @@ package dev.kscott.interfaces.paper;
 import dev.kscott.interfaces.core.view.InterfaceView;
 import dev.kscott.interfaces.core.view.InterfaceViewer;
 import dev.kscott.interfaces.paper.pane.ChestPane;
+import dev.kscott.interfaces.paper.view.BookView;
 import dev.kscott.interfaces.paper.view.ChestView;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -51,16 +52,29 @@ public class PlayerViewer implements InterfaceViewer {
             return;
         }
 
+        if (pane instanceof BookView bookView) {
+            openBookView(bookView);
+        }
+
         throw new UnsupportedOperationException("Cannot open view of type " + pane.getClass().getName() + ".");
     }
 
     /**
      * Opens a chest pane.
      *
-     * @param chestPane the chest pane
+     * @param chestView the chest view
      */
-    private void openChestView(final @NonNull ChestView chestPane) {
-        this.player.openInventory(chestPane.inventory());
+    private void openChestView(final @NonNull ChestView chestView) {
+        this.player.openInventory(chestView.inventory());
+    }
+
+    /**
+     * Opens a book pane.
+     *
+     * @param bookView the book view
+     */
+    private void openBookView(final @NonNull BookView bookView) {
+        this.player.openBook(bookView.book());
     }
 
     /**

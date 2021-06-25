@@ -17,13 +17,13 @@ public class BookPane implements Pane {
     /**
      * The list of elements containing text.
      */
-    private final @NonNull List<TextElement> text;
+    private final @NonNull List<TextElement> pages;
 
     /**
      * Constructs {@code BookPane}.
      */
     public BookPane() {
-        this.text = new ArrayList<>();
+        this.pages = new ArrayList<>();
     }
 
     /**
@@ -31,33 +31,38 @@ public class BookPane implements Pane {
      *
      * @return the amount of lines in the pane
      */
-    public int lines() {
-        return this.text.size();
-    }
-
-    public void add(final @NonNull TextElement element) {
-        this.text.add(element);
+    public int count() {
+        return this.pages.size();
     }
 
     /**
-     * Inserts an element at the index.
+     * Adds a page.
+     *
+     * @param element the element
+     */
+    public void add(final @NonNull TextElement element) {
+        this.pages.add(element);
+    }
+
+    /**
+     * Inserts a page at the index.
      *
      * @param index   the index
      * @param element the element
      * @throws IndexOutOfBoundsException if index is greater than the pane size or lesser than 0
      */
     public void add(final int index, final @NonNull TextElement element) {
-        this.text.add(index, element);
+        this.pages.add(index, element);
     }
 
     /**
-     * Removes an element at the given index.
+     * Removes a page at the given index.
      *
      * @param index the index
      * @throws IndexOutOfBoundsException if index is greater than the pane size or lesser than 0
      */
     public void remove(final int index) {
-        this.text.remove(index);
+        this.pages.remove(index);
     }
 
     /**
@@ -67,7 +72,16 @@ public class BookPane implements Pane {
      */
     @Override
     public @NonNull Collection<Element> elements() {
-        return List.copyOf(this.text);
+        return List.copyOf(this.pages);
+    }
+
+    /**
+     * Returns the list of pages.
+     *
+     * @return the list of pages
+     */
+    public @NonNull List<TextElement> pages() {
+        return List.copyOf(this.pages);
     }
 
 }
