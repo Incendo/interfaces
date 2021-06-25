@@ -128,7 +128,7 @@ public class ChestInterface implements
      * @return the view
      */
     @Override
-    public @NonNull ChestView U open(final @NonNull InterfaceViewer viewer) {
+    public @NonNull ChestView open(final @NonNull InterfaceViewer viewer) {
         return this.open(viewer, HashMapInterfaceArgument.empty());
     }
 
