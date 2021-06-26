@@ -43,7 +43,7 @@ public class PlayerViewer implements InterfaceViewer {
      * Opens a pane for the viewer.
      *
      * @param pane the pane
-     * @throws UnsupportedOperationException when the pane
+     * @throws UnsupportedOperationException when the pane cannot be opened
      */
     @Override
     public void open(final @NonNull InterfaceView pane) {
