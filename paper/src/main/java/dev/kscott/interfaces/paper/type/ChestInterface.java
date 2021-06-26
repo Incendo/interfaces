@@ -195,11 +195,6 @@ public class ChestInterface implements
         private final @NonNull List<Transform<ChestPane>> transformsList;
 
         /**
-         * The argument.
-         */
-        private final @NonNull InterfaceArgument argument;
-
-        /**
          * The amount of rows.
          */
         private int rows;
@@ -229,7 +224,6 @@ public class ChestInterface implements
          */
         public Builder() {
             this.transformsList = new ArrayList<>();
-            this.argument = HashMapInterfaceArgument.empty();
             this.rows = 1;
             this.title = Component.empty();
             this.updates = false;
