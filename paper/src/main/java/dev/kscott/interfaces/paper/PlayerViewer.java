@@ -54,6 +54,7 @@ public class PlayerViewer implements InterfaceViewer {
 
         if (pane instanceof BookView bookView) {
             openBookView(bookView);
+            return;
         }
 
         throw new UnsupportedOperationException("Cannot open view of type " + pane.getClass().getName() + ".");
