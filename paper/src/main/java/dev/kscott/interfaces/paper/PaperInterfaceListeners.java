@@ -118,7 +118,9 @@ public class PaperInterfaceListeners implements Listener {
             int x = slot % 9;
             int y = slot / 9;
 
-            final @NonNull ItemStackElement element = ((ChestPane) chestView.pane()).element(x, y);
+            chestView.parent().topClickHandler().accept(event, chestView);
+
+            final @NonNull ItemStackElement element = chestView.pane().element(x, y);
             element.handler().accept(event, chestView);
         }
     }
