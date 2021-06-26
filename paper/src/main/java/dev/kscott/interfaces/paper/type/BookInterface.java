@@ -21,7 +21,7 @@ public class BookInterface implements
         TitledInterface {
 
     /**
-     * Returns a new ChestInterface builder.
+     * Returns a new {@code BookInterface} builder.
      *
      * @return the builder
      */
