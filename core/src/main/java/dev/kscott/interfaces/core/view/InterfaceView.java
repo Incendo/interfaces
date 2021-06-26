@@ -9,7 +9,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * Represents a currently open interface (a "view").
  *
  * @param <T> the type of pane this view can view
- * @apiNote take a shot whenever you read "view" in these docs.
  */
 public interface InterfaceView<T extends Pane, U extends InterfaceViewer, V extends Interface<T, U>> {
 
@@ -28,7 +27,7 @@ public interface InterfaceView<T extends Pane, U extends InterfaceViewer, V exte
      * this view.
      *
      * @return the viewer
-     * @see  #viewing() check if the viewer is currently viewing this view
+     * @see #viewing() check if the viewer is currently viewing this view
      */
     @NonNull InterfaceViewer viewer();
 

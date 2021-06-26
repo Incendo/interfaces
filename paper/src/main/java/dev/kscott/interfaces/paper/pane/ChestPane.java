@@ -4,10 +4,8 @@ import dev.kscott.interfaces.core.element.Element;
 import dev.kscott.interfaces.core.pane.Pane;
 import dev.kscott.interfaces.paper.element.ItemStackElement;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -56,7 +54,7 @@ public class ChestPane implements Pane {
     /**
      * Constructs {@code ChestPane}.
      *
-     * @param rows amount of rows
+     * @param rows     amount of rows
      * @param elements the elements
      */
     public ChestPane(final int rows, final @NonNull List<List<ItemStackElement>> elements) {

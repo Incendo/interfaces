@@ -3,7 +3,6 @@ package dev.kscott.interfaces.paper;
 import dev.kscott.interfaces.core.UpdatingInterface;
 import dev.kscott.interfaces.core.view.InterfaceView;
 import dev.kscott.interfaces.paper.element.ItemStackElement;
-import dev.kscott.interfaces.paper.pane.ChestPane;
 import dev.kscott.interfaces.paper.view.ChestView;
 import dev.kscott.interfaces.paper.view.InventoryView;
 import org.bukkit.event.EventHandler;

@@ -2,9 +2,6 @@ package dev.kscott.interfaces.core.arguments;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Holds arguments passed into an interface.
  */
@@ -26,4 +23,5 @@ public interface InterfaceArgument {
      * @param value the value
      */
     void set(final @NonNull String key, final @NonNull Object value);
+
 }

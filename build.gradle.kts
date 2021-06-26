@@ -1,6 +1,6 @@
+import net.kyori.indra.IndraCheckstylePlugin
 import net.kyori.indra.IndraPlugin
 import net.kyori.indra.IndraPublishingPlugin
-import net.kyori.indra.IndraCheckstylePlugin
 import net.kyori.indra.repository.sonatypeSnapshots
 
 plugins {

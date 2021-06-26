@@ -45,12 +45,14 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
     /**
      * Opens this interface to the viewer.
      *
-     * @param viewer the viewer
+     * @param viewer    the viewer
      * @param arguments the interface's arguments
      * @return the view
      */
-    @NonNull InterfaceView<T, U, Interface<T, U>> open(final @NonNull U viewer,
-                                final @NonNull InterfaceArgument arguments);
+    @NonNull InterfaceView<T, U, Interface<T, U>> open(
+            final @NonNull U viewer,
+            final @NonNull InterfaceArgument arguments
+    );
 
     /**
      * An interface that represents an interface builder.
@@ -67,4 +69,5 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
         @NonNull V build();
 
     }
+
 }

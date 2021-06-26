@@ -281,7 +281,7 @@ public class ChestInterface implements
         /**
          * Controls how/if the interface updates.
          *
-         * @param updates true if the interface should update, false if not
+         * @param updates     true if the interface should update, false if not
          * @param updateDelay how many ticks to wait between updates
          * @return this
          */

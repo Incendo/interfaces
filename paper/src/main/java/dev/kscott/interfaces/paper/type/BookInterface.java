@@ -4,12 +4,8 @@ import dev.kscott.interfaces.core.Interface;
 import dev.kscott.interfaces.core.arguments.HashMapInterfaceArgument;
 import dev.kscott.interfaces.core.arguments.InterfaceArgument;
 import dev.kscott.interfaces.core.transform.Transform;
-import dev.kscott.interfaces.core.view.InterfaceView;
-import dev.kscott.interfaces.core.view.InterfaceViewer;
 import dev.kscott.interfaces.paper.PlayerViewer;
-import dev.kscott.interfaces.paper.element.ClickHandler;
 import dev.kscott.interfaces.paper.pane.BookPane;
-import dev.kscott.interfaces.paper.pane.ChestPane;
 import dev.kscott.interfaces.paper.view.BookView;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -163,6 +159,7 @@ public class BookInterface implements
         public @NonNull BookInterface build() {
             return new BookInterface(this.transformsList);
         }
+
     }
 
 }
