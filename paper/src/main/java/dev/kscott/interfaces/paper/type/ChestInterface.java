@@ -274,6 +274,30 @@ public class ChestInterface implements
         }
 
         /**
+         * Sets the top click handler.
+         *
+         * @param handler the handler
+         * @return this
+         */
+        public @NonNull Builder topClickHandler(final @NonNull ClickHandler handler) {
+            this.topClickHandler = handler;
+            return this;
+        }
+
+        /**
+         * Controls how/if the interface updates.
+         *
+         * @param updates true if the interface should update, false if not
+         * @param updateDelay how many ticks to wait between updates
+         * @return this
+         */
+        public @NonNull Builder updates(final boolean updates, final int updateDelay) {
+            this.updates = updates;
+            this.updateDelay = updateDelay;
+            return this;
+        }
+
+        /**
          * Constructs and returns the interface.
          *
          * @return the interface
