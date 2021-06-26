@@ -4,19 +4,6 @@ _Building interfaces since 2021._
 
 `interfaces` is a builder-style user interface library designed to make creation of flexible user interfaces as easy as possible.
 
-Using `interfaces`, an interface can be created by applying a series of transformation operations on a pane. Transformations are
-executed in parallel, and the final result is the 'rendered' pane, ready to be shown to a user.
-
-Interfaces can also be provided arguments during construction, meaning that transformations can apply different operations
-depending on what arguments are provided.
-
-The core idea is: write the definition of an interface once, and reuse it across your code while providing it varying arguments.
-
-Let's take the idea of an interface displaying a countdown, from 10 to 0. Instead of creating 10 different instances of the UI for
-each second of the countdown, you can create one Interface, provide it the countdown time as an argument, and have a
-transformation use that argument to show the seconds remaining. If you wanted to have a different coloured background for each
-second, you'd simply add a transformation using the countdown argument that fills the pane with a certain colour. Fun stuff!
-
 ## Packages
 
 `interfaces-core` provides the core API classes.
@@ -50,45 +37,100 @@ with panes.
 
 ## Usage
 
-_Gradle instructions coming soon._
+Gradle instructions coming soon. For now, clone the repo, build, and publish using the `publishMavenPublicationToMavenLocal` 
+task. The dependency information can be found in `build.gradle.kts`.
 
 ## Examples
 
-### Creating an interface with an updating clock.
+<details open>
+<summary>Creating an interface</summary>
+
+This code creates a chest interface with one row, a background fill, an ItemStackElement containing information about the 
+player, and utilizes an argument provider. This element also tracks how many times it has been clicked. 
 
 ```java
-ChestInterface menuInterface=Interface.chest(4)
-        .updating(true) // Sets this interface to updating
-        .updateTicks(2) // This interface will now update every 2 ticks
-        // Fill the background with bgItem
-        .transform(Transform.gridFill(Element.item(
-        bgItem,
-        (event,view)->event.setCancelled(true)))
-        )
-        .transform(Transform.gridItem(Element.item(diamondItem),1,1)) // Add an item and x=1 y=1
-        // Adds a clock timer (which will update every 2 ticks)
-        .transform(Transform.grid((grid,view)->{
-// Get arguments
-final @NonNull ChestView chestView=(ChestView)view;
-final @NonNull Long time=chestView.arguments().get("time");
-        // Add clock element
-        grid.element(Element.item(
-        PaperItemBuilder.paper(Material.CLOCK)
-        .name(Component.text("Time: "+time))
-        .build()
-        ),1,2);
-        }))
-        .title(Component.text("/menu"));
+ChestInterface infoInterface = ChestInterface.builder()
+    // This interface will have one row.
+    .rows(1)
+    // This interface will update every five ticks.
+    .updates(true, 5)
+    // Cancel all inventory click events
+    .topClickHandler(ClickHandler.cancel())
+    // Fill the background with black stained glass panes
+    .addTransform(PaperTransform.chestFill(
+        ItemStackElement.of(new ItemStack(Material.BLACK_STAINED_GLASS_PANE))
+    ))
+    // Add some information to the pane
+    .addTransform((pane, view) -> {
+        // Get the view arguments
+        // (Keep in mind - these arguments may be coming from a Supplier, so their values can change!)
+        final @NonNull String time = view.argument().get("time");
+        final @NonNull Player player = view.argument().get("player");
 
-// Opens the menu with the time argument given.
-// Since InterfaceArguments accept a supplier, passing in System::currentTimeMillis will
-// provide the latest time every interface update.
-        menuInterface.open(player,InterfaceArguments.with("time",System::currentTimeMillis));
+        // Return a pane with 
+        return pane.element(ItemStackElement.of(PaperItemBuilder.paper(Material.PAPER)
+            // Add icon name
+            .name(Component.text()
+                .append(player.displayName())
+                .append(Component.text("'s info"))
+                .decoration(TextDecoration.ITALIC, false)
+                .asComponent())
+            // Add icon lore
+            .loreComponents(
+                Component.text()
+                    .append(Component.text("Current time: "))
+                    .append(Component.text(time))
+                    .color(NamedTextColor.GRAY)
+                    .decoration(TextDecoration.ITALIC, false)
+                    .asComponent(),
+                Component.text()
+                    .append(Component.text("Health: "))
+                    .append(Component.text(Double.toString(player.getHealth())))
+                    .color(NamedTextColor.GRAY)
+                    .decoration(TextDecoration.ITALIC, false)
+                    .asComponent())
+                    .build(),
+                // Handle click
+                (clickEvent, clickView) -> {
+                    final @NonNull InterfaceArgument argument = clickView.argument();
+                    argument.set("clicks", ((Integer) argument.get("clicks")) + 1);
+                    clickView.parent().open(clickView.viewer(), argument);
+                }
+            ), 4, 0);
+        })
+        // Set the title
+        .title(Component.text("interfaces demo"))
+        // Build the interface
+        .build();
 ```
+</details>
 
-_Note: this may not reflect the latest iteration of the `interfaces` API._
+<details open>
+<summary>Showing the interface to a player</summary>
+
+This code shows the interface created in the previous example being shown to a viewer.
+As the interface uses arguments, we can pass in supplier functions to the interface argument.
+
+```java
+// Open the interface to the player.
+infoInterface.open(PlayerViewer.of(player),
+    // Create a HashMapInterfaceArgument with a time argument set to a
+    // supplier that returns the current time printed all nice and pretty.
+    HashMapInterfaceArgument.with("time", () -> {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        return dtf.format(now);
+    })
+        .with("clicks", 0)
+        .build()
+);
+```
+</details>
+
+_Note: these examples may not reflect the latest version of the `interfaces` API._
 
 ## Credits
 
-Thanks to [kyori](https://github.com/kyoripowered) and their [`adventure` text library](https://github.com/kyoripowered/adventure)
-. Thanks to [broccolai](https://github.com/broccolai) for letting me steal his entire Gradle project setup.
+Thanks to [kyori](https://github.com/kyoripowered) and their [`adventure` text library](https://github.com/kyoripowered/adventure).
+
+Thanks to [broccolai](https://github.com/broccolai) for letting me steal his entire Gradle project setup.
