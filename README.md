@@ -125,6 +125,8 @@ infoInterface.open(PlayerViewer.of(player),
         .build()
 );
 ```
+
+[Video of the result of this code in Minecraft](https://imgur.com/a/JPdJPvX).
 </details>
 
 _Note: these examples may not reflect the latest version of the `interfaces` API._
