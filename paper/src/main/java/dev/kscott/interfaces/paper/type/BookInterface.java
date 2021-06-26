@@ -25,6 +25,15 @@ public class BookInterface implements
         TitledInterface {
 
     /**
+     * Returns a new ChestInterface builder.
+     *
+     * @return the builder
+     */
+    public static @NonNull Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * The list of transforms.
      */
     private final @NonNull List<Transform<BookPane>> transforms;
