@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -113,14 +114,16 @@ public class PaperInterfaceListeners implements Listener {
         }
 
         if (holder instanceof ChestView chestView) {
-            int slot = event.getSlot();
-            int x = slot % 9;
-            int y = slot / 9;
+            if (event.getSlotType() == InventoryType.SlotType.CONTAINER) {
+                int slot = event.getSlot();
+                int x = slot % 9;
+                int y = slot / 9;
 
-            chestView.parent().topClickHandler().accept(event, chestView);
+                chestView.parent().topClickHandler().accept(event, chestView);
 
-            final @NonNull ItemStackElement element = chestView.pane().element(x, y);
-            element.handler().accept(event, chestView);
+                final @NonNull ItemStackElement element = chestView.pane().element(x, y);
+                element.handler().accept(event, chestView);
+            }
         }
     }
 
