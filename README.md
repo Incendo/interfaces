@@ -4,6 +4,8 @@ _Building interfaces since 2021._
 
 `interfaces` is a builder-style user interface library designed to make creation of flexible user interfaces as easy as possible.
 
+> This library is currently in a state of constant breaking changes. The API has yet to be finalized, so please keep this in mind when considering using `interfaces`.
+
 ## Packages
 
 [`interfaces-core`](https://github.com/Incendo/interfaces/tree/master/core) provides the core API classes.
