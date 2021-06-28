@@ -114,12 +114,14 @@ public class PaperInterfaceListeners implements Listener {
         }
 
         if (holder instanceof ChestView chestView) {
+            // Handle parent interface click event
+            chestView.parent().clickHandler().accept(event, chestView);
+
+            // Handle element click event
             if (event.getSlotType() == InventoryType.SlotType.CONTAINER) {
                 int slot = event.getSlot();
                 int x = slot % 9;
                 int y = slot / 9;
-
-                chestView.parent().topClickHandler().accept(event, chestView);
 
                 final @NonNull ItemStackElement element = chestView.pane().element(x, y);
                 element.handler().accept(event, chestView);

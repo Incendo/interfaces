@@ -5,6 +5,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Represents a clickable interface.
+ * <p>
+ * {@code clickHandler} will be called whenever the viewer clicks on the interface.
  */
 public interface ClickableInterface {
 
@@ -13,6 +15,6 @@ public interface ClickableInterface {
      *
      * @return the top click handler
      */
-    @NonNull ClickHandler topClickHandler();
+    @NonNull ClickHandler clickHandler();
 
 }

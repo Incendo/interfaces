@@ -25,43 +25,29 @@ public class ChestInterface implements
         ClickableInterface {
 
     /**
-     * Returns a new ChestInterface builder.
-     *
-     * @return the builder
-     */
-    public static @NonNull Builder builder() {
-        return new ChestInterface.Builder();
-    }
-
-    /**
      * The interface's rows.
      */
     private final int rows;
-
     /**
      * The list of transformations.
      */
     private final @NonNull List<Transform<ChestPane>> transformationList;
-
     /**
      * The title.
      */
     private final @NonNull Component title;
-
     /**
      * True if this is an updating interface, false if not.
      */
     private final boolean updates;
-
     /**
      * The amount of ticks between updates.
      */
     private final int updateDelay;
-
     /**
      * The click handler for the top part of the menu.
      */
-    private final @NonNull ClickHandler topClickHandler;
+    private final @NonNull ClickHandler clickHandler;
 
     /**
      * Constructs {@code ChestInterface}.
@@ -74,14 +60,23 @@ public class ChestInterface implements
             final @NonNull List<Transform<ChestPane>> transforms,
             final boolean updates,
             final int updateDelay,
-            final @NonNull ClickHandler topClickHandler
+            final @NonNull ClickHandler clickHandler
     ) {
         this.title = title;
         this.transformationList = transforms;
         this.updates = updates;
         this.updateDelay = updateDelay;
         this.rows = rows;
-        this.topClickHandler = topClickHandler;
+        this.clickHandler = clickHandler;
+    }
+
+    /**
+     * Returns a new ChestInterface builder.
+     *
+     * @return the builder
+     */
+    public static @NonNull Builder builder() {
+        return new ChestInterface.Builder();
     }
 
     /**
@@ -94,12 +89,12 @@ public class ChestInterface implements
     }
 
     /**
-     * Returns the top click handler.
+     * Returns the click handler.
      *
      * @return the click handler
      */
-    public @NonNull ClickHandler topClickHandler() {
-        return this.topClickHandler;
+    public @NonNull ClickHandler clickHandler() {
+        return this.clickHandler;
     }
 
     /**
@@ -217,7 +212,7 @@ public class ChestInterface implements
         /**
          * The top click handler.
          */
-        private @NonNull ClickHandler topClickHandler;
+        private @NonNull ClickHandler clickHandler;
 
         /**
          * Constructs {@code Builder}.
@@ -228,8 +223,7 @@ public class ChestInterface implements
             this.title = Component.empty();
             this.updates = false;
             this.updateDelay = 1;
-            this.topClickHandler = (event, view) -> {
-            };
+            this.clickHandler = ClickHandler.cancel();
         }
 
         /**
@@ -268,13 +262,13 @@ public class ChestInterface implements
         }
 
         /**
-         * Sets the top click handler.
+         * Sets the click handler.
          *
          * @param handler the handler
          * @return this
          */
-        public @NonNull Builder topClickHandler(final @NonNull ClickHandler handler) {
-            this.topClickHandler = handler;
+        public @NonNull Builder clickHandler(final @NonNull ClickHandler handler) {
+            this.clickHandler = handler;
             return this;
         }
 
@@ -304,7 +298,7 @@ public class ChestInterface implements
                     this.transformsList,
                     this.updates,
                     this.updateDelay,
-                    this.topClickHandler
+                    this.clickHandler
             );
         }
 
