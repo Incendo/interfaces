@@ -6,9 +6,10 @@ _Building interfaces since 2021._
 
 ## Packages
 
-`interfaces-core` provides the core API classes.
+[`interfaces-core`](https://github.com/Incendo/interfaces/tree/master/core) provides the core API classes.
 
-`interfaces-paper` implements `interfaces` using the [Paper Minecraft server API](https://papermc.io). This package provides the
+[`interfaces-paper`](https://github.com/Incendo/interfaces/tree/master/paper) implements `interfaces` using the [Paper Minecraft server API](https://papermc.io). This package 
+provides the
 capability to construct a variety of Minecraft-based interfaces, including text, inventory (i.e. chests), and books.
 
 ## Terminology
