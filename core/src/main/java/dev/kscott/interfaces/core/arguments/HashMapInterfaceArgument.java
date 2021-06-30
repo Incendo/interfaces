@@ -92,6 +92,21 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
     }
 
     /**
+     * Returns the value of the given key. Will throw an exception if there is no value at key.
+     *
+     * @param key the key
+     * @param <T> the value's type
+     * @return the value
+     * @throws NullPointerException if the key's value is null
+     */
+    @Override
+    public <T> T getOrDefault(final @NonNull String key, final @NonNull T def) {
+        final @Nullable Supplier<Object> supplier = this.argumentMap.get(key);
+
+        return supplier == null ? def : (T) supplier.get();
+    }
+
+    /**
      * Sets the value of the key.
      *
      * @param key   the key
