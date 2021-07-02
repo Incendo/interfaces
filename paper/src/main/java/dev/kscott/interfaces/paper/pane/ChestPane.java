@@ -92,7 +92,7 @@ public class ChestPane implements Pane {
         // Fill the temp elements list with the elements.
         for (int i = 0; i < MINECRAFT_CHEST_WIDTH; i++) {
             for (int j = 0; j < this.rows; j++) {
-                tempElements.add(this.elements.get(i).get(rows));
+                tempElements.add(this.elements.get(i).get(this.rows));
             }
         }
 

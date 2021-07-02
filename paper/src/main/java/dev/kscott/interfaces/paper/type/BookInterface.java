@@ -44,7 +44,7 @@ public class BookInterface implements
      */
     public BookInterface() {
         this.transforms = new ArrayList<>();
-        this.title = title();
+        this.title = this.title();
     }
 
     /**

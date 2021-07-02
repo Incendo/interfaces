@@ -114,7 +114,7 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
      */
     @Override
     public void set(final @NonNull String key, final @NonNull Object value) {
-        set(key, () -> value);
+        this.set(key, () -> value);
     }
 
     /**
@@ -155,7 +155,7 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
                 final @NonNull String key,
                 final @NonNull Object value
         ) {
-            with(key, () -> value);
+            this.with(key, () -> value);
             return this;
         }
 

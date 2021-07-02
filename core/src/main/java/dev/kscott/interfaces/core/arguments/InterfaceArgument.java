@@ -14,7 +14,7 @@ public interface InterfaceArgument {
      * @param <T> the value's type
      * @return the value
      */
-    <T> T get(final @NonNull String key);
+    <T> T get(@NonNull String key);
 
     /**
      * Returns the value at the given key.
@@ -24,7 +24,7 @@ public interface InterfaceArgument {
      * @param def the default object
      * @return the value
      */
-    <T> T getOrDefault(final @NonNull String key, final @NonNull T def);
+    <T> T getOrDefault(@NonNull String key, @NonNull T def);
 
     /**
      * Sets a value of the argument.
@@ -32,6 +32,6 @@ public interface InterfaceArgument {
      * @param key   the key
      * @param value the value
      */
-    void set(final @NonNull String key, final @NonNull Object value);
+    void set(@NonNull String key, @NonNull Object value);
 
 }

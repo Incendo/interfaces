@@ -23,7 +23,7 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
      * @param transform the transformation
      * @return this interface
      */
-    @NonNull Interface<T, U> transform(final @NonNull Transform<T> transform);
+    @NonNull Interface<T, U> transform(@NonNull Transform<T> transform);
 
     /**
      * Returns an immutable collection of transformations.
@@ -40,7 +40,7 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
      * @param viewer the viewer
      * @return the view
      */
-    @NonNull InterfaceView<T, U, Interface<T, U>> open(final @NonNull U viewer);
+    @NonNull InterfaceView<T, U, Interface<T, U>> open(@NonNull U viewer);
 
     /**
      * Opens this interface to the viewer.
@@ -50,8 +50,8 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
      * @return the view
      */
     @NonNull InterfaceView<T, U, Interface<T, U>> open(
-            final @NonNull U viewer,
-            final @NonNull InterfaceArgument arguments
+            @NonNull U viewer,
+            @NonNull InterfaceArgument arguments
     );
 
     /**
@@ -59,7 +59,7 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
      */
     interface Builder<T extends Pane, U extends InterfaceViewer, V extends Interface<T, U>> {
 
-        Builder<T, U, V> addTransform(final @NonNull Transform<T> transform);
+        Builder<T, U, V> addTransform(@NonNull Transform<T> transform);
 
         /**
          * Builds the interface and returns it.

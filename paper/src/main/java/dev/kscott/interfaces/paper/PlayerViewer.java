@@ -13,7 +13,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * <p>
  * Supports {@link ChestPane}.
  */
-public class PlayerViewer implements InterfaceViewer {
+public final class PlayerViewer implements InterfaceViewer {
 
     /**
      * Returns a new {@code PlayerViewer} containging {@code player}.
@@ -46,14 +46,14 @@ public class PlayerViewer implements InterfaceViewer {
      * @throws UnsupportedOperationException when the pane cannot be opened
      */
     @Override
-    public void open(final @NonNull InterfaceView pane) {
+    public void open(final @NonNull InterfaceView<?, ?, ?> pane) {
         if (pane instanceof ChestView chestView) {
-            openChestView(chestView);
+            this.openChestView(chestView);
             return;
         }
 
         if (pane instanceof BookView bookView) {
-            openBookView(bookView);
+            this.openBookView(bookView);
             return;
         }
 

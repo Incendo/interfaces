@@ -70,7 +70,7 @@ public class ChestView implements InventoryView<ChestPane> {
      * @param slot the slot
      * @return the x/y position
      */
-    public static int[] slotToGrid(int slot) {
+    public static int[] slotToGrid(final int slot) {
         return new int[]{slot % 9, slot / 9};
     }
 
@@ -81,7 +81,7 @@ public class ChestView implements InventoryView<ChestPane> {
      * @param y the y position
      * @return the slot
      */
-    public static int gridToSlot(int x, int y) {
+    public static int gridToSlot(final int x, final int y) {
         return y * 9 + x;
     }
 
