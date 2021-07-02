@@ -24,29 +24,11 @@ public class ChestInterface implements
         UpdatingInterface,
         ClickableInterface {
 
-    /**
-     * The interface's rows.
-     */
     private final int rows;
-    /**
-     * The list of transformations.
-     */
     private final @NonNull List<Transform<ChestPane>> transformationList;
-    /**
-     * The title.
-     */
     private final @NonNull Component title;
-    /**
-     * True if this is an updating interface, false if not.
-     */
     private final boolean updates;
-    /**
-     * The amount of ticks between updates.
-     */
     private final int updateDelay;
-    /**
-     * The click handler for the top part of the menu.
-     */
     private final @NonNull ClickHandler clickHandler;
 
     /**

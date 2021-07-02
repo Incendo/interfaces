@@ -25,9 +25,6 @@ public final class PlayerViewer implements InterfaceViewer {
         return new PlayerViewer(player);
     }
 
-    /**
-     * The player.
-     */
     private final @NonNull Player player;
 
     /**

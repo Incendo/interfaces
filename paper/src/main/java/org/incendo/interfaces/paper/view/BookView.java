@@ -19,29 +19,10 @@ import java.util.List;
  */
 public class BookView implements InterfaceView<BookPane, PlayerViewer, Interface<BookPane, PlayerViewer>> {
 
-    /**
-     * The parent interface.
-     */
     private final @NonNull BookInterface parent;
-
-    /**
-     * The viewer.
-     */
     private final @NonNull PlayerViewer viewer;
-
-    /**
-     * The argument.
-     */
     private final @NonNull InterfaceArgument argument;
-
-    /**
-     * The pane.
-     */
     private final @NonNull BookPane pane;
-
-    /**
-     * The book.
-     */
     private final @NonNull Book book;
 
     /**

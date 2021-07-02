@@ -29,14 +29,8 @@ public class BookInterface implements
         return new Builder();
     }
 
-    /**
-     * The list of transforms.
-     */
     private final @NonNull List<Transform<BookPane>> transforms;
 
-    /**
-     * The title.
-     */
     private @NonNull Component title;
 
     /**

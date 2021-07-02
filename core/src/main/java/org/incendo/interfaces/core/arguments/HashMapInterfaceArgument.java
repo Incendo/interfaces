@@ -12,9 +12,6 @@ import java.util.function.Supplier;
  */
 public class HashMapInterfaceArgument implements InterfaceArgument {
 
-    /**
-     * The argument map.
-     */
     private final @NonNull Map<String, Supplier<Object>> argumentMap;
 
     /**

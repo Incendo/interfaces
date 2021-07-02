@@ -14,9 +14,6 @@ import java.util.List;
  */
 public class BookPane implements Pane {
 
-    /**
-     * The list of elements containing text.
-     */
     private final @NonNull List<TextElement> pages;
 
     /**

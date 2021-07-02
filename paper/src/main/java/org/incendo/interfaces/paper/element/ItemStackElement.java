@@ -13,13 +13,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public class ItemStackElement implements Element {
 
-    /**
-     * The {@link ItemStack}.
-     */
     private final @NonNull ItemStack itemStack;
-    /**
-     * The click handler.
-     */
     private final @NonNull ClickHandler handler;
 
     /**

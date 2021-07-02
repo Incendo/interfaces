@@ -16,25 +16,10 @@ import java.util.List;
  */
 public class ChestView implements InventoryView<ChestPane> {
 
-    /**
-     * The viewer.
-     */
     private final @NonNull PlayerViewer viewer;
-    /**
-     * The parent interface.
-     */
     private final @NonNull ChestInterface parent;
-    /**
-     * The inventory.
-     */
     private final @NonNull Inventory inventory;
-    /**
-     * The argument.
-     */
     private final @NonNull InterfaceArgument argument;
-    /**
-     * The chest pane.
-     */
     private final @NonNull ChestPane pane;
 
     /**

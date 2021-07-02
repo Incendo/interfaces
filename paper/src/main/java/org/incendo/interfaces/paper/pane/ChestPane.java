@@ -14,19 +14,10 @@ import java.util.List;
  */
 public class ChestPane implements Pane {
 
-    /**
-     * The width of a Minecraft chest.
-     */
     public static final int MINECRAFT_CHEST_WIDTH = 9;
 
-    /**
-     * The 2d elements array.
-     */
     private final @NonNull List<List<ItemStackElement>> elements;
 
-    /**
-     * The amount of rows this inventory has.
-     */
     private final int rows;
 
     /**

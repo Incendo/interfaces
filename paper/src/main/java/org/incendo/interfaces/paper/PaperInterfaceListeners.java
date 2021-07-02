@@ -28,14 +28,7 @@ import java.util.Set;
  */
 public class PaperInterfaceListeners implements Listener {
 
-    /**
-     * Holds all open views.
-     */
     private final @NonNull Set<InterfaceView> openViews;
-
-    /**
-     * The plugin.
-     */
     private final @NonNull JavaPlugin plugin;
 
     /**

@@ -19,9 +19,6 @@ public class TextElement implements Element {
         return new TextElement(text);
     }
 
-    /**
-     * This element's text.
-     */
     private final @NonNull Component text;
 
     /**
