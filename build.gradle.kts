@@ -30,14 +30,15 @@ subprojects {
     indra {
         mitLicense()
 
+        publishSnapshotsTo("incendo", "https://repo.incendo.org/content/repositories/snapshots/")
+
         javaVersions {
             target(16)
         }
-//
-//        github("kadenscott", "interfaces") {
-//            ci(true)
-//            publishing(true)
-//        }
+
+        github("incendo", "interfaces") {
+            ci(true)
+        }
 
         configurePublications {
             pom {
