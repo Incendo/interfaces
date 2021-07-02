@@ -9,7 +9,7 @@ plugins {
     id("net.kyori.indra.checkstyle") apply false
 }
 
-group = "dev.kscott.interfaces"
+group = "org.incendo.interfaces"
 version = "1.0.0-SNAPSHOT"
 description = "A builder-style user interface library."
 
