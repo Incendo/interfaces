@@ -98,6 +98,7 @@ public class ChestPane implements Pane {
      * @param element the element
      * @param x       the x coordinate
      * @param y       the y coordinate
+     * @return a new {@code ChestPane}
      */
     public @NonNull ChestPane element(final @NonNull ItemStackElement element, final int x, final int y) {
         final @NonNull List<List<ItemStackElement>> newElements = new ArrayList<>();

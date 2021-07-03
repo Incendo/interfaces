@@ -10,6 +10,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * An InterfaceView containing a Bukkit inventory.
+ *
+ * @param <T> the pane type
  */
 public interface InventoryView<T extends Pane> extends InterfaceView<T, PlayerViewer, Interface<T, PlayerViewer>>,
         InventoryHolder {

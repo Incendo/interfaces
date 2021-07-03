@@ -33,6 +33,8 @@ public class PaperInterfaceListeners implements Listener {
 
     /**
      * Constructs {@code PaperInterfaceListeners}.
+     *
+     * @param plugin the plugin instance to register against
      */
     public PaperInterfaceListeners(final @NonNull JavaPlugin plugin) {
         this.openViews = new HashSet<>();

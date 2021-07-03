@@ -13,6 +13,7 @@ import java.util.List;
  * Represents an interface of a given pane type.
  *
  * @param <T> the pane type
+ * @param <U> the viewer type
  * @see InterfaceView
  */
 public interface Interface<T extends Pane, U extends InterfaceViewer> {
@@ -56,6 +57,10 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
 
     /**
      * An interface that represents an interface builder.
+     *
+     * @param <T> the pane type
+     * @param <U> the viewer type
+     * @param <V> the interface type
      */
     interface Builder<T extends Pane, U extends InterfaceViewer, V extends Interface<T, U>> {
 

@@ -35,6 +35,11 @@ public class ChestInterface implements
      * Constructs {@code ChestInterface}.
      *
      * @param rows the rows
+     * @param title the interfaces title
+     * @param transforms the transformations to apply
+     * @param updates {@code true} if the interface is an updating interface
+     * @param updateDelay the update delay
+     * @param clickHandler the handler to run on click
      */
     public ChestInterface(
             final int rows,

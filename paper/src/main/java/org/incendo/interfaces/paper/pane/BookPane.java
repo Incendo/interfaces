@@ -71,6 +71,7 @@ public class BookPane implements Pane {
      * Removes a page at the given index.
      *
      * @param index the index
+     * @return a new {@code BookPane}
      * @throws IndexOutOfBoundsException if index is greater than the pane size or lesser than 0
      */
     public @NonNull BookPane remove(final int index) {

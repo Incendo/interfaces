@@ -9,7 +9,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public interface TitledInterface {
 
     /**
-     * Returns the title of this interfface.
+     * Returns the title of this interface.
      *
      * @return the title
      */
