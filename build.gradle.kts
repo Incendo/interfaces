@@ -33,7 +33,7 @@ subprojects {
         publishSnapshotsTo("incendo", "https://repo.incendo.org/content/repositories/snapshots/")
 
         javaVersions {
-            target(16)
+            target(11)
         }
 
         github("incendo", "interfaces") {

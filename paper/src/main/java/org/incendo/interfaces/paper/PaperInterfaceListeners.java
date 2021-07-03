@@ -56,10 +56,12 @@ public class PaperInterfaceListeners implements Listener {
             return;
         }
 
-        if (holder instanceof final @NonNull InventoryView view) {
+        if (holder instanceof InventoryView) {
+            InventoryView view = (InventoryView) holder;
             this.openViews.add(view);
 
-            if (view.parent() instanceof UpdatingInterface updatingInterface) {
+            if (view.parent() instanceof UpdatingInterface) {
+                UpdatingInterface updatingInterface = (UpdatingInterface) view.parent();
                 if (updatingInterface.updates()) {
                     new BukkitRunnable() {
                         @Override
@@ -88,8 +90,8 @@ public class PaperInterfaceListeners implements Listener {
             return;
         }
 
-        if (holder instanceof final @NonNull InventoryView view) {
-            this.openViews.remove(view);
+        if (holder instanceof InventoryView) {
+            this.openViews.remove((InventoryView) holder);
         }
     }
 
@@ -108,7 +110,8 @@ public class PaperInterfaceListeners implements Listener {
             return;
         }
 
-        if (holder instanceof ChestView chestView) {
+        if (holder instanceof ChestView) {
+            ChestView chestView = (ChestView) holder;
             // Handle parent interface click event
             chestView.parent().clickHandler().accept(event, chestView);
 

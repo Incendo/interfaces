@@ -44,13 +44,13 @@ public final class PlayerViewer implements InterfaceViewer {
      */
     @Override
     public void open(final @NonNull InterfaceView<?, ?, ?> pane) {
-        if (pane instanceof ChestView chestView) {
-            this.openChestView(chestView);
+        if (pane instanceof ChestView) {
+            this.openChestView((ChestView) pane);
             return;
         }
 
-        if (pane instanceof BookView bookView) {
-            this.openBookView(bookView);
+        if (pane instanceof BookView) {
+            this.openBookView((BookView) pane);
             return;
         }
 
