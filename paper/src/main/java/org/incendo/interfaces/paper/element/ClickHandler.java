@@ -17,6 +17,7 @@ public interface ClickHandler<T extends Pane> extends BiConsumer<InventoryClickE
     /**
      * Returns a {@code ClickHandler} that cancels the event.
      *
+     * @param <T> pane type
      * @return the handler
      */
     static @NonNull <T extends Pane> ClickHandler<T> cancel() {
