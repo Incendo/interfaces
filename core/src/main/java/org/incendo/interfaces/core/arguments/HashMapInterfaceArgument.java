@@ -85,7 +85,10 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
             throw new NullPointerException("The value at " + key + " cannot be null.");
         }
 
-        return (T) supplier.get();
+        @SuppressWarnings("unchecked")
+        final T object = (T) supplier.get();
+
+        return object;
     }
 
     /**
