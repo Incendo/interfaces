@@ -1,9 +1,9 @@
 package org.incendo.interfaces.core.view;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
 import org.incendo.interfaces.core.pane.Pane;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Represents a currently open interface (a "view").
@@ -31,7 +31,7 @@ public interface InterfaceView<T extends Pane, U extends InterfaceViewer, V exte
      * @return the viewer
      * @see #viewing() check if the viewer is currently viewing this view
      */
-    @NonNull InterfaceViewer viewer();
+    @NonNull U viewer();
 
     /**
      * Returns true if the viewer is currently viewing this view. False
@@ -61,5 +61,14 @@ public interface InterfaceView<T extends Pane, U extends InterfaceViewer, V exte
      * @return the pane
      */
     T pane();
+
+    /**
+     * Triggers a manual update.
+     */
+    default void update() {
+        if (this.viewing()) {
+            this.parent().open(this.viewer(), this.argument());
+        }
+    }
 
 }

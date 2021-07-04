@@ -1,7 +1,7 @@
 package org.incendo.interfaces.paper.type;
 
-import java.util.Collections;
-
+import net.kyori.adventure.text.Component;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.UpdatingInterface;
 import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
@@ -11,10 +11,9 @@ import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ClickHandler;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.view.ChestView;
-import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,11 +35,11 @@ public class ChestInterface implements
     /**
      * Constructs {@code ChestInterface}.
      *
-     * @param rows the rows
-     * @param title the interfaces title
-     * @param transforms the transformations to apply
-     * @param updates {@code true} if the interface is an updating interface
-     * @param updateDelay the update delay
+     * @param rows         the rows
+     * @param title        the interfaces title
+     * @param transforms   the transformations to apply
+     * @param updates      {@code true} if the interface is an updating interface
+     * @param updateDelay  the update delay
      * @param clickHandler the handler to run on click
      */
     public ChestInterface(
@@ -237,7 +236,7 @@ public class ChestInterface implements
          * @return the number of rows
          */
         public int rows() {
-           return this.rows;
+            return this.rows;
         }
 
         /**

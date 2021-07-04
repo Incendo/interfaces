@@ -1,12 +1,9 @@
 package org.incendo.interfaces.paper;
 
-import org.incendo.interfaces.core.view.InterfaceView;
-import org.incendo.interfaces.core.view.InterfaceViewer;
-import org.incendo.interfaces.paper.pane.ChestPane;
-import org.incendo.interfaces.paper.view.BookView;
-import org.incendo.interfaces.paper.view.ChestView;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.interfaces.core.view.InterfaceViewer;
+import org.incendo.interfaces.paper.pane.ChestPane;
 
 /**
  * An interface viewer holding a {@link Player}.

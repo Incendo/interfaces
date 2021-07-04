@@ -3,6 +3,7 @@ package org.incendo.interfaces.kotlin.paper
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.incendo.interfaces.core.Interface
+import org.incendo.interfaces.core.arguments.InterfaceArgument
 import org.incendo.interfaces.core.pane.Pane
 import org.incendo.interfaces.core.view.InterfaceView
 import org.incendo.interfaces.paper.PlayerViewer
@@ -22,12 +23,16 @@ public fun buildChestInterface(builder: MutableChestInterfaceBuilder.() -> Unit)
 /**
  * Opens the [interface] for `this` player.
  *
+ * @param `interface` interface to open
+ * @param arguments the arguments to pass to the interface
  * @return the interface view
  */
 public fun <T : Pane> Player.open(
-    `interface`: Interface<T, PlayerViewer>
+    `interface`: Interface<T, PlayerViewer>,
+    arguments: InterfaceArgument? = null
 ): InterfaceView<T, PlayerViewer, Interface<T, PlayerViewer>> =
-    `interface`.open(PlayerViewer.of(this))
+    if (arguments == null) `interface`.open(this.asViewer())
+    else `interface`.open(this.asViewer(), arguments)
 
 /**
  * Returns a [PlayerViewer] instance wrapping `this` player.

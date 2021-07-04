@@ -1,13 +1,13 @@
 package org.incendo.interfaces.paper.view;
 
+import org.bukkit.Bukkit;
+import org.bukkit.inventory.Inventory;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
-import org.bukkit.Bukkit;
-import org.bukkit.inventory.Inventory;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
 

@@ -15,6 +15,10 @@ tasks {
     }
 }
 
+ktfmt {
+    dropboxStyle()
+}
+
 kotlin {
     explicitApi()
 }

@@ -1,5 +1,7 @@
 package org.incendo.interfaces.paper.type;
 
+import net.kyori.adventure.text.Component;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
@@ -7,8 +9,6 @@ import org.incendo.interfaces.core.transform.Transform;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.pane.BookPane;
 import org.incendo.interfaces.paper.view.BookView;
-import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,17 +20,7 @@ public class BookInterface implements
         Interface<BookPane, PlayerViewer>,
         TitledInterface {
 
-    /**
-     * Returns a new {@code BookInterface} builder.
-     *
-     * @return the builder
-     */
-    public static @NonNull Builder builder() {
-        return new Builder();
-    }
-
     private final @NonNull List<Transform<BookPane>> transforms;
-
     private @NonNull Component title;
 
     /**
@@ -49,6 +39,15 @@ public class BookInterface implements
     public BookInterface(final @NonNull List<Transform<BookPane>> transforms) {
         this.transforms = transforms;
         this.title = Component.empty();
+    }
+
+    /**
+     * Returns a new {@code BookInterface} builder.
+     *
+     * @return the builder
+     */
+    public static @NonNull Builder builder() {
+        return new Builder();
     }
 
     /**

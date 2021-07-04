@@ -1,11 +1,11 @@
 package org.incendo.interfaces.core;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
 import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.core.transform.Transform;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.InterfaceViewer;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
 
