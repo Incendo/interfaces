@@ -29,7 +29,7 @@ import java.util.Set;
  */
 public class PaperInterfaceListeners implements Listener {
 
-    private final @NonNull Set<@NonNull InterfaceView<?, PlayerViewer, ?>> openViews;
+    private final @NonNull Set<@NonNull InterfaceView<?, PlayerViewer>> openViews;
     private final @NonNull JavaPlugin plugin;
 
     /**

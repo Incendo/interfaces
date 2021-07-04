@@ -19,9 +19,8 @@ import java.util.List;
 /**
  * An interface using a chest.
  */
-public class ChestInterface implements
-        Interface<ChestPane, PlayerViewer>,
-        TitledInterface,
+public final class ChestInterface implements
+        TitledInterface<ChestPane, PlayerViewer>,
         UpdatingInterface,
         ClickableInterface {
 
@@ -107,35 +106,40 @@ public class ChestInterface implements
         return List.copyOf(this.transformationList);
     }
 
-    /**
-     * Opens the interface to the viewer.
-     *
-     * @param viewer the viewer
-     * @return the view
-     */
     @Override
     public @NonNull ChestView open(final @NonNull PlayerViewer viewer) {
         return this.open(viewer, HashMapInterfaceArgument.empty());
     }
 
-    /**
-     * Opens the interface to the viewer.
-     *
-     * @param viewer    the viewer
-     * @param arguments the interface's arguments
-     * @return the view
-     */
     @Override
     public @NonNull ChestView open(
             final @NonNull PlayerViewer viewer,
             final @NonNull InterfaceArgument arguments
     ) {
-        final @NonNull ChestView view = new ChestView(this, viewer, arguments);
+        return this.open(viewer, arguments, this.title);
+    }
+
+    @Override
+    public @NonNull ChestView open(
+            final @NonNull PlayerViewer viewer,
+            final @NonNull Component title
+    ) {
+        return this.open(viewer, HashMapInterfaceArgument.empty(), title);
+    }
+
+    @Override
+    public @NonNull ChestView open(
+            final @NonNull PlayerViewer viewer,
+            final @NonNull InterfaceArgument arguments,
+            final @NonNull Component title
+    ) {
+        final @NonNull ChestView view = new ChestView(this, viewer, arguments, title);
 
         view.open();
 
         return view;
     }
+
 
     /**
      * Sets the title of the interface.
@@ -168,14 +172,14 @@ public class ChestInterface implements
     }
 
     /**
-     * An immutable class that builds a chest interface.
+     * A class that builds a chest interface.
      */
     public static class Builder implements Interface.Builder<ChestPane, PlayerViewer, ChestInterface> {
 
         /**
          * The list of transformations.
          */
-        private final @NonNull List<Transform<ChestPane>> transformsList;
+        private final @NonNull List<@NonNull Transform<ChestPane>> transformsList;
 
         /**
          * The amount of rows.

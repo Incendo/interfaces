@@ -10,9 +10,8 @@ import org.incendo.interfaces.core.pane.Pane;
  *
  * @param <T> the type of pane this view can view
  * @param <U> the viewer type
- * @param <V> the interface type
  */
-public interface InterfaceView<T extends Pane, U extends InterfaceViewer, V extends Interface<T, U>> {
+public interface InterfaceView<T extends Pane, U extends InterfaceViewer> {
 
     /**
      * Returns the parent interface.

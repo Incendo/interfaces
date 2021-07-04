@@ -1,5 +1,6 @@
 package org.incendo.interfaces.example.kotlin
 
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
@@ -47,26 +48,26 @@ public class KotlinPlugin : JavaPlugin() {
                             .append(text(event.slot.toString(), NamedTextColor.GOLD)))
                 }
 
-                addTransform { pane, view ->
+                withTransform { view ->
                     // Extract the name argument.
-                    val name: String = view.argument["name"] ?: return@addTransform pane
+                    val name: String = view.argument["name"] ?: return@withTransform
 
                     // Create an item stack element with the player's name.
                     val element =
-                        ItemStack(Material.PAPER)
-                            .also {
-                                it.itemMeta =
-                                    it.itemMeta.also { meta -> meta.displayName(text(name)) }
-                            }
-                            .asElement { event, _ ->
-                                event.whoClicked.sendMessage(
-                                    text("You clicked it :D", NamedTextColor.AQUA))
-                            }
+                        createItemStack(Material.PAPER, text(name)).asElement { event, _ ->
+                            event.whoClicked.sendMessage(
+                                text("You clicked it :D", NamedTextColor.AQUA))
+                        }
 
-                    pane.element(element, 0, 0)
+                    view[0, 0] = element
                 }
             }
     }
+
+    private fun createItemStack(material: Material, name: Component): ItemStack =
+        ItemStack(material).also {
+            it.itemMeta = it.itemMeta.also { meta -> meta.displayName(name) }
+        }
 
     private inner class InterfaceCommandHandler : CommandExecutor {
 

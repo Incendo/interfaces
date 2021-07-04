@@ -44,7 +44,7 @@ final class PlayerViewerImpl implements PlayerViewer {
      * @throws UnsupportedOperationException when the pane cannot be opened
      */
     @Override
-    public void open(final @NonNull InterfaceView<?, ?, ?> pane) {
+    public void open(final @NonNull InterfaceView<?, ?> pane) {
         if (pane instanceof ChestView) {
             this.openChestView((ChestView) pane);
             return;

@@ -4,11 +4,13 @@ import net.kyori.adventure.text.Component
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.incendo.interfaces.core.transform.Transform
 import org.incendo.interfaces.core.view.InterfaceView
+import org.incendo.interfaces.paper.PlayerViewer
 import org.incendo.interfaces.paper.element.ClickHandler
 import org.incendo.interfaces.paper.pane.ChestPane
 import org.incendo.interfaces.paper.type.ChestInterface
 import org.incendo.interfaces.paper.view.InventoryView
 
+@Suppress("unused")
 public class MutableChestInterfaceBuilder {
 
     private var internalBuilder: ChestInterface.Builder = ChestInterface.builder()
@@ -64,9 +66,24 @@ public class MutableChestInterfaceBuilder {
      *
      * @param transform transform to add
      */
+    @Suppress("unchecked_cast")
     public fun addTransform(
-        transform: (ChestPane, InterfaceView<ChestPane, *, *>) -> ChestPane
-    ): Unit = mutate { internalBuilder.addTransform(transform) }
+        transform: (ChestPane, InterfaceView<ChestPane, PlayerViewer>) -> ChestPane
+    ): Unit = mutate {
+        internalBuilder.addTransform(
+            transform as (ChestPane, InterfaceView<ChestPane, *>) -> ChestPane)
+    }
+
+    /**
+     * Adds the given [transform] to the interface.
+     *
+     * @param transform transform to add
+     */
+    public fun withTransform(transform: (MutableChestPaneView) -> Unit) {
+        addTransform { chestPane, interfaceView ->
+            MutableChestPaneView(chestPane, interfaceView).also(transform).toChestPane()
+        }
+    }
     // </editor-fold>
 
     private fun mutate(mutator: ChestInterface.Builder.() -> ChestInterface.Builder) {
@@ -76,7 +93,7 @@ public class MutableChestInterfaceBuilder {
     /**
      * Converts this mutable chest interface builder to a [ChestInterface.Builder].
      *
-     * @return The converted builder.
+     * @return the converted builder
      */
     public fun toBuilder(): ChestInterface.Builder = internalBuilder
 }

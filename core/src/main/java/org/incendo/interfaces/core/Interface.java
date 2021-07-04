@@ -41,7 +41,7 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
      * @param viewer the viewer
      * @return the view
      */
-    @NonNull InterfaceView<T, U, Interface<T, U>> open(@NonNull U viewer);
+    @NonNull InterfaceView<T, U> open(@NonNull U viewer);
 
     /**
      * Opens this interface to the viewer.
@@ -50,7 +50,7 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
      * @param arguments the interface's arguments
      * @return the view
      */
-    @NonNull InterfaceView<T, U, Interface<T, U>> open(
+    @NonNull InterfaceView<T, U> open(
             @NonNull U viewer,
             @NonNull InterfaceArgument arguments
     );
