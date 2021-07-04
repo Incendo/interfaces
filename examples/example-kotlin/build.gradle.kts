@@ -7,11 +7,11 @@ plugins {
 
 tasks {
     compileKotlin {
-        kotlinOptions.jvmTarget = "1.11"
+        kotlinOptions.jvmTarget = "11"
     }
 
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.11"
+        kotlinOptions.jvmTarget = "11"
     }
 }
 
