@@ -9,7 +9,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -30,14 +30,14 @@ import java.util.Set;
 public class PaperInterfaceListeners implements Listener {
 
     private final @NonNull Set<@NonNull InterfaceView<?, PlayerViewer>> openViews;
-    private final @NonNull JavaPlugin plugin;
+    private final @NonNull Plugin plugin;
 
     /**
      * Constructs {@code PaperInterfaceListeners}.
      *
      * @param plugin the plugin instance to register against
      */
-    public PaperInterfaceListeners(final @NonNull JavaPlugin plugin) {
+    public PaperInterfaceListeners(final @NonNull Plugin plugin) {
         this.openViews = new HashSet<>();
         this.plugin = plugin;
     }
@@ -47,7 +47,7 @@ public class PaperInterfaceListeners implements Listener {
      *
      * @param plugin owning plugin
      */
-    public static void install(final @NonNull JavaPlugin plugin) {
+    public static void install(final @NonNull Plugin plugin) {
         Bukkit.getPluginManager().registerEvents(new PaperInterfaceListeners(plugin), plugin);
     }
 
