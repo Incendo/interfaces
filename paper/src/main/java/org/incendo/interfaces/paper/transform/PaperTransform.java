@@ -1,13 +1,13 @@
 package org.incendo.interfaces.paper.transform;
 
 
+import net.kyori.adventure.text.Component;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.transform.Transform;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.element.TextElement;
 import org.incendo.interfaces.paper.pane.BookPane;
 import org.incendo.interfaces.paper.pane.ChestPane;
-import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Utility methods for Paper transformations.

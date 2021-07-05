@@ -1,10 +1,7 @@
-repositories {
-    maven("https://papermc.io/repo/repository/maven-public/")
-}
-
 dependencies {
     api(project(":interfaces-core"))
 
+    compileOnlyApi(libs.adventure.api)
     compileOnlyApi(libs.paper.api) {
         exclude(module = "guava")
         exclude(module = "gson")

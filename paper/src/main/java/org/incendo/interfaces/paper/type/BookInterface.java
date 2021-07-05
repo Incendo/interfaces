@@ -1,5 +1,9 @@
 package org.incendo.interfaces.paper.type;
 
+import java.util.Collections;
+
+import net.kyori.adventure.text.Component;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
@@ -7,8 +11,6 @@ import org.incendo.interfaces.core.transform.Transform;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.pane.BookPane;
 import org.incendo.interfaces.paper.view.BookView;
-import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,29 +18,17 @@ import java.util.List;
 /**
  * An interface using a book.
  */
-public class BookInterface implements
-        Interface<BookPane, PlayerViewer>,
-        TitledInterface {
-
-    /**
-     * Returns a new {@code BookInterface} builder.
-     *
-     * @return the builder
-     */
-    public static @NonNull Builder builder() {
-        return new Builder();
-    }
+public final class BookInterface implements TitledInterface<BookPane, PlayerViewer> {
 
     private final @NonNull List<Transform<BookPane>> transforms;
-
-    private @NonNull Component title;
+    private @NonNull
+    final Component title;
 
     /**
      * Constructs {@code BookInterface}.
      */
     public BookInterface() {
-        this.transforms = new ArrayList<>();
-        this.title = this.title();
+        this(new ArrayList<>());
     }
 
     /**
@@ -47,8 +37,30 @@ public class BookInterface implements
      * @param transforms the transforms
      */
     public BookInterface(final @NonNull List<Transform<BookPane>> transforms) {
+        this(transforms, Component.empty());
+    }
+
+    /**
+     * Constructs {@code BookInterface}
+     *
+     * @param transforms the transforms
+     * @param title      the title
+     */
+    public BookInterface(
+            final @NonNull List<Transform<BookPane>> transforms,
+            final @NonNull Component title
+    ) {
         this.transforms = transforms;
-        this.title = Component.empty();
+        this.title = title;
+    }
+
+    /**
+     * Returns a new {@code BookInterface} builder.
+     *
+     * @return the builder
+     */
+    public static @NonNull Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -97,7 +109,24 @@ public class BookInterface implements
             final @NonNull PlayerViewer viewer,
             final @NonNull InterfaceArgument arguments
     ) {
-        final @NonNull BookView view = new BookView(this, (PlayerViewer) viewer, arguments);
+        return this.open(viewer, arguments, this.title);
+    }
+
+    @Override
+    public @NonNull BookView open(
+            @NonNull final PlayerViewer viewer,
+            @NonNull final Component title
+    ) {
+        return this.open(viewer, HashMapInterfaceArgument.empty(), title);
+    }
+
+    @Override
+    public @NonNull BookView open(
+            @NonNull final PlayerViewer viewer,
+            @NonNull final InterfaceArgument arguments,
+            @NonNull final Component title
+    ) {
+        final @NonNull BookView view = new BookView(this, (PlayerViewer) viewer, arguments, title);
 
         view.open();
 
@@ -119,29 +148,56 @@ public class BookInterface implements
      */
     public static class Builder implements Interface.Builder<BookPane, PlayerViewer, BookInterface> {
 
-        /**
-         * The list of transformations.
-         */
-        private final @NonNull List<Transform<BookPane>> transformsList;
+        private final @NonNull List<@NonNull Transform<BookPane>> transforms;
+        private final @NonNull Component title;
 
         /**
          * Constructs {@code Builder}.
          */
         public Builder() {
-            this.transformsList = new ArrayList<>();
+            this.transforms = new ArrayList<>();
+            this.title = Component.empty();
+        }
+
+        private Builder(
+                final @NonNull List<@NonNull Transform<BookPane>> transforms,
+                final @NonNull Component title
+        ) {
+            this.transforms = Collections.unmodifiableList(transforms);
+            this.title = title;
         }
 
         /**
          * Adds a transformation to the interface.
          *
          * @param transform the transformation
-         * @return this
+         * @return new builder instance
          */
         @Override
         public @NonNull Builder addTransform(final @NonNull Transform<BookPane> transform) {
-            this.transformsList.add(transform);
+            final List<Transform<BookPane>> transforms = new ArrayList<>(this.transforms);
+            transforms.add(transform);
 
-            return this;
+            return new Builder(transforms, this.title);
+        }
+
+        /**
+         * Returns the title of the interface.
+         *
+         * @return the title
+         */
+        public @NonNull Component title() {
+            return this.title;
+        }
+
+        /**
+         * Sets the title of the interface.
+         *
+         * @param title the title
+         * @return new builder instance
+         */
+        public @NonNull Builder title(final @NonNull Component title) {
+            return new Builder(this.transforms, title);
         }
 
         /**
@@ -151,7 +207,7 @@ public class BookInterface implements
          */
         @Override
         public @NonNull BookInterface build() {
-            return new BookInterface(this.transformsList);
+            return new BookInterface(this.transforms, this.title);
         }
 
     }

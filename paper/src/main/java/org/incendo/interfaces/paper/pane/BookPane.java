@@ -1,9 +1,9 @@
 package org.incendo.interfaces.paper.pane;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.paper.element.TextElement;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;

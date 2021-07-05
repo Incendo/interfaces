@@ -12,6 +12,6 @@ public interface InterfaceViewer {
      *
      * @param pane the pane
      */
-    void open(@NonNull InterfaceView<?, ?, ?> pane);
+    void open(@NonNull InterfaceView<?, ?> pane);
 
 }

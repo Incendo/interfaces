@@ -7,6 +7,9 @@ plugins {
     id("net.kyori.indra")
     id("net.kyori.indra.publishing") apply false
     id("net.kyori.indra.checkstyle") apply false
+
+    // Auto-generates project files.
+    idea
 }
 
 group = "org.incendo.interfaces"
@@ -21,6 +24,7 @@ subprojects {
     repositories {
         mavenCentral()
         sonatypeSnapshots()
+        maven("https://papermc.io/repo/repository/maven-public/")
     }
 
     dependencies {

@@ -1,7 +1,7 @@
 package org.incendo.interfaces.core.pane;
 
-import org.incendo.interfaces.core.element.Element;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.interfaces.core.element.Element;
 
 import java.util.Collection;
 

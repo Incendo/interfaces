@@ -1,10 +1,10 @@
 package org.incendo.interfaces.paper.element;
 
-import org.incendo.interfaces.core.element.Element;
-import org.incendo.interfaces.paper.pane.ChestPane;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.interfaces.core.element.Element;
+import org.incendo.interfaces.paper.pane.ChestPane;
 
 /**
  * Holds an {@link ItemStack} in an element.

@@ -1,26 +1,28 @@
 package org.incendo.interfaces.paper.view;
 
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.inventory.Inventory;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
-import org.bukkit.Bukkit;
-import org.bukkit.inventory.Inventory;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
 
 /**
  * The view of a Bukkit inventory-based interface.
  */
-public class ChestView implements InventoryView<ChestPane> {
+public final class ChestView implements InventoryView<ChestPane> {
 
     private final @NonNull PlayerViewer viewer;
     private final @NonNull ChestInterface parent;
     private final @NonNull Inventory inventory;
     private final @NonNull InterfaceArgument argument;
     private final @NonNull ChestPane pane;
+    private final @NonNull Component title;
 
     /**
      * Constructs {@code InventoryInterfaceView}.
@@ -28,15 +30,18 @@ public class ChestView implements InventoryView<ChestPane> {
      * @param viewer   the viewer
      * @param parent   the parent interface
      * @param argument the interface argument
+     * @param title    the title
      */
     public ChestView(
             final @NonNull ChestInterface parent,
             final @NonNull PlayerViewer viewer,
-            final @NonNull InterfaceArgument argument
+            final @NonNull InterfaceArgument argument,
+            final @NonNull Component title
     ) {
         this.viewer = viewer;
         this.parent = parent;
         this.argument = argument;
+        this.title = title;
 
         @NonNull ChestPane pane = new ChestPane(parent.rows());
 
@@ -79,7 +84,7 @@ public class ChestView implements InventoryView<ChestPane> {
         final @NonNull Inventory inventory = Bukkit.createInventory(
                 this,
                 this.parent.rows() * 9,
-                this.parent.title()
+                this.title
         );
 
         final @NonNull List<List<ItemStackElement>> elements = this.pane.chestElements();

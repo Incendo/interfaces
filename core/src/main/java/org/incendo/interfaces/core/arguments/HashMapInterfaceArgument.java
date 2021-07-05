@@ -10,7 +10,8 @@ import java.util.function.Supplier;
 /**
  * An InterfaceArgument backed by a HashMap. Accepts providers as arguments.
  */
-public class HashMapInterfaceArgument implements InterfaceArgument {
+@SuppressWarnings("unused")
+public class HashMapInterfaceArgument implements MutableInterfaceArgument {
 
     private final @NonNull Map<String, Supplier<Object>> argumentMap;
 
@@ -78,14 +79,16 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
      * @throws NullPointerException if the key's value is null
      */
     @Override
-    public <T> T get(final @NonNull String key) {
+    public <T> @Nullable T get(final @NonNull String key) {
         final @Nullable Supplier<Object> supplier = this.argumentMap.get(key);
 
         if (supplier == null) {
             throw new NullPointerException("The value at " + key + " cannot be null.");
         }
 
-        return (T) supplier.get();
+        @SuppressWarnings("unchecked") final T object = (T) supplier.get();
+
+        return object;
     }
 
     /**
@@ -97,10 +100,27 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
      * @throws NullPointerException if the key's value is null
      */
     @Override
-    public <T> T getOrDefault(final @NonNull String key, final @NonNull T def) {
+    public <T> @NonNull T getOrDefault(final @NonNull String key, final @NonNull T def) {
         final @Nullable Supplier<Object> supplier = this.argumentMap.get(key);
 
-        return supplier == null ? def : (T) supplier.get();
+        if (supplier == null) {
+            return def;
+        }
+
+        @SuppressWarnings("unchecked") final T object = (T) supplier.get();
+
+        return object;
+    }
+
+    /**
+     * Returns whether the given key is stored in this argument.
+     *
+     * @param key the key
+     * @return whether the key is stored in this argument
+     */
+    @Override
+    public boolean contains(final @NonNull String key) {
+        return this.argumentMap.containsKey(key);
     }
 
     /**
@@ -120,7 +140,7 @@ public class HashMapInterfaceArgument implements InterfaceArgument {
      * @param key      the key
      * @param supplier the value supplier
      */
-    public void set(final @NonNull String key, final @NonNull Supplier<Object> supplier) {
+    public void set(final @NonNull String key, final @NonNull Supplier<@NonNull Object> supplier) {
         this.argumentMap.put(key, supplier);
     }
 
