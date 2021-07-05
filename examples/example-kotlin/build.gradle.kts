@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.dokka")
     id("com.ncorti.ktfmt.gradle")
     id("com.github.johnrengelman.shadow")
+    id("xyz.jpenilla.run-paper")
 }
 
 tasks {
@@ -34,5 +35,11 @@ dependencies {
         exclude(module = "gson")
         exclude(module = "snakeyaml")
         exclude(module = "commons-lang")
+    }
+}
+
+tasks {
+    runServer {
+        minecraftVersion("1.16.5")
     }
 }
