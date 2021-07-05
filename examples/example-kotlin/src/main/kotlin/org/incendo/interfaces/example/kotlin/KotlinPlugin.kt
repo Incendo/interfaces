@@ -23,8 +23,12 @@ public class KotlinPlugin : JavaPlugin() {
 
     private companion object {
         private const val CHEST_ROWS: Int = 3
+        private const val CHEST_COLUMNS: Int = 9
 
         private val CHEST_TITLE = text("Example Chest", NamedTextColor.GOLD)
+
+        private val LEAVES =
+            setOf(Material.EMERALD_BLOCK, Material.DIAMOND_BLOCK, Material.IRON_BLOCK)
     }
 
     private lateinit var exampleChest: ChestInterface
@@ -39,9 +43,12 @@ public class KotlinPlugin : JavaPlugin() {
         // Build a chest interface.
         exampleChest =
             buildChestInterface {
+                var counterX = 0
+                var counterY = 0
                 title = CHEST_TITLE
                 rows = CHEST_ROWS
 
+                updates(true, 5)
                 clickHandler(
                     canceling { event, _ ->
                         event.whoClicked.sendMessage(
@@ -50,13 +57,34 @@ public class KotlinPlugin : JavaPlugin() {
                     })
 
                 withTransform { view ->
+                    for (column in 0 until CHEST_COLUMNS) {
+                        for (row in 0 until CHEST_ROWS) {
+                            view[column, row] =
+                                createItemStack(LEAVES.random(), text("background")).asElement()
+                        }
+                    }
+                }
+
+                withTransform { view ->
                     // Extract the name argument.
                     val name: String = view.argument["name"] ?: return@withTransform
 
                     // Create an item stack element with the player's name.
-                    val element = createItemStack(Material.PAPER, text(name)).asElement()
+                    val element =
+                        createItemStack(Material.PAPER, text(name)).asElement { event, clickView ->
+                            counterX += 1
+                            if (counterX == CHEST_COLUMNS) {
+                                counterX = 0
+                                counterY += 1
 
-                    view[0, 0] = element
+                                if (counterY == CHEST_ROWS) {
+                                    counterY = 0
+                                }
+                            }
+                            clickView.update()
+                        }
+
+                    view[counterX, counterY] = element
                 }
             }
     }
