@@ -42,22 +42,19 @@ public class KotlinPlugin : JavaPlugin() {
                 title = CHEST_TITLE
                 rows = CHEST_ROWS
 
-                clickHandler { event, _ ->
-                    event.whoClicked.sendMessage(
-                        text("You clicked ", NamedTextColor.GRAY)
-                            .append(text(event.slot.toString(), NamedTextColor.GOLD)))
-                }
+                clickHandler(
+                    canceling { event, _ ->
+                        event.whoClicked.sendMessage(
+                            text("You clicked ", NamedTextColor.GRAY)
+                                .append(text(event.slot.toString(), NamedTextColor.GOLD)))
+                    })
 
                 withTransform { view ->
                     // Extract the name argument.
                     val name: String = view.argument["name"] ?: return@withTransform
 
                     // Create an item stack element with the player's name.
-                    val element =
-                        createItemStack(Material.PAPER, text(name)).asElement { event, _ ->
-                            event.whoClicked.sendMessage(
-                                text("You clicked it :D", NamedTextColor.AQUA))
-                        }
+                    val element = createItemStack(Material.PAPER, text(name)).asElement()
 
                     view[0, 0] = element
                 }
@@ -92,7 +89,11 @@ public class KotlinPlugin : JavaPlugin() {
             val arguments = interfaceArgumentOf("name" to sender.name)
 
             when (args[0].toLowerCase()) {
-                "chest" -> sender.open(exampleChest, arguments)
+                "chest" ->
+                    sender.open(
+                        exampleChest,
+                        arguments,
+                        text("Your Chest: ${sender.name}", NamedTextColor.GREEN))
                 else ->
                     sender.sendMessage(
                         text("Unknown interface type '${args[0]}'", NamedTextColor.RED))

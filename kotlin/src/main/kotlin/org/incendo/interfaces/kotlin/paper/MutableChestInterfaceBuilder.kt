@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.incendo.interfaces.core.transform.Transform
 import org.incendo.interfaces.core.view.InterfaceView
+import org.incendo.interfaces.kotlin.MutableInterfaceBuilder
 import org.incendo.interfaces.paper.PlayerViewer
 import org.incendo.interfaces.paper.element.ClickHandler
 import org.incendo.interfaces.paper.pane.ChestPane
@@ -11,7 +12,7 @@ import org.incendo.interfaces.paper.type.ChestInterface
 import org.incendo.interfaces.paper.view.InventoryView
 
 @Suppress("unused")
-public class MutableChestInterfaceBuilder {
+public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
 
     private var internalBuilder: ChestInterface.Builder = ChestInterface.builder()
 
@@ -51,6 +52,15 @@ public class MutableChestInterfaceBuilder {
     public fun clickHandler(
         handler: (InventoryClickEvent, InventoryView<ChestPane>) -> Unit
     ): Unit = mutate { internalBuilder.clickHandler(handler) }
+
+    /**
+     * Sets the click handler
+     *
+     * @param handler click handler
+     */
+    public fun clickHandler(handler: ClickHandler<ChestPane>): Unit = mutate {
+        internalBuilder.clickHandler(handler)
+    }
 
     /**
      * Adds the given [transform] to the interface.

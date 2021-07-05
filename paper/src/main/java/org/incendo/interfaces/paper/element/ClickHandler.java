@@ -15,6 +15,22 @@ import java.util.function.BiConsumer;
 public interface ClickHandler<T extends Pane> extends BiConsumer<InventoryClickEvent, InventoryView<T>> {
 
     /**
+     * Returns a {@code ClickHandler} that cancels the event and then calls
+     * the given click handler.
+     *
+     * @param clickHandler the handler
+     * @param <T>          pane type
+     * @return the handler
+     */
+    static @NonNull <T extends Pane> ClickHandler<T> canceling(final @NonNull ClickHandler<T> clickHandler) {
+        return (event, view) -> {
+            event.setCancelled(true);
+
+            clickHandler.accept(event, view);
+        };
+    }
+
+    /**
      * Returns a {@code ClickHandler} that cancels the event.
      *
      * @param <T> pane type
