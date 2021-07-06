@@ -8,7 +8,7 @@ import org.incendo.interfaces.paper.element.ClickHandler;
  * <p>
  * {@code clickHandler} will be called whenever the viewer clicks on the interface.
  */
-public interface ClickableInterface {
+public interface Clickable {
 
     /**
      * Returns the top click handler.
