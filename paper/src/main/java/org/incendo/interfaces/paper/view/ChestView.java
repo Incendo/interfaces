@@ -5,7 +5,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.interfaces.core.Interface;
+import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
+import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
@@ -77,6 +80,31 @@ public final class ChestView implements
         this.pane = pane;
 
         this.inventory = this.createInventory();
+    }
+
+    /**
+     * Opens a child interface.
+     *
+     * @param backing the backing interface
+     * @param <T> the type of view
+     * @return the view
+     */
+    public @NonNull <T extends PlayerView<?>> T openChild(final @NonNull Interface<?, PlayerViewer> backing) {
+        final InterfaceView<?, PlayerViewer> view = backing.open(this.viewer, HashMapInterfaceArgument.empty());
+
+        view.open();
+
+        return (T) view;
+    }
+
+    @Override
+    public @NonNull PlayerView<?> back() {
+        if (hasParent()) {
+            parent.open();
+            return parent;
+        }
+
+        throw new NullPointerException("The view has no parent");
     }
 
     @Override
