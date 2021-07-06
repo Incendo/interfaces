@@ -22,4 +22,14 @@ public interface ChildView {
      */
     @Nullable PlayerView<?> parent();
 
+    /**
+     * Returns to the parent view.
+     *
+     * @return the parent view
+     * @throws NullPointerException if there is no parent view
+     * @see #hasParent()
+     * @see #parent()
+     */
+    @NonNull PlayerView<?> back();
+
 }
