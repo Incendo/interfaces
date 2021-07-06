@@ -3,7 +3,7 @@ package org.incendo.interfaces.paper.element;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.pane.Pane;
-import org.incendo.interfaces.paper.view.InventoryView;
+import org.incendo.interfaces.paper.view.PlayerView;
 
 import java.util.function.BiConsumer;
 
@@ -12,7 +12,7 @@ import java.util.function.BiConsumer;
  *
  * @param <T> the pane type
  */
-public interface ClickHandler<T extends Pane> extends BiConsumer<InventoryClickEvent, InventoryView<T>> {
+public interface ClickHandler<T extends Pane> extends BiConsumer<InventoryClickEvent, PlayerView<T>> {
 
     /**
      * Returns a {@code ClickHandler} that cancels the event and then calls

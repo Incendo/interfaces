@@ -21,6 +21,13 @@ public interface InterfaceView<T extends Pane, U extends InterfaceViewer> {
     @NonNull Interface<T, U> backing();
 
     /**
+     * Returns the argument provided to this view.
+     *
+     * @return the view's argument
+     */
+    @NonNull InterfaceArgument argument();
+
+    /**
      * Returns the viewer of this view.
      * <p>
      * This will always return a value; every view must be constructed
@@ -41,11 +48,11 @@ public interface InterfaceView<T extends Pane, U extends InterfaceViewer> {
     boolean viewing();
 
     /**
-     * Returns the argument provided to this view.
+     * Returns the pane.
      *
-     * @return the view's argument
+     * @return the pane
      */
-    @NonNull InterfaceArgument argument();
+    T pane();
 
     /**
      * Opens the view to the viewer.
@@ -53,13 +60,6 @@ public interface InterfaceView<T extends Pane, U extends InterfaceViewer> {
      * @see #viewer()
      */
     void open();
-
-    /**
-     * Returns the pane.
-     *
-     * @return the pane
-     */
-    T pane();
 
     /**
      * Triggers a manual update.

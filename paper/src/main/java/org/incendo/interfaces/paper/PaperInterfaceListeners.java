@@ -17,7 +17,7 @@ import org.incendo.interfaces.core.UpdatingInterface;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.view.ChestView;
-import org.incendo.interfaces.paper.view.InventoryView;
+import org.incendo.interfaces.paper.view.PlayerView;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -65,8 +65,8 @@ public class PaperInterfaceListeners implements Listener {
             return;
         }
 
-        if (holder instanceof InventoryView) {
-            InventoryView<?> view = (InventoryView<?>) holder;
+        if (holder instanceof PlayerView) {
+            PlayerView<?> view = (PlayerView<?>) holder;
             this.openViews.add(view);
 
             if (view.backing() instanceof UpdatingInterface) {
@@ -97,8 +97,8 @@ public class PaperInterfaceListeners implements Listener {
             return;
         }
 
-        if (holder instanceof InventoryView) {
-            this.openViews.remove((InventoryView) holder);
+        if (holder instanceof PlayerView) {
+            this.openViews.remove((PlayerView) holder);
         }
     }
 

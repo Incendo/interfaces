@@ -9,7 +9,7 @@ import org.incendo.interfaces.paper.PlayerViewer
 import org.incendo.interfaces.paper.element.ClickHandler
 import org.incendo.interfaces.paper.pane.ChestPane
 import org.incendo.interfaces.paper.type.ChestInterface
-import org.incendo.interfaces.paper.view.InventoryView
+import org.incendo.interfaces.paper.view.PlayerView
 
 @Suppress("unused")
 public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
@@ -50,7 +50,7 @@ public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
      * @param handler click handler
      */
     public fun clickHandler(
-        handler: (InventoryClickEvent, InventoryView<ChestPane>) -> Unit
+        handler: (InventoryClickEvent, PlayerView<ChestPane>) -> Unit
     ): Unit = mutate { internalBuilder.clickHandler(handler) }
 
     /**

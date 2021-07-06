@@ -12,14 +12,5 @@ import org.incendo.interfaces.paper.PlayerViewer;
  *
  * @param <T> the pane type
  */
-public interface InventoryView<T extends Pane> extends InterfaceView<T, PlayerViewer>,
-        InventoryHolder {
-
-    /**
-     * Returns the inventory.
-     *
-     * @return the inventory
-     */
-    @NonNull Inventory inventory();
-
-}
+public interface PlayerView<T extends Pane> extends InterfaceView<T, PlayerViewer>,
+        InventoryHolder {}
