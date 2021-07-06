@@ -9,6 +9,7 @@ import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
+import org.incendo.interfaces.paper.utils.PaperUtils;
 
 import java.util.List;
 
@@ -55,27 +56,6 @@ public final class ChestView implements InventoryView<ChestPane> {
     }
 
     /**
-     * Converts a Bukkit slot index to an x/y position.
-     *
-     * @param slot the slot
-     * @return the x/y position
-     */
-    public static int[] slotToGrid(final int slot) {
-        return new int[]{slot % 9, slot / 9};
-    }
-
-    /**
-     * Converts the x/y position to a Bukkit slot index.
-     *
-     * @param x the x position
-     * @param y the y position
-     * @return the slot
-     */
-    public static int gridToSlot(final int x, final int y) {
-        return y * 9 + x;
-    }
-
-    /**
      * Creates the Bukkit inventory.
      *
      * @return the inventory
@@ -93,7 +73,7 @@ public final class ChestView implements InventoryView<ChestPane> {
             for (int y = 0; y < this.backing.rows(); y++) {
                 final @NonNull ItemStackElement element = elements.get(x).get(y);
 
-                inventory.setItem(gridToSlot(x, y), element.itemStack());
+                inventory.setItem(PaperUtils.gridToSlot(x, y), element.itemStack());
             }
         }
 
