@@ -18,7 +18,7 @@ public interface InterfaceView<T extends Pane, U extends InterfaceViewer> {
      *
      * @return the interface
      */
-    @NonNull Interface<T, U> parent();
+    @NonNull Interface<T, U> backing();
 
     /**
      * Returns the viewer of this view.
@@ -66,7 +66,7 @@ public interface InterfaceView<T extends Pane, U extends InterfaceViewer> {
      */
     default void update() {
         if (this.viewing()) {
-            this.parent().open(this.viewer(), this.argument());
+            this.backing().open(this.viewer(), this.argument());
         }
     }
 

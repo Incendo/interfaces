@@ -69,8 +69,8 @@ public class PaperInterfaceListeners implements Listener {
             InventoryView<?> view = (InventoryView<?>) holder;
             this.openViews.add(view);
 
-            if (view.parent() instanceof UpdatingInterface) {
-                UpdatingInterface updatingInterface = (UpdatingInterface) view.parent();
+            if (view.backing() instanceof UpdatingInterface) {
+                UpdatingInterface updatingInterface = (UpdatingInterface) view.backing();
                 if (updatingInterface.updates()) {
                     new BukkitRunnable() {
                         @Override
@@ -120,7 +120,7 @@ public class PaperInterfaceListeners implements Listener {
         if (holder instanceof ChestView) {
             ChestView chestView = (ChestView) holder;
             // Handle parent interface click event
-            chestView.parent().clickHandler().accept(event, chestView);
+            chestView.backing().clickHandler().accept(event, chestView);
 
             // Handle element click event
             if (event.getSlotType() == InventoryType.SlotType.CONTAINER) {

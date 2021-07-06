@@ -13,39 +13,39 @@ import org.incendo.interfaces.paper.type.ChestInterface;
 import java.util.List;
 
 /**
- * The view of a Bukkit inventory-based interface.
+ * The view of a chest.
  */
 public final class ChestView implements InventoryView<ChestPane> {
 
     private final @NonNull PlayerViewer viewer;
-    private final @NonNull ChestInterface parent;
+    private final @NonNull ChestInterface backing;
     private final @NonNull Inventory inventory;
     private final @NonNull InterfaceArgument argument;
     private final @NonNull ChestPane pane;
     private final @NonNull Component title;
 
     /**
-     * Constructs {@code InventoryInterfaceView}.
+     * Constructs {@code ChestView}.
      *
+     * @param backing  the backing interface
      * @param viewer   the viewer
-     * @param parent   the parent interface
      * @param argument the interface argument
      * @param title    the title
      */
     public ChestView(
-            final @NonNull ChestInterface parent,
+            final @NonNull ChestInterface backing,
             final @NonNull PlayerViewer viewer,
             final @NonNull InterfaceArgument argument,
             final @NonNull Component title
     ) {
         this.viewer = viewer;
-        this.parent = parent;
+        this.backing = backing;
         this.argument = argument;
         this.title = title;
 
-        @NonNull ChestPane pane = new ChestPane(parent.rows());
+        @NonNull ChestPane pane = new ChestPane(this.backing.rows());
 
-        for (final var transform : this.parent.transformations()) {
+        for (final var transform : this.backing.transformations()) {
             pane = transform.apply(pane, this);
         }
 
@@ -83,14 +83,14 @@ public final class ChestView implements InventoryView<ChestPane> {
     private @NonNull Inventory createInventory() {
         final @NonNull Inventory inventory = Bukkit.createInventory(
                 this,
-                this.parent.rows() * 9,
+                this.backing.rows() * 9,
                 this.title
         );
 
         final @NonNull List<List<ItemStackElement>> elements = this.pane.chestElements();
 
         for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
-            for (int y = 0; y < this.parent.rows(); y++) {
+            for (int y = 0; y < this.backing.rows(); y++) {
                 final @NonNull ItemStackElement element = elements.get(x).get(y);
 
                 inventory.setItem(gridToSlot(x, y), element.itemStack());
@@ -106,8 +106,8 @@ public final class ChestView implements InventoryView<ChestPane> {
      * @return the parent
      */
     @Override
-    public @NonNull ChestInterface parent() {
-        return this.parent;
+    public @NonNull ChestInterface backing() {
+        return this.backing;
     }
 
     /**
