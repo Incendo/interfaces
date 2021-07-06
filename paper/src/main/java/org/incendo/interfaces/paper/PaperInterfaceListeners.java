@@ -17,6 +17,9 @@ import org.incendo.interfaces.core.UpdatingInterface;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
 import org.incendo.interfaces.paper.element.ItemStackElement;
+import org.incendo.interfaces.paper.pane.ChestPane;
+import org.incendo.interfaces.paper.type.ChestInterface;
+import org.incendo.interfaces.paper.type.CloseHandler;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.InventoryView;
 
@@ -105,7 +108,16 @@ public class PaperInterfaceListeners implements Listener {
         }
 
         if (holder instanceof InventoryView) {
-            this.openViews.remove((InventoryView) holder);
+            InventoryView inventoryView = (InventoryView) holder;
+            this.openViews.remove(inventoryView);
+
+            if (inventoryView.parent() instanceof ChestInterface) {
+                ChestInterface chestInterface = (ChestInterface) inventoryView.parent();
+
+                for (final CloseHandler<ChestPane> closeHandler : chestInterface.closeHandlers()) {
+                    closeHandler.accept(event, inventoryView);
+                }
+            }
         }
     }
 

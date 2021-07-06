@@ -94,6 +94,8 @@ public class KotlinPlugin : JavaPlugin() {
 
                     view[counterX, counterY] = element
                 }
+
+                withCloseHandler { event, _ -> event.player.sendMessage(text("bye")) }
             }
     }
 
