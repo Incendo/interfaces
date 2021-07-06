@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
@@ -16,10 +17,11 @@ import java.util.List;
 /**
  * The view of a chest.
  */
-public final class ChestView implements InventoryView<ChestPane> {
+public final class ChestView implements PlayerView<ChestPane> {
 
     private final @NonNull PlayerViewer viewer;
     private final @NonNull ChestInterface backing;
+    private final @Nullable PlayerView<?> parent;
     private final @NonNull Inventory inventory;
     private final @NonNull InterfaceArgument argument;
     private final @NonNull ChestPane pane;
@@ -39,6 +41,26 @@ public final class ChestView implements InventoryView<ChestPane> {
             final @NonNull InterfaceArgument argument,
             final @NonNull Component title
     ) {
+        this(null, backing, viewer, argument, title);
+    }
+
+    /**
+     * Constructs {@code ChestView}.
+     *
+     * @param parent   the parent view
+     * @param backing  the backing interface
+     * @param viewer   the viewer
+     * @param argument the interface argument
+     * @param title    the title
+     */
+    public ChestView(
+            final @Nullable PlayerView<?> parent,
+            final @NonNull ChestInterface backing,
+            final @NonNull PlayerViewer viewer,
+            final @NonNull InterfaceArgument argument,
+            final @NonNull Component title
+    ) {
+        this.parent = parent;
         this.viewer = viewer;
         this.backing = backing;
         this.argument = argument;
@@ -53,6 +75,60 @@ public final class ChestView implements InventoryView<ChestPane> {
         this.pane = pane;
 
         this.inventory = this.createInventory();
+    }
+
+    /**
+     * Returns true if this view has a parent, false if not.
+     *
+     * @return true if this view has a parent, false if not
+     */
+    public boolean hasParent() {
+        return this.parent != null;
+    }
+
+    /**
+     * Returns the parent view, if any.
+     *
+     * @return the parent view, if any
+     */
+    public @Nullable PlayerView<?> parent() {
+        return this.parent;
+    }
+
+
+    @Override
+    public @NonNull ChestInterface backing() {
+        return this.backing;
+    }
+
+    @Override
+    public @NonNull PlayerViewer viewer() {
+        return this.viewer;
+    }
+
+    @Override
+    public boolean viewing() {
+        return this.inventory.getViewers().contains(this.viewer.player());
+    }
+
+    @Override
+    public @NonNull InterfaceArgument argument() {
+        return this.argument;
+    }
+
+    @Override
+    public void open() {
+        this.viewer.open(this);
+    }
+
+    @Override
+    public @NonNull ChestPane pane() {
+        return this.pane;
+    }
+
+    @Override
+    public @NonNull Inventory getInventory() {
+        return this.inventory;
     }
 
     /**
@@ -78,83 +154,6 @@ public final class ChestView implements InventoryView<ChestPane> {
         }
 
         return inventory;
-    }
-
-    /**
-     * Returns the parent.
-     *
-     * @return the parent
-     */
-    @Override
-    public @NonNull ChestInterface backing() {
-        return this.backing;
-    }
-
-    /**
-     * Returns the viewer.
-     *
-     * @return the viewer
-     */
-    @Override
-    public @NonNull PlayerViewer viewer() {
-        return this.viewer;
-    }
-
-    /**
-     * Returns true if {@link #viewer()} is viewing this view, false if not.
-     *
-     * @return true if {@link #viewer()} is viewing this view, false if not
-     */
-    @Override
-    public boolean viewing() {
-        return this.inventory.getViewers().contains(this.viewer.player());
-    }
-
-    /**
-     * Returns the argument provided to this view.
-     *
-     * @return the argument
-     */
-    @Override
-    public @NonNull InterfaceArgument argument() {
-        return this.argument;
-    }
-
-    /**
-     * Opens this view to the viewer.
-     */
-    @Override
-    public void open() {
-        this.viewer.open(this);
-    }
-
-    /**
-     * Returns this view's pane.
-     *
-     * @return the view's pane
-     */
-    @Override
-    public @NonNull ChestPane pane() {
-        return this.pane;
-    }
-
-    /**
-     * Returns the inventory of this view.
-     *
-     * @return the inventory
-     */
-    public @NonNull Inventory getInventory() {
-        return this.inventory;
-    }
-
-    /**
-     * Returns the inventory of this view.
-     *
-     * @return the inventory
-     */
-    @Override
-    public @NonNull Inventory inventory() {
-        return this.inventory;
     }
 
 }
