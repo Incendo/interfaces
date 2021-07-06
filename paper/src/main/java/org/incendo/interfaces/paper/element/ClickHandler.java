@@ -14,10 +14,6 @@ import java.util.function.BiConsumer;
  */
 public interface ClickHandler<T extends Pane> extends BiConsumer<InventoryClickEvent, PlayerView<T>> {
 
-    static @NonNull <T extends Pane> ClickHandler<T> of(BiConsumer<InventoryClickEvent, PlayerView<T>> consumer) {
-        return (ClickHandler<T>) consumer;
-    }
-
     /**
      * Returns a {@code ClickHandler} that cancels the event and then calls
      * the given click handler.
