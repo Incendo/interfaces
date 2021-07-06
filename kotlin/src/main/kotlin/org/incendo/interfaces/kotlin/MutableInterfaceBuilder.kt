@@ -14,6 +14,6 @@ public interface MutableInterfaceBuilder<T : Pane> {
      * @return the handler
      */
     public fun canceling(
-        clickHandler: ClickHandler<T, PlayerView<T>> = ClickHandler { _, _ -> }
-    ): ClickHandler<T, PlayerView<T>> = ClickHandler.canceling(clickHandler)
+        clickHandler: ClickHandler<T> = ClickHandler { _, _ -> }
+    ): ClickHandler<T> = ClickHandler.canceling(clickHandler)
 }

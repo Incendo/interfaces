@@ -66,5 +66,5 @@ public fun Player.asViewer(): PlayerViewer = PlayerViewer.of(this)
  * @param handler optional click handler
  * @return element instance
  */
-public fun ItemStack.asElement(handler: ClickHandler<*, *>? = null): ItemStackElement =
+public fun ItemStack.asElement(handler: ClickHandler<*>? = null): ItemStackElement =
     if (handler == null) ItemStackElement.of(this) else ItemStackElement.of(this, handler)

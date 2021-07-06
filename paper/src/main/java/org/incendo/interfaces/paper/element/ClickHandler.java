@@ -11,12 +11,11 @@ import java.util.function.BiConsumer;
  * A function that handles a click event on an interface.
  *
  * @param <T> the pane type
- * @param <U> the view type
  */
-public interface ClickHandler<T extends Pane, U extends PlayerView<T>> extends BiConsumer<InventoryClickEvent, U> {
+public interface ClickHandler<T extends Pane> extends BiConsumer<InventoryClickEvent, PlayerView<T>> {
 
-    static @NonNull <T extends Pane, U extends PlayerView<T>> ClickHandler<T, U> of(BiConsumer<InventoryClickEvent, U> consumer) {
-        return (ClickHandler<T, U>) consumer;
+    static @NonNull <T extends Pane> ClickHandler<T> of(BiConsumer<InventoryClickEvent, PlayerView<T>> consumer) {
+        return (ClickHandler<T>) consumer;
     }
 
     /**
@@ -27,7 +26,7 @@ public interface ClickHandler<T extends Pane, U extends PlayerView<T>> extends B
      * @param <T>          the pane type
      * @return the handler
      */
-    static @NonNull <T extends Pane, U extends PlayerView<T>> ClickHandler<T, U> canceling(final @NonNull ClickHandler<T, U> clickHandler) {
+    static @NonNull <T extends Pane> ClickHandler<T> canceling(final @NonNull ClickHandler<T> clickHandler) {
         return (event, view) -> {
             event.setCancelled(true);
 
@@ -39,10 +38,9 @@ public interface ClickHandler<T extends Pane, U extends PlayerView<T>> extends B
      * Returns a {@code ClickHandler} that cancels the event.
      *
      * @param <T> the pane type
-     * @param <U> the view type
      * @return the handler
      */
-    static @NonNull <T extends Pane, U extends PlayerView<T>> ClickHandler<T, U> cancel() {
+    static @NonNull <T extends Pane> ClickHandler<T> cancel() {
         return (event, view) -> event.setCancelled(true);
     }
 

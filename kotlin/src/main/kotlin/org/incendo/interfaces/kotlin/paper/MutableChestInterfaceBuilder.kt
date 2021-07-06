@@ -29,7 +29,7 @@ public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
         set(value) = mutate { internalBuilder.title(value) }
 
     /** The click handler of the interface. */
-    public var clickHandler: ClickHandler<ChestPane, ChestView>
+    public var clickHandler: ClickHandler<ChestPane>
         get() = internalBuilder.clickHandler()
         set(value) = mutate { internalBuilder.clickHandler(value) }
     // </editor-fold>
@@ -59,7 +59,7 @@ public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
      *
      * @param handler click handler
      */
-    public fun clickHandler(handler: ClickHandler<ChestPane, ChestView>): Unit = mutate {
+    public fun clickHandler(handler: ClickHandler<ChestPane>): Unit = mutate {
         internalBuilder.clickHandler(handler)
     }
 
