@@ -3,7 +3,7 @@ package org.incendo.interfaces.paper.utils;
 /**
  * A collection of utility methods.
  */
-public class PaperUtils {
+public final class PaperUtils {
 
     /**
      * Converts a Bukkit slot index to an x/y position.
@@ -26,4 +26,5 @@ public class PaperUtils {
         return y * 9 + x;
     }
 
+    private PaperUtils() {}
 }
