@@ -8,6 +8,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import org.incendo.interfaces.kotlin.argument
@@ -50,12 +51,11 @@ public class KotlinPlugin : JavaPlugin() {
 
                 updates(true, 5)
                 clickHandler(
-                    canceling { event, _ ->
+                    canceling { event: InventoryClickEvent, _ ->
                         event.whoClicked.sendMessage(
                             text("You clicked ", NamedTextColor.GRAY)
                                 .append(text(event.slot.toString(), NamedTextColor.GOLD)))
                     })
-
                 withTransform { view ->
                     for (column in 0 until CHEST_COLUMNS) {
                         for (row in 0 until CHEST_ROWS) {

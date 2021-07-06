@@ -9,6 +9,7 @@ import org.incendo.interfaces.paper.PlayerViewer
 import org.incendo.interfaces.paper.element.ClickHandler
 import org.incendo.interfaces.paper.pane.ChestPane
 import org.incendo.interfaces.paper.type.ChestInterface
+import org.incendo.interfaces.paper.view.ChestView
 import org.incendo.interfaces.paper.view.PlayerView
 
 @Suppress("unused")
@@ -28,7 +29,7 @@ public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
         set(value) = mutate { internalBuilder.title(value) }
 
     /** The click handler of the interface. */
-    public var clickHandler: ClickHandler<ChestPane>
+    public var clickHandler: ClickHandler<ChestPane, ChestView>
         get() = internalBuilder.clickHandler()
         set(value) = mutate { internalBuilder.clickHandler(value) }
     // </editor-fold>
@@ -58,7 +59,7 @@ public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
      *
      * @param handler click handler
      */
-    public fun clickHandler(handler: ClickHandler<ChestPane>): Unit = mutate {
+    public fun clickHandler(handler: ClickHandler<ChestPane, ChestView>): Unit = mutate {
         internalBuilder.clickHandler(handler)
     }
 
