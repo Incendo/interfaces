@@ -29,7 +29,7 @@ public final class ChestInterface implements
     private final @NonNull Component title;
     private final boolean updates;
     private final int updateDelay;
-    private final @NonNull ClickHandler<ChestPane> clickHandler;
+    private final @NonNull ClickHandler<ChestPane, ChestView> clickHandler;
 
     /**
      * Constructs {@code ChestInterface}.
@@ -47,7 +47,7 @@ public final class ChestInterface implements
             final @NonNull List<Transform<ChestPane>> transforms,
             final boolean updates,
             final int updateDelay,
-            final @NonNull ClickHandler<ChestPane> clickHandler
+            final @NonNull ClickHandler<ChestPane, ChestView> clickHandler
     ) {
         this.title = title;
         this.transformationList = transforms;
@@ -80,7 +80,7 @@ public final class ChestInterface implements
      *
      * @return the click handler
      */
-    public @NonNull ClickHandler<ChestPane> clickHandler() {
+    public @NonNull ClickHandler<ChestPane, ChestView> clickHandler() {
         return this.clickHandler;
     }
 
@@ -204,7 +204,7 @@ public final class ChestInterface implements
         /**
          * The top click handler.
          */
-        private final @NonNull ClickHandler<ChestPane> clickHandler;
+        private final @NonNull ClickHandler<ChestPane, ChestView> clickHandler;
 
         /**
          * Constructs {@code Builder}.
@@ -224,7 +224,7 @@ public final class ChestInterface implements
                 @NonNull final Component title,
                 final boolean updates,
                 final int updateDelay,
-                @NonNull final ClickHandler<ChestPane> clickHandler
+                @NonNull final ClickHandler<ChestPane, ChestView> clickHandler
         ) {
             this.transformsList = Collections.unmodifiableList(transformsList);
             this.rows = rows;
@@ -312,7 +312,7 @@ public final class ChestInterface implements
          *
          * @return click handler
          */
-        public @NonNull ClickHandler<ChestPane> clickHandler() {
+        public @NonNull ClickHandler<ChestPane, ChestView> clickHandler() {
             return this.clickHandler;
         }
 
@@ -322,7 +322,7 @@ public final class ChestInterface implements
          * @param handler the handler
          * @return new builder instance
          */
-        public @NonNull Builder clickHandler(final @NonNull ClickHandler<ChestPane> handler) {
+        public @NonNull Builder clickHandler(final @NonNull ClickHandler<ChestPane, ChestView> handler) {
             return new Builder(
                     this.transformsList,
                     this.rows,
