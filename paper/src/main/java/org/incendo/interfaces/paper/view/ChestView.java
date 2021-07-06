@@ -17,7 +17,9 @@ import java.util.List;
 /**
  * The view of a chest.
  */
-public final class ChestView implements PlayerView<ChestPane> {
+public final class ChestView implements
+        PlayerView<ChestPane>,
+        ChildView {
 
     private final @NonNull PlayerViewer viewer;
     private final @NonNull ChestInterface backing;
@@ -77,20 +79,12 @@ public final class ChestView implements PlayerView<ChestPane> {
         this.inventory = this.createInventory();
     }
 
-    /**
-     * Returns true if this view has a parent, false if not.
-     *
-     * @return true if this view has a parent, false if not
-     */
+    @Override
     public boolean hasParent() {
         return this.parent != null;
     }
 
-    /**
-     * Returns the parent view, if any.
-     *
-     * @return the parent view, if any
-     */
+    @Override
     public @Nullable PlayerView<?> parent() {
         return this.parent;
     }
