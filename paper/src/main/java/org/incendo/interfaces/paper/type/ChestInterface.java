@@ -26,6 +26,7 @@ public final class ChestInterface implements
 
     private final int rows;
     private final @NonNull List<Transform<ChestPane>> transformationList;
+    private final @NonNull List<CloseHandler<ChestPane>> closeHandlerList;
     private final @NonNull Component title;
     private final boolean updates;
     private final int updateDelay;
@@ -34,23 +35,26 @@ public final class ChestInterface implements
     /**
      * Constructs {@code ChestInterface}.
      *
-     * @param rows         the rows
-     * @param title        the interfaces title
-     * @param transforms   the transformations to apply
-     * @param updates      {@code true} if the interface is an updating interface
-     * @param updateDelay  the update delay
-     * @param clickHandler the handler to run on click
+     * @param rows          the rows
+     * @param title         the interfaces title
+     * @param transforms    the transformations to apply
+     * @param closeHandlers the close handlers to apply
+     * @param updates       {@code true} if the interface is an updating interface
+     * @param updateDelay   the update delay
+     * @param clickHandler  the handler to run on click
      */
     public ChestInterface(
             final int rows,
             final @NonNull Component title,
             final @NonNull List<Transform<ChestPane>> transforms,
+            final @NonNull List<CloseHandler<ChestPane>> closeHandlers,
             final boolean updates,
             final int updateDelay,
             final @NonNull ClickHandler<ChestPane> clickHandler
     ) {
         this.title = title;
         this.transformationList = transforms;
+        this.closeHandlerList = closeHandlers;
         this.updates = updates;
         this.updateDelay = updateDelay;
         this.rows = rows;
@@ -104,6 +108,15 @@ public final class ChestInterface implements
     @Override
     public @NonNull List<Transform<ChestPane>> transformations() {
         return List.copyOf(this.transformationList);
+    }
+
+    /**
+     * Returns the list of close handlers.
+     *
+     * @return the close handlers
+     */
+    public @NonNull List<CloseHandler<ChestPane>> closeHandlers() {
+        return List.copyOf(this.closeHandlerList);
     }
 
     @Override
@@ -182,6 +195,11 @@ public final class ChestInterface implements
         private final @NonNull List<@NonNull Transform<ChestPane>> transformsList;
 
         /**
+         * The list of close handlers.
+         */
+        private final @NonNull List<@NonNull CloseHandler<ChestPane>> closeHandlerList;
+
+        /**
          * The amount of rows.
          */
         private final int rows;
@@ -211,6 +229,7 @@ public final class ChestInterface implements
          */
         public Builder() {
             this.transformsList = new ArrayList<>();
+            this.closeHandlerList = new ArrayList<>();
             this.rows = 1;
             this.title = Component.empty();
             this.updates = false;
@@ -220,6 +239,7 @@ public final class ChestInterface implements
 
         private Builder(
                 @NonNull final List<Transform<ChestPane>> transformsList,
+                @NonNull final List<CloseHandler<ChestPane>> closeHandlerList,
                 final int rows,
                 @NonNull final Component title,
                 final boolean updates,
@@ -227,6 +247,7 @@ public final class ChestInterface implements
                 @NonNull final ClickHandler<ChestPane> clickHandler
         ) {
             this.transformsList = Collections.unmodifiableList(transformsList);
+            this.closeHandlerList = Collections.unmodifiableList(closeHandlerList);
             this.rows = rows;
             this.title = title;
             this.updates = updates;
@@ -252,6 +273,7 @@ public final class ChestInterface implements
         public @NonNull Builder rows(final int rows) {
             return new Builder(
                     this.transformsList,
+                    this.closeHandlerList,
                     rows,
                     this.title,
                     this.updates,
@@ -278,8 +300,30 @@ public final class ChestInterface implements
         public @NonNull Builder title(final @NonNull Component title) {
             return new Builder(
                     this.transformsList,
+                    this.closeHandlerList,
                     this.rows,
                     title,
+                    this.updates,
+                    this.updateDelay,
+                    this.clickHandler
+            );
+        }
+
+        /**
+         * Adds a close handler to the interface.
+         *
+         * @param closeHandler the close handler
+         * @return new builder instance.
+         */
+        public @NonNull Builder addCloseHandler(final @NonNull CloseHandler<ChestPane> closeHandler) {
+            final List<CloseHandler<ChestPane>> closeHandlers = new ArrayList<>(this.closeHandlerList);
+            closeHandlers.add(closeHandler);
+
+            return new Builder(
+                    this.transformsList,
+                    closeHandlers,
+                    this.rows,
+                    this.title,
                     this.updates,
                     this.updateDelay,
                     this.clickHandler
@@ -299,6 +343,7 @@ public final class ChestInterface implements
 
             return new Builder(
                     transforms,
+                    this.closeHandlerList,
                     this.rows,
                     this.title,
                     this.updates,
@@ -325,6 +370,7 @@ public final class ChestInterface implements
         public @NonNull Builder clickHandler(final @NonNull ClickHandler<ChestPane> handler) {
             return new Builder(
                     this.transformsList,
+                    this.closeHandlerList,
                     this.rows,
                     this.title,
                     this.updates,
@@ -343,6 +389,7 @@ public final class ChestInterface implements
         public @NonNull Builder updates(final boolean updates, final int updateDelay) {
             return new Builder(
                     this.transformsList,
+                    this.closeHandlerList,
                     this.rows,
                     this.title,
                     updates,
@@ -362,6 +409,7 @@ public final class ChestInterface implements
                     this.rows,
                     this.title,
                     this.transformsList,
+                    this.closeHandlerList,
                     this.updates,
                     this.updateDelay,
                     this.clickHandler
