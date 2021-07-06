@@ -15,6 +15,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.UpdatingInterface;
 import org.incendo.interfaces.core.view.InterfaceView;
+import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.InventoryView;
@@ -72,12 +73,18 @@ public class PaperInterfaceListeners implements Listener {
             if (view.parent() instanceof UpdatingInterface) {
                 UpdatingInterface updatingInterface = (UpdatingInterface) view.parent();
                 if (updatingInterface.updates()) {
-                    new BukkitRunnable() {
+                    BukkitRunnable runnable = new BukkitRunnable() {
                         @Override
                         public void run() {
                             view.update();
                         }
-                    }.runTaskLater(this.plugin, updatingInterface.updateDelay());
+                    };
+
+                    if (view instanceof SelfUpdatingInterfaceView) {
+                        runnable.runTaskTimer(this.plugin, updatingInterface.updateDelay(), updatingInterface.updateDelay());
+                    } else {
+                        runnable.runTaskLater(this.plugin, updatingInterface.updateDelay());
+                    }
                 }
             }
         }

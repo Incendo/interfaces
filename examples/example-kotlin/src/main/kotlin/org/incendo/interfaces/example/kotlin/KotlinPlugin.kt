@@ -1,5 +1,6 @@
 package org.incendo.interfaces.example.kotlin
 
+import kotlin.random.Random
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.format.NamedTextColor
@@ -16,6 +17,7 @@ import org.incendo.interfaces.kotlin.paper.asElement
 import org.incendo.interfaces.kotlin.paper.buildChestInterface
 import org.incendo.interfaces.kotlin.paper.open
 import org.incendo.interfaces.paper.PaperInterfaceListeners
+import org.incendo.interfaces.paper.transform.PaperTransform
 import org.incendo.interfaces.paper.type.ChestInterface
 
 @Suppress("unused")
@@ -56,11 +58,16 @@ public class KotlinPlugin : JavaPlugin() {
                                 .append(text(event.slot.toString(), NamedTextColor.GOLD)))
                     })
 
+                addTransform(
+                    PaperTransform.chestFill(createItemStack(Material.DIRT, text("")).asElement()))
+
                 withTransform { view ->
                     for (column in 0 until CHEST_COLUMNS) {
                         for (row in 0 until CHEST_ROWS) {
-                            view[column, row] =
-                                createItemStack(LEAVES.random(), text("background")).asElement()
+                            if (Random.nextInt(5) == 3) {
+                                view[column, row] =
+                                    createItemStack(LEAVES.random(), text("background")).asElement()
+                            }
                         }
                     }
                 }
@@ -72,6 +79,7 @@ public class KotlinPlugin : JavaPlugin() {
                     // Create an item stack element with the player's name.
                     val element =
                         createItemStack(Material.PAPER, text(name)).asElement { event, clickView ->
+                            println(1)
                             counterX += 1
                             if (counterX == CHEST_COLUMNS) {
                                 counterX = 0

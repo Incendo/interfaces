@@ -4,6 +4,8 @@ import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.element.Element;
 
+import java.util.Objects;
+
 /**
  * An element containing a piece of text.
  */
@@ -39,5 +41,21 @@ public class TextElement implements Element {
         return this.text;
     }
 
+    @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        TextElement that = (TextElement) o;
+        return this.text.equals(that.text);
+    }
+
+    @Override
+    public final int hashCode() {
+        return Objects.hash(this.text);
+    }
 
 }

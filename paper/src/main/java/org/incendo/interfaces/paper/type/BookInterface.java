@@ -21,8 +21,7 @@ import java.util.List;
 public final class BookInterface implements TitledInterface<BookPane, PlayerViewer> {
 
     private final @NonNull List<Transform<BookPane>> transforms;
-    private @NonNull
-    final Component title;
+    private final @NonNull Component title;
 
     /**
      * Constructs {@code BookInterface}.
@@ -126,7 +125,7 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
             @NonNull final InterfaceArgument arguments,
             @NonNull final Component title
     ) {
-        final @NonNull BookView view = new BookView(this, (PlayerViewer) viewer, arguments, title);
+        final @NonNull BookView view = new BookView(this, viewer, arguments, title);
 
         view.open();
 
