@@ -90,7 +90,20 @@ public final class ChestView implements
      * @return the view
      */
     public @NonNull <T extends PlayerView<?>> T openChild(final @NonNull Interface<?, PlayerViewer> backing) {
-        final InterfaceView<?, PlayerViewer> view = backing.open(this.viewer, HashMapInterfaceArgument.empty());
+        return this.openChild(backing, HashMapInterfaceArgument.empty());
+    }
+
+
+    /**
+     * Opens a child interface.
+     *
+     * @param backing the backing interface
+     * @param <T> the type of view
+     * @return the view
+     */
+    public @NonNull <T extends PlayerView<?>> T openChild(final @NonNull Interface<?, PlayerViewer> backing,
+                                                          final @NonNull InterfaceArgument argument) {
+        final InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
 
         view.open();
 
