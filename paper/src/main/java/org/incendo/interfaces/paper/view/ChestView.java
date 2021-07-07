@@ -4,25 +4,32 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
+import org.incendo.interfaces.core.element.Element;
+import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The view of a Bukkit inventory-based interface.
  */
-public final class ChestView implements InventoryView<ChestPane> {
+public final class ChestView implements InventoryView<ChestPane>, SelfUpdatingInterfaceView {
 
     private final @NonNull PlayerViewer viewer;
     private final @NonNull ChestInterface parent;
     private final @NonNull Inventory inventory;
     private final @NonNull InterfaceArgument argument;
-    private final @NonNull ChestPane pane;
     private final @NonNull Component title;
+    private @NonNull ChestPane pane;
+
+    private final @NonNull Map<Integer, Element> current = new HashMap<>();
 
     /**
      * Constructs {@code InventoryInterfaceView}.
@@ -42,14 +49,7 @@ public final class ChestView implements InventoryView<ChestPane> {
         this.parent = parent;
         this.argument = argument;
         this.title = title;
-
-        @NonNull ChestPane pane = new ChestPane(parent.rows());
-
-        for (final var transform : this.parent.transformations()) {
-            pane = transform.apply(pane, this);
-        }
-
-        this.pane = pane;
+        this.pane = this.updatePane();
 
         this.inventory = this.createInventory();
     }
@@ -75,6 +75,16 @@ public final class ChestView implements InventoryView<ChestPane> {
         return y * 9 + x;
     }
 
+    private @NonNull ChestPane updatePane() {
+        @NonNull ChestPane pane = new ChestPane(this.parent.rows());
+
+        for (final var transform : this.parent.transformations()) {
+            pane = transform.apply(pane, this);
+        }
+
+        return pane;
+    }
+
     /**
      * Creates the Bukkit inventory.
      *
@@ -93,11 +103,33 @@ public final class ChestView implements InventoryView<ChestPane> {
             for (int y = 0; y < this.parent.rows(); y++) {
                 final @NonNull ItemStackElement element = elements.get(x).get(y);
 
+                this.current.put(gridToSlot(x, y), element);
                 inventory.setItem(gridToSlot(x, y), element.itemStack());
             }
         }
 
         return inventory;
+    }
+
+    @Override
+    public void update() {
+        this.pane = this.updatePane();
+
+        final @NonNull List<List<ItemStackElement>> elements = this.pane.chestElements();
+
+        for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
+            for (int y = 0; y < this.parent.rows(); y++) {
+                final @Nullable Element currentElement = this.current.get(gridToSlot(x, y));
+                final @NonNull ItemStackElement element = elements.get(x).get(y);
+
+                if (element.equals(currentElement)) {
+                    continue;
+                }
+
+                this.current.put(gridToSlot(x, y), element);
+                this.inventory.setItem(gridToSlot(x, y), element.itemStack());
+            }
+        }
     }
 
     /**

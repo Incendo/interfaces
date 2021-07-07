@@ -6,6 +6,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.paper.pane.ChestPane;
 
+import java.util.Objects;
+
 /**
  * Holds an {@link ItemStack} in an element.
  *
@@ -90,6 +92,23 @@ public class ItemStackElement implements Element {
      */
     public @NonNull ClickHandler handler() {
         return this.handler;
+    }
+
+    @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ItemStackElement that = (ItemStackElement) o;
+        return this.itemStack.equals(that.itemStack);
+    }
+
+    @Override
+    public final int hashCode() {
+        return Objects.hash(this.itemStack);
     }
 
 }
