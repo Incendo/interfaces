@@ -165,11 +165,11 @@ public final class ChestView implements
                 this.title
         );
 
-        final @NonNull List<List<ItemStackElement>> elements = this.pane.chestElements();
+        final @NonNull List<List<ItemStackElement<ChestPane>>> elements = this.pane.chestElements();
 
         for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
             for (int y = 0; y < this.backing.rows(); y++) {
-                final @NonNull ItemStackElement element = elements.get(x).get(y);
+                final @NonNull ItemStackElement<ChestPane> element = elements.get(x).get(y);
 
                 inventory.setItem(PaperUtils.gridToSlot(x, y), element.itemStack());
             }
