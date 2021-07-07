@@ -4,17 +4,19 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.element.Element;
+import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.paper.pane.ChestPane;
+import org.incendo.interfaces.paper.type.Clickable;
 
 /**
  * Holds an {@link ItemStack} in an element.
  *
  * @see ChestPane
  */
-public class ItemStackElement implements Element {
+public class ItemStackElement<T extends Pane> implements Element, Clickable<T> {
 
     private final @NonNull ItemStack itemStack;
-    private final @NonNull ClickHandler handler;
+    private final @NonNull ClickHandler<T> handler;
 
     /**
      * Constructs {@code ItemStackElement}.
@@ -35,7 +37,7 @@ public class ItemStackElement implements Element {
      */
     public ItemStackElement(
             final @NonNull ItemStack itemStack,
-            final @NonNull ClickHandler clickHandler
+            final @NonNull ClickHandler<T> clickHandler
     ) {
         this.itemStack = itemStack;
         this.handler = clickHandler;
@@ -46,8 +48,8 @@ public class ItemStackElement implements Element {
      *
      * @return an empty {@code ItemStackElement}.
      */
-    public static @NonNull ItemStackElement empty() {
-        return new ItemStackElement(new ItemStack(Material.AIR));
+    public static <T extends Pane> @NonNull ItemStackElement<T> empty() {
+        return new ItemStackElement<T>(new ItemStack(Material.AIR));
     }
 
     /**
@@ -56,8 +58,8 @@ public class ItemStackElement implements Element {
      * @param itemStack the ItemStack
      * @return the element
      */
-    public static @NonNull ItemStackElement of(final @NonNull ItemStack itemStack) {
-        return new ItemStackElement(itemStack);
+    public static <T extends Pane> @NonNull ItemStackElement<T> of(final @NonNull ItemStack itemStack) {
+        return new ItemStackElement<T>(itemStack);
     }
 
     /**
@@ -67,11 +69,11 @@ public class ItemStackElement implements Element {
      * @param handler   the handler
      * @return the element
      */
-    public static @NonNull ItemStackElement of(
+    public static <T extends Pane> @NonNull ItemStackElement<T> of(
             final @NonNull ItemStack itemStack,
-            final @NonNull ClickHandler handler
+            final @NonNull ClickHandler<T> handler
     ) {
-        return new ItemStackElement(itemStack, handler);
+        return new ItemStackElement<T>(itemStack, handler);
     }
 
     /**
@@ -88,7 +90,7 @@ public class ItemStackElement implements Element {
      *
      * @return the click handler
      */
-    public @NonNull ClickHandler handler() {
+    public @NonNull ClickHandler<T> clickHandler() {
         return this.handler;
     }
 
