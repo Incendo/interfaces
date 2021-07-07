@@ -9,7 +9,6 @@ import org.incendo.interfaces.paper.PlayerViewer
 import org.incendo.interfaces.paper.element.ClickHandler
 import org.incendo.interfaces.paper.pane.ChestPane
 import org.incendo.interfaces.paper.type.ChestInterface
-import org.incendo.interfaces.paper.view.ChestView
 import org.incendo.interfaces.paper.view.PlayerView
 
 @Suppress("unused")
@@ -82,7 +81,8 @@ public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
         transform: (ChestPane, InterfaceView<ChestPane, PlayerViewer>) -> ChestPane
     ): Unit = mutate {
         internalBuilder.addTransform(
-            transform as (ChestPane, InterfaceView<ChestPane, *>) -> ChestPane)
+            transform as (ChestPane, InterfaceView<ChestPane, *>) -> ChestPane
+        )
     }
 
     /**

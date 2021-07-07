@@ -2,7 +2,6 @@ package org.incendo.interfaces.kotlin
 
 import org.incendo.interfaces.core.pane.Pane
 import org.incendo.interfaces.paper.element.ClickHandler
-import org.incendo.interfaces.paper.view.PlayerView
 
 public interface MutableInterfaceBuilder<T : Pane> {
 
@@ -14,6 +13,6 @@ public interface MutableInterfaceBuilder<T : Pane> {
      * @return the handler
      */
     public fun canceling(
-        clickHandler: ClickHandler<T> = ClickHandler { _, _ -> }
+            clickHandler: ClickHandler<T> = ClickHandler { _, _ -> }
     ): ClickHandler<T> = ClickHandler.canceling(clickHandler)
 }
