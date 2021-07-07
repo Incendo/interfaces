@@ -23,7 +23,9 @@ import org.incendo.interfaces.paper.type.CloseHandler;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.InventoryView;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -34,6 +36,7 @@ import java.util.Set;
 public class PaperInterfaceListeners implements Listener {
 
     private final @NonNull Set<@NonNull InterfaceView<?, PlayerViewer>> openViews;
+    private final @NonNull Map<@NonNull SelfUpdatingInterfaceView, @NonNull Integer> updatingRunnables;
     private final @NonNull Plugin plugin;
 
     /**
@@ -43,6 +46,7 @@ public class PaperInterfaceListeners implements Listener {
      */
     public PaperInterfaceListeners(final @NonNull Plugin plugin) {
         this.openViews = new HashSet<>();
+        this.updatingRunnables = new HashMap<>();
         this.plugin = plugin;
     }
 
@@ -84,7 +88,9 @@ public class PaperInterfaceListeners implements Listener {
                     };
 
                     if (view instanceof SelfUpdatingInterfaceView) {
+                        SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
                         runnable.runTaskTimer(this.plugin, updatingInterface.updateDelay(), updatingInterface.updateDelay());
+                        this.updatingRunnables.put(selfUpdating, runnable.getTaskId());
                     } else {
                         runnable.runTaskLater(this.plugin, updatingInterface.updateDelay());
                     }
@@ -117,6 +123,13 @@ public class PaperInterfaceListeners implements Listener {
                 for (final CloseHandler<ChestPane> closeHandler : chestInterface.closeHandlers()) {
                     closeHandler.accept(event, inventoryView);
                 }
+            }
+
+            if (inventoryView instanceof SelfUpdatingInterfaceView) {
+                SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) inventoryView;
+
+                Bukkit.getScheduler().cancelTask(this.updatingRunnables.get(selfUpdating));
+                this.updatingRunnables.remove(selfUpdating);
             }
         }
     }
