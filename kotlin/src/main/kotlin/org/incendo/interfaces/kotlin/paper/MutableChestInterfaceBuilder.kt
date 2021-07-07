@@ -102,11 +102,15 @@ public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
      *
      * @param handler close handler to add
      */
-    @Suppress("unchecked_cast")
     public fun addCloseHandler(handler: CloseHandler<ChestPane>): Unit = mutate {
         internalBuilder.addCloseHandler(handler)
     }
 
+    /**
+     * Adds the given [handler] to the interface.
+     *
+     * @param handler close handler to add
+     */
     public fun withCloseHandler(handler: (InventoryCloseEvent, InventoryView<ChestPane>) -> Unit) {
         addCloseHandler(handler)
     }
