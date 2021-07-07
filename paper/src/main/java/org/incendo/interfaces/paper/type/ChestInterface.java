@@ -10,9 +10,7 @@ import org.incendo.interfaces.core.transform.Transform;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ClickHandler;
-import org.incendo.interfaces.paper.pane.BookPane;
 import org.incendo.interfaces.paper.pane.ChestPane;
-import org.incendo.interfaces.paper.view.BookView;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.PlayerView;
 
@@ -149,7 +147,7 @@ public final class ChestInterface implements
             @NonNull final InterfaceView<?, PlayerViewer> parent,
             @NonNull final InterfaceArgument arguments
     ) {
-        final @NonNull ChestView view = new ChestView((PlayerView<?>) parent, this, parent.viewer(), arguments, title);
+        final @NonNull ChestView view = new ChestView((PlayerView<?>) parent, this, parent.viewer(), arguments, this.title);
 
         view.open();
 

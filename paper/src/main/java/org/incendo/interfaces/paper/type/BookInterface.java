@@ -1,10 +1,7 @@
 package org.incendo.interfaces.paper.type;
 
-import java.util.Collections;
-
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
@@ -13,9 +10,9 @@ import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.pane.BookPane;
 import org.incendo.interfaces.paper.view.BookView;
-import org.incendo.interfaces.paper.view.PlayerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
