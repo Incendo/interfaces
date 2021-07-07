@@ -49,7 +49,7 @@ public final class ChestView implements InventoryView<ChestPane>, SelfUpdatingIn
         this.parent = parent;
         this.argument = argument;
         this.title = title;
-        this.pane = this.updatePane();
+        this.pane = this.updatePane(true);
 
         this.inventory = this.createInventory();
     }
@@ -75,11 +75,17 @@ public final class ChestView implements InventoryView<ChestPane>, SelfUpdatingIn
         return y * 9 + x;
     }
 
-    private @NonNull ChestPane updatePane() {
+    private @NonNull ChestPane updatePane(final boolean firstApply) {
         @NonNull ChestPane pane = new ChestPane(this.parent.rows());
 
         for (final var transform : this.parent.transformations()) {
-            pane = transform.apply(pane, this);
+            pane = transform.transform().apply(pane, this);
+
+            // If it's the first time we apply the transform, then
+            // we add update listeners to all the dependent properties
+            if (firstApply) {
+                transform.property().addListener((oldValue, newValue) -> this.update());
+            }
         }
 
         return pane;
@@ -113,7 +119,7 @@ public final class ChestView implements InventoryView<ChestPane>, SelfUpdatingIn
 
     @Override
     public void update() {
-        this.pane = this.updatePane();
+        this.pane = this.updatePane(false);
 
         final @NonNull List<List<ItemStackElement>> elements = this.pane.chestElements();
 

@@ -7,7 +7,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
+import org.incendo.interfaces.core.transform.InterfaceProperty;
 import org.incendo.interfaces.core.transform.Transform;
+import org.incendo.interfaces.core.transform.TransformContext;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.pane.BookPane;
 import org.incendo.interfaces.paper.view.BookView;
@@ -20,7 +22,7 @@ import java.util.List;
  */
 public final class BookInterface implements TitledInterface<BookPane, PlayerViewer> {
 
-    private final @NonNull List<Transform<BookPane>> transforms;
+    private final @NonNull List<TransformContext<?, BookPane>> transforms;
     private final @NonNull Component title;
 
     /**
@@ -35,7 +37,7 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
      *
      * @param transforms the transforms
      */
-    public BookInterface(final @NonNull List<Transform<BookPane>> transforms) {
+    public BookInterface(final @NonNull List<TransformContext<?, BookPane>> transforms) {
         this(transforms, Component.empty());
     }
 
@@ -46,7 +48,7 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
      * @param title      the title
      */
     public BookInterface(
-            final @NonNull List<Transform<BookPane>> transforms,
+            final @NonNull List<TransformContext<?, BookPane>> transforms,
             final @NonNull Component title
     ) {
         this.transforms = transforms;
@@ -70,7 +72,12 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
      */
     @Override
     public @NonNull BookInterface transform(final @NonNull Transform<BookPane> transform) {
-        this.transforms.add(transform);
+        this.transforms.add(
+                TransformContext.of(
+                        InterfaceProperty.dummy(),
+                        transform
+                )
+        );
 
         return this;
     }
@@ -81,7 +88,7 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
      * @return the list of transformations
      */
     @Override
-    public @NonNull List<Transform<BookPane>> transformations() {
+    public @NonNull List<TransformContext<?, BookPane>> transformations() {
         return List.copyOf(this.transforms);
     }
 
@@ -145,9 +152,9 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
     /**
      * A class that builds a book interface.
      */
-    public static class Builder implements Interface.Builder<BookPane, PlayerViewer, BookInterface> {
+    public static final class Builder implements Interface.Builder<BookPane, PlayerViewer, BookInterface> {
 
-        private final @NonNull List<@NonNull Transform<BookPane>> transforms;
+        private final @NonNull List<@NonNull TransformContext<?, BookPane>> transforms;
         private final @NonNull Component title;
 
         /**
@@ -159,7 +166,7 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
         }
 
         private Builder(
-                final @NonNull List<@NonNull Transform<BookPane>> transforms,
+                final @NonNull List<@NonNull TransformContext<?, BookPane>> transforms,
                 final @NonNull Component title
         ) {
             this.transforms = Collections.unmodifiableList(transforms);
@@ -174,8 +181,21 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
          */
         @Override
         public @NonNull Builder addTransform(final @NonNull Transform<BookPane> transform) {
-            final List<Transform<BookPane>> transforms = new ArrayList<>(this.transforms);
-            transforms.add(transform);
+            return this.addTransform(InterfaceProperty.dummy(), transform);
+        }
+
+        @Override
+        public <S> Builder addTransform(
+                @NonNull final InterfaceProperty<S> property,
+                @NonNull final Transform<BookPane> transform
+        ) {
+            final List<TransformContext<?, BookPane>> transforms = new ArrayList<>(this.transforms);
+            transforms.add(
+                    TransformContext.of(
+                            property,
+                            transform
+                    )
+            );
 
             return new Builder(transforms, this.title);
         }

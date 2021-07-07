@@ -11,11 +11,15 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
+import org.incendo.interfaces.core.transform.InterfaceProperty
 import org.incendo.interfaces.kotlin.argument
+import org.incendo.interfaces.kotlin.getValue
 import org.incendo.interfaces.kotlin.interfaceArgumentOf
 import org.incendo.interfaces.kotlin.paper.asElement
 import org.incendo.interfaces.kotlin.paper.buildChestInterface
 import org.incendo.interfaces.kotlin.paper.open
+import org.incendo.interfaces.kotlin.setValue
+import org.incendo.interfaces.kotlin.value
 import org.incendo.interfaces.paper.PaperInterfaceListeners
 import org.incendo.interfaces.paper.transform.PaperTransform
 import org.incendo.interfaces.paper.type.ChestInterface
@@ -35,12 +39,18 @@ public class KotlinPlugin : JavaPlugin() {
 
     private lateinit var exampleChest: ChestInterface
 
+    private var _dependentValue: InterfaceProperty<Long> = InterfaceProperty.of(0L)
+
     override fun onEnable() {
         // Register the command.
         getCommand("interfaces")?.setExecutor(InterfaceCommandHandler())
 
         // Register event listeners.
         PaperInterfaceListeners.install(this)
+
+        // Update the dependent value every time the server ticks.
+        var dependentValue: Long by _dependentValue
+        server.scheduler.runTaskTimer(this, Runnable { _dependentValue.value++ }, 1L, 1L)
 
         // Build a chest interface.
         exampleChest =
@@ -72,25 +82,26 @@ public class KotlinPlugin : JavaPlugin() {
                     }
                 }
 
-                withTransform { view ->
+                withTransform(_dependentValue) { view ->
                     // Extract the name argument.
                     val name: String = view.argument["name"] ?: return@withTransform
 
                     // Create an item stack element with the player's name.
                     val element =
-                        createItemStack(Material.PAPER, text(name)).asElement { event, clickView ->
-                            println(1)
-                            counterX += 1
-                            if (counterX == CHEST_COLUMNS) {
-                                counterX = 0
-                                counterY += 1
+                        createItemStack(Material.PAPER, text("$name ($dependentValue ticks)"))
+                            .asElement { event, clickView ->
+                                println(1)
+                                counterX += 1
+                                if (counterX == CHEST_COLUMNS) {
+                                    counterX = 0
+                                    counterY += 1
 
-                                if (counterY == CHEST_ROWS) {
-                                    counterY = 0
+                                    if (counterY == CHEST_ROWS) {
+                                        counterY = 0
+                                    }
                                 }
+                                clickView.update()
                             }
-                            clickView.update()
-                        }
 
                     view[counterX, counterY] = element
                 }
