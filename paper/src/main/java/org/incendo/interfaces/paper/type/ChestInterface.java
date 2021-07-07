@@ -7,10 +7,14 @@ import org.incendo.interfaces.core.UpdatingInterface;
 import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
 import org.incendo.interfaces.core.transform.Transform;
+import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ClickHandler;
+import org.incendo.interfaces.paper.pane.BookPane;
 import org.incendo.interfaces.paper.pane.ChestPane;
+import org.incendo.interfaces.paper.view.BookView;
 import org.incendo.interfaces.paper.view.ChestView;
+import org.incendo.interfaces.paper.view.PlayerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -134,6 +138,18 @@ public final class ChestInterface implements
             final @NonNull Component title
     ) {
         final @NonNull ChestView view = new ChestView(this, viewer, arguments, title);
+
+        view.open();
+
+        return view;
+    }
+
+    @Override
+    public @NonNull ChestView open(
+            @NonNull final InterfaceView<?, PlayerViewer> parent,
+            @NonNull final InterfaceArgument arguments
+    ) {
+        final @NonNull ChestView view = new ChestView((PlayerView<?>) parent, this, parent.viewer(), arguments, title);
 
         view.open();
 

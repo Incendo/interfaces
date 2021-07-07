@@ -4,13 +4,16 @@ import java.util.Collections;
 
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
 import org.incendo.interfaces.core.transform.Transform;
+import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.pane.BookPane;
 import org.incendo.interfaces.paper.view.BookView;
+import org.incendo.interfaces.paper.view.PlayerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,11 +129,19 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
             @NonNull final InterfaceArgument arguments,
             @NonNull final Component title
     ) {
-        final @NonNull BookView view = new BookView(this, (PlayerViewer) viewer, arguments, title);
+        final @NonNull BookView view = new BookView(this, viewer, arguments, title);
 
         view.open();
 
         return view;
+    }
+
+    @Override
+    public @NonNull BookView open(
+            @NonNull final InterfaceView<?, PlayerViewer> view,
+            @NonNull final InterfaceArgument arguments
+    ) {
+        return this.open(view.viewer(), arguments);
     }
 
     /**
