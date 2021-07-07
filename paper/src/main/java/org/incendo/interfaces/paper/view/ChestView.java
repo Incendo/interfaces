@@ -86,7 +86,7 @@ public final class ChestView implements
      * Opens a child interface.
      *
      * @param backing the backing interface
-     * @param <T> the type of view
+     * @param <T>     the type of view
      * @return the view
      */
     public @NonNull <T extends PlayerView<?>> T openChild(final @NonNull Interface<?, PlayerViewer> backing) {
@@ -97,12 +97,15 @@ public final class ChestView implements
     /**
      * Opens a child interface.
      *
-     * @param backing the backing interface
-     * @param <T> the type of view
+     * @param backing  the backing interface
+     * @param argument the argument
+     * @param <T>      the type of view
      * @return the view
      */
-    public @NonNull <T extends PlayerView<?>> T openChild(final @NonNull Interface<?, PlayerViewer> backing,
-                                                          final @NonNull InterfaceArgument argument) {
+    public @NonNull <T extends PlayerView<?>> T openChild(
+            final @NonNull Interface<?, PlayerViewer> backing,
+            final @NonNull InterfaceArgument argument
+    ) {
         final InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
 
         view.open();
