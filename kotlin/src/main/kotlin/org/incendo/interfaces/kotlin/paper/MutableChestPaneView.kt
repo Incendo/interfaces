@@ -21,7 +21,8 @@ public class MutableChestPaneView(
      * @param y the y coordinate
      * @return the element
      */
-    public operator fun get(x: Int, y: Int): ItemStackElement = internalPane.element(x, y)
+    public operator fun get(x: Int, y: Int): ItemStackElement<ChestPane> =
+        internalPane.element(x, y)
 
     /**
      * Sets an element at the given position.
@@ -30,7 +31,7 @@ public class MutableChestPaneView(
      * @param y the y coordinate
      * @param element the element
      */
-    public operator fun set(x: Int, y: Int, element: ItemStackElement): Unit = mutate {
+    public operator fun set(x: Int, y: Int, element: ItemStackElement<ChestPane>): Unit = mutate {
         element(element, x, y)
     }
 

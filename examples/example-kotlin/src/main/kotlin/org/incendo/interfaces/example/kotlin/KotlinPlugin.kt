@@ -17,6 +17,7 @@ import org.incendo.interfaces.kotlin.paper.asElement
 import org.incendo.interfaces.kotlin.paper.buildChestInterface
 import org.incendo.interfaces.kotlin.paper.open
 import org.incendo.interfaces.paper.PaperInterfaceListeners
+import org.incendo.interfaces.paper.pane.ChestPane
 import org.incendo.interfaces.paper.type.ChestInterface
 
 @Suppress("unused")
@@ -71,7 +72,9 @@ public class KotlinPlugin : JavaPlugin() {
 
                     // Create an item stack element with the player's name.
                     val element =
-                        createItemStack(Material.PAPER, text(name)).asElement { event, clickView ->
+                        createItemStack(Material.PAPER, text(name)).asElement<ChestPane> {
+                            event,
+                            clickView ->
                             counterX += 1
                             if (counterX == CHEST_COLUMNS) {
                                 counterX = 0

@@ -11,6 +11,7 @@ import org.incendo.interfaces.paper.type.Clickable;
 /**
  * Holds an {@link ItemStack} in an element.
  *
+ * @param <T> the pane type
  * @see ChestPane
  */
 public class ItemStackElement<T extends Pane> implements Element, Clickable<T> {
@@ -46,20 +47,22 @@ public class ItemStackElement<T extends Pane> implements Element, Clickable<T> {
     /**
      * Returns an empty {@code ItemStackElement}.
      *
+     * @param <T> the pane type
      * @return an empty {@code ItemStackElement}.
      */
     public static <T extends Pane> @NonNull ItemStackElement<T> empty() {
-        return new ItemStackElement<T>(new ItemStack(Material.AIR));
+        return new ItemStackElement<>(new ItemStack(Material.AIR));
     }
 
     /**
      * Returns an {@code ItemStackElement} with the provided ItemStack.
      *
      * @param itemStack the ItemStack
+     * @param <T> the pane type
      * @return the element
      */
     public static <T extends Pane> @NonNull ItemStackElement<T> of(final @NonNull ItemStack itemStack) {
-        return new ItemStackElement<T>(itemStack);
+        return new ItemStackElement<>(itemStack);
     }
 
     /**
@@ -67,13 +70,14 @@ public class ItemStackElement<T extends Pane> implements Element, Clickable<T> {
      *
      * @param itemStack the ItemStack
      * @param handler   the handler
+     * @param <T> the pane type
      * @return the element
      */
     public static <T extends Pane> @NonNull ItemStackElement<T> of(
             final @NonNull ItemStack itemStack,
             final @NonNull ClickHandler<T> handler
     ) {
-        return new ItemStackElement<T>(itemStack, handler);
+        return new ItemStackElement<>(itemStack, handler);
     }
 
     /**

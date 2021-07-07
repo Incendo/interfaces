@@ -8,6 +8,8 @@ import org.incendo.interfaces.paper.element.ClickHandler;
  * Represents a clickable interface.
  * <p>
  * {@code clickHandler} will be called whenever the viewer clicks on the interface.
+ *
+ * @param <T> the pane type
  */
 public interface Clickable<T extends Pane> {
 

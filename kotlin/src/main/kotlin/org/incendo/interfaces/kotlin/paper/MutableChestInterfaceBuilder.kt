@@ -49,9 +49,10 @@ public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
      *
      * @param handler click handler
      */
-    public fun clickHandler(
-        handler: (InventoryClickEvent, PlayerView<ChestPane>) -> Unit
-    ): Unit = mutate { internalBuilder.clickHandler(handler) }
+    public fun clickHandler(handler: (InventoryClickEvent, PlayerView<ChestPane>) -> Unit): Unit =
+        mutate {
+        internalBuilder.clickHandler(handler)
+    }
 
     /**
      * Sets the click handler
@@ -81,8 +82,7 @@ public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
         transform: (ChestPane, InterfaceView<ChestPane, PlayerViewer>) -> ChestPane
     ): Unit = mutate {
         internalBuilder.addTransform(
-            transform as (ChestPane, InterfaceView<ChestPane, *>) -> ChestPane
-        )
+            transform as (ChestPane, InterfaceView<ChestPane, *>) -> ChestPane)
     }
 
     /**

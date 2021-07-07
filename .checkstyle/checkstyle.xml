@@ -64,6 +64,12 @@
         <property name="fileNamePattern" value="module\-info\.java$"/>
     </module>
 
+    <!-- https://checkstyle.org/config_filters.html#SuppressionFilter -->
+    <module name="SuppressionFilter">
+        <property name="file" value="${config_loc}/checkstyle-suppressions.xml"/>
+        <property name="optional" value="false"/>
+    </module>
+
     <!-- Checks that a package-info.java file exists for each package.     -->
     <!-- See https://checkstyle.org/config_javadoc.html#JavadocPackage -->
     <module name="JavadocPackage"/>

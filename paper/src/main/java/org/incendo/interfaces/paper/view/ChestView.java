@@ -99,9 +99,9 @@ public final class ChestView implements
 
     @Override
     public @NonNull PlayerView<?> back() {
-        if (hasParent()) {
-            parent.open();
-            return parent;
+        if (this.hasParent()) {
+            this.parent.open();
+            return this.parent;
         }
 
         throw new NullPointerException("The view has no parent");
