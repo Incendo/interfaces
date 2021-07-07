@@ -22,7 +22,7 @@ import java.util.List;
 public final class ChestInterface implements
         TitledInterface<ChestPane, PlayerViewer>,
         UpdatingInterface,
-        ClickableInterface {
+        Clickable {
 
     private final int rows;
     private final @NonNull List<Transform<ChestPane>> transformationList;
