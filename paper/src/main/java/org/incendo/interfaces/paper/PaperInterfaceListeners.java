@@ -15,11 +15,17 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.UpdatingInterface;
 import org.incendo.interfaces.core.view.InterfaceView;
+import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
 import org.incendo.interfaces.paper.element.ItemStackElement;
+import org.incendo.interfaces.paper.pane.ChestPane;
+import org.incendo.interfaces.paper.type.ChestInterface;
+import org.incendo.interfaces.paper.type.CloseHandler;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.PlayerView;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -30,6 +36,7 @@ import java.util.Set;
 public class PaperInterfaceListeners implements Listener {
 
     private final @NonNull Set<@NonNull InterfaceView<?, PlayerViewer>> openViews;
+    private final @NonNull Map<@NonNull SelfUpdatingInterfaceView, @NonNull Integer> updatingRunnables;
     private final @NonNull Plugin plugin;
 
     /**
@@ -39,6 +46,7 @@ public class PaperInterfaceListeners implements Listener {
      */
     public PaperInterfaceListeners(final @NonNull Plugin plugin) {
         this.openViews = new HashSet<>();
+        this.updatingRunnables = new HashMap<>();
         this.plugin = plugin;
     }
 
@@ -72,12 +80,20 @@ public class PaperInterfaceListeners implements Listener {
             if (view.backing() instanceof UpdatingInterface) {
                 UpdatingInterface updatingInterface = (UpdatingInterface) view.backing();
                 if (updatingInterface.updates()) {
-                    new BukkitRunnable() {
+                    BukkitRunnable runnable = new BukkitRunnable() {
                         @Override
                         public void run() {
                             view.update();
                         }
-                    }.runTaskLater(this.plugin, updatingInterface.updateDelay());
+                    };
+
+                    if (view instanceof SelfUpdatingInterfaceView) {
+                        SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
+                        runnable.runTaskTimer(this.plugin, updatingInterface.updateDelay(), updatingInterface.updateDelay());
+                        this.updatingRunnables.put(selfUpdating, runnable.getTaskId());
+                    } else {
+                        runnable.runTaskLater(this.plugin, updatingInterface.updateDelay());
+                    }
                 }
             }
         }
@@ -99,6 +115,22 @@ public class PaperInterfaceListeners implements Listener {
 
         if (holder instanceof PlayerView) {
             this.openViews.remove((PlayerView) holder);
+            PlayerView playerView = (PlayerView) holder;
+
+            if (playerView.backing() instanceof ChestInterface) {
+                ChestInterface chestInterface = (ChestInterface) playerView.backing();
+
+                for (final CloseHandler<ChestPane> closeHandler : chestInterface.closeHandlers()) {
+                    closeHandler.accept(event, playerView);
+                }
+            }
+
+            if (playerView instanceof SelfUpdatingInterfaceView) {
+                SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) playerView;
+
+                Bukkit.getScheduler().cancelTask(this.updatingRunnables.get(selfUpdating));
+                this.updatingRunnables.remove(selfUpdating);
+            }
         }
     }
 

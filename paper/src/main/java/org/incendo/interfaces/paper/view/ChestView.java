@@ -9,19 +9,24 @@ import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
 import org.incendo.interfaces.core.view.InterfaceView;
+import org.incendo.interfaces.core.element.Element;
+import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
 import org.incendo.interfaces.paper.utils.PaperUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The view of a chest.
  */
 public final class ChestView implements
         PlayerView<ChestPane>,
+        SelfUpdatingInterfaceView,
         ChildView {
 
     private final @NonNull PlayerViewer viewer;
@@ -29,8 +34,10 @@ public final class ChestView implements
     private final @Nullable PlayerView<?> parent;
     private final @NonNull Inventory inventory;
     private final @NonNull InterfaceArgument argument;
-    private final @NonNull ChestPane pane;
     private final @NonNull Component title;
+    private @NonNull ChestPane pane;
+
+    private final @NonNull Map<Integer, Element> current = new HashMap<>();
 
     /**
      * Constructs {@code ChestView}.
@@ -70,14 +77,7 @@ public final class ChestView implements
         this.backing = backing;
         this.argument = argument;
         this.title = title;
-
-        @NonNull ChestPane pane = new ChestPane(this.backing.rows());
-
-        for (final var transform : this.backing.transformations()) {
-            pane = transform.apply(pane, this);
-        }
-
-        this.pane = pane;
+        this.pane = this.updatePane();
 
         this.inventory = this.createInventory();
     }
@@ -93,6 +93,16 @@ public final class ChestView implements
         return this.openChild(backing, HashMapInterfaceArgument.empty());
     }
 
+
+    private @NonNull ChestPane updatePane() {
+        @NonNull ChestPane pane = new ChestPane(this.backing.rows());
+
+        for (final var transform : this.backing.transformations()) {
+            pane = transform.apply(pane, this);
+        }
+
+        return pane;
+    }
 
     /**
      * Opens a child interface.
@@ -123,6 +133,32 @@ public final class ChestView implements
         throw new NullPointerException("The view has no parent");
     }
 
+    @Override
+    public void update() {
+        this.pane = this.updatePane();
+
+        final @NonNull List<List<ItemStackElement<ChestPane>>> elements = this.pane.chestElements();
+
+        for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
+            for (int y = 0; y < this.backing.rows(); y++) {
+                final @Nullable Element currentElement = this.current.get(PaperUtils.gridToSlot(x, y));
+                final @NonNull ItemStackElement<ChestPane> element = elements.get(x).get(y);
+
+                if (element.equals(currentElement)) {
+                    continue;
+                }
+
+                this.current.put(PaperUtils.gridToSlot(x, y), element);
+                this.inventory.setItem(PaperUtils.gridToSlot(x, y), element.itemStack());
+            }
+        }
+    }
+
+    /**
+     * Returns the parent.
+     *
+     * @return the parent
+     */
     @Override
     public boolean hasParent() {
         return this.parent != null;
@@ -187,6 +223,7 @@ public final class ChestView implements
             for (int y = 0; y < this.backing.rows(); y++) {
                 final @NonNull ItemStackElement<ChestPane> element = elements.get(x).get(y);
 
+                this.current.put(PaperUtils.gridToSlot(x, y), element);
                 inventory.setItem(PaperUtils.gridToSlot(x, y), element.itemStack());
             }
         }

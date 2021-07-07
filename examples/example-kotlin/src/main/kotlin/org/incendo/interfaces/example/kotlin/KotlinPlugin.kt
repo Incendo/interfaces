@@ -1,5 +1,6 @@
 package org.incendo.interfaces.example.kotlin
 
+import kotlin.random.Random
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.format.NamedTextColor
@@ -18,6 +19,7 @@ import org.incendo.interfaces.kotlin.paper.buildChestInterface
 import org.incendo.interfaces.kotlin.paper.open
 import org.incendo.interfaces.paper.PaperInterfaceListeners
 import org.incendo.interfaces.paper.pane.ChestPane
+import org.incendo.interfaces.paper.transform.PaperTransform
 import org.incendo.interfaces.paper.type.ChestInterface
 
 @Suppress("unused")
@@ -57,11 +59,18 @@ public class KotlinPlugin : JavaPlugin() {
                             text("You clicked ", NamedTextColor.GRAY)
                                 .append(text(event.slot.toString(), NamedTextColor.GOLD)))
                     })
+
+                addTransform(
+                    PaperTransform.chestFill(
+                        createItemStack(Material.DIRT, text("")).asElement<ChestPane>()))
+
                 withTransform { view ->
                     for (column in 0 until CHEST_COLUMNS) {
                         for (row in 0 until CHEST_ROWS) {
-                            view[column, row] =
-                                createItemStack(LEAVES.random(), text("background")).asElement()
+                            if (Random.nextInt(5) == 3) {
+                                view[column, row] =
+                                    createItemStack(LEAVES.random(), text("background")).asElement()
+                            }
                         }
                     }
                 }
@@ -89,6 +98,8 @@ public class KotlinPlugin : JavaPlugin() {
 
                     view[counterX, counterY] = element
                 }
+
+                withCloseHandler { event, _ -> event.player.sendMessage(text("bye")) }
             }
     }
 

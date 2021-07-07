@@ -8,6 +8,8 @@ import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.Clickable;
 
+import java.util.Objects;
+
 /**
  * Holds an {@link ItemStack} in an element.
  *
@@ -96,6 +98,23 @@ public class ItemStackElement<T extends Pane> implements Element, Clickable<T> {
      */
     public @NonNull ClickHandler<T> clickHandler() {
         return this.handler;
+    }
+
+    @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ItemStackElement that = (ItemStackElement) o;
+        return this.itemStack.equals(that.itemStack);
+    }
+
+    @Override
+    public final int hashCode() {
+        return Objects.hash(this.itemStack);
     }
 
 }
