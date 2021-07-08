@@ -21,6 +21,24 @@ public class PaperClick implements Click  {
         this.event = event;
     }
 
+    /**
+     * Returns the underlying {@link ClickType}.
+     *
+     * @return the click type
+     */
+    public @NonNull ClickType type() {
+        return this.event.getClick();
+    }
+
+    /**
+     * Returns the backing event for this click.
+     *
+     * @return the event
+     */
+    public @NonNull InventoryClickEvent event() {
+        return this.event;
+    }
+
     @Override
     public boolean rightClick() {
         return this.event.isRightClick();
