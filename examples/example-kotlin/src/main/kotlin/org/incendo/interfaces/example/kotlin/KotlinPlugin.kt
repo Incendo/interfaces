@@ -69,7 +69,7 @@ public class KotlinPlugin : JavaPlugin() {
                     val displayElement =
                         createItemStack(Material.BLACK_CONCRETE, text("")).asElement<ChestPane>()
 
-                    for (x in 3 until CHEST_COLUMNS - 1) {
+                    for (x in 3 until CHEST_COLUMNS) {
                         for (y in 0 until CHEST_ROWS) {
                             view[x, y] = displayElement
                         }
@@ -90,7 +90,7 @@ public class KotlinPlugin : JavaPlugin() {
                     println("rendering selected option")
 
                     val displayElement =
-                        createItemStack(Material.WHITE_CONCRETE, text("")).asElement<ChestPane>()
+                        createItemStack(Material.LIME_CONCRETE, text("")).asElement<ChestPane>()
                     selectedOption.art.forEach { (x, y) -> view[x, y] = displayElement }
                 }
 
