@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.pane.Pane;
+import org.incendo.interfaces.paper.element.click.ClickHandler;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.Clickable;
 

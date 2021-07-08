@@ -1,7 +1,7 @@
 package org.incendo.interfaces.kotlin
 
 import org.incendo.interfaces.core.pane.Pane
-import org.incendo.interfaces.paper.element.ClickHandler
+import org.incendo.interfaces.paper.element.click.ClickHandler
 
 public interface MutableInterfaceBuilder<T : Pane> {
 

@@ -1,4 +1,4 @@
-package org.incendo.interfaces.paper.element;
+package org.incendo.interfaces.paper.element.click;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
