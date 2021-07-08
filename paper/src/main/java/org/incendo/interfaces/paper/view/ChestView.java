@@ -3,6 +3,8 @@ package org.incendo.interfaces.paper.view;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.Interface;
@@ -17,6 +19,8 @@ import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
 import org.incendo.interfaces.paper.utils.PaperUtils;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +43,7 @@ public final class ChestView implements
     private @NonNull ChestPane pane;
 
     private final @NonNull Map<Integer, Element> current = new HashMap<>();
+    private final Collection<Integer> tasks = new ArrayList<>();
 
     /**
      * Constructs {@code ChestView}.
@@ -241,6 +246,17 @@ public final class ChestView implements
     @Override
     public boolean updates() {
         return this.backing().updates();
+    }
+
+    @Override
+    public void addTask(final @NonNull Plugin plugin, final @NonNull Runnable runnable, final int delay) {
+        BukkitTask bukkitTask = Bukkit.getScheduler().runTaskLater(plugin, runnable, delay);
+        this.tasks.add(bukkitTask.getTaskId());
+    }
+
+    @Override
+    public Collection<Integer> taskIds() {
+        return this.tasks;
     }
 
 }

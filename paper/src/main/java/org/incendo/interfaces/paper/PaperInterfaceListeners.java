@@ -23,6 +23,7 @@ import org.incendo.interfaces.paper.type.ChestInterface;
 import org.incendo.interfaces.paper.type.CloseHandler;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.PlayerView;
+import org.incendo.interfaces.paper.view.TaskableView;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -127,14 +128,22 @@ public class PaperInterfaceListeners implements Listener {
                     closeHandler.accept(event, (PlayerView<ChestPane>) playerView);
                 }
             }
+        }
 
-            if (playerView instanceof SelfUpdatingInterfaceView) {
-                final SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) playerView;
+        if (holder instanceof SelfUpdatingInterfaceView) {
+            SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) holder;
 
-                if (selfUpdating.updates()) {
-                    Bukkit.getScheduler().cancelTask(this.updatingRunnables.get(selfUpdating));
-                    this.updatingRunnables.remove(selfUpdating);
-                }
+            if (selfUpdating.updates()) {
+                Bukkit.getScheduler().cancelTask(this.updatingRunnables.get(selfUpdating));
+                this.updatingRunnables.remove(selfUpdating);
+            }
+        }
+
+        if (holder instanceof TaskableView) {
+            TaskableView taskableView = (TaskableView) holder;
+
+            for (final Integer task : taskableView.taskIds()) {
+                Bukkit.getScheduler().cancelTask(task);
             }
         }
     }
