@@ -3,7 +3,9 @@ package org.incendo.interfaces.core;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
 import org.incendo.interfaces.core.pane.Pane;
+import org.incendo.interfaces.core.transform.InterfaceProperty;
 import org.incendo.interfaces.core.transform.Transform;
+import org.incendo.interfaces.core.transform.TransformContext;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.InterfaceViewer;
 
@@ -33,7 +35,7 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
      *
      * @return the transformations
      */
-    @NonNull List<Transform<T>> transformations();
+    @NonNull List<TransformContext<?, T>> transformations();
 
     /**
      * Opens this interface to the viewer.
@@ -77,6 +79,11 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
     interface Builder<T extends Pane, U extends InterfaceViewer, V extends Interface<T, U>> {
 
         Builder<T, U, V> addTransform(@NonNull Transform<T> transform);
+
+        <S> Builder<T, U, V> addTransform(
+                @NonNull InterfaceProperty<S> property,
+                @NonNull Transform<T> transform
+        );
 
         /**
          * Builds the interface and returns it.

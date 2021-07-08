@@ -3,6 +3,7 @@ package org.incendo.interfaces.kotlin.paper
 import net.kyori.adventure.text.Component
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.incendo.interfaces.core.transform.InterfaceProperty
 import org.incendo.interfaces.core.transform.Transform
 import org.incendo.interfaces.core.view.InterfaceView
 import org.incendo.interfaces.kotlin.MutableInterfaceBuilder
@@ -81,10 +82,11 @@ public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
      */
     @Suppress("unchecked_cast")
     public fun addTransform(
+        property: InterfaceProperty<*> = InterfaceProperty.dummy(),
         transform: (ChestPane, InterfaceView<ChestPane, PlayerViewer>) -> ChestPane
     ): Unit = mutate {
         internalBuilder.addTransform(
-            transform as (ChestPane, InterfaceView<ChestPane, *>) -> ChestPane)
+            property, transform as (ChestPane, InterfaceView<ChestPane, *>) -> ChestPane)
     }
 
     /**
@@ -92,8 +94,11 @@ public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
      *
      * @param transform transform to add
      */
-    public fun withTransform(transform: (MutableChestPaneView) -> Unit) {
-        addTransform { chestPane, interfaceView ->
+    public fun withTransform(
+        property: InterfaceProperty<*> = InterfaceProperty.dummy(),
+        transform: (MutableChestPaneView) -> Unit
+    ) {
+        addTransform(property) { chestPane, interfaceView ->
             MutableChestPaneView(chestPane, interfaceView).also(transform).toChestPane()
         }
     }

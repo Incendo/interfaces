@@ -6,7 +6,9 @@ import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.UpdatingInterface;
 import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
+import org.incendo.interfaces.core.transform.InterfaceProperty;
 import org.incendo.interfaces.core.transform.Transform;
+import org.incendo.interfaces.core.transform.TransformContext;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ClickHandler;
@@ -24,10 +26,10 @@ import java.util.List;
 public final class ChestInterface implements
         TitledInterface<ChestPane, PlayerViewer>,
         UpdatingInterface,
-        Clickable {
+        Clickable<ChestPane>  {
 
     private final int rows;
-    private final @NonNull List<Transform<ChestPane>> transformationList;
+    private final @NonNull List<TransformContext<?, ChestPane>> transformationList;
     private final @NonNull List<CloseHandler<ChestPane>> closeHandlerList;
     private final @NonNull Component title;
     private final boolean updates;
@@ -48,7 +50,7 @@ public final class ChestInterface implements
     public ChestInterface(
             final int rows,
             final @NonNull Component title,
-            final @NonNull List<Transform<ChestPane>> transforms,
+            final @NonNull List<TransformContext<?, ChestPane>> transforms,
             final @NonNull List<CloseHandler<ChestPane>> closeHandlers,
             final boolean updates,
             final int updateDelay,
@@ -98,7 +100,12 @@ public final class ChestInterface implements
      */
     @Override
     public @NonNull ChestInterface transform(final @NonNull Transform<ChestPane> transform) {
-        this.transformationList.add(transform);
+        this.transformationList.add(
+                TransformContext.of(
+                        InterfaceProperty.dummy(),
+                        transform
+                )
+        );
         return this;
     }
 
@@ -108,7 +115,7 @@ public final class ChestInterface implements
      * @return the transformations
      */
     @Override
-    public @NonNull List<Transform<ChestPane>> transformations() {
+    public @NonNull List<TransformContext<?, ChestPane>> transformations() {
         return List.copyOf(this.transformationList);
     }
 
@@ -201,12 +208,12 @@ public final class ChestInterface implements
     /**
      * A class that builds a chest interface.
      */
-    public static class Builder implements Interface.Builder<ChestPane, PlayerViewer, ChestInterface> {
+    public static final class Builder implements Interface.Builder<ChestPane, PlayerViewer, ChestInterface> {
 
         /**
          * The list of transformations.
          */
-        private final @NonNull List<@NonNull Transform<ChestPane>> transformsList;
+        private final @NonNull List<@NonNull TransformContext<?, ChestPane>> transformsList;
 
         /**
          * The list of close handlers.
@@ -252,7 +259,7 @@ public final class ChestInterface implements
         }
 
         private Builder(
-                @NonNull final List<Transform<ChestPane>> transformsList,
+                @NonNull final List<TransformContext<?, ChestPane>> transformsList,
                 @NonNull final List<CloseHandler<ChestPane>> closeHandlerList,
                 final int rows,
                 @NonNull final Component title,
@@ -351,9 +358,17 @@ public final class ChestInterface implements
          * @return new builder instance.
          */
         @Override
-        public @NonNull Builder addTransform(final @NonNull Transform<ChestPane> transform) {
-            final List<Transform<ChestPane>> transforms = new ArrayList<>(this.transformsList);
-            transforms.add(transform);
+        public @NonNull <T> Builder addTransform(
+                final @NonNull InterfaceProperty<T> property,
+                final @NonNull Transform<ChestPane> transform
+        ) {
+            final List<TransformContext<?, ChestPane>> transforms = new ArrayList<>(this.transformsList);
+            transforms.add(
+                    TransformContext.of(
+                            property,
+                            transform
+                    )
+            );
 
             return new Builder(
                     transforms,
@@ -364,6 +379,17 @@ public final class ChestInterface implements
                     this.updateDelay,
                     this.clickHandler
             );
+        }
+
+        /**
+         * Adds a transformation to the interface.
+         *
+         * @param transform the transformation
+         * @return new builder instance.
+         */
+        @Override
+        public @NonNull Builder addTransform(final @NonNull Transform<ChestPane> transform) {
+            return this.addTransform(InterfaceProperty.dummy(), transform);
         }
 
         /**

@@ -77,7 +77,7 @@ public final class ChestView implements
         this.backing = backing;
         this.argument = argument;
         this.title = title;
-        this.pane = this.updatePane();
+        this.pane = this.updatePane(true);
 
         this.inventory = this.createInventory();
     }
@@ -94,11 +94,17 @@ public final class ChestView implements
     }
 
 
-    private @NonNull ChestPane updatePane() {
+    private @NonNull ChestPane updatePane(final boolean firstApply) {
         @NonNull ChestPane pane = new ChestPane(this.backing.rows());
 
         for (final var transform : this.backing.transformations()) {
-            pane = transform.apply(pane, this);
+            pane = transform.transform().apply(pane, this);
+
+            // If it's the first time we apply the transform, then
+            // we add update listeners to all the dependent properties
+            if (firstApply) {
+                transform.property().addListener((oldValue, newValue) -> this.update());
+            }
         }
 
         return pane;
@@ -135,7 +141,7 @@ public final class ChestView implements
 
     @Override
     public void update() {
-        this.pane = this.updatePane();
+        this.pane = this.updatePane(false);
 
         final @NonNull List<List<ItemStackElement<ChestPane>>> elements = this.pane.chestElements();
 

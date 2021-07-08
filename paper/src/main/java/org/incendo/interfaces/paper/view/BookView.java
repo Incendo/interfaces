@@ -45,7 +45,7 @@ public final class BookView implements InterfaceView<BookPane, PlayerViewer> {
         @NonNull BookPane pane = new BookPane();
 
         for (final var transform : this.parent.transformations()) {
-            pane = transform.apply(pane, this);
+            pane = transform.transform().apply(pane, this);
         }
 
         this.pane = pane;
