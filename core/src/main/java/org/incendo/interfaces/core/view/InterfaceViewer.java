@@ -14,4 +14,9 @@ public interface InterfaceViewer {
      */
     void open(@NonNull InterfaceView<?, ?> pane);
 
+    /**
+     * Closes the open view, if any.
+     */
+    void close();
+
 }
