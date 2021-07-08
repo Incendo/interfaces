@@ -8,7 +8,7 @@ import org.incendo.interfaces.core.transform.Transform
 import org.incendo.interfaces.core.view.InterfaceView
 import org.incendo.interfaces.kotlin.MutableInterfaceBuilder
 import org.incendo.interfaces.paper.PlayerViewer
-import org.incendo.interfaces.paper.element.click.ClickHandler
+import org.incendo.interfaces.paper.click.ClickHandler
 import org.incendo.interfaces.paper.pane.ChestPane
 import org.incendo.interfaces.paper.type.ChestInterface
 import org.incendo.interfaces.paper.type.CloseHandler
