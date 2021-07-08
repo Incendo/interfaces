@@ -14,8 +14,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.UpdatingInterface;
+import org.incendo.interfaces.core.click.ClickContext;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
+import org.incendo.interfaces.paper.click.ChestClickContext;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
@@ -152,9 +154,11 @@ public class PaperInterfaceListeners implements Listener {
         }
 
         if (holder instanceof ChestView) {
+            final @NonNull ChestClickContext context = new ChestClickContext(event);
+
             ChestView chestView = (ChestView) holder;
             // Handle parent interface click event
-            chestView.backing().clickHandler().accept(event, chestView);
+            chestView.backing().clickHandler().accept(context);
 
             // Handle element click event
             if (event.getSlotType() == InventoryType.SlotType.CONTAINER) {
@@ -163,7 +167,7 @@ public class PaperInterfaceListeners implements Listener {
                 int y = slot / 9;
 
                 final @NonNull ItemStackElement element = chestView.pane().element(x, y);
-                element.clickHandler().accept(event, (PlayerView) chestView);
+                element.clickHandler().accept(context);
             }
         }
     }
