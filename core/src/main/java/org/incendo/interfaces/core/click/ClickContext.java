@@ -33,31 +33,9 @@ public interface ClickContext<T extends Pane> {
     @NonNull InterfaceView<T, ?> view();
 
     /**
-     * Returns true if this click was a left click.
+     * Returns the click associated with this context.
      *
-     * @return true if this click was a left click
+     * @return the click
      */
-    boolean leftClick();
-
-    /**
-     * Returns true if this click was a right click.
-     *
-     * @return true if this click was a right click
-     */
-    boolean rightClick();
-
-    /**
-     * Returns true if this click was a shift click.
-     *
-     * @return true if this click was a shift click
-     */
-    boolean shiftClick();
-
-    /**
-     * Returns true if this click was a middle click.
-     *
-     * @return true if this click was a middle click
-     */
-    boolean middleClick();
-
+    @NonNull Click click();
 }
