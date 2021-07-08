@@ -231,4 +231,9 @@ public final class ChestView implements
         return inventory;
     }
 
+    @Override
+    public boolean updates() {
+        return this.backing().updates();
+    }
+
 }

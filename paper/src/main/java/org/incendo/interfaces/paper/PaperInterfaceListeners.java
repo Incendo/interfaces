@@ -128,8 +128,10 @@ public class PaperInterfaceListeners implements Listener {
             if (playerView instanceof SelfUpdatingInterfaceView) {
                 SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) playerView;
 
-                Bukkit.getScheduler().cancelTask(this.updatingRunnables.get(selfUpdating));
-                this.updatingRunnables.remove(selfUpdating);
+                if (selfUpdating.updates()) {
+                    Bukkit.getScheduler().cancelTask(this.updatingRunnables.get(selfUpdating));
+                    this.updatingRunnables.remove(selfUpdating);
+                }
             }
         }
     }
