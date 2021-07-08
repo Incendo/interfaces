@@ -6,13 +6,14 @@ import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.paper.view.PlayerView;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * A function that handles a click event on an interface.
  *
- * @param <T> the pane type
+ * @param <T> the context type
  */
-public interface ClickHandler<T extends Pane> extends BiConsumer<InventoryClickEvent, PlayerView<T>> {
+public interface ClickHandler<T extends Pane> extends Consumer<ClickContext<T>> {
 
     /**
      * Returns a {@code ClickHandler} that cancels the event and then calls
@@ -23,10 +24,9 @@ public interface ClickHandler<T extends Pane> extends BiConsumer<InventoryClickE
      * @return the handler
      */
     static @NonNull <T extends Pane> ClickHandler<T> canceling(final @NonNull ClickHandler<T> clickHandler) {
-        return (event, view) -> {
-            event.setCancelled(true);
-
-            clickHandler.accept(event, view);
+        return (ctx) -> {
+            ctx.cancel(true);
+            clickHandler.accept(ctx);
         };
     }
 
@@ -37,7 +37,9 @@ public interface ClickHandler<T extends Pane> extends BiConsumer<InventoryClickE
      * @return the handler
      */
     static @NonNull <T extends Pane> ClickHandler<T> cancel() {
-        return (event, view) -> event.setCancelled(true);
+        return (ctx) -> {
+            ctx.cancel(true);
+        };
     }
 
 }
