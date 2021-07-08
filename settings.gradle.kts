@@ -15,6 +15,8 @@ fun interfacesProjects(vararg names: String) {
 }
 
 // Add the example modules.
+include("examples/example-java")
+project(":examples/example-java").name = "example-java"
 include("examples/example-kotlin")
 project(":examples/example-kotlin").name = "example-kotlin"
 

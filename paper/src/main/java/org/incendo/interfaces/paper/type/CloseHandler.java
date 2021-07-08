@@ -2,7 +2,7 @@ package org.incendo.interfaces.paper.type;
 
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.incendo.interfaces.core.pane.Pane;
-import org.incendo.interfaces.paper.view.InventoryView;
+import org.incendo.interfaces.paper.view.PlayerView;
 
 import java.util.function.BiConsumer;
 
@@ -11,6 +11,6 @@ import java.util.function.BiConsumer;
  *
  * @param <T> the pane type
  */
-public interface CloseHandler<T extends Pane> extends BiConsumer<InventoryCloseEvent, InventoryView<T>> {
+public interface CloseHandler<T extends Pane> extends BiConsumer<InventoryCloseEvent, PlayerView<T>> {
 
 }

@@ -11,7 +11,7 @@ import org.incendo.interfaces.paper.element.ClickHandler;
  *
  * @param <T> the pane type
  */
-public interface ClickableInterface<T extends Pane> {
+public interface Clickable<T extends Pane> {
 
     /**
      * Returns the top click handler.

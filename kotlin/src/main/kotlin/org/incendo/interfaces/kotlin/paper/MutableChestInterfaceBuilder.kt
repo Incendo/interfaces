@@ -12,7 +12,7 @@ import org.incendo.interfaces.paper.element.ClickHandler
 import org.incendo.interfaces.paper.pane.ChestPane
 import org.incendo.interfaces.paper.type.ChestInterface
 import org.incendo.interfaces.paper.type.CloseHandler
-import org.incendo.interfaces.paper.view.InventoryView
+import org.incendo.interfaces.paper.view.PlayerView
 
 @Suppress("unused")
 public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
@@ -52,9 +52,10 @@ public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
      *
      * @param handler click handler
      */
-    public fun clickHandler(
-        handler: (InventoryClickEvent, InventoryView<ChestPane>) -> Unit
-    ): Unit = mutate { internalBuilder.clickHandler(handler) }
+    public fun clickHandler(handler: (InventoryClickEvent, PlayerView<ChestPane>) -> Unit): Unit =
+        mutate {
+        internalBuilder.clickHandler(handler)
+    }
 
     /**
      * Sets the click handler
@@ -116,7 +117,7 @@ public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
      *
      * @param handler close handler to add
      */
-    public fun withCloseHandler(handler: (InventoryCloseEvent, InventoryView<ChestPane>) -> Unit) {
+    public fun withCloseHandler(handler: (InventoryCloseEvent, PlayerView<ChestPane>) -> Unit) {
         addCloseHandler(handler)
     }
     // </editor-fold>

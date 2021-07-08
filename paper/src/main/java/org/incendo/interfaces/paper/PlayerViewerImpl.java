@@ -25,7 +25,7 @@ final class PlayerViewerImpl implements PlayerViewer {
      * @param chestView the chest view
      */
     private void openChestView(final @NonNull ChestView chestView) {
-        this.player.openInventory(chestView.inventory());
+        this.player.openInventory(chestView.getInventory());
     }
 
     /**

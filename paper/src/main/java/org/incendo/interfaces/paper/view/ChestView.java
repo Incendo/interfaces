@@ -5,25 +5,33 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.interfaces.core.Interface;
+import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
+import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
+import org.incendo.interfaces.paper.utils.PaperUtils;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * The view of a Bukkit inventory-based interface.
+ * The view of a chest.
  */
-public final class ChestView implements InventoryView<ChestPane>, SelfUpdatingInterfaceView {
+public final class ChestView implements
+        PlayerView<ChestPane>,
+        SelfUpdatingInterfaceView,
+        ChildView {
 
     private final @NonNull PlayerViewer viewer;
-    private final @NonNull ChestInterface parent;
+    private final @NonNull ChestInterface backing;
+    private final @Nullable PlayerView<?> parent;
     private final @NonNull Inventory inventory;
     private final @NonNull InterfaceArgument argument;
     private final @NonNull Component title;
@@ -32,21 +40,41 @@ public final class ChestView implements InventoryView<ChestPane>, SelfUpdatingIn
     private final @NonNull Map<Integer, Element> current = new HashMap<>();
 
     /**
-     * Constructs {@code InventoryInterfaceView}.
+     * Constructs {@code ChestView}.
      *
+     * @param backing  the backing interface
      * @param viewer   the viewer
-     * @param parent   the parent interface
      * @param argument the interface argument
      * @param title    the title
      */
     public ChestView(
-            final @NonNull ChestInterface parent,
+            final @NonNull ChestInterface backing,
             final @NonNull PlayerViewer viewer,
             final @NonNull InterfaceArgument argument,
             final @NonNull Component title
     ) {
-        this.viewer = viewer;
+        this(null, backing, viewer, argument, title);
+    }
+
+    /**
+     * Constructs {@code ChestView}.
+     *
+     * @param parent   the parent view
+     * @param backing  the backing interface
+     * @param viewer   the viewer
+     * @param argument the interface argument
+     * @param title    the title
+     */
+    public ChestView(
+            final @Nullable PlayerView<?> parent,
+            final @NonNull ChestInterface backing,
+            final @NonNull PlayerViewer viewer,
+            final @NonNull InterfaceArgument argument,
+            final @NonNull Component title
+    ) {
         this.parent = parent;
+        this.viewer = viewer;
+        this.backing = backing;
         this.argument = argument;
         this.title = title;
         this.pane = this.updatePane(true);
@@ -55,30 +83,21 @@ public final class ChestView implements InventoryView<ChestPane>, SelfUpdatingIn
     }
 
     /**
-     * Converts a Bukkit slot index to an x/y position.
+     * Opens a child interface.
      *
-     * @param slot the slot
-     * @return the x/y position
+     * @param backing the backing interface
+     * @param <T>     the type of view
+     * @return the view
      */
-    public static int[] slotToGrid(final int slot) {
-        return new int[]{slot % 9, slot / 9};
+    public @NonNull <T extends PlayerView<?>> T openChild(final @NonNull Interface<?, PlayerViewer> backing) {
+        return this.openChild(backing, HashMapInterfaceArgument.empty());
     }
 
-    /**
-     * Converts the x/y position to a Bukkit slot index.
-     *
-     * @param x the x position
-     * @param y the y position
-     * @return the slot
-     */
-    public static int gridToSlot(final int x, final int y) {
-        return y * 9 + x;
-    }
 
     private @NonNull ChestPane updatePane(final boolean firstApply) {
-        @NonNull ChestPane pane = new ChestPane(this.parent.rows());
+        @NonNull ChestPane pane = new ChestPane(this.backing.rows());
 
-        for (final var transform : this.parent.transformations()) {
+        for (final var transform : this.backing.transformations()) {
             pane = transform.transform().apply(pane, this);
 
             // If it's the first time we apply the transform, then
@@ -92,48 +111,51 @@ public final class ChestView implements InventoryView<ChestPane>, SelfUpdatingIn
     }
 
     /**
-     * Creates the Bukkit inventory.
+     * Opens a child interface.
      *
-     * @return the inventory
+     * @param backing  the backing interface
+     * @param argument the argument
+     * @param <T>      the type of view
+     * @return the view
      */
-    private @NonNull Inventory createInventory() {
-        final @NonNull Inventory inventory = Bukkit.createInventory(
-                this,
-                this.parent.rows() * 9,
-                this.title
-        );
+    public @NonNull <T extends PlayerView<?>> T openChild(
+            final @NonNull Interface<?, PlayerViewer> backing,
+            final @NonNull InterfaceArgument argument
+    ) {
+        final InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
 
-        final @NonNull List<List<ItemStackElement>> elements = this.pane.chestElements();
+        view.open();
 
-        for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
-            for (int y = 0; y < this.parent.rows(); y++) {
-                final @NonNull ItemStackElement element = elements.get(x).get(y);
+        return (T) view;
+    }
 
-                this.current.put(gridToSlot(x, y), element);
-                inventory.setItem(gridToSlot(x, y), element.itemStack());
-            }
+    @Override
+    public @NonNull PlayerView<?> back() {
+        if (this.hasParent()) {
+            this.parent.open();
+            return this.parent;
         }
 
-        return inventory;
+        throw new NullPointerException("The view has no parent");
     }
 
     @Override
     public void update() {
         this.pane = this.updatePane(false);
 
-        final @NonNull List<List<ItemStackElement>> elements = this.pane.chestElements();
+        final @NonNull List<List<ItemStackElement<ChestPane>>> elements = this.pane.chestElements();
 
         for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
-            for (int y = 0; y < this.parent.rows(); y++) {
-                final @Nullable Element currentElement = this.current.get(gridToSlot(x, y));
-                final @NonNull ItemStackElement element = elements.get(x).get(y);
+            for (int y = 0; y < this.backing.rows(); y++) {
+                final @Nullable Element currentElement = this.current.get(PaperUtils.gridToSlot(x, y));
+                final @NonNull ItemStackElement<ChestPane> element = elements.get(x).get(y);
 
                 if (element.equals(currentElement)) {
                     continue;
                 }
 
-                this.current.put(gridToSlot(x, y), element);
-                this.inventory.setItem(gridToSlot(x, y), element.itemStack());
+                this.current.put(PaperUtils.gridToSlot(x, y), element);
+                this.inventory.setItem(PaperUtils.gridToSlot(x, y), element.itemStack());
             }
         }
     }
@@ -144,75 +166,75 @@ public final class ChestView implements InventoryView<ChestPane>, SelfUpdatingIn
      * @return the parent
      */
     @Override
-    public @NonNull ChestInterface parent() {
+    public boolean hasParent() {
+        return this.parent != null;
+    }
+
+    @Override
+    public @Nullable PlayerView<?> parent() {
         return this.parent;
     }
 
-    /**
-     * Returns the viewer.
-     *
-     * @return the viewer
-     */
+
+    @Override
+    public @NonNull ChestInterface backing() {
+        return this.backing;
+    }
+
     @Override
     public @NonNull PlayerViewer viewer() {
         return this.viewer;
     }
 
-    /**
-     * Returns true if {@link #viewer()} is viewing this view, false if not.
-     *
-     * @return true if {@link #viewer()} is viewing this view, false if not
-     */
     @Override
     public boolean viewing() {
         return this.inventory.getViewers().contains(this.viewer.player());
     }
 
-    /**
-     * Returns the argument provided to this view.
-     *
-     * @return the argument
-     */
     @Override
     public @NonNull InterfaceArgument argument() {
         return this.argument;
     }
 
-    /**
-     * Opens this view to the viewer.
-     */
     @Override
     public void open() {
         this.viewer.open(this);
     }
 
-    /**
-     * Returns this view's pane.
-     *
-     * @return the view's pane
-     */
     @Override
     public @NonNull ChestPane pane() {
         return this.pane;
     }
 
-    /**
-     * Returns the inventory of this view.
-     *
-     * @return the inventory
-     */
+    @Override
     public @NonNull Inventory getInventory() {
         return this.inventory;
     }
 
     /**
-     * Returns the inventory of this view.
+     * Creates the Bukkit inventory.
      *
      * @return the inventory
      */
-    @Override
-    public @NonNull Inventory inventory() {
-        return this.inventory;
+    private @NonNull Inventory createInventory() {
+        final @NonNull Inventory inventory = Bukkit.createInventory(
+                this,
+                this.backing.rows() * 9,
+                this.title
+        );
+
+        final @NonNull List<List<ItemStackElement<ChestPane>>> elements = this.pane.chestElements();
+
+        for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
+            for (int y = 0; y < this.backing.rows(); y++) {
+                final @NonNull ItemStackElement<ChestPane> element = elements.get(x).get(y);
+
+                this.current.put(PaperUtils.gridToSlot(x, y), element);
+                inventory.setItem(PaperUtils.gridToSlot(x, y), element.itemStack());
+            }
+        }
+
+        return inventory;
     }
 
 }

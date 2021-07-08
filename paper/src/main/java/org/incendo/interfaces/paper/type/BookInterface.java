@@ -1,7 +1,5 @@
 package org.incendo.interfaces.paper.type;
 
-import java.util.Collections;
-
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.Interface;
@@ -10,11 +8,13 @@ import org.incendo.interfaces.core.arguments.InterfaceArgument;
 import org.incendo.interfaces.core.transform.InterfaceProperty;
 import org.incendo.interfaces.core.transform.Transform;
 import org.incendo.interfaces.core.transform.TransformContext;
+import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.pane.BookPane;
 import org.incendo.interfaces.paper.view.BookView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -137,6 +137,14 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
         view.open();
 
         return view;
+    }
+
+    @Override
+    public @NonNull BookView open(
+            @NonNull final InterfaceView<?, PlayerViewer> view,
+            @NonNull final InterfaceArgument arguments
+    ) {
+        return this.open(view.viewer(), arguments);
     }
 
     /**

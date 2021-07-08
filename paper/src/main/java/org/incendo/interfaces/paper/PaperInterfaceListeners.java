@@ -21,7 +21,7 @@ import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
 import org.incendo.interfaces.paper.type.CloseHandler;
 import org.incendo.interfaces.paper.view.ChestView;
-import org.incendo.interfaces.paper.view.InventoryView;
+import org.incendo.interfaces.paper.view.PlayerView;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -73,12 +73,12 @@ public class PaperInterfaceListeners implements Listener {
             return;
         }
 
-        if (holder instanceof InventoryView) {
-            InventoryView<?> view = (InventoryView<?>) holder;
+        if (holder instanceof PlayerView) {
+            PlayerView<?> view = (PlayerView<?>) holder;
             this.openViews.add(view);
 
-            if (view.parent() instanceof UpdatingInterface) {
-                UpdatingInterface updatingInterface = (UpdatingInterface) view.parent();
+            if (view.backing() instanceof UpdatingInterface) {
+                UpdatingInterface updatingInterface = (UpdatingInterface) view.backing();
                 if (updatingInterface.updates()) {
                     BukkitRunnable runnable = new BukkitRunnable() {
                         @Override
@@ -113,20 +113,20 @@ public class PaperInterfaceListeners implements Listener {
             return;
         }
 
-        if (holder instanceof InventoryView) {
-            InventoryView inventoryView = (InventoryView) holder;
-            this.openViews.remove(inventoryView);
+        if (holder instanceof PlayerView) {
+            this.openViews.remove((PlayerView) holder);
+            PlayerView playerView = (PlayerView) holder;
 
-            if (inventoryView.parent() instanceof ChestInterface) {
-                ChestInterface chestInterface = (ChestInterface) inventoryView.parent();
+            if (playerView.backing() instanceof ChestInterface) {
+                ChestInterface chestInterface = (ChestInterface) playerView.backing();
 
                 for (final CloseHandler<ChestPane> closeHandler : chestInterface.closeHandlers()) {
-                    closeHandler.accept(event, inventoryView);
+                    closeHandler.accept(event, playerView);
                 }
             }
 
-            if (inventoryView instanceof SelfUpdatingInterfaceView) {
-                SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) inventoryView;
+            if (playerView instanceof SelfUpdatingInterfaceView) {
+                SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) playerView;
 
                 Bukkit.getScheduler().cancelTask(this.updatingRunnables.get(selfUpdating));
                 this.updatingRunnables.remove(selfUpdating);
@@ -152,7 +152,7 @@ public class PaperInterfaceListeners implements Listener {
         if (holder instanceof ChestView) {
             ChestView chestView = (ChestView) holder;
             // Handle parent interface click event
-            chestView.parent().clickHandler().accept(event, chestView);
+            chestView.backing().clickHandler().accept(event, chestView);
 
             // Handle element click event
             if (event.getSlotType() == InventoryType.SlotType.CONTAINER) {
@@ -161,7 +161,7 @@ public class PaperInterfaceListeners implements Listener {
                 int y = slot / 9;
 
                 final @NonNull ItemStackElement element = chestView.pane().element(x, y);
-                element.handler().accept(event, chestView);
+                element.clickHandler().accept(event, (PlayerView) chestView);
             }
         }
     }
