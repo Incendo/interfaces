@@ -1,11 +1,8 @@
-package org.incendo.interfaces.paper.click;
+package org.incendo.interfaces.core.click;
 
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.pane.Pane;
-import org.incendo.interfaces.paper.view.PlayerView;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**

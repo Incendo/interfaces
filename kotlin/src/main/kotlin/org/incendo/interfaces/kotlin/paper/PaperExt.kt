@@ -8,7 +8,7 @@ import org.incendo.interfaces.core.arguments.InterfaceArgument
 import org.incendo.interfaces.core.pane.Pane
 import org.incendo.interfaces.core.view.InterfaceView
 import org.incendo.interfaces.paper.PlayerViewer
-import org.incendo.interfaces.paper.click.ClickHandler
+import org.incendo.interfaces.core.click.ClickHandler
 import org.incendo.interfaces.paper.element.ItemStackElement
 import org.incendo.interfaces.paper.type.ChestInterface
 import org.incendo.interfaces.paper.type.TitledInterface

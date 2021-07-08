@@ -1,4 +1,4 @@
-package org.incendo.interfaces.paper.click;
+package org.incendo.interfaces.core.click;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.pane.Pane;
