@@ -8,6 +8,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
 import org.incendo.interfaces.core.arguments.InterfaceArgument;
+import org.incendo.interfaces.core.transform.InterfaceProperty;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
@@ -99,15 +100,51 @@ public final class ChestView implements
 
         for (final var transform : this.backing.transformations()) {
             pane = transform.transform().apply(pane, this);
-
             // If it's the first time we apply the transform, then
             // we add update listeners to all the dependent properties
             if (firstApply) {
-                transform.property().addListener((oldValue, newValue) -> this.update());
+                transform.property().addListener((oldValue, newValue) -> this.updateByProperty(transform.property()));
             }
         }
 
         return pane;
+    }
+
+    private @NonNull ChestPane updatePaneByProperty(final InterfaceProperty<?> interfaceProperty) {
+        @NonNull ChestPane pane = new ChestPane(this.backing.rows());
+
+        for (final var transform : this.backing.transformations()) {
+            if (transform.property() != interfaceProperty) {
+                continue;
+            }
+
+            pane = transform.transform().apply(pane, this);
+        }
+
+        return pane;
+    }
+
+    private void updateByProperty(final InterfaceProperty<?> interfaceProperty) {
+        this.pane = this.updatePaneByProperty(interfaceProperty);
+        this.reapplyInventory();
+    }
+
+    private void reapplyInventory() {
+        final @NonNull List<List<ItemStackElement<ChestPane>>> elements = this.pane.chestElements();
+
+        for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
+            for (int y = 0; y < this.backing.rows(); y++) {
+                final @Nullable Element currentElement = this.current.get(PaperUtils.gridToSlot(x, y));
+                final @NonNull ItemStackElement<ChestPane> element = elements.get(x).get(y);
+
+                if (element.equals(currentElement)) {
+                    continue;
+                }
+
+                this.current.put(PaperUtils.gridToSlot(x, y), element);
+                this.inventory.setItem(PaperUtils.gridToSlot(x, y), element.itemStack());
+            }
+        }
     }
 
     /**
@@ -142,22 +179,7 @@ public final class ChestView implements
     @Override
     public void update() {
         this.pane = this.updatePane(false);
-
-        final @NonNull List<List<ItemStackElement<ChestPane>>> elements = this.pane.chestElements();
-
-        for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
-            for (int y = 0; y < this.backing.rows(); y++) {
-                final @Nullable Element currentElement = this.current.get(PaperUtils.gridToSlot(x, y));
-                final @NonNull ItemStackElement<ChestPane> element = elements.get(x).get(y);
-
-                if (element.equals(currentElement)) {
-                    continue;
-                }
-
-                this.current.put(PaperUtils.gridToSlot(x, y), element);
-                this.inventory.setItem(PaperUtils.gridToSlot(x, y), element.itemStack());
-            }
-        }
+        this.reapplyInventory();
     }
 
     /**
