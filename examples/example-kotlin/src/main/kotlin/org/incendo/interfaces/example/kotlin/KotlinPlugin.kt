@@ -1,6 +1,5 @@
 package org.incendo.interfaces.example.kotlin
 
-import kotlin.random.Random
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.format.NamedTextColor
@@ -13,24 +12,21 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import org.incendo.interfaces.core.transform.InterfaceProperty
-import org.incendo.interfaces.kotlin.argument
 import org.incendo.interfaces.kotlin.getValue
 import org.incendo.interfaces.kotlin.interfaceArgumentOf
 import org.incendo.interfaces.kotlin.paper.asElement
 import org.incendo.interfaces.kotlin.paper.buildChestInterface
 import org.incendo.interfaces.kotlin.paper.open
 import org.incendo.interfaces.kotlin.setValue
-import org.incendo.interfaces.kotlin.value
 import org.incendo.interfaces.paper.PaperInterfaceListeners
 import org.incendo.interfaces.paper.pane.ChestPane
-import org.incendo.interfaces.paper.transform.PaperTransform
 import org.incendo.interfaces.paper.type.ChestInterface
 
 @Suppress("unused")
 public class KotlinPlugin : JavaPlugin() {
 
     private companion object {
-        private const val CHEST_ROWS: Int = 3
+        private const val CHEST_ROWS: Int = 5
         private const val CHEST_COLUMNS: Int = 9
 
         private val CHEST_TITLE = text("Example Chest", NamedTextColor.GOLD)
@@ -41,7 +37,8 @@ public class KotlinPlugin : JavaPlugin() {
 
     private lateinit var exampleChest: ChestInterface
 
-    private var _dependentValue: InterfaceProperty<Long> = InterfaceProperty.of(0L)
+    private var _selectedOption: InterfaceProperty<SelectionOptions> =
+        InterfaceProperty.of(SelectionOptions.ONE)
 
     override fun onEnable() {
         // Register the command.
@@ -51,18 +48,14 @@ public class KotlinPlugin : JavaPlugin() {
         PaperInterfaceListeners.install(this)
 
         // Update the dependent value every time the server ticks.
-        var dependentValue: Long by _dependentValue
-        server.scheduler.runTaskTimer(this, Runnable { _dependentValue.value++ }, 1L, 1L)
+        var selectedOption: SelectionOptions by _selectedOption
 
         // Build a chest interface.
         exampleChest =
             buildChestInterface {
-                var counterX = 0
-                var counterY = 0
                 title = CHEST_TITLE
                 rows = CHEST_ROWS
 
-                updates(true, 5)
                 clickHandler(
                     canceling { event: InventoryClickEvent, _ ->
                         event.whoClicked.sendMessage(
@@ -70,43 +63,35 @@ public class KotlinPlugin : JavaPlugin() {
                                 .append(text(event.slot.toString(), NamedTextColor.GOLD)))
                     })
 
-                addTransform(
-                    PaperTransform.chestFill(
-                        createItemStack(Material.DIRT, text("")).asElement<ChestPane>()))
-
                 withTransform { view ->
-                    for (column in 0 until CHEST_COLUMNS) {
-                        for (row in 0 until CHEST_ROWS) {
-                            if (Random.nextInt(5) == 3) {
-                                view[column, row] =
-                                    createItemStack(LEAVES.random(), text("background")).asElement()
-                            }
+                    println("rendering black concrete backing")
+
+                    val displayElement =
+                        createItemStack(Material.BLACK_CONCRETE, text("")).asElement<ChestPane>()
+
+                    for (x in 3 until CHEST_COLUMNS - 1) {
+                        for (y in 0 until CHEST_ROWS) {
+                            view[x, y] = displayElement
                         }
                     }
                 }
 
-                withTransform(_dependentValue) { view ->
-                    // Extract the name argument.
-                    val name: String = view.argument["name"] ?: return@withTransform
-
-                    // Create an item stack element with the player's name.
-                    val element =
-                        createItemStack(Material.PAPER, text("$name ($dependentValue ticks)"))
-                            .asElement<ChestPane> { event, clickView ->
-                                println(1)
-                                counterX += 1
-                                if (counterX == CHEST_COLUMNS) {
-                                    counterX = 0
-                                    counterY += 1
-
-                                    if (counterY == CHEST_ROWS) {
-                                        counterY = 0
-                                    }
-                                }
-                                clickView.update()
+                withTransform { view ->
+                    println("rendering options")
+                    SelectionOptions.values().forEach { option ->
+                        view[1, option.index] =
+                            createItemStack(option.material, text(option.name)).asElement { _, _ ->
+                                _selectedOption.set(option)
                             }
+                    }
+                }
 
-                    view[counterX, counterY] = element
+                withTransform(_selectedOption) { view ->
+                    println("rendering selected option")
+
+                    val displayElement =
+                        createItemStack(Material.WHITE_CONCRETE, text("")).asElement<ChestPane>()
+                    selectedOption.art.forEach { (x, y) -> view[x, y] = displayElement }
                 }
 
                 withCloseHandler { event, _ -> event.player.sendMessage(text("bye")) }
