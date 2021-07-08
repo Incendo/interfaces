@@ -20,7 +20,7 @@ public class ChestClickContext implements ClickContext<ChestPane> {
 
     private final @NonNull InventoryClickEvent event;
     private final @NonNull ChestView view;
-    private final @NonNull Click click;
+    private final @NonNull PaperClick click;
 
     /**
      * Constructs {@code ChestClickContext}.
@@ -69,7 +69,7 @@ public class ChestClickContext implements ClickContext<ChestPane> {
     }
 
     @Override
-    public @NonNull Click click() {
+    public @NonNull PaperClick click() {
         return this.click;
     }
 
