@@ -56,6 +56,18 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
     );
 
     /**
+     * Opens an interface with a parent view.
+     *
+     * @param view      the parent view
+     * @param arguments the interface's arguments
+     * @return the view
+     */
+    @NonNull InterfaceView<T, U> open(
+            @NonNull InterfaceView<?, U> view,
+            @NonNull InterfaceArgument arguments
+    );
+
+    /**
      * An interface that represents an interface builder.
      *
      * @param <T> the pane type

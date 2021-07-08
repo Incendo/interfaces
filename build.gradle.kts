@@ -7,6 +7,7 @@ plugins {
     id("net.kyori.indra")
     id("net.kyori.indra.publishing") apply false
     id("net.kyori.indra.checkstyle") apply false
+    id("xyz.jpenilla.run-paper") apply false
 
     // Auto-generates project files.
     idea

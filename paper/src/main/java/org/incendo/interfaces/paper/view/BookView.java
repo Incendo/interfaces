@@ -77,7 +77,7 @@ public final class BookView implements InterfaceView<BookPane, PlayerViewer> {
      * @return the parent
      */
     @Override
-    public @NonNull BookInterface parent() {
+    public @NonNull BookInterface backing() {
         return this.parent;
     }
 

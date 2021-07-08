@@ -9,6 +9,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import org.incendo.interfaces.kotlin.argument
@@ -17,6 +18,7 @@ import org.incendo.interfaces.kotlin.paper.asElement
 import org.incendo.interfaces.kotlin.paper.buildChestInterface
 import org.incendo.interfaces.kotlin.paper.open
 import org.incendo.interfaces.paper.PaperInterfaceListeners
+import org.incendo.interfaces.paper.pane.ChestPane
 import org.incendo.interfaces.paper.transform.PaperTransform
 import org.incendo.interfaces.paper.type.ChestInterface
 
@@ -52,14 +54,15 @@ public class KotlinPlugin : JavaPlugin() {
 
                 updates(true, 5)
                 clickHandler(
-                    canceling { event, _ ->
+                    canceling { event: InventoryClickEvent, _ ->
                         event.whoClicked.sendMessage(
                             text("You clicked ", NamedTextColor.GRAY)
                                 .append(text(event.slot.toString(), NamedTextColor.GOLD)))
                     })
 
                 addTransform(
-                    PaperTransform.chestFill(createItemStack(Material.DIRT, text("")).asElement()))
+                    PaperTransform.chestFill(
+                        createItemStack(Material.DIRT, text("")).asElement<ChestPane>()))
 
                 withTransform { view ->
                     for (column in 0 until CHEST_COLUMNS) {
@@ -78,8 +81,9 @@ public class KotlinPlugin : JavaPlugin() {
 
                     // Create an item stack element with the player's name.
                     val element =
-                        createItemStack(Material.PAPER, text(name)).asElement { event, clickView ->
-                            println(1)
+                        createItemStack(Material.PAPER, text(name)).asElement<ChestPane> {
+                            event,
+                            clickView ->
                             counterX += 1
                             if (counterX == CHEST_COLUMNS) {
                                 counterX = 0

@@ -16,7 +16,7 @@ public class ChestPane implements Pane {
 
     public static final int MINECRAFT_CHEST_WIDTH = 9;
 
-    private final @NonNull List<List<ItemStackElement>> elements;
+    private final @NonNull List<List<ItemStackElement<ChestPane>>> elements;
 
     private final int rows;
 
@@ -32,7 +32,7 @@ public class ChestPane implements Pane {
 
         // Fill the arrays with empty elements.
         for (int i = 0; i < MINECRAFT_CHEST_WIDTH; i++) {
-            final @NonNull List<ItemStackElement> deepElements = new ArrayList<>();
+            final @NonNull List<ItemStackElement<ChestPane>> deepElements = new ArrayList<>();
 
             for (int j = 0; j < this.rows; j++) {
                 deepElements.add(j, ItemStackElement.empty());
@@ -48,7 +48,7 @@ public class ChestPane implements Pane {
      * @param rows     amount of rows
      * @param elements the elements
      */
-    public ChestPane(final int rows, final @NonNull List<List<ItemStackElement>> elements) {
+    public ChestPane(final int rows, final @NonNull List<List<ItemStackElement<ChestPane>>> elements) {
         this.rows = rows;
         this.elements = elements;
     }
@@ -58,7 +58,7 @@ public class ChestPane implements Pane {
      *
      * @return the elements
      */
-    public @NonNull List<List<ItemStackElement>> chestElements() {
+    public @NonNull List<List<ItemStackElement<ChestPane>>> chestElements() {
         return this.elements;
     }
 
@@ -100,10 +100,10 @@ public class ChestPane implements Pane {
      * @param y       the y coordinate
      * @return a new {@code ChestPane}
      */
-    public @NonNull ChestPane element(final @NonNull ItemStackElement element, final int x, final int y) {
-        final @NonNull List<List<ItemStackElement>> newElements = new ArrayList<>();
+    public @NonNull ChestPane element(final @NonNull ItemStackElement<ChestPane> element, final int x, final int y) {
+        final @NonNull List<List<ItemStackElement<ChestPane>>> newElements = new ArrayList<>();
 
-        for (final @NonNull List<ItemStackElement> elements : this.elements) {
+        for (final @NonNull List<ItemStackElement<ChestPane>> elements : this.elements) {
             newElements.add(new ArrayList<>(elements));
         }
 
@@ -119,7 +119,7 @@ public class ChestPane implements Pane {
      * @param y the y coordinate
      * @return the element
      */
-    public @NonNull ItemStackElement element(final int x, final int y) {
+    public @NonNull ItemStackElement<ChestPane> element(final int x, final int y) {
         return this.elements.get(x).get(y);
     }
 

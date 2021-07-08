@@ -4,19 +4,22 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.element.Element;
+import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.paper.pane.ChestPane;
+import org.incendo.interfaces.paper.type.Clickable;
 
 import java.util.Objects;
 
 /**
  * Holds an {@link ItemStack} in an element.
  *
+ * @param <T> the pane type
  * @see ChestPane
  */
-public class ItemStackElement implements Element {
+public class ItemStackElement<T extends Pane> implements Element, Clickable<T> {
 
     private final @NonNull ItemStack itemStack;
-    private final @NonNull ClickHandler handler;
+    private final @NonNull ClickHandler<T> handler;
 
     /**
      * Constructs {@code ItemStackElement}.
@@ -37,7 +40,7 @@ public class ItemStackElement implements Element {
      */
     public ItemStackElement(
             final @NonNull ItemStack itemStack,
-            final @NonNull ClickHandler clickHandler
+            final @NonNull ClickHandler<T> clickHandler
     ) {
         this.itemStack = itemStack;
         this.handler = clickHandler;
@@ -46,20 +49,22 @@ public class ItemStackElement implements Element {
     /**
      * Returns an empty {@code ItemStackElement}.
      *
+     * @param <T> the pane type
      * @return an empty {@code ItemStackElement}.
      */
-    public static @NonNull ItemStackElement empty() {
-        return new ItemStackElement(new ItemStack(Material.AIR));
+    public static <T extends Pane> @NonNull ItemStackElement<T> empty() {
+        return new ItemStackElement<>(new ItemStack(Material.AIR));
     }
 
     /**
      * Returns an {@code ItemStackElement} with the provided ItemStack.
      *
      * @param itemStack the ItemStack
+     * @param <T> the pane type
      * @return the element
      */
-    public static @NonNull ItemStackElement of(final @NonNull ItemStack itemStack) {
-        return new ItemStackElement(itemStack);
+    public static <T extends Pane> @NonNull ItemStackElement<T> of(final @NonNull ItemStack itemStack) {
+        return new ItemStackElement<>(itemStack);
     }
 
     /**
@@ -67,13 +72,14 @@ public class ItemStackElement implements Element {
      *
      * @param itemStack the ItemStack
      * @param handler   the handler
+     * @param <T> the pane type
      * @return the element
      */
-    public static @NonNull ItemStackElement of(
+    public static <T extends Pane> @NonNull ItemStackElement<T> of(
             final @NonNull ItemStack itemStack,
-            final @NonNull ClickHandler handler
+            final @NonNull ClickHandler<T> handler
     ) {
-        return new ItemStackElement(itemStack, handler);
+        return new ItemStackElement<>(itemStack, handler);
     }
 
     /**
@@ -90,7 +96,7 @@ public class ItemStackElement implements Element {
      *
      * @return the click handler
      */
-    public @NonNull ClickHandler handler() {
+    public @NonNull ClickHandler<T> clickHandler() {
         return this.handler;
     }
 

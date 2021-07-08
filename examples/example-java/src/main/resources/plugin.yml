@@ -1,0 +1,4 @@
+name: ExampleJavaPlugin
+version: 1.0.0
+main: org.incendo.interfaces.example.java.ExampleJavaPlugin
+api-version: 1.16

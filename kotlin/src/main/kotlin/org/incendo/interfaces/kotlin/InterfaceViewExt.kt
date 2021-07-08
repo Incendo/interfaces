@@ -8,7 +8,7 @@ import org.incendo.interfaces.core.view.InterfaceViewer
 
 /** The parent interface. */
 public val <T : Pane, U : InterfaceViewer> InterfaceView<T, U>.parent: Interface<T, U>
-    get() = this.parent()
+    get() = this.backing()
 
 /** The viewer of this view. */
 public val InterfaceView<*, *>.viewer: InterfaceViewer

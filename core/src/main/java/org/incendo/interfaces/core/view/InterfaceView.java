@@ -18,7 +18,14 @@ public interface InterfaceView<T extends Pane, U extends InterfaceViewer> {
      *
      * @return the interface
      */
-    @NonNull Interface<T, U> parent();
+    @NonNull Interface<T, U> backing();
+
+    /**
+     * Returns the argument provided to this view.
+     *
+     * @return the view's argument
+     */
+    @NonNull InterfaceArgument argument();
 
     /**
      * Returns the viewer of this view.
@@ -41,11 +48,11 @@ public interface InterfaceView<T extends Pane, U extends InterfaceViewer> {
     boolean viewing();
 
     /**
-     * Returns the argument provided to this view.
+     * Returns the pane.
      *
-     * @return the view's argument
+     * @return the pane
      */
-    @NonNull InterfaceArgument argument();
+    T pane();
 
     /**
      * Opens the view to the viewer.
@@ -55,18 +62,11 @@ public interface InterfaceView<T extends Pane, U extends InterfaceViewer> {
     void open();
 
     /**
-     * Returns the pane.
-     *
-     * @return the pane
-     */
-    T pane();
-
-    /**
      * Triggers a manual update.
      */
     default void update() {
         if (this.viewing()) {
-            this.parent().open(this.viewer(), this.argument());
+            this.backing().open(this.viewer(), this.argument());
         }
     }
 
