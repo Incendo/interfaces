@@ -3,6 +3,7 @@ package org.incendo.interfaces.core.click;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.core.view.InterfaceView;
+import org.incendo.interfaces.core.view.InterfaceViewer;
 
 /**
  * Represents the context of a click.
@@ -31,6 +32,13 @@ public interface ClickContext<T extends Pane> {
      * @return the view
      */
     @NonNull InterfaceView<T, ?> view();
+
+    /**
+     * Returns the viewer (the one who clicked).
+     *
+     * @return the viewer
+     */
+    @NonNull InterfaceViewer viewer();
 
     /**
      * Returns the click associated with this context.

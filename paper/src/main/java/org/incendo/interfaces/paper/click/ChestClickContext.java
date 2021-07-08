@@ -1,5 +1,6 @@
 package org.incendo.interfaces.paper.click;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -7,6 +8,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.click.Click;
 import org.incendo.interfaces.core.click.ClickContext;
 import org.incendo.interfaces.core.view.InterfaceView;
+import org.incendo.interfaces.core.view.InterfaceViewer;
+import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.view.ChestView;
 
@@ -58,6 +61,11 @@ public class ChestClickContext implements ClickContext<ChestPane> {
     @Override
     public @NonNull ChestView view() {
         return this.view;
+    }
+
+    @Override
+    public @NonNull InterfaceViewer viewer() {
+        return PlayerViewer.of((Player) this.event.getWhoClicked());
     }
 
     @Override
