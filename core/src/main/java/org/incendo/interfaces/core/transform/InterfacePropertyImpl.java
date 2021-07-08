@@ -23,10 +23,12 @@ class InterfacePropertyImpl<T> implements InterfaceProperty<T> {
 
     @Override
     public void set(@NonNull final T value) {
-        for (final BiConsumer<T, T> consumer : this.updateListeners) {
-            consumer.accept(this.value, value);
-        }
+        T oldValue = this.value;
         this.value = value;
+
+        for (final BiConsumer<T, T> consumer : this.updateListeners) {
+            consumer.accept(oldValue, this.value);
+        }
     }
 
     @Override
