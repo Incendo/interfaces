@@ -1,10 +1,8 @@
-
 package org.incendo.interfaces.paper.pane;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.pane.Pane;
-import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.element.TextElement;
 
 import java.util.ArrayList;
@@ -61,6 +59,22 @@ public class ChatPane implements Pane {
         final @NonNull List<TextElement> newElements = new ArrayList<>(this.elements);
 
         newElements.set(index, element);
+
+        return new ChatPane(newElements);
+    }
+
+    /**
+     * Puts a text element at the the end of the pane.
+     * <p>
+     * This method returns an updated instance of {@code ChatPane} with the new element.
+     *
+     * @param element the element
+     * @return a new {@code ChatPane}
+     */
+    public @NonNull ChatPane element(final @NonNull TextElement element) {
+        final @NonNull List<TextElement> newElements = new ArrayList<>(this.elements);
+
+        newElements.add(element);
 
         return new ChatPane(newElements);
     }
