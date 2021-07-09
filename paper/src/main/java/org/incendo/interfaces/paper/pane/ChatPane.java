@@ -1,14 +1,21 @@
 package org.incendo.interfaces.paper.pane;
 
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.interfaces.core.click.ClickContext;
+import org.incendo.interfaces.core.click.ClickHandler;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.paper.element.ChatLineElement;
+import org.incendo.interfaces.paper.element.ClickableTextElement;
 import org.incendo.interfaces.paper.element.TextElement;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * A pane using the Minecraft chat window..
@@ -16,6 +23,8 @@ import java.util.List;
 public class ChatPane implements Pane {
 
     private final @NonNull List<ChatLineElement> elements;
+    private final @NonNull Map<UUID, ClickHandler<ChatPane, InventoryClickEvent, ? extends ClickContext<ChatPane,
+            InventoryClickEvent>>> handlerMap;
 
     /**
      * Constructs {@code ChatPane}.
@@ -24,6 +33,16 @@ public class ChatPane implements Pane {
      */
     public ChatPane(final @NonNull List<ChatLineElement> elements) {
         this.elements = elements;
+        this.handlerMap = new HashMap<>();
+
+        for (final @NonNull ChatLineElement element : this.elements) {
+            for (final @NonNull TextElement textElement : element.textElements()) {
+                if (textElement instanceof ClickableTextElement) {
+                    final @NonNull ClickableTextElement clickable = (ClickableTextElement) textElement;
+                    this.handlerMap.put(clickable.uuid(), clickable.clickHandler());
+                }
+            }
+        }
     }
 
     /**
