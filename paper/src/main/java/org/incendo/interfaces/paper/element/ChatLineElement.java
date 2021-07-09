@@ -36,6 +36,7 @@ public class ChatLineElement implements Element {
      * Constructs and returns a new ChatLineElement with the provided components.
      * <p>
      * This method will append all the components together, then that component to {@link #of(TextElement...)}.
+     *
      * @param components the components
      * @return the line element
      */
@@ -50,29 +51,12 @@ public class ChatLineElement implements Element {
     }
 
     /**
-     * Returns the built {@link Component} representing this line of chat.
+     * Returns all the text elements comprising this line.
      *
-     * @return the component
+     * @return the text element list
      */
-    public @NonNull Component text() {
-        final TextComponent.@NonNull Builder builder = Component.text();
-
-        for (final @NonNull TextElement element : textElements) {
-            if (element instanceof ClickableTextElement) {
-                final @NonNull ClickableTextElement clickable = (ClickableTextElement) element;
-
-                builder.append(
-                        Component.text()
-                                .append(clickable.text())
-                                .clickEvent(ClickEvent.runCommand("/interfaces view_id handler_id"))
-                                .hoverEvent(HoverEvent.showText(clickable.tooltip()))
-                );
-            } else {
-                builder.append(element.text());
-            }
-        }
-
-        return builder.asComponent();
+    public @NonNull List<TextElement> textElements() {
+        return List.copyOf(this.textElements);
     }
 
 }
