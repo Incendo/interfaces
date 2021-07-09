@@ -1,11 +1,11 @@
 package org.incendo.interfaces.paper.pane;
 
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.interfaces.core.click.ClickContext;
 import org.incendo.interfaces.core.click.ClickHandler;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.pane.Pane;
+import org.incendo.interfaces.paper.click.ChatClickCause;
+import org.incendo.interfaces.paper.click.ChatClickContext;
 import org.incendo.interfaces.paper.element.ChatLineElement;
 import org.incendo.interfaces.paper.element.ClickableTextElement;
 import org.incendo.interfaces.paper.element.TextElement;
@@ -23,8 +23,7 @@ import java.util.UUID;
 public class ChatPane implements Pane {
 
     private final @NonNull List<ChatLineElement> elements;
-    private final @NonNull Map<UUID, ClickHandler<ChatPane, InventoryClickEvent, ? extends ClickContext<ChatPane,
-            InventoryClickEvent>>> handlerMap;
+    private final @NonNull Map<UUID, ClickHandler<ChatPane, ChatClickCause, ChatClickContext>> handlerMap;
 
     /**
      * Constructs {@code ChatPane}.

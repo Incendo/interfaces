@@ -18,11 +18,12 @@ import org.incendo.interfaces.paper.view.ChestView;
  * The click context of a chat element.
  */
 @SuppressWarnings("unused")
-public final class ChatClickContext implements ClickContext<ChatPane, PlayerCommandPreprocessEvent> {
+public final class ChatClickContext implements ClickContext<ChatPane, ChatClickCause> {
 
     private final @NonNull PlayerCommandPreprocessEvent event;
+    private final @NonNull ChatClickCause cause;
     private final @NonNull ChatView view;
-    private final @NonNull Click<PlayerCommandPreprocessEvent> click;
+    private final @NonNull Click<ChatClickCause> click;
 
     /**
      * Constructs {@code ChatClickContext}.
@@ -34,15 +35,16 @@ public final class ChatClickContext implements ClickContext<ChatPane, PlayerComm
             final @NonNull ChatView view,
             final @NonNull PlayerCommandPreprocessEvent event
     ) {
-        this.event = event;
         this.view = view;
+        this.cause = new ChatClickCause();
+        this.event = event;
 
-        this.click = Clicks.leftClick(this.event, false);
+        this.click = Clicks.leftClick(this.cause, false);
     }
 
     @Override
-    public @NonNull PlayerCommandPreprocessEvent cause() {
-        return this.event;
+    public @NonNull ChatClickCause cause() {
+        return this.cause;
     }
 
     @Override
@@ -66,7 +68,7 @@ public final class ChatClickContext implements ClickContext<ChatPane, PlayerComm
     }
 
     @Override
-    public @NonNull Click<PlayerCommandPreprocessEvent> click() {
+    public @NonNull Click<ChatClickCause> click() {
         return this.click;
     }
 

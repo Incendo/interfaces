@@ -1,10 +1,10 @@
 package org.incendo.interfaces.paper.element;
 
 import net.kyori.adventure.text.Component;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.interfaces.core.click.ClickContext;
 import org.incendo.interfaces.core.click.ClickHandler;
+import org.incendo.interfaces.paper.click.ChatClickCause;
+import org.incendo.interfaces.paper.click.ChatClickContext;
 import org.incendo.interfaces.paper.pane.ChatPane;
 import org.incendo.interfaces.paper.type.Clickable;
 
@@ -13,11 +13,11 @@ import java.util.UUID;
 /**
  * An element containing a piece of text.
  */
-public class ClickableTextElement extends TextElement implements Clickable<ChatPane, InventoryClickEvent> {
+public class ClickableTextElement extends TextElement implements Clickable<ChatPane, ChatClickCause> {
 
     private final @NonNull UUID uuid;
     private final @NonNull Component tooltip;
-    private final @NonNull ClickHandler<ChatPane, InventoryClickEvent, ? extends ClickContext<ChatPane, InventoryClickEvent>> clickHandler;
+    private final @NonNull ClickHandler<ChatPane, ChatClickCause, ChatClickContext> clickHandler;
 
     /**
      * Constructs {@code TextElement}.
@@ -29,8 +29,7 @@ public class ClickableTextElement extends TextElement implements Clickable<ChatP
     public ClickableTextElement(
             final @NonNull Component text,
             final @NonNull Component tooltip,
-            final @NonNull ClickHandler<ChatPane, InventoryClickEvent, ? extends ClickContext<ChatPane,
-                    InventoryClickEvent>> clickHandler
+            final @NonNull ClickHandler<ChatPane, ChatClickCause, ChatClickContext> clickHandler
     ) {
         super(text);
 
@@ -80,8 +79,10 @@ public class ClickableTextElement extends TextElement implements Clickable<ChatP
      * @param text the text
      * @return the element
      */
-    public static @NonNull ClickableTextElement of(final @NonNull Component text,
-                                                   final @NonNull Component tooltip) {
+    public static @NonNull ClickableTextElement of(
+            final @NonNull Component text,
+            final @NonNull Component tooltip
+    ) {
         return of(text, tooltip, ClickHandler.cancel());
     }
 
@@ -95,14 +96,13 @@ public class ClickableTextElement extends TextElement implements Clickable<ChatP
     public static @NonNull ClickableTextElement of(
             final @NonNull Component text,
             final @NonNull Component tooltip,
-            final @NonNull ClickHandler<ChatPane, InventoryClickEvent, ? extends ClickContext<ChatPane,
-                    InventoryClickEvent>> clickHandler
+            final @NonNull ClickHandler<ChatPane, ChatClickCause, ChatClickContext> clickHandler
     ) {
         return new ClickableTextElement(text, tooltip, clickHandler);
     }
 
     @Override
-    public @NonNull ClickHandler<ChatPane, InventoryClickEvent, ? extends ClickContext<ChatPane, InventoryClickEvent>> clickHandler() {
+    public @NonNull ClickHandler<ChatPane, ChatClickCause, ChatClickContext> clickHandler() {
         return this.clickHandler;
     }
 
