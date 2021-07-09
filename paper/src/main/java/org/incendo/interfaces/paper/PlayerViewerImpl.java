@@ -4,7 +4,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.view.InterfaceView;
+import org.incendo.interfaces.paper.element.TextElement;
 import org.incendo.interfaces.paper.view.BookView;
+import org.incendo.interfaces.paper.view.ChatView;
 import org.incendo.interfaces.paper.view.ChestView;
 
 final class PlayerViewerImpl implements PlayerViewer {
@@ -38,19 +40,34 @@ final class PlayerViewerImpl implements PlayerViewer {
         this.player.openBook(bookView.book());
     }
 
+    /**
+     * Opens a chat pane.
+     *
+     * @param chatView the chat view
+     */
+    private void openChatView(final @NonNull ChatView chatView) {
+        for (final @NonNull TextElement element : chatView.pane().textElements()) {
+            this.player.sendMessage(element.text());
+        }
+    }
+
     @Override
-    public void open(final @NonNull InterfaceView<?, ?> pane) {
-        if (pane instanceof ChestView) {
-            this.openChestView((ChestView) pane);
+    public void open(final @NonNull InterfaceView<?, ?> view) {
+        if (view instanceof ChestView) {
+            this.openChestView((ChestView) view);
             return;
         }
 
-        if (pane instanceof BookView) {
-            this.openBookView((BookView) pane);
+        if (view instanceof BookView) {
+            this.openBookView((BookView) view);
             return;
         }
 
-        throw new UnsupportedOperationException("Cannot open view of type " + pane.getClass().getName() + ".");
+        if (view instanceof ChatView) {
+            this.openChatView((ChatView) view);
+        }
+
+        throw new UnsupportedOperationException("Cannot open view of type " + view.getClass().getName() + ".");
     }
 
     @Override
