@@ -22,6 +22,25 @@ public class PaperClick implements Click  {
     }
 
     /**
+     * Returns the clicked slot number from the Bukkit API.
+     *
+     * @return the slot number
+     * @see #rawSlot();
+     */
+    public int slot() {
+        return this.event.getSlot();
+    }
+
+    /**
+     * Returns the clicked slot's raw number.
+     *
+     * @return the raw slot number
+     */
+    public int rawSlot() {
+        return this.event.getRawSlot();
+    }
+
+    /**
      * Returns the underlying {@link ClickType}.
      *
      * @return the click type
