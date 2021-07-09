@@ -2,8 +2,6 @@ package org.incendo.interfaces.paper.element;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.element.Element;
 
@@ -34,11 +32,23 @@ public class ChatLineElement implements Element {
 
     /**
      * Constructs and returns a new empty ChatLineElement.
+     * <p>
+     * If you want a blank line to render, use {@link #blank()}.
      *
      * @return the line element
      */
     public static @NonNull ChatLineElement empty() {
         return new ChatLineElement(List.of());
+    }
+
+
+    /**
+     * Constructs and returns a new blank ChatLineElement.
+     *
+     * @return the line element
+     */
+    public static @NonNull ChatLineElement blank() {
+        return new ChatLineElement(List.of(TextElement.of(Component.empty())));
     }
 
     /**
