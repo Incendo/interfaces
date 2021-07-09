@@ -33,6 +33,15 @@ public class ChatLineElement implements Element {
     }
 
     /**
+     * Constructs and returns a new empty ChatLineElement.
+     *
+     * @return the line element
+     */
+    public static @NonNull ChatLineElement empty() {
+        return new ChatLineElement(List.of());
+    }
+
+    /**
      * Constructs and returns a new ChatLineElement with the provided components.
      * <p>
      * This method will append all the components together, then that component to {@link #of(TextElement...)}.
