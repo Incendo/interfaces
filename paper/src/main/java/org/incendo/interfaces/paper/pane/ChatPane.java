@@ -3,6 +3,7 @@ package org.incendo.interfaces.paper.pane;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.pane.Pane;
+import org.incendo.interfaces.paper.element.ChatLineElement;
 import org.incendo.interfaces.paper.element.TextElement;
 
 import java.util.ArrayList;
@@ -14,14 +15,14 @@ import java.util.List;
  */
 public class ChatPane implements Pane {
 
-    private final @NonNull List<TextElement> elements;
+    private final @NonNull List<ChatLineElement> elements;
 
     /**
      * Constructs {@code ChatPane}.
      *
      * @param elements the text elements of this pane
      */
-    public ChatPane(final @NonNull List<TextElement> elements) {
+    public ChatPane(final @NonNull List<ChatLineElement> elements) {
         this.elements = elements;
     }
 
@@ -30,7 +31,7 @@ public class ChatPane implements Pane {
      *
      * @return the elements
      */
-    public @NonNull List<TextElement> textElements() {
+    public @NonNull List<ChatLineElement> textElements() {
         return this.elements;
     }
 
@@ -55,8 +56,8 @@ public class ChatPane implements Pane {
      * @param index   the line index
      * @return a new {@code ChatPane}
      */
-    public @NonNull ChatPane element(final @NonNull TextElement element, final int index) {
-        final @NonNull List<TextElement> newElements = new ArrayList<>(this.elements);
+    public @NonNull ChatPane element(final @NonNull ChatLineElement element, final int index) {
+        final @NonNull List<ChatLineElement> newElements = new ArrayList<>(this.elements);
 
         newElements.set(index, element);
 
@@ -71,8 +72,8 @@ public class ChatPane implements Pane {
      * @param element the element
      * @return a new {@code ChatPane}
      */
-    public @NonNull ChatPane element(final @NonNull TextElement element) {
-        final @NonNull List<TextElement> newElements = new ArrayList<>(this.elements);
+    public @NonNull ChatPane element(final @NonNull ChatLineElement element) {
+        final @NonNull List<ChatLineElement> newElements = new ArrayList<>(this.elements);
 
         newElements.add(element);
 
@@ -80,12 +81,12 @@ public class ChatPane implements Pane {
     }
 
     /**
-     * Returns the text element at the given line in dex.
+     * Returns the chat element at the given line in dex.
      *
      * @param index the line index
      * @return the element
      */
-    public @NonNull TextElement element(final int index) {
+    public @NonNull ChatLineElement element(final int index) {
         return this.elements.get(index);
     }
 

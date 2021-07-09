@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.view.InterfaceView;
+import org.incendo.interfaces.paper.element.ChatLineElement;
 import org.incendo.interfaces.paper.element.TextElement;
 import org.incendo.interfaces.paper.view.BookView;
 import org.incendo.interfaces.paper.view.ChatView;
@@ -46,7 +47,7 @@ final class PlayerViewerImpl implements PlayerViewer {
      * @param chatView the chat view
      */
     private void openChatView(final @NonNull ChatView chatView) {
-        for (final @NonNull TextElement element : chatView.pane().textElements()) {
+        for (final @NonNull ChatLineElement element : chatView.pane().textElements()) {
             this.player.sendMessage(element.text());
         }
     }
