@@ -24,6 +24,7 @@ import java.util.Map;
 /**
  * The view of a chest.
  */
+@SuppressWarnings("unused")
 public final class ChestView implements
         PlayerView<ChestPane>,
         SelfUpdatingInterfaceView,

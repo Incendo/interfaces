@@ -6,6 +6,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 /**
  * Represents a view which can hold a parent.
  */
+@SuppressWarnings("unused")
 public interface ChildView {
 
     /**

@@ -9,8 +9,10 @@ import java.util.function.Consumer;
  * A function that handles a click event on an interface.
  *
  * @param <T> the context type
+ * @param <U> the click cause
+ * @param <V> the context type
  */
-public interface ClickHandler<T extends Pane> extends Consumer<ClickContext<T>> {
+public interface ClickHandler<T extends Pane, U, V extends ClickContext<T, U>> extends Consumer<V> {
 
     /**
      * Returns a {@code ClickHandler} that cancels the event and then calls
@@ -18,9 +20,13 @@ public interface ClickHandler<T extends Pane> extends Consumer<ClickContext<T>> 
      *
      * @param clickHandler the handler
      * @param <T>          the pane type
+     * @param <U>          the click cause type
+     * @param <V>          the context type
      * @return the handler
      */
-    static @NonNull <T extends Pane> ClickHandler<T> canceling(final @NonNull ClickHandler<T> clickHandler) {
+    static @NonNull <T extends Pane, U, V extends ClickContext<T, U>> ClickHandler<T, U, V> canceling(
+            final @NonNull ClickHandler<T, U, V> clickHandler
+    ) {
         return (ctx) -> {
             ctx.cancel(true);
             clickHandler.accept(ctx);
@@ -31,12 +37,12 @@ public interface ClickHandler<T extends Pane> extends Consumer<ClickContext<T>> 
      * Returns a {@code ClickHandler} that cancels the event.
      *
      * @param <T> the pane type
+     * @param <U> the click cause type
+     * @param <V> the context type
      * @return the handler
      */
-    static @NonNull <T extends Pane> ClickHandler<T> cancel() {
-        return (ctx) -> {
-            ctx.cancel(true);
-        };
+    static @NonNull <T extends Pane, U, V extends ClickContext<T, U>> ClickHandler<T, U, V> cancel() {
+        return (ctx) -> ctx.cancel(true);
     }
 
 }

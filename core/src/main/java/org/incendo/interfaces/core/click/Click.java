@@ -1,9 +1,20 @@
 package org.incendo.interfaces.core.click;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 /**
  * Represents a class that holds data about a click.
+ *
+ * @param <T> the click cause
  */
-public interface Click {
+public interface Click<T> {
+
+    /**
+     * Returns the click cause
+     *
+     * @return the click cause
+     */
+    @NonNull T cause();
 
     /**
      * Returns true if this click was a right click.
