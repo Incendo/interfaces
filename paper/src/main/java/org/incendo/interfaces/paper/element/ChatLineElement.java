@@ -23,13 +23,30 @@ public class ChatLineElement implements Element {
     }
 
     /**
-     * Constructs and returns a new ChatLineElememt with the provided elements.
+     * Constructs and returns a new ChatLineElement with the provided elements.
      *
      * @param elements the elements
      * @return the line element
      */
     public static @NonNull ChatLineElement of(final @NonNull TextElement... elements) {
         return new ChatLineElement(List.of(elements));
+    }
+
+    /**
+     * Constructs and returns a new ChatLineElement with the provided components.
+     * <p>
+     * This method will append all the components together, then that component to {@link #of(TextElement...)}.
+     * @param components the components
+     * @return the line element
+     */
+    public static @NonNull ChatLineElement of(final @NonNull Component... components) {
+        final TextComponent.@NonNull Builder builder = Component.text();
+
+        for (final @NonNull Component component : components) {
+            builder.append(component);
+        }
+
+        return new ChatLineElement(List.of(TextElement.of(builder.asComponent())));
     }
 
     /**
