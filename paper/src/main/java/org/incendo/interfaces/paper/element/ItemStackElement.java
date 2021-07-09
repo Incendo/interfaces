@@ -1,8 +1,10 @@
 package org.incendo.interfaces.paper.element;
 
 import org.bukkit.Material;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.interfaces.core.click.ClickContext;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.core.click.ClickHandler;
@@ -17,10 +19,10 @@ import java.util.Objects;
  * @param <T> the pane type
  * @see ChestPane
  */
-public class ItemStackElement<T extends Pane> implements Element, Clickable<T> {
+public class ItemStackElement<T extends Pane> implements Element, Clickable<T, InventoryClickEvent> {
 
     private final @NonNull ItemStack itemStack;
-    private final @NonNull ClickHandler<T> handler;
+    private final @NonNull ClickHandler<T, InventoryClickEvent, ClickContext<T, InventoryClickEvent>> handler;
 
     /**
      * Constructs {@code ItemStackElement}.
@@ -41,7 +43,7 @@ public class ItemStackElement<T extends Pane> implements Element, Clickable<T> {
      */
     public ItemStackElement(
             final @NonNull ItemStack itemStack,
-            final @NonNull ClickHandler<T> clickHandler
+            final @NonNull ClickHandler<T, InventoryClickEvent, ClickContext<T, InventoryClickEvent>> clickHandler
     ) {
         this.itemStack = itemStack;
         this.handler = clickHandler;
@@ -78,7 +80,7 @@ public class ItemStackElement<T extends Pane> implements Element, Clickable<T> {
      */
     public static <T extends Pane> @NonNull ItemStackElement<T> of(
             final @NonNull ItemStack itemStack,
-            final @NonNull ClickHandler<T> handler
+            final @NonNull ClickHandler<T, InventoryClickEvent, ClickContext<T, InventoryClickEvent>> handler
     ) {
         return new ItemStackElement<>(itemStack, handler);
     }
@@ -97,7 +99,7 @@ public class ItemStackElement<T extends Pane> implements Element, Clickable<T> {
      *
      * @return the click handler
      */
-    public @NonNull ClickHandler<T> clickHandler() {
+    public @NonNull ClickHandler<T, InventoryClickEvent, ClickContext<T, InventoryClickEvent>> clickHandler() {
         return this.handler;
     }
 
@@ -109,7 +111,7 @@ public class ItemStackElement<T extends Pane> implements Element, Clickable<T> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ItemStackElement that = (ItemStackElement) o;
+        ItemStackElement<?> that = (ItemStackElement<?>) o;
         return this.itemStack.equals(that.itemStack);
     }
 

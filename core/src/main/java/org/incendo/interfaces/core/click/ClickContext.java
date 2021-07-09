@@ -9,8 +9,16 @@ import org.incendo.interfaces.core.view.InterfaceViewer;
  * Represents the context of a click.
  *
  * @param <T> the pane's type
+ * @param <U> the click cause
  */
-public interface ClickContext<T extends Pane> {
+public interface ClickContext<T extends Pane, U> {
+
+    /**
+     * The click cause
+     *
+     * @return the cause
+     */
+    @NonNull U cause();
 
     /**
      * Returns true if this context is cancelling the click.
@@ -45,5 +53,5 @@ public interface ClickContext<T extends Pane> {
      *
      * @return the click
      */
-    @NonNull Click click();
+    @NonNull Click<U> click();
 }

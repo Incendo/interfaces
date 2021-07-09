@@ -14,7 +14,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.UpdatingInterface;
-import org.incendo.interfaces.core.click.ClickContext;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
 import org.incendo.interfaces.paper.click.ChestClickContext;
@@ -166,7 +165,7 @@ public class PaperInterfaceListeners implements Listener {
                 int x = slot % 9;
                 int y = slot / 9;
 
-                final @NonNull ItemStackElement element = chestView.pane().element(x, y);
+                final @NonNull ItemStackElement<ChestPane> element = chestView.pane().element(x, y);
                 element.clickHandler().accept(context);
             }
         }
