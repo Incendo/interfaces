@@ -8,6 +8,7 @@ import org.incendo.interfaces.paper.pane.ChatPane;
 import org.incendo.interfaces.paper.type.ChatInterface;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The view of a Chat-based interface.
@@ -18,6 +19,7 @@ public final class ChatView implements InterfaceView<ChatPane, PlayerViewer> {
     private final @NonNull PlayerViewer viewer;
     private final @NonNull InterfaceArgument argument;
     private final @NonNull ChatPane pane;
+    private final @NonNull UUID uuid;
 
     /**
      * Constructs {@code ChatView}.
@@ -42,6 +44,8 @@ public final class ChatView implements InterfaceView<ChatPane, PlayerViewer> {
         }
 
         this.pane = pane;
+
+        this.uuid = UUID.randomUUID();
     }
 
     @Override
