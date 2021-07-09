@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.Interface;
@@ -250,13 +250,30 @@ public final class ChestView implements
 
     @Override
     public void addTask(final @NonNull Plugin plugin, final @NonNull Runnable runnable, final int delay) {
-        BukkitTask bukkitTask = Bukkit.getScheduler().runTaskLater(plugin, runnable, delay);
-        this.tasks.add(bukkitTask.getTaskId());
+        BukkitRunnable bukkitRunnable = new NestedRunnable(runnable);
+        bukkitRunnable.runTaskLater(plugin, delay);
+        this.tasks.add(bukkitRunnable.getTaskId());
     }
 
     @Override
     public Collection<Integer> taskIds() {
         return this.tasks;
+    }
+
+    private final class NestedRunnable extends BukkitRunnable {
+
+        private final Runnable runnable;
+
+        private NestedRunnable(final @NonNull Runnable runnable) {
+            this.runnable = runnable;
+        }
+
+        @Override
+        public void run() {
+            this.runnable.run();
+            ChestView.this.tasks.remove(this.getTaskId());
+        }
+
     }
 
 }
