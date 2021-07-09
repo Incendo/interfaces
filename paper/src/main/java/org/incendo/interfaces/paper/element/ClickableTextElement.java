@@ -8,11 +8,14 @@ import org.incendo.interfaces.core.click.ClickHandler;
 import org.incendo.interfaces.paper.pane.ChatPane;
 import org.incendo.interfaces.paper.type.Clickable;
 
+import java.util.UUID;
+
 /**
  * An element containing a piece of text.
  */
 public class ClickableTextElement extends TextElement implements Clickable<ChatPane, InventoryClickEvent> {
 
+    private final @NonNull UUID uuid;
     private final @NonNull Component tooltip;
     private final @NonNull ClickHandler<ChatPane, InventoryClickEvent, ? extends ClickContext<ChatPane, InventoryClickEvent>> clickHandler;
 
@@ -33,6 +36,8 @@ public class ClickableTextElement extends TextElement implements Clickable<ChatP
 
         this.clickHandler = clickHandler;
         this.tooltip = tooltip;
+
+        this.uuid = UUID.randomUUID();
     }
 
     /**
@@ -108,6 +113,15 @@ public class ClickableTextElement extends TextElement implements Clickable<ChatP
      */
     public @NonNull Component tooltip() {
         return this.tooltip;
+    }
+
+    /**
+     * Returns the UUID of this clickable element.
+     *
+     * @return the uuid
+     */
+    public @NonNull UUID uuid() {
+        return this.uuid;
     }
 
 }
