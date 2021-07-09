@@ -48,6 +48,15 @@ public final class ChatView implements InterfaceView<ChatPane, PlayerViewer> {
         this.uuid = UUID.randomUUID();
     }
 
+    /**
+     * Returns the UUID of this chat view.
+     *
+     * @return the view's uuid
+     */
+    public @NonNull UUID uuid() {
+        return this.uuid;
+    }
+
     @Override
     public boolean viewing() {
         return false;
