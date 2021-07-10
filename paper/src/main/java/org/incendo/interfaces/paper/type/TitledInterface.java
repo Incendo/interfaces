@@ -3,7 +3,7 @@ package org.incendo.interfaces.paper.type;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.Interface;
-import org.incendo.interfaces.core.arguments.InterfaceArgument;
+import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.InterfaceViewer;
@@ -45,7 +45,7 @@ public interface TitledInterface<T extends Pane, U extends InterfaceViewer> exte
      */
     @NonNull InterfaceView<T, U> open(
             @NonNull U viewer,
-            @NonNull InterfaceArgument arguments,
+            @NonNull InterfaceArguments arguments,
             @NonNull Component title
     );
 
