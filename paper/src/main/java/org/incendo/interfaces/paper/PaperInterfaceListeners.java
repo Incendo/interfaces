@@ -34,6 +34,7 @@ import java.util.Set;
  * <p>
  * Register this from your plugin if you want event handling to function.
  */
+@SuppressWarnings("unused")
 public class PaperInterfaceListeners implements Listener {
 
     private final @NonNull Set<@NonNull InterfaceView<?, PlayerViewer>> openViews;
@@ -106,6 +107,7 @@ public class PaperInterfaceListeners implements Listener {
      * @param event the event
      */
     @EventHandler
+    @SuppressWarnings("unchecked")
     public void onInventoryClose(final @NonNull InventoryCloseEvent event) {
         final @NonNull Inventory inventory = event.getInventory();
         final @Nullable InventoryHolder holder = inventory.getHolder();
@@ -115,19 +117,19 @@ public class PaperInterfaceListeners implements Listener {
         }
 
         if (holder instanceof PlayerView) {
-            this.openViews.remove((PlayerView) holder);
-            PlayerView playerView = (PlayerView) holder;
+            final PlayerView<?> playerView = (PlayerView<?>) holder;
+            this.openViews.remove(playerView);
 
             if (playerView.backing() instanceof ChestInterface) {
-                ChestInterface chestInterface = (ChestInterface) playerView.backing();
+                final ChestInterface chestInterface = (ChestInterface) playerView.backing();
 
                 for (final CloseHandler<ChestPane> closeHandler : chestInterface.closeHandlers()) {
-                    closeHandler.accept(event, playerView);
+                    closeHandler.accept(event, (PlayerView<ChestPane>) playerView);
                 }
             }
 
             if (playerView instanceof SelfUpdatingInterfaceView) {
-                SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) playerView;
+                final SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) playerView;
 
                 if (selfUpdating.updates()) {
                     Bukkit.getScheduler().cancelTask(this.updatingRunnables.get(selfUpdating));

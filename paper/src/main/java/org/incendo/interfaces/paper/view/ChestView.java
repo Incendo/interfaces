@@ -94,7 +94,6 @@ public final class ChestView implements
         return this.openChild(backing, HashMapInterfaceArgument.empty());
     }
 
-
     private @NonNull ChestPane updatePane(final boolean firstApply) {
         @NonNull ChestPane pane = new ChestPane(this.backing.rows());
 
@@ -124,10 +123,11 @@ public final class ChestView implements
             final @NonNull InterfaceArgument argument
     ) {
         final InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
-
         view.open();
 
-        return (T) view;
+        @SuppressWarnings("unchecked")
+        final T typedView = (T) view;
+        return typedView;
     }
 
     @Override

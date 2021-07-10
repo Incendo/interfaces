@@ -7,6 +7,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @param <T> the click cause
  */
+@SuppressWarnings("unused")
 public interface Click<T> {
 
     /**

@@ -11,6 +11,7 @@ import org.incendo.interfaces.core.view.InterfaceViewer;
  * @param <T> the pane's type
  * @param <U> the click cause
  */
+@SuppressWarnings("unused")
 public interface ClickContext<T extends Pane, U> {
 
     /**

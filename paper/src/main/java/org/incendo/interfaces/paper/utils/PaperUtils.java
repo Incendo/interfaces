@@ -3,6 +3,7 @@ package org.incendo.interfaces.paper.utils;
 /**
  * A collection of utility methods.
  */
+@SuppressWarnings("unused")
 public final class PaperUtils {
 
     /**

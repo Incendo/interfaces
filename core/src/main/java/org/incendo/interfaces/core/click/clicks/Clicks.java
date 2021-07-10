@@ -3,6 +3,7 @@ package org.incendo.interfaces.core.click.clicks;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.click.Click;
 
+@SuppressWarnings("unused")
 public final class Clicks {
 
     private Clicks() {
