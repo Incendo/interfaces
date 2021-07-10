@@ -75,6 +75,7 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
         this.transforms.add(
                 TransformContext.of(
                         InterfaceProperty.dummy(),
+                        1,
                         transform
                 )
         );
@@ -189,18 +190,20 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
          */
         @Override
         public @NonNull Builder addTransform(final @NonNull Transform<BookPane> transform) {
-            return this.addTransform(InterfaceProperty.dummy(), transform);
+            return this.addTransform(InterfaceProperty.dummy(), 1, transform);
         }
 
         @Override
         public <S> Builder addTransform(
                 final @NonNull InterfaceProperty<S> property,
+                final int priority,
                 final @NonNull Transform<BookPane> transform
         ) {
             final List<TransformContext<?, BookPane>> transforms = new ArrayList<>(this.transforms);
             transforms.add(
                     TransformContext.of(
                             property,
+                            priority,
                             transform
                     )
             );

@@ -82,6 +82,7 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
 
         <S> Builder<T, U, V> addTransform(
                 @NonNull InterfaceProperty<S> property,
+                int priority,
                 @NonNull Transform<T> transform
         );
 

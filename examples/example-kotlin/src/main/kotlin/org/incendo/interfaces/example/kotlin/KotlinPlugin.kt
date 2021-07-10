@@ -64,7 +64,7 @@ public class KotlinPlugin : JavaPlugin() {
                                 .append(text(event.slot.toString(), NamedTextColor.GOLD)))
                     })
 
-                withTransform { view ->
+                withTransform(priority = 5) { view ->
                     println("rendering black concrete backing")
 
                     val displayElement =
