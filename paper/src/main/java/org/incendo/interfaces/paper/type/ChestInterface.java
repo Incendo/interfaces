@@ -164,8 +164,8 @@ public final class ChestInterface implements
 
     @Override
     public @NonNull ChestView open(
-            @NonNull final InterfaceView<?, PlayerViewer> parent,
-            @NonNull final InterfaceArguments arguments
+            final @NonNull InterfaceView<?, PlayerViewer> parent,
+            final @NonNull InterfaceArguments arguments
     ) {
         final @NonNull ChestView view = new ChestView((PlayerView<?>) parent, this, parent.viewer(), arguments, this.title);
 
@@ -259,13 +259,13 @@ public final class ChestInterface implements
         }
 
         private Builder(
-                @NonNull final List<TransformContext<?, ChestPane>> transformsList,
-                @NonNull final List<CloseHandler<ChestPane>> closeHandlerList,
+                final @NonNull List<TransformContext<?, ChestPane>> transformsList,
+                final @NonNull List<CloseHandler<ChestPane>> closeHandlerList,
                 final int rows,
-                @NonNull final Component title,
+                final @NonNull Component title,
                 final boolean updates,
                 final int updateDelay,
-                @NonNull final ClickHandler<ChestPane> clickHandler
+                final @NonNull ClickHandler<ChestPane> clickHandler
         ) {
             this.transformsList = Collections.unmodifiableList(transformsList);
             this.closeHandlerList = Collections.unmodifiableList(closeHandlerList);

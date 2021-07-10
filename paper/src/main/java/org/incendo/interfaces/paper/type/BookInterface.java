@@ -120,17 +120,17 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
 
     @Override
     public @NonNull BookView open(
-            @NonNull final PlayerViewer viewer,
-            @NonNull final Component title
+            final @NonNull PlayerViewer viewer,
+            final @NonNull Component title
     ) {
         return this.open(viewer, HashMapInterfaceArguments.empty(), title);
     }
 
     @Override
     public @NonNull BookView open(
-            @NonNull final PlayerViewer viewer,
-            @NonNull final InterfaceArguments arguments,
-            @NonNull final Component title
+            final @NonNull PlayerViewer viewer,
+            final @NonNull InterfaceArguments arguments,
+            final @NonNull Component title
     ) {
         final @NonNull BookView view = new BookView(this, viewer, arguments, title);
 
@@ -141,8 +141,8 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
 
     @Override
     public @NonNull BookView open(
-            @NonNull final InterfaceView<?, PlayerViewer> view,
-            @NonNull final InterfaceArguments arguments
+            final @NonNull InterfaceView<?, PlayerViewer> view,
+            final @NonNull InterfaceArguments arguments
     ) {
         return this.open(view.viewer(), arguments);
     }
@@ -194,8 +194,8 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
 
         @Override
         public <S> Builder addTransform(
-                @NonNull final InterfaceProperty<S> property,
-                @NonNull final Transform<BookPane> transform
+                final @NonNull InterfaceProperty<S> property,
+                final @NonNull Transform<BookPane> transform
         ) {
             final List<TransformContext<?, BookPane>> transforms = new ArrayList<>(this.transforms);
             transforms.add(
