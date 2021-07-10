@@ -12,20 +12,20 @@ final class ImmutableDelegatingInterfaceArguments implements InterfaceArguments 
     }
 
     @Override
-    public <T> @Nullable T get(@NonNull final ArgumentKey<T> key) {
+    public <T> @Nullable T get(final @NonNull ArgumentKey<T> key) {
         return this.backingArgument.get(key);
     }
 
     @Override
     public <T> @NonNull T getOrDefault(
-            @NonNull final ArgumentKey<T> key,
-            @NonNull final T def
+            final @NonNull ArgumentKey<T> key,
+            final @NonNull T def
     ) {
         return this.backingArgument.getOrDefault(key, def);
     }
 
     @Override
-    public boolean contains(@NonNull final ArgumentKey<?> key) {
+    public boolean contains(final @NonNull ArgumentKey<?> key) {
         return this.backingArgument.contains(key);
     }
 

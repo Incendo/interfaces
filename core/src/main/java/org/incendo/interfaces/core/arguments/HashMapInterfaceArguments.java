@@ -111,7 +111,7 @@ public final class HashMapInterfaceArguments implements MutableInterfaceArgument
 
     @Override
     public <T> void set(
-            @NonNull final ArgumentKey<T> key,
+            final @NonNull ArgumentKey<T> key,
             final T value
     ) {
         this.argumentMap.put(key.key(), () -> value);
