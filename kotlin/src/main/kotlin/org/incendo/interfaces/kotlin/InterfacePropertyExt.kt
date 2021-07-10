@@ -4,7 +4,7 @@ import kotlin.reflect.KProperty
 import org.incendo.interfaces.core.transform.InterfaceProperty
 
 /** Setter delegate. */
-public operator fun <T : Any> InterfaceProperty<T>.setValue(
+public operator fun <T> InterfaceProperty<T>.setValue(
     thisRef: Any?,
     property: KProperty<*>,
     value: T
@@ -13,13 +13,11 @@ public operator fun <T : Any> InterfaceProperty<T>.setValue(
 }
 
 /** Getter delegate. */
-public operator fun <T : Any> InterfaceProperty<T>.getValue(
-    thisRef: Any?,
-    property: KProperty<*>
-): T = this.get()
+public operator fun <T> InterfaceProperty<T>.getValue(thisRef: Any?, property: KProperty<*>): T =
+    this.get()
 
 /** Getter/Setter delegate. */
-public var <T : Any> InterfaceProperty<T>.value: T
+public var <T> InterfaceProperty<T>.value: T
     get() = this.get()
     set(value) {
         this.set(value)

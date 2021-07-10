@@ -12,17 +12,17 @@ class InterfacePropertyImpl<T> implements InterfaceProperty<T> {
     private final Collection<BiConsumer<T, T>> updateListeners = new HashSet<>();
     private T value;
 
-    InterfacePropertyImpl(final @NonNull T value) {
+    InterfacePropertyImpl(final T value) {
         this.value = value;
     }
 
     @Override
-    public @NonNull T get() {
+    public T get() {
         return this.value;
     }
 
     @Override
-    public void set(@NonNull final T value) {
+    public void set(final T value) {
         T oldValue = this.value;
         this.value = value;
 
@@ -33,7 +33,7 @@ class InterfacePropertyImpl<T> implements InterfaceProperty<T> {
 
     @Override
     public void addListener(
-            @NonNull final BiConsumer<T, T> consumer
+            final @NonNull BiConsumer<T, T> consumer
     ) {
         this.updateListeners.add(consumer);
     }
