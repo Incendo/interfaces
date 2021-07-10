@@ -3,8 +3,8 @@ package org.incendo.interfaces.paper.type;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.Interface;
-import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
-import org.incendo.interfaces.core.arguments.InterfaceArgument;
+import org.incendo.interfaces.core.arguments.HashMapInterfaceArguments;
+import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.transform.InterfaceProperty;
 import org.incendo.interfaces.core.transform.Transform;
 import org.incendo.interfaces.core.transform.TransformContext;
@@ -100,7 +100,7 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
      */
     @Override
     public @NonNull BookView open(final @NonNull PlayerViewer viewer) {
-        return this.open(viewer, HashMapInterfaceArgument.empty());
+        return this.open(viewer, HashMapInterfaceArguments.empty());
     }
 
     /**
@@ -113,7 +113,7 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
     @Override
     public @NonNull BookView open(
             final @NonNull PlayerViewer viewer,
-            final @NonNull InterfaceArgument arguments
+            final @NonNull InterfaceArguments arguments
     ) {
         return this.open(viewer, arguments, this.title);
     }
@@ -123,13 +123,13 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
             @NonNull final PlayerViewer viewer,
             @NonNull final Component title
     ) {
-        return this.open(viewer, HashMapInterfaceArgument.empty(), title);
+        return this.open(viewer, HashMapInterfaceArguments.empty(), title);
     }
 
     @Override
     public @NonNull BookView open(
             @NonNull final PlayerViewer viewer,
-            @NonNull final InterfaceArgument arguments,
+            @NonNull final InterfaceArguments arguments,
             @NonNull final Component title
     ) {
         final @NonNull BookView view = new BookView(this, viewer, arguments, title);
@@ -142,7 +142,7 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
     @Override
     public @NonNull BookView open(
             @NonNull final InterfaceView<?, PlayerViewer> view,
-            @NonNull final InterfaceArgument arguments
+            @NonNull final InterfaceArguments arguments
     ) {
         return this.open(view.viewer(), arguments);
     }

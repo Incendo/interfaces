@@ -1,7 +1,7 @@
 package org.incendo.interfaces.core;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.interfaces.core.arguments.InterfaceArgument;
+import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.core.transform.InterfaceProperty;
 import org.incendo.interfaces.core.transform.Transform;
@@ -54,7 +54,7 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
      */
     @NonNull InterfaceView<T, U> open(
             @NonNull U viewer,
-            @NonNull InterfaceArgument arguments
+            @NonNull InterfaceArguments arguments
     );
 
     /**
@@ -66,7 +66,7 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
      */
     @NonNull InterfaceView<T, U> open(
             @NonNull InterfaceView<?, U> view,
-            @NonNull InterfaceArgument arguments
+            @NonNull InterfaceArguments arguments
     );
 
     /**

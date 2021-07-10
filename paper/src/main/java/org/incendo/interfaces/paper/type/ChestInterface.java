@@ -4,8 +4,8 @@ import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.UpdatingInterface;
-import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
-import org.incendo.interfaces.core.arguments.InterfaceArgument;
+import org.incendo.interfaces.core.arguments.HashMapInterfaceArguments;
+import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.transform.InterfaceProperty;
 import org.incendo.interfaces.core.transform.Transform;
 import org.incendo.interfaces.core.transform.TransformContext;
@@ -130,13 +130,13 @@ public final class ChestInterface implements
 
     @Override
     public @NonNull ChestView open(final @NonNull PlayerViewer viewer) {
-        return this.open(viewer, HashMapInterfaceArgument.empty());
+        return this.open(viewer, HashMapInterfaceArguments.empty());
     }
 
     @Override
     public @NonNull ChestView open(
             final @NonNull PlayerViewer viewer,
-            final @NonNull InterfaceArgument arguments
+            final @NonNull InterfaceArguments arguments
     ) {
         return this.open(viewer, arguments, this.title);
     }
@@ -146,13 +146,13 @@ public final class ChestInterface implements
             final @NonNull PlayerViewer viewer,
             final @NonNull Component title
     ) {
-        return this.open(viewer, HashMapInterfaceArgument.empty(), title);
+        return this.open(viewer, HashMapInterfaceArguments.empty(), title);
     }
 
     @Override
     public @NonNull ChestView open(
             final @NonNull PlayerViewer viewer,
-            final @NonNull InterfaceArgument arguments,
+            final @NonNull InterfaceArguments arguments,
             final @NonNull Component title
     ) {
         final @NonNull ChestView view = new ChestView(this, viewer, arguments, title);
@@ -165,7 +165,7 @@ public final class ChestInterface implements
     @Override
     public @NonNull ChestView open(
             @NonNull final InterfaceView<?, PlayerViewer> parent,
-            @NonNull final InterfaceArgument arguments
+            @NonNull final InterfaceArguments arguments
     ) {
         final @NonNull ChestView view = new ChestView((PlayerView<?>) parent, this, parent.viewer(), arguments, this.title);
 
