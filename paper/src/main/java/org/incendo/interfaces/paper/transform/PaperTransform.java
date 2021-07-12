@@ -12,6 +12,7 @@ import org.incendo.interfaces.paper.pane.ChestPane;
 /**
  * Utility methods for Paper transformations.
  */
+@SuppressWarnings("unused")
 public interface PaperTransform {
 
     /**
@@ -20,7 +21,7 @@ public interface PaperTransform {
      * @param element the element
      * @return the transform
      */
-    static @NonNull Transform<ChestPane> chestFill(final @NonNull ItemStackElement element) {
+    static @NonNull Transform<ChestPane> chestFill(final @NonNull ItemStackElement<ChestPane> element) {
         return (pane, view) -> {
             final int length = ChestPane.MINECRAFT_CHEST_WIDTH;
             final int height = pane.rows();
@@ -43,7 +44,7 @@ public interface PaperTransform {
      * @param y       the y coordinate
      * @return the transform
      */
-    static @NonNull Transform<ChestPane> chestItem(final @NonNull ItemStackElement element, final int x, final int y) {
+    static @NonNull Transform<ChestPane> chestItem(final @NonNull ItemStackElement<ChestPane> element, final int x, final int y) {
         return (pane, view) -> pane.element(element, x, y);
     }
 

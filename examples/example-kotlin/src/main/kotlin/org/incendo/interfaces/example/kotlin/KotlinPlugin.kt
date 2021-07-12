@@ -8,7 +8,6 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import org.incendo.interfaces.core.arguments.ArgumentKey
@@ -18,9 +17,9 @@ import org.incendo.interfaces.kotlin.paper.asElement
 import org.incendo.interfaces.kotlin.paper.buildChestInterface
 import org.incendo.interfaces.kotlin.paper.open
 import org.incendo.interfaces.paper.PaperInterfaceListeners
+import org.incendo.interfaces.paper.element.ItemStackElement
 import org.incendo.interfaces.paper.pane.ChestPane
 import org.incendo.interfaces.paper.type.ChestInterface
-import org.incendo.interfaces.paper.view.PlayerView
 
 @Suppress("unused")
 public class KotlinPlugin : JavaPlugin() {
@@ -58,17 +57,19 @@ public class KotlinPlugin : JavaPlugin() {
                 rows = CHEST_ROWS
 
                 clickHandler(
-                    canceling { event: InventoryClickEvent, _ ->
-                        event.whoClicked.sendMessage(
-                            text("You clicked ", NamedTextColor.GRAY)
-                                .append(text(event.slot.toString(), NamedTextColor.GOLD)))
+                    canceling {
+                        it.cause()
+                            .whoClicked
+                            .sendMessage(
+                                text("You clicked ", NamedTextColor.GRAY)
+                                    .append(text(it.slot().toString(), NamedTextColor.GOLD)))
                     })
 
                 withTransform { view ->
                     println("rendering black concrete backing")
 
-                    val displayElement =
-                        createItemStack(Material.BLACK_CONCRETE, text("")).asElement<ChestPane>()
+                    val displayElement: ItemStackElement<ChestPane> =
+                        createItemStack(Material.BLACK_CONCRETE, text("")).asElement()
 
                     for (x in 3 until CHEST_COLUMNS) {
                         for (y in 0 until CHEST_ROWS) {
@@ -82,8 +83,6 @@ public class KotlinPlugin : JavaPlugin() {
                     SelectionOptions.values().forEach { option ->
                         view[1, option.index] =
                             createItemStack(option.material, text(option.name)).asElement {
-                                _,
-                                _: PlayerView<*> ->
                                 _selectedOption.set(option)
                             }
                     }

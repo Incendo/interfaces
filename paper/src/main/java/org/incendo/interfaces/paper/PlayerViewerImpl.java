@@ -1,6 +1,7 @@
 package org.incendo.interfaces.paper;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.view.BookView;
@@ -37,12 +38,6 @@ final class PlayerViewerImpl implements PlayerViewer {
         this.player.openBook(bookView.book());
     }
 
-    /**
-     * Opens a pane for the viewer.
-     *
-     * @param pane the pane
-     * @throws UnsupportedOperationException when the pane cannot be opened
-     */
     @Override
     public void open(final @NonNull InterfaceView<?, ?> pane) {
         if (pane instanceof ChestView) {
@@ -56,6 +51,11 @@ final class PlayerViewerImpl implements PlayerViewer {
         }
 
         throw new UnsupportedOperationException("Cannot open view of type " + pane.getClass().getName() + ".");
+    }
+
+    @Override
+    public void close() {
+        this.player.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
     }
 
     @Override

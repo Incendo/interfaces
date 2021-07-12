@@ -2,13 +2,15 @@ package org.incendo.interfaces.kotlin.paper
 
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import org.incendo.interfaces.core.Interface
 import org.incendo.interfaces.core.arguments.InterfaceArguments
+import org.incendo.interfaces.core.click.ClickContext
+import org.incendo.interfaces.core.click.ClickHandler
 import org.incendo.interfaces.core.pane.Pane
 import org.incendo.interfaces.core.view.InterfaceView
 import org.incendo.interfaces.paper.PlayerViewer
-import org.incendo.interfaces.paper.element.ClickHandler
 import org.incendo.interfaces.paper.element.ItemStackElement
 import org.incendo.interfaces.paper.type.ChestInterface
 import org.incendo.interfaces.paper.type.TitledInterface
@@ -66,5 +68,7 @@ public fun Player.asViewer(): PlayerViewer = PlayerViewer.of(this)
  * @param handler optional click handler
  * @return element instance
  */
-public fun <T : Pane> ItemStack.asElement(handler: ClickHandler<T>? = null): ItemStackElement<T> =
+public fun <T : Pane> ItemStack.asElement(
+    handler: ClickHandler<T, InventoryClickEvent, ClickContext<T, InventoryClickEvent>>? = null
+): ItemStackElement<T> =
     if (handler == null) ItemStackElement.of(this) else ItemStackElement.of(this, handler)

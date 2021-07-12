@@ -24,6 +24,7 @@ import java.util.Map;
 /**
  * The view of a chest.
  */
+@SuppressWarnings("unused")
 public final class ChestView implements
         PlayerView<ChestPane>,
         SelfUpdatingInterfaceView,
@@ -93,7 +94,6 @@ public final class ChestView implements
         return this.openChild(backing, HashMapInterfaceArguments.empty());
     }
 
-
     private @NonNull ChestPane updatePane(final boolean firstApply) {
         @NonNull ChestPane pane = new ChestPane(this.backing.rows());
 
@@ -123,10 +123,11 @@ public final class ChestView implements
             final @NonNull InterfaceArguments argument
     ) {
         final InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
-
         view.open();
 
-        return (T) view;
+        @SuppressWarnings("unchecked")
+        final T typedView = (T) view;
+        return typedView;
     }
 
     @Override
