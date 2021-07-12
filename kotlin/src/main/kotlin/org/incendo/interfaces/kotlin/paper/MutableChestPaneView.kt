@@ -2,15 +2,14 @@ package org.incendo.interfaces.kotlin.paper
 
 import org.incendo.interfaces.core.element.Element
 import org.incendo.interfaces.core.pane.Pane
-import org.incendo.interfaces.core.view.InterfaceView
-import org.incendo.interfaces.paper.PlayerViewer
 import org.incendo.interfaces.paper.element.ItemStackElement
 import org.incendo.interfaces.paper.pane.ChestPane
+import org.incendo.interfaces.paper.view.PlayerView
 
 public class MutableChestPaneView(
     private var internalPane: ChestPane,
-    private val view: InterfaceView<ChestPane, PlayerViewer>
-) : Pane, InterfaceView<ChestPane, PlayerViewer> by view {
+    private val view: PlayerView<ChestPane>
+) : Pane, PlayerView<ChestPane> by view {
 
     override fun elements(): MutableCollection<Element> = internalPane.elements()
 
