@@ -10,13 +10,12 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
+import org.incendo.interfaces.core.arguments.ArgumentKey
 import org.incendo.interfaces.core.transform.InterfaceProperty
-import org.incendo.interfaces.kotlin.getValue
-import org.incendo.interfaces.kotlin.interfaceArgumentOf
+import org.incendo.interfaces.kotlin.*
 import org.incendo.interfaces.kotlin.paper.asElement
 import org.incendo.interfaces.kotlin.paper.buildChestInterface
 import org.incendo.interfaces.kotlin.paper.open
-import org.incendo.interfaces.kotlin.setValue
 import org.incendo.interfaces.paper.PaperInterfaceListeners
 import org.incendo.interfaces.paper.element.ItemStackElement
 import org.incendo.interfaces.paper.pane.ChestPane
@@ -30,9 +29,10 @@ public class KotlinPlugin : JavaPlugin() {
         private const val CHEST_COLUMNS: Int = 9
 
         private val CHEST_TITLE = text("Example Chest", NamedTextColor.GOLD)
-
         private val LEAVES =
             setOf(Material.EMERALD_BLOCK, Material.DIAMOND_BLOCK, Material.IRON_BLOCK)
+
+        private val ARGUMENT_CONCRETE: ArgumentKey<Material> = argumentKeyOf("concrete")
     }
 
     private lateinit var exampleChest: ChestInterface
@@ -48,7 +48,7 @@ public class KotlinPlugin : JavaPlugin() {
         PaperInterfaceListeners.install(this)
 
         // Update the dependent value every time the server ticks.
-        var selectedOption: SelectionOptions by _selectedOption
+        val selectedOption: SelectionOptions by _selectedOption
 
         // Build a chest interface.
         exampleChest =
@@ -91,8 +91,10 @@ public class KotlinPlugin : JavaPlugin() {
                 withTransform(_selectedOption) { view ->
                     println("rendering selected option")
 
-                    val displayElement: ItemStackElement<ChestPane> =
-                        createItemStack(Material.LIME_CONCRETE, text("")).asElement()
+                    // Extract an argument from the view
+                    val concrete = view.arguments[ARGUMENT_CONCRETE]
+
+                    val displayElement = createItemStack(concrete, text("")).asElement<ChestPane>()
                     selectedOption.art.forEach { (x, y) -> view[x, y] = displayElement }
                 }
 
@@ -124,8 +126,8 @@ public class KotlinPlugin : JavaPlugin() {
                 return false
             }
 
-            // Pass the player's name as an argument.
-            val arguments = interfaceArgumentOf("name" to sender.name)
+            // Pass an argument to the interface.
+            val arguments = interfaceArgumentOf(ARGUMENT_CONCRETE to Material.LIME_CONCRETE)
 
             when (args[0].toLowerCase()) {
                 "chest" ->

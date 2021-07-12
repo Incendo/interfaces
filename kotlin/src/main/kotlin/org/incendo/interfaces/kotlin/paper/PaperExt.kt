@@ -5,7 +5,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import org.incendo.interfaces.core.Interface
-import org.incendo.interfaces.core.arguments.InterfaceArgument
+import org.incendo.interfaces.core.arguments.InterfaceArguments
 import org.incendo.interfaces.core.click.ClickContext
 import org.incendo.interfaces.core.click.ClickHandler
 import org.incendo.interfaces.core.pane.Pane
@@ -33,7 +33,7 @@ public fun buildChestInterface(builder: MutableChestInterfaceBuilder.() -> Unit)
  */
 public fun <T : Pane> Player.open(
     `interface`: Interface<T, PlayerViewer>,
-    arguments: InterfaceArgument? = null,
+    arguments: InterfaceArguments? = null,
 ): InterfaceView<T, PlayerViewer> =
     if (arguments == null) `interface`.open(this.asViewer())
     else `interface`.open(this.asViewer(), arguments)
@@ -48,7 +48,7 @@ public fun <T : Pane> Player.open(
  */
 public fun <T : Pane, I : TitledInterface<T, PlayerViewer>> Player.open(
     `interface`: I,
-    arguments: InterfaceArgument? = null,
+    arguments: InterfaceArguments? = null,
     title: Component = `interface`.title()
 ): InterfaceView<T, PlayerViewer> =
     if (arguments == null) `interface`.open(this.asViewer(), title)

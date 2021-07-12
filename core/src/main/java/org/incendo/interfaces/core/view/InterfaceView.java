@@ -2,7 +2,7 @@ package org.incendo.interfaces.core.view;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.Interface;
-import org.incendo.interfaces.core.arguments.InterfaceArgument;
+import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.pane.Pane;
 
 /**
@@ -25,7 +25,7 @@ public interface InterfaceView<T extends Pane, U extends InterfaceViewer> {
      *
      * @return the view's argument
      */
-    @NonNull InterfaceArgument argument();
+    @NonNull InterfaceArguments arguments();
 
     /**
      * Returns the viewer of this view.
@@ -66,7 +66,7 @@ public interface InterfaceView<T extends Pane, U extends InterfaceViewer> {
      */
     default void update() {
         if (this.viewing()) {
-            this.backing().open(this.viewer(), this.argument());
+            this.backing().open(this.viewer(), this.arguments());
         }
     }
 

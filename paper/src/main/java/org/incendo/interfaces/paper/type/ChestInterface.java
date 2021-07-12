@@ -5,8 +5,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.UpdatingInterface;
-import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
-import org.incendo.interfaces.core.arguments.InterfaceArgument;
+import org.incendo.interfaces.core.arguments.HashMapInterfaceArguments;
+import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.transform.InterfaceProperty;
 import org.incendo.interfaces.core.transform.Transform;
 import org.incendo.interfaces.core.transform.TransformContext;
@@ -132,13 +132,13 @@ public final class ChestInterface implements
 
     @Override
     public @NonNull ChestView open(final @NonNull PlayerViewer viewer) {
-        return this.open(viewer, HashMapInterfaceArgument.empty());
+        return this.open(viewer, HashMapInterfaceArguments.empty());
     }
 
     @Override
     public @NonNull ChestView open(
             final @NonNull PlayerViewer viewer,
-            final @NonNull InterfaceArgument arguments
+            final @NonNull InterfaceArguments arguments
     ) {
         return this.open(viewer, arguments, this.title);
     }
@@ -148,13 +148,13 @@ public final class ChestInterface implements
             final @NonNull PlayerViewer viewer,
             final @NonNull Component title
     ) {
-        return this.open(viewer, HashMapInterfaceArgument.empty(), title);
+        return this.open(viewer, HashMapInterfaceArguments.empty(), title);
     }
 
     @Override
     public @NonNull ChestView open(
             final @NonNull PlayerViewer viewer,
-            final @NonNull InterfaceArgument arguments,
+            final @NonNull InterfaceArguments arguments,
             final @NonNull Component title
     ) {
         final @NonNull ChestView view = new ChestView(this, viewer, arguments, title);
@@ -166,8 +166,8 @@ public final class ChestInterface implements
 
     @Override
     public @NonNull ChestView open(
-            @NonNull final InterfaceView<?, PlayerViewer> parent,
-            @NonNull final InterfaceArgument arguments
+            final @NonNull InterfaceView<?, PlayerViewer> parent,
+            final @NonNull InterfaceArguments arguments
     ) {
         final @NonNull ChestView view = new ChestView((PlayerView<?>) parent, this, parent.viewer(), arguments, this.title);
 
@@ -261,13 +261,13 @@ public final class ChestInterface implements
         }
 
         private Builder(
-                @NonNull final List<TransformContext<?, ChestPane>> transformsList,
-                @NonNull final List<CloseHandler<ChestPane>> closeHandlerList,
+                final @NonNull List<TransformContext<?, ChestPane>> transformsList,
+                final @NonNull List<CloseHandler<ChestPane>> closeHandlerList,
                 final int rows,
-                @NonNull final Component title,
+                final @NonNull Component title,
                 final boolean updates,
                 final int updateDelay,
-                @NonNull final ClickHandler<ChestPane, InventoryClickEvent, ChestClickContext> clickHandler
+                final @NonNull ClickHandler<ChestPane, InventoryClickEvent, ChestClickContext> clickHandler
         ) {
             this.transformsList = Collections.unmodifiableList(transformsList);
             this.closeHandlerList = Collections.unmodifiableList(closeHandlerList);

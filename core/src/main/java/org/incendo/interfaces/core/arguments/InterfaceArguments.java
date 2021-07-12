@@ -1,21 +1,20 @@
 package org.incendo.interfaces.core.arguments;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Holds arguments passed into an interface.
  */
-public interface InterfaceArgument {
+public interface InterfaceArguments {
 
     /**
-     * Returns an immutable wrapper of {@link InterfaceArgument}.
+     * Returns an immutable wrapper of {@link InterfaceArguments}.
      *
-     * @param interfaceArgument the instance to wrap
+     * @param interfaceArguments the instance to wrap
      * @return immutable wrapper
      */
-    static @NonNull InterfaceArgument immutable(final @NonNull InterfaceArgument interfaceArgument) {
-        return new ImmutableDelegatingInterfaceArgument(interfaceArgument);
+    static @NonNull InterfaceArguments immutable(final @NonNull InterfaceArguments interfaceArguments) {
+        return new ImmutableDelegatingInterfaceArguments(interfaceArguments);
     }
 
     /**
@@ -25,7 +24,7 @@ public interface InterfaceArgument {
      * @param <T> the value's type
      * @return the value
      */
-    <T> @Nullable T get(@NonNull String key);
+    <T> T get(@NonNull ArgumentKey<T> key);
 
     /**
      * Returns the value at the given key.
@@ -35,7 +34,7 @@ public interface InterfaceArgument {
      * @param def the default object
      * @return the value
      */
-    <T> @NonNull T getOrDefault(@NonNull String key, @NonNull T def);
+    <T> @NonNull T getOrDefault(@NonNull ArgumentKey<T> key, @NonNull T def);
 
     /**
      * Returns whether the given key is stored in this argument.
@@ -43,7 +42,6 @@ public interface InterfaceArgument {
      * @param key the key
      * @return whether the key is stored in this argument
      */
-    boolean contains(@NonNull String key);
-
+    boolean contains(@NonNull ArgumentKey<?> key);
 
 }

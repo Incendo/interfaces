@@ -6,8 +6,8 @@ import org.bukkit.inventory.Inventory;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.Interface;
-import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
-import org.incendo.interfaces.core.arguments.InterfaceArgument;
+import org.incendo.interfaces.core.arguments.HashMapInterfaceArguments;
+import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
@@ -34,7 +34,7 @@ public final class ChestView implements
     private final @NonNull ChestInterface backing;
     private final @Nullable PlayerView<?> parent;
     private final @NonNull Inventory inventory;
-    private final @NonNull InterfaceArgument argument;
+    private final @NonNull InterfaceArguments argument;
     private final @NonNull Component title;
     private @NonNull ChestPane pane;
 
@@ -51,7 +51,7 @@ public final class ChestView implements
     public ChestView(
             final @NonNull ChestInterface backing,
             final @NonNull PlayerViewer viewer,
-            final @NonNull InterfaceArgument argument,
+            final @NonNull InterfaceArguments argument,
             final @NonNull Component title
     ) {
         this(null, backing, viewer, argument, title);
@@ -70,7 +70,7 @@ public final class ChestView implements
             final @Nullable PlayerView<?> parent,
             final @NonNull ChestInterface backing,
             final @NonNull PlayerViewer viewer,
-            final @NonNull InterfaceArgument argument,
+            final @NonNull InterfaceArguments argument,
             final @NonNull Component title
     ) {
         this.parent = parent;
@@ -91,7 +91,7 @@ public final class ChestView implements
      * @return the view
      */
     public @NonNull <T extends PlayerView<?>> T openChild(final @NonNull Interface<?, PlayerViewer> backing) {
-        return this.openChild(backing, HashMapInterfaceArgument.empty());
+        return this.openChild(backing, HashMapInterfaceArguments.empty());
     }
 
     private @NonNull ChestPane updatePane(final boolean firstApply) {
@@ -120,7 +120,7 @@ public final class ChestView implements
      */
     public @NonNull <T extends PlayerView<?>> T openChild(
             final @NonNull Interface<?, PlayerViewer> backing,
-            final @NonNull InterfaceArgument argument
+            final @NonNull InterfaceArguments argument
     ) {
         final InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
         view.open();
@@ -193,7 +193,7 @@ public final class ChestView implements
     }
 
     @Override
-    public @NonNull InterfaceArgument argument() {
+    public @NonNull InterfaceArguments arguments() {
         return this.argument;
     }
 

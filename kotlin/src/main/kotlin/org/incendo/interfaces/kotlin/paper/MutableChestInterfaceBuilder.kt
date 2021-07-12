@@ -8,7 +8,6 @@ import org.incendo.interfaces.core.transform.InterfaceProperty
 import org.incendo.interfaces.core.transform.Transform
 import org.incendo.interfaces.core.view.InterfaceView
 import org.incendo.interfaces.kotlin.MutableInterfaceBuilder
-import org.incendo.interfaces.paper.PlayerViewer
 import org.incendo.interfaces.paper.click.ChestClickContext
 import org.incendo.interfaces.paper.pane.ChestPane
 import org.incendo.interfaces.paper.type.ChestInterface
@@ -75,7 +74,7 @@ public class MutableChestInterfaceBuilder :
     @Suppress("unchecked_cast")
     public fun addTransform(
         property: InterfaceProperty<*> = InterfaceProperty.dummy(),
-        transform: (ChestPane, InterfaceView<ChestPane, PlayerViewer>) -> ChestPane
+        transform: (ChestPane, PlayerView<ChestPane>) -> ChestPane
     ): Unit = mutate {
         internalBuilder.addTransform(
             property, transform as (ChestPane, InterfaceView<ChestPane, *>) -> ChestPane)
