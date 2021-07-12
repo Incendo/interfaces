@@ -23,6 +23,7 @@ import org.incendo.interfaces.paper.type.ChestInterface;
 import org.incendo.interfaces.paper.type.CloseHandler;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.PlayerView;
+import org.incendo.interfaces.paper.view.TaskableView;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,7 +39,7 @@ import java.util.Set;
 public class PaperInterfaceListeners implements Listener {
 
     private final @NonNull Set<@NonNull InterfaceView<?, PlayerViewer>> openViews;
-    private final @NonNull Map<@NonNull SelfUpdatingInterfaceView, @NonNull Integer> updatingRunnables;
+    private final @NonNull Map<@NonNull SelfUpdatingInterfaceView, @NonNull Integer> updatingRunnablesIds;
     private final @NonNull Plugin plugin;
 
     /**
@@ -48,7 +49,7 @@ public class PaperInterfaceListeners implements Listener {
      */
     public PaperInterfaceListeners(final @NonNull Plugin plugin) {
         this.openViews = new HashSet<>();
-        this.updatingRunnables = new HashMap<>();
+        this.updatingRunnablesIds = new HashMap<>();
         this.plugin = plugin;
     }
 
@@ -92,7 +93,7 @@ public class PaperInterfaceListeners implements Listener {
                     if (view instanceof SelfUpdatingInterfaceView) {
                         SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
                         runnable.runTaskTimer(this.plugin, updatingInterface.updateDelay(), updatingInterface.updateDelay());
-                        this.updatingRunnables.put(selfUpdating, runnable.getTaskId());
+                        this.updatingRunnablesIds.put(selfUpdating, runnable.getTaskId());
                     } else {
                         runnable.runTaskLater(this.plugin, updatingInterface.updateDelay());
                     }
@@ -127,14 +128,22 @@ public class PaperInterfaceListeners implements Listener {
                     closeHandler.accept(event, (PlayerView<ChestPane>) playerView);
                 }
             }
+        }
 
-            if (playerView instanceof SelfUpdatingInterfaceView) {
-                final SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) playerView;
+        if (holder instanceof SelfUpdatingInterfaceView) {
+            SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) holder;
 
-                if (selfUpdating.updates()) {
-                    Bukkit.getScheduler().cancelTask(this.updatingRunnables.get(selfUpdating));
-                    this.updatingRunnables.remove(selfUpdating);
-                }
+            if (selfUpdating.updates()) {
+                Bukkit.getScheduler().cancelTask(this.updatingRunnablesIds.get(selfUpdating));
+                this.updatingRunnablesIds.remove(selfUpdating);
+            }
+        }
+
+        if (holder instanceof TaskableView) {
+            TaskableView taskableView = (TaskableView) holder;
+
+            for (final Integer task : taskableView.taskIds()) {
+                Bukkit.getScheduler().cancelTask(task);
             }
         }
     }
