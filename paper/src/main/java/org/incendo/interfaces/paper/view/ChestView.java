@@ -19,9 +19,9 @@ import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
 import org.incendo.interfaces.paper.utils.PaperUtils;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +43,7 @@ public final class ChestView implements
     private @NonNull ChestPane pane;
 
     private final @NonNull Map<Integer, Element> current = new HashMap<>();
-    private final Collection<Integer> tasks = new ArrayList<>();
+    private final Collection<Integer> tasks = new HashSet<>();
 
     /**
      * Constructs {@code ChestView}.
