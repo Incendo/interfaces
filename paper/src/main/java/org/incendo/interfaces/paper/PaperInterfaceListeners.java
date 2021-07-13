@@ -8,6 +8,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.PlayerInventory;
@@ -27,6 +28,7 @@ import org.incendo.interfaces.paper.type.CloseHandler;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.PlayerInventoryView;
 import org.incendo.interfaces.paper.view.PlayerView;
+import org.incendo.interfaces.paper.view.TaskableView;
 import org.incendo.interfaces.paper.view.ViewOpenEvent;
 
 import java.util.HashMap;
@@ -43,7 +45,7 @@ import java.util.Set;
 public class PaperInterfaceListeners implements Listener {
 
     private final @NonNull Set<@NonNull InterfaceView<?, PlayerViewer>> openViews;
-    private final @NonNull Map<@NonNull SelfUpdatingInterfaceView, @NonNull Integer> updatingRunnables;
+    private final @NonNull Map<@NonNull SelfUpdatingInterfaceView, @NonNull Integer> updatingRunnablesIds;
     private final @NonNull Plugin plugin;
 
     /**
@@ -53,7 +55,7 @@ public class PaperInterfaceListeners implements Listener {
      */
     public PaperInterfaceListeners(final @NonNull Plugin plugin) {
         this.openViews = new HashSet<>();
-        this.updatingRunnables = new HashMap<>();
+        this.updatingRunnablesIds = new HashMap<>();
         this.plugin = plugin;
     }
 
@@ -121,7 +123,7 @@ public class PaperInterfaceListeners implements Listener {
                 if (view instanceof SelfUpdatingInterfaceView) {
                     SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
                     runnable.runTaskTimer(this.plugin, updatingInterface.updateDelay(), updatingInterface.updateDelay());
-                    this.updatingRunnables.put(selfUpdating, runnable.getTaskId());
+                    this.updatingRunnablesIds.put(selfUpdating, runnable.getTaskId());
                 } else {
                     runnable.runTaskLater(this.plugin, updatingInterface.updateDelay());
                 }
@@ -155,15 +157,45 @@ public class PaperInterfaceListeners implements Listener {
                     closeHandler.accept(event, (PlayerView<ChestPane>) playerView);
                 }
             }
+        }
 
-            if (playerView instanceof SelfUpdatingInterfaceView) {
-                final SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) playerView;
+        this.cleanUpView((InterfaceView<?, PlayerViewer>) holder);
+    }
 
-                if (selfUpdating.updates()) {
-                    Bukkit.getScheduler().cancelTask(this.updatingRunnables.get(selfUpdating));
-                    this.updatingRunnables.remove(selfUpdating);
-                }
+    /**
+     * Handles the player quit event.
+     *
+     * @param event the event
+     */
+    @EventHandler
+    public void onPlayerQuit(final @NonNull PlayerQuitEvent event) {
+        final PlayerInventoryView view = PlayerInventoryView.forPlayer(event.getPlayer());
+
+        if (view != null) {
+            this.cleanUpView(view);
+        }
+    }
+
+    private void cleanUpView(final @NonNull InterfaceView<?, PlayerViewer> view) {
+        if (view instanceof SelfUpdatingInterfaceView) {
+            SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
+
+            if (selfUpdating.updates()) {
+                Bukkit.getScheduler().cancelTask(this.updatingRunnablesIds.get(selfUpdating));
+                this.updatingRunnablesIds.remove(selfUpdating);
             }
+        }
+
+        if (view instanceof TaskableView) {
+            TaskableView taskableView = (TaskableView) view;
+
+            for (final Integer task : taskableView.taskIds()) {
+                Bukkit.getScheduler().cancelTask(task);
+            }
+        }
+
+        if (view instanceof PlayerInventoryView) {
+            PlayerInventoryView.removeForPlayer(view.viewer().player());
         }
     }
 
