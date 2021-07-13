@@ -159,7 +159,9 @@ public class PaperInterfaceListeners implements Listener {
             }
         }
 
-        this.cleanUpView((InterfaceView<?, PlayerViewer>) holder);
+        if (holder instanceof InterfaceView) {
+            this.cleanUpView((InterfaceView<?, PlayerViewer>) holder);
+        }
     }
 
     /**
