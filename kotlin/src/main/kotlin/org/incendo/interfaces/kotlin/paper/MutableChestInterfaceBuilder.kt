@@ -8,15 +8,18 @@ import org.incendo.interfaces.core.transform.InterfaceProperty
 import org.incendo.interfaces.core.transform.Transform
 import org.incendo.interfaces.core.view.InterfaceView
 import org.incendo.interfaces.kotlin.MutableInterfaceBuilder
-import org.incendo.interfaces.paper.click.ChestClickContext
+import org.incendo.interfaces.paper.PlayerViewer
+import org.incendo.interfaces.paper.click.InventoryClickContext
 import org.incendo.interfaces.paper.pane.ChestPane
 import org.incendo.interfaces.paper.type.ChestInterface
 import org.incendo.interfaces.paper.type.CloseHandler
+import org.incendo.interfaces.paper.view.ChestView
 import org.incendo.interfaces.paper.view.PlayerView
 
 @Suppress("unused")
 public class MutableChestInterfaceBuilder :
-    MutableInterfaceBuilder<ChestPane, InventoryClickEvent, ChestClickContext> {
+    MutableInterfaceBuilder<
+        ChestPane, InventoryClickEvent, InventoryClickContext<ChestPane, ChestView>> {
 
     private var internalBuilder: ChestInterface.Builder = ChestInterface.builder()
 
@@ -32,7 +35,8 @@ public class MutableChestInterfaceBuilder :
         set(value) = mutate { internalBuilder.title(value) }
 
     /** The click handler of the interface. */
-    public var clickHandler: ClickHandler<ChestPane, InventoryClickEvent, ChestClickContext>
+    public var clickHandler:
+        ClickHandler<ChestPane, InventoryClickEvent, InventoryClickContext<ChestPane, ChestView>>
         get() = internalBuilder.clickHandler()
         set(value) = mutate { internalBuilder.clickHandler(value) }
     // </editor-fold>
@@ -54,7 +58,9 @@ public class MutableChestInterfaceBuilder :
      * @param handler click handler
      */
     public fun clickHandler(
-        handler: ClickHandler<ChestPane, InventoryClickEvent, ChestClickContext>
+        handler:
+            ClickHandler<
+                ChestPane, InventoryClickEvent, InventoryClickContext<ChestPane, ChestView>>
     ): Unit = mutate { internalBuilder.clickHandler(handler) }
 
     /**
@@ -62,7 +68,7 @@ public class MutableChestInterfaceBuilder :
      *
      * @param transform transform to add
      */
-    public fun addTransform(transform: Transform<ChestPane>): Unit = mutate {
+    public fun addTransform(transform: Transform<ChestPane, PlayerViewer>): Unit = mutate {
         internalBuilder.addTransform(transform)
     }
 

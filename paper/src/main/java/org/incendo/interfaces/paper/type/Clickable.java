@@ -2,8 +2,8 @@ package org.incendo.interfaces.paper.type;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.click.ClickContext;
-import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.core.click.ClickHandler;
+import org.incendo.interfaces.core.pane.Pane;
 
 /**
  * Represents a clickable interface.

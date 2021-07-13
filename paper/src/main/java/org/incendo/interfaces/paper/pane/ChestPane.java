@@ -3,20 +3,23 @@ package org.incendo.interfaces.paper.pane;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.pane.Pane;
+import org.incendo.interfaces.core.util.Vector2;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A pane based off of a Minecraft chest inventory.
  */
-public class ChestPane implements Pane {
+public final class ChestPane implements Pane {
 
     public static final int MINECRAFT_CHEST_WIDTH = 9;
 
-    private final @NonNull List<List<ItemStackElement<ChestPane>>> elements;
+    private final @NonNull Map<@NonNull Vector2, @NonNull ItemStackElement<ChestPane>> elements;
 
     private final int rows;
 
@@ -28,17 +31,13 @@ public class ChestPane implements Pane {
     public ChestPane(final int rows) {
         this.rows = rows;
 
-        this.elements = new ArrayList<>();
+        this.elements = new HashMap<>();
 
         // Fill the arrays with empty elements.
-        for (int i = 0; i < MINECRAFT_CHEST_WIDTH; i++) {
-            final @NonNull List<ItemStackElement<ChestPane>> deepElements = new ArrayList<>();
-
-            for (int j = 0; j < this.rows; j++) {
-                deepElements.add(j, ItemStackElement.empty());
+        for (int x = 0; x < MINECRAFT_CHEST_WIDTH; x++) {
+            for (int y = 0; y < this.rows; y++) {
+                this.elements.put(Vector2.at(x, y), ItemStackElement.empty());
             }
-
-            this.elements.add(deepElements);
         }
     }
 
@@ -48,7 +47,10 @@ public class ChestPane implements Pane {
      * @param rows     amount of rows
      * @param elements the elements
      */
-    public ChestPane(final int rows, final @NonNull List<List<ItemStackElement<ChestPane>>> elements) {
+    public ChestPane(
+            final int rows,
+            final @NonNull Map<@NonNull Vector2, @NonNull ItemStackElement<ChestPane>> elements
+    ) {
         this.rows = rows;
         this.elements = elements;
     }
@@ -58,7 +60,7 @@ public class ChestPane implements Pane {
      *
      * @return the elements
      */
-    public @NonNull List<List<ItemStackElement<ChestPane>>> chestElements() {
+    public @NonNull Map<@NonNull Vector2, @NonNull ItemStackElement<ChestPane>> chestElements() {
         return this.elements;
     }
 
@@ -71,19 +73,14 @@ public class ChestPane implements Pane {
         return this.rows;
     }
 
-    /**
-     * Returns the elements, where the first 9 elements are row 1, the second 9 elements are row 2, etc...
-     *
-     * @return the elements collection
-     */
     @Override
     public @NonNull Collection<Element> elements() {
         final @NonNull List<Element> tempElements = new ArrayList<>();
 
         // Fill the temp elements list with the elements.
-        for (int i = 0; i < MINECRAFT_CHEST_WIDTH; i++) {
-            for (int j = 0; j < this.rows; j++) {
-                tempElements.add(this.elements.get(i).get(this.rows));
+        for (int x = 0; x < MINECRAFT_CHEST_WIDTH; x++) {
+            for (int y = 0; y < this.rows; y++) {
+                tempElements.add(this.elements.get(Vector2.at(x, y)));
             }
         }
 
@@ -101,13 +98,9 @@ public class ChestPane implements Pane {
      * @return a new {@code ChestPane}
      */
     public @NonNull ChestPane element(final @NonNull ItemStackElement<ChestPane> element, final int x, final int y) {
-        final @NonNull List<List<ItemStackElement<ChestPane>>> newElements = new ArrayList<>();
+        final Map<@NonNull Vector2, @NonNull ItemStackElement<ChestPane>> newElements = new HashMap<>(this.elements);
 
-        for (final @NonNull List<ItemStackElement<ChestPane>> elements : this.elements) {
-            newElements.add(new ArrayList<>(elements));
-        }
-
-        newElements.get(x).set(y, element);
+        newElements.put(Vector2.at(x, y), element);
 
         return new ChestPane(this.rows, newElements);
     }
@@ -120,7 +113,7 @@ public class ChestPane implements Pane {
      * @return the element
      */
     public @NonNull ItemStackElement<ChestPane> element(final int x, final int y) {
-        return this.elements.get(x).get(y);
+        return this.elements.get(Vector2.at(x, y));
     }
 
 }

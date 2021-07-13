@@ -1,6 +1,7 @@
 package org.incendo.interfaces.paper;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -9,6 +10,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -16,13 +18,16 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.UpdatingInterface;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
-import org.incendo.interfaces.paper.click.ChestClickContext;
+import org.incendo.interfaces.paper.click.InventoryClickContext;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
+import org.incendo.interfaces.paper.pane.PlayerPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
 import org.incendo.interfaces.paper.type.CloseHandler;
 import org.incendo.interfaces.paper.view.ChestView;
+import org.incendo.interfaces.paper.view.PlayerInventoryView;
 import org.incendo.interfaces.paper.view.PlayerView;
+import org.incendo.interfaces.paper.view.ViewOpenEvent;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -77,25 +82,48 @@ public class PaperInterfaceListeners implements Listener {
 
         if (holder instanceof PlayerView) {
             PlayerView<?> view = (PlayerView<?>) holder;
-            this.openViews.add(view);
+            this.addOpenView(view);
+        }
+    }
 
-            if (view.backing() instanceof UpdatingInterface) {
-                UpdatingInterface updatingInterface = (UpdatingInterface) view.backing();
-                if (updatingInterface.updates()) {
-                    BukkitRunnable runnable = new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            view.update();
-                        }
-                    };
+    /**
+     * Handles the open view event.
+     *
+     * @param event the event
+     */
+    @EventHandler
+    public void onViewOpen(final @NonNull ViewOpenEvent event) {
+        final @NonNull InterfaceView<?, PlayerViewer> view = event.view();
 
-                    if (view instanceof SelfUpdatingInterfaceView) {
-                        SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
-                        runnable.runTaskTimer(this.plugin, updatingInterface.updateDelay(), updatingInterface.updateDelay());
-                        this.updatingRunnables.put(selfUpdating, runnable.getTaskId());
-                    } else {
-                        runnable.runTaskLater(this.plugin, updatingInterface.updateDelay());
+        if (view instanceof PlayerInventoryView) {
+            this.addOpenView(view);
+        }
+    }
+
+    /**
+     * Adds an open view
+     *
+     * @param view the view
+     */
+    public void addOpenView(final @NonNull InterfaceView<?, PlayerViewer> view) {
+        this.openViews.add(view);
+
+        if (view.backing() instanceof UpdatingInterface) {
+            UpdatingInterface updatingInterface = (UpdatingInterface) view.backing();
+            if (updatingInterface.updates()) {
+                BukkitRunnable runnable = new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        view.update();
                     }
+                };
+
+                if (view instanceof SelfUpdatingInterfaceView) {
+                    SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
+                    runnable.runTaskTimer(this.plugin, updatingInterface.updateDelay(), updatingInterface.updateDelay());
+                    this.updatingRunnables.put(selfUpdating, runnable.getTaskId());
+                } else {
+                    runnable.runTaskLater(this.plugin, updatingInterface.updateDelay());
                 }
             }
         }
@@ -150,12 +178,8 @@ public class PaperInterfaceListeners implements Listener {
 
         final @Nullable InventoryHolder holder = inventory.getHolder();
 
-        if (holder == null) {
-            return;
-        }
-
         if (holder instanceof ChestView) {
-            final @NonNull ChestClickContext context = new ChestClickContext(event);
+            final InventoryClickContext<ChestPane, ChestView> context = new InventoryClickContext<>(event, false);
 
             ChestView chestView = (ChestView) holder;
             // Handle parent interface click event
@@ -170,6 +194,20 @@ public class PaperInterfaceListeners implements Listener {
                 final @NonNull ItemStackElement<ChestPane> element = chestView.pane().element(x, y);
                 element.clickHandler().accept(context);
             }
+        } else if (event.getClickedInventory() != null && event.getClickedInventory() instanceof PlayerInventory) {
+            if (PlayerInventoryView.forPlayer((Player) event.getWhoClicked()) == null) {
+                return;
+            }
+
+            final InventoryClickContext<PlayerPane, PlayerInventoryView> context = new InventoryClickContext<>(
+                    event,
+                    true
+            );
+
+            PlayerInventoryView playerInventoryView = context.view();
+
+            final @NonNull ItemStackElement<PlayerPane> element = playerInventoryView.pane().element(event.getSlot());
+            element.clickHandler().accept(context);
         }
     }
 

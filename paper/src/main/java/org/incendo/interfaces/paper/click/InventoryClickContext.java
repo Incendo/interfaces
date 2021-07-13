@@ -9,46 +9,55 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.click.Click;
 import org.incendo.interfaces.core.click.ClickContext;
 import org.incendo.interfaces.core.click.clicks.Clicks;
+import org.incendo.interfaces.core.pane.Pane;
+import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.InterfaceViewer;
 import org.incendo.interfaces.paper.PlayerViewer;
-import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.view.ChestView;
+import org.incendo.interfaces.paper.view.PlayerInventoryView;
+
+import java.util.Objects;
 
 /**
  * The click context of a chest.
+ *
+ * @param <T> the pane type
+ * @param <U> the viewer type
  */
 @SuppressWarnings("unused")
-public final class ChestClickContext implements ClickContext<ChestPane, InventoryClickEvent> {
+public final class InventoryClickContext<T extends Pane, U extends InterfaceView<T, ?>> implements
+        ClickContext<T, InventoryClickEvent> {
 
     private final @NonNull InventoryClickEvent event;
-    private final @NonNull ChestView view;
+    private final @NonNull U view;
     private final @NonNull Click<InventoryClickEvent> click;
 
     /**
      * Constructs {@code ChestClickContext}.
      *
-     * @param event the event, must be of {@link InventoryType#CHEST}
+     * @param event  the event
+     * @param player whether or not the player clicked their own inventory
      */
-    public ChestClickContext(
-            final @NonNull InventoryClickEvent event
+    @SuppressWarnings("unchecked")
+    public InventoryClickContext(
+            final @NonNull InventoryClickEvent event,
+            final boolean player
     ) {
         this.event = event;
 
         final @NonNull Inventory inventory = event.getInventory();
-
-        if (inventory.getType() != InventoryType.CHEST) {
-            throw new IllegalArgumentException(
-                    "ChestClickContext requires an InventoryClickEvent with an InventoryType of CHEST."
-            );
+        if (inventory.getType() == InventoryType.CHEST) {
+            if (!(inventory.getHolder() instanceof ChestView)) {
+                throw new IllegalArgumentException(
+                        "The InventoryHolder wasn't a ChestView."
+                );
+            }
+            this.view = (U) inventory.getHolder();
+        } else if (player) {
+            this.view = (U) Objects.requireNonNull(PlayerInventoryView.forPlayer((Player) event.getWhoClicked()));
+        } else {
+            throw new IllegalArgumentException("Inventory type " + inventory.getType() + " is not a valid inventory.");
         }
-
-        if (!(inventory.getHolder() instanceof ChestView)) {
-            throw new IllegalArgumentException(
-                    "The InventoryHolder wasn't a ChestView."
-            );
-        }
-
-        this.view = (ChestView) inventory.getHolder();
 
         if (this.event.isLeftClick()) {
             this.click = Clicks.leftClick(this.event, this.event.isShiftClick());
@@ -78,7 +87,7 @@ public final class ChestClickContext implements ClickContext<ChestPane, Inventor
     }
 
     @Override
-    public @NonNull ChestView view() {
+    public @NonNull U view() {
         return this.view;
     }
 

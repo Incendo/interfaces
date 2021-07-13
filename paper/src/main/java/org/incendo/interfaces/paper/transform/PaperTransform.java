@@ -4,6 +4,7 @@ package org.incendo.interfaces.paper.transform;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.transform.Transform;
+import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.element.TextElement;
 import org.incendo.interfaces.paper.pane.BookPane;
@@ -21,7 +22,7 @@ public interface PaperTransform {
      * @param element the element
      * @return the transform
      */
-    static @NonNull Transform<ChestPane> chestFill(final @NonNull ItemStackElement<ChestPane> element) {
+    static @NonNull Transform<ChestPane, PlayerViewer> chestFill(final @NonNull ItemStackElement<ChestPane> element) {
         return (pane, view) -> {
             final int length = ChestPane.MINECRAFT_CHEST_WIDTH;
             final int height = pane.rows();
@@ -44,7 +45,8 @@ public interface PaperTransform {
      * @param y       the y coordinate
      * @return the transform
      */
-    static @NonNull Transform<ChestPane> chestItem(final @NonNull ItemStackElement<ChestPane> element, final int x, final int y) {
+    static @NonNull Transform<ChestPane, PlayerViewer> chestItem(final @NonNull ItemStackElement<ChestPane> element, final int x,
+                                                    final int y) {
         return (pane, view) -> pane.element(element, x, y);
     }
 
@@ -54,7 +56,7 @@ public interface PaperTransform {
      * @param pages the pages as components
      * @return the transform
      */
-    static @NonNull Transform<BookPane> bookText(final @NonNull Component... pages) {
+    static @NonNull Transform<BookPane, PlayerViewer> bookText(final @NonNull Component... pages) {
         return (pane, view) -> {
             @NonNull BookPane bookPane = pane;
 

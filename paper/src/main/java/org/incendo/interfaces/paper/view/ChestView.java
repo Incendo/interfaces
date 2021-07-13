@@ -8,8 +8,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.arguments.HashMapInterfaceArguments;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
-import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.element.Element;
+import org.incendo.interfaces.core.util.Vector2;
+import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
@@ -18,7 +19,6 @@ import org.incendo.interfaces.paper.type.ChestInterface;
 import org.incendo.interfaces.paper.utils.PaperUtils;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,7 +34,7 @@ public final class ChestView implements
     private final @NonNull ChestInterface backing;
     private final @Nullable PlayerView<?> parent;
     private final @NonNull Inventory inventory;
-    private final @NonNull InterfaceArguments argument;
+    private final @NonNull InterfaceArguments arguments;
     private final @NonNull Component title;
     private @NonNull ChestPane pane;
 
@@ -43,40 +43,40 @@ public final class ChestView implements
     /**
      * Constructs {@code ChestView}.
      *
-     * @param backing  the backing interface
-     * @param viewer   the viewer
-     * @param argument the interface argument
-     * @param title    the title
+     * @param backing   the backing interface
+     * @param viewer    the viewer
+     * @param arguments the interface argument
+     * @param title     the title
      */
     public ChestView(
             final @NonNull ChestInterface backing,
             final @NonNull PlayerViewer viewer,
-            final @NonNull InterfaceArguments argument,
+            final @NonNull InterfaceArguments arguments,
             final @NonNull Component title
     ) {
-        this(null, backing, viewer, argument, title);
+        this(null, backing, viewer, arguments, title);
     }
 
     /**
      * Constructs {@code ChestView}.
      *
-     * @param parent   the parent view
-     * @param backing  the backing interface
-     * @param viewer   the viewer
-     * @param argument the interface argument
-     * @param title    the title
+     * @param parent    the parent view
+     * @param backing   the backing interface
+     * @param viewer    the viewer
+     * @param arguments the interface argument
+     * @param title     the title
      */
     public ChestView(
             final @Nullable PlayerView<?> parent,
             final @NonNull ChestInterface backing,
             final @NonNull PlayerViewer viewer,
-            final @NonNull InterfaceArguments argument,
+            final @NonNull InterfaceArguments arguments,
             final @NonNull Component title
     ) {
         this.parent = parent;
         this.viewer = viewer;
         this.backing = backing;
-        this.argument = argument;
+        this.arguments = arguments;
         this.title = title;
         this.pane = this.updatePane(true);
 
@@ -144,12 +144,12 @@ public final class ChestView implements
     public void update() {
         this.pane = this.updatePane(false);
 
-        final @NonNull List<List<ItemStackElement<ChestPane>>> elements = this.pane.chestElements();
+        final @NonNull Map<Vector2, ItemStackElement<ChestPane>> elements = this.pane.chestElements();
 
         for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
             for (int y = 0; y < this.backing.rows(); y++) {
                 final @Nullable Element currentElement = this.current.get(PaperUtils.gridToSlot(x, y));
-                final @NonNull ItemStackElement<ChestPane> element = elements.get(x).get(y);
+                final @NonNull ItemStackElement<ChestPane> element = elements.get(Vector2.at(x, y));
 
                 if (element.equals(currentElement)) {
                     continue;
@@ -194,12 +194,13 @@ public final class ChestView implements
 
     @Override
     public @NonNull InterfaceArguments arguments() {
-        return this.argument;
+        return this.arguments;
     }
 
     @Override
     public void open() {
         this.viewer.open(this);
+        this.emitEvent();
     }
 
     @Override
@@ -224,11 +225,11 @@ public final class ChestView implements
                 this.title
         );
 
-        final @NonNull List<List<ItemStackElement<ChestPane>>> elements = this.pane.chestElements();
+        final @NonNull Map<Vector2, ItemStackElement<ChestPane>> elements = this.pane.chestElements();
 
         for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
             for (int y = 0; y < this.backing.rows(); y++) {
-                final @NonNull ItemStackElement<ChestPane> element = elements.get(x).get(y);
+                final @NonNull ItemStackElement<ChestPane> element = elements.get(Vector2.at(x, y));
 
                 this.current.put(PaperUtils.gridToSlot(x, y), element);
                 inventory.setItem(PaperUtils.gridToSlot(x, y), element.itemStack());
