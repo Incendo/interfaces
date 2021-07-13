@@ -83,10 +83,11 @@ public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
     @Suppress("unchecked_cast")
     public fun addTransform(
         property: InterfaceProperty<*> = InterfaceProperty.dummy(),
+        priority: Int = 1,
         transform: (ChestPane, InterfaceView<ChestPane, PlayerViewer>) -> ChestPane
     ): Unit = mutate {
         internalBuilder.addTransform(
-            property, transform as (ChestPane, InterfaceView<ChestPane, *>) -> ChestPane)
+            property, priority, transform as (ChestPane, InterfaceView<ChestPane, *>) -> ChestPane)
     }
 
     /**
@@ -96,9 +97,10 @@ public class MutableChestInterfaceBuilder : MutableInterfaceBuilder<ChestPane> {
      */
     public fun withTransform(
         property: InterfaceProperty<*> = InterfaceProperty.dummy(),
+        priority: Int = 1,
         transform: (MutableChestPaneView) -> Unit
     ) {
-        addTransform(property) { chestPane, interfaceView ->
+        addTransform(property, priority) { chestPane, interfaceView ->
             MutableChestPaneView(chestPane, interfaceView).also(transform).toChestPane()
         }
     }

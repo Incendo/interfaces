@@ -1,7 +1,7 @@
 package org.incendo.interfaces.kotlin
 
 import org.incendo.interfaces.core.Interface
-import org.incendo.interfaces.core.arguments.InterfaceArgument
+import org.incendo.interfaces.core.arguments.InterfaceArguments
 import org.incendo.interfaces.core.pane.Pane
 import org.incendo.interfaces.core.view.InterfaceView
 import org.incendo.interfaces.core.view.InterfaceViewer
@@ -19,8 +19,8 @@ public val InterfaceView<*, *>.viewing: Boolean
     get() = this.viewing()
 
 /** The argument provided to this view. */
-public val InterfaceView<*, *>.argument: InterfaceArgument
-    get() = this.argument()
+public val InterfaceView<*, *>.arguments: InterfaceArguments
+    get() = this.arguments()
 
 /** The pane. */
 public val <T : Pane> InterfaceView<T, *>.pane: T

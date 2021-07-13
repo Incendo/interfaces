@@ -3,7 +3,7 @@ package org.incendo.interfaces.paper.view;
 import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.interfaces.core.arguments.InterfaceArgument;
+import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.TextElement;
@@ -20,7 +20,7 @@ public final class BookView implements InterfaceView<BookPane, PlayerViewer> {
 
     private final @NonNull BookInterface parent;
     private final @NonNull PlayerViewer viewer;
-    private final @NonNull InterfaceArgument argument;
+    private final @NonNull InterfaceArguments argument;
     private final @NonNull BookPane pane;
     private final @NonNull Book book;
 
@@ -35,7 +35,7 @@ public final class BookView implements InterfaceView<BookPane, PlayerViewer> {
     public BookView(
             final @NonNull BookInterface parent,
             final @NonNull PlayerViewer viewer,
-            final @NonNull InterfaceArgument argument,
+            final @NonNull InterfaceArguments argument,
             final @NonNull Component title
     ) {
         this.parent = parent;
@@ -97,7 +97,7 @@ public final class BookView implements InterfaceView<BookPane, PlayerViewer> {
      * @return the argument
      */
     @Override
-    public @NonNull InterfaceArgument argument() {
+    public @NonNull InterfaceArguments arguments() {
         return this.argument;
     }
 

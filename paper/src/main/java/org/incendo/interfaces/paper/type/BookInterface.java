@@ -3,8 +3,8 @@ package org.incendo.interfaces.paper.type;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.Interface;
-import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
-import org.incendo.interfaces.core.arguments.InterfaceArgument;
+import org.incendo.interfaces.core.arguments.HashMapInterfaceArguments;
+import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.transform.InterfaceProperty;
 import org.incendo.interfaces.core.transform.Transform;
 import org.incendo.interfaces.core.transform.TransformContext;
@@ -75,6 +75,7 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
         this.transforms.add(
                 TransformContext.of(
                         InterfaceProperty.dummy(),
+                        1,
                         transform
                 )
         );
@@ -100,7 +101,7 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
      */
     @Override
     public @NonNull BookView open(final @NonNull PlayerViewer viewer) {
-        return this.open(viewer, HashMapInterfaceArgument.empty());
+        return this.open(viewer, HashMapInterfaceArguments.empty());
     }
 
     /**
@@ -113,24 +114,24 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
     @Override
     public @NonNull BookView open(
             final @NonNull PlayerViewer viewer,
-            final @NonNull InterfaceArgument arguments
+            final @NonNull InterfaceArguments arguments
     ) {
         return this.open(viewer, arguments, this.title);
     }
 
     @Override
     public @NonNull BookView open(
-            @NonNull final PlayerViewer viewer,
-            @NonNull final Component title
+            final @NonNull PlayerViewer viewer,
+            final @NonNull Component title
     ) {
-        return this.open(viewer, HashMapInterfaceArgument.empty(), title);
+        return this.open(viewer, HashMapInterfaceArguments.empty(), title);
     }
 
     @Override
     public @NonNull BookView open(
-            @NonNull final PlayerViewer viewer,
-            @NonNull final InterfaceArgument arguments,
-            @NonNull final Component title
+            final @NonNull PlayerViewer viewer,
+            final @NonNull InterfaceArguments arguments,
+            final @NonNull Component title
     ) {
         final @NonNull BookView view = new BookView(this, viewer, arguments, title);
 
@@ -141,8 +142,8 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
 
     @Override
     public @NonNull BookView open(
-            @NonNull final InterfaceView<?, PlayerViewer> view,
-            @NonNull final InterfaceArgument arguments
+            final @NonNull InterfaceView<?, PlayerViewer> view,
+            final @NonNull InterfaceArguments arguments
     ) {
         return this.open(view.viewer(), arguments);
     }
@@ -189,18 +190,20 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
          */
         @Override
         public @NonNull Builder addTransform(final @NonNull Transform<BookPane> transform) {
-            return this.addTransform(InterfaceProperty.dummy(), transform);
+            return this.addTransform(InterfaceProperty.dummy(), 1, transform);
         }
 
         @Override
         public <S> Builder addTransform(
-                @NonNull final InterfaceProperty<S> property,
-                @NonNull final Transform<BookPane> transform
+                final @NonNull InterfaceProperty<S> property,
+                final int priority,
+                final @NonNull Transform<BookPane> transform
         ) {
             final List<TransformContext<?, BookPane>> transforms = new ArrayList<>(this.transforms);
             transforms.add(
                     TransformContext.of(
                             property,
+                            priority,
                             transform
                     )
             );

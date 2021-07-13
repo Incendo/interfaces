@@ -6,9 +6,9 @@ import org.bukkit.inventory.Inventory;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.Interface;
-import org.incendo.interfaces.core.arguments.HashMapInterfaceArgument;
-import org.incendo.interfaces.core.arguments.InterfaceArgument;
 import org.incendo.interfaces.core.transform.InterfaceProperty;
+import org.incendo.interfaces.core.arguments.HashMapInterfaceArguments;
+import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
@@ -18,6 +18,8 @@ import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
 import org.incendo.interfaces.paper.utils.PaperUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,11 +36,12 @@ public final class ChestView implements
     private final @NonNull ChestInterface backing;
     private final @Nullable PlayerView<?> parent;
     private final @NonNull Inventory inventory;
-    private final @NonNull InterfaceArgument argument;
+    private final @NonNull InterfaceArguments argument;
     private final @NonNull Component title;
     private @NonNull ChestPane pane;
 
     private final @NonNull Map<Integer, Element> current = new HashMap<>();
+    private final @NonNull Map<Integer, ChestPane> panes = new HashMap<>();
 
     /**
      * Constructs {@code ChestView}.
@@ -51,7 +54,7 @@ public final class ChestView implements
     public ChestView(
             final @NonNull ChestInterface backing,
             final @NonNull PlayerViewer viewer,
-            final @NonNull InterfaceArgument argument,
+            final @NonNull InterfaceArguments argument,
             final @NonNull Component title
     ) {
         this(null, backing, viewer, argument, title);
@@ -70,7 +73,7 @@ public final class ChestView implements
             final @Nullable PlayerView<?> parent,
             final @NonNull ChestInterface backing,
             final @NonNull PlayerViewer viewer,
-            final @NonNull InterfaceArgument argument,
+            final @NonNull InterfaceArguments argument,
             final @NonNull Component title
     ) {
         this.parent = parent;
@@ -91,37 +94,39 @@ public final class ChestView implements
      * @return the view
      */
     public @NonNull <T extends PlayerView<?>> T openChild(final @NonNull Interface<?, PlayerViewer> backing) {
-        return this.openChild(backing, HashMapInterfaceArgument.empty());
+        return this.openChild(backing, HashMapInterfaceArguments.empty());
     }
 
 
     private @NonNull ChestPane updatePane(final boolean firstApply) {
-        @NonNull ChestPane pane = new ChestPane(this.backing.rows());
-
         for (final var transform : this.backing.transformations()) {
-            pane = transform.transform().apply(pane, this);
+            ChestPane currentPane = this.panes.getOrDefault(transform.priority(), new ChestPane(this.backing.rows()));
+            ChestPane newPane = transform.transform().apply(currentPane, this);
             // If it's the first time we apply the transform, then
             // we add update listeners to all the dependent properties
             if (firstApply) {
                 transform.property().addListener((oldValue, newValue) -> this.updateByProperty(transform.property()));
             }
+
+            this.panes.put(transform.priority(), newPane);
         }
 
-        return pane;
+        return this.mergePanes();
     }
 
     private @NonNull ChestPane updatePaneByProperty(final InterfaceProperty<?> interfaceProperty) {
-        @NonNull ChestPane pane = new ChestPane(this.backing.rows());
-
         for (final var transform : this.backing.transformations()) {
             if (transform.property() != interfaceProperty) {
                 continue;
             }
 
-            pane = transform.transform().apply(pane, this);
+            ChestPane currentPane = this.panes.getOrDefault(transform.priority(), new ChestPane(this.backing.rows()));
+            ChestPane newPane = transform.transform().apply(currentPane, this);
+
+            this.panes.put(transform.priority(), newPane);
         }
 
-        return pane;
+        return this.mergePanes();
     }
 
     private void updateByProperty(final InterfaceProperty<?> interfaceProperty) {
@@ -157,7 +162,7 @@ public final class ChestView implements
      */
     public @NonNull <T extends PlayerView<?>> T openChild(
             final @NonNull Interface<?, PlayerViewer> backing,
-            final @NonNull InterfaceArgument argument
+            final @NonNull InterfaceArguments argument
     ) {
         final InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
 
@@ -214,7 +219,7 @@ public final class ChestView implements
     }
 
     @Override
-    public @NonNull InterfaceArgument argument() {
+    public @NonNull InterfaceArguments arguments() {
         return this.argument;
     }
 
@@ -257,6 +262,37 @@ public final class ChestView implements
         }
 
         return inventory;
+    }
+
+    @Override
+    public boolean updates() {
+        return this.backing().updates();
+    }
+
+    private @NonNull ChestPane mergePanes() {
+        ItemStackElement<ChestPane> empty = ItemStackElement.empty();
+        ChestPane finalPane = new ChestPane(this.backing.rows());
+
+        List<Integer> keys = new ArrayList<>(this.panes.keySet());
+        Collections.sort(keys);
+
+        for (final int key : keys) {
+            List<List<ItemStackElement<ChestPane>>> elements = this.panes.get(key).chestElements();
+
+            for (int x = 0; x < elements.size(); x++) {
+                final List<ItemStackElement<ChestPane>> innerElements = elements.get(x);
+
+                for (int y = 0; y < innerElements.size(); y++) {
+                    ItemStackElement<ChestPane> element = innerElements.get(y);
+
+                    if (!element.equals(empty)) {
+                        finalPane = finalPane.element(element, x, y);
+                    }
+                }
+            }
+        }
+
+        return finalPane;
     }
 
 }
