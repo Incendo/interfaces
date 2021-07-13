@@ -40,8 +40,23 @@ with panes.
 
 ## Usage
 
-Gradle instructions coming soon. For now, clone the repo, build, and publish using the `publishMavenPublicationToMavenLocal` 
-task. The dependency information can be found in `build.gradle.kts`.
+## Usage
+
+Snapshots of this repository are hosted at https://repo.incendo.org/content/repositories/snapshots/.
+
+Gradle example:
+
+```kotlin
+repositories() {
+    // ...
+    maven("https://repo.incendo.org/content/repositories/snapshots/")
+    // ...
+}
+
+dependencies() {
+    implementation("org.incendo.interfaces:interfaces-{package}:1.0.0-SNAPSHOT")
+}
+```
 
 ## Examples
 

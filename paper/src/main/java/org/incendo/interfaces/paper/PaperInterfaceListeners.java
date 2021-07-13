@@ -16,12 +16,14 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.UpdatingInterface;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
+import org.incendo.interfaces.paper.click.ChestClickContext;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
 import org.incendo.interfaces.paper.type.CloseHandler;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.PlayerView;
+import org.incendo.interfaces.paper.view.TaskableView;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,10 +35,11 @@ import java.util.Set;
  * <p>
  * Register this from your plugin if you want event handling to function.
  */
+@SuppressWarnings("unused")
 public class PaperInterfaceListeners implements Listener {
 
     private final @NonNull Set<@NonNull InterfaceView<?, PlayerViewer>> openViews;
-    private final @NonNull Map<@NonNull SelfUpdatingInterfaceView, @NonNull Integer> updatingRunnables;
+    private final @NonNull Map<@NonNull SelfUpdatingInterfaceView, @NonNull Integer> updatingRunnablesIds;
     private final @NonNull Plugin plugin;
 
     /**
@@ -46,7 +49,7 @@ public class PaperInterfaceListeners implements Listener {
      */
     public PaperInterfaceListeners(final @NonNull Plugin plugin) {
         this.openViews = new HashSet<>();
-        this.updatingRunnables = new HashMap<>();
+        this.updatingRunnablesIds = new HashMap<>();
         this.plugin = plugin;
     }
 
@@ -90,7 +93,7 @@ public class PaperInterfaceListeners implements Listener {
                     if (view instanceof SelfUpdatingInterfaceView) {
                         SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
                         runnable.runTaskTimer(this.plugin, updatingInterface.updateDelay(), updatingInterface.updateDelay());
-                        this.updatingRunnables.put(selfUpdating, runnable.getTaskId());
+                        this.updatingRunnablesIds.put(selfUpdating, runnable.getTaskId());
                     } else {
                         runnable.runTaskLater(this.plugin, updatingInterface.updateDelay());
                     }
@@ -105,6 +108,7 @@ public class PaperInterfaceListeners implements Listener {
      * @param event the event
      */
     @EventHandler
+    @SuppressWarnings("unchecked")
     public void onInventoryClose(final @NonNull InventoryCloseEvent event) {
         final @NonNull Inventory inventory = event.getInventory();
         final @Nullable InventoryHolder holder = inventory.getHolder();
@@ -114,24 +118,32 @@ public class PaperInterfaceListeners implements Listener {
         }
 
         if (holder instanceof PlayerView) {
-            this.openViews.remove((PlayerView) holder);
-            PlayerView playerView = (PlayerView) holder;
+            final PlayerView<?> playerView = (PlayerView<?>) holder;
+            this.openViews.remove(playerView);
 
             if (playerView.backing() instanceof ChestInterface) {
-                ChestInterface chestInterface = (ChestInterface) playerView.backing();
+                final ChestInterface chestInterface = (ChestInterface) playerView.backing();
 
                 for (final CloseHandler<ChestPane> closeHandler : chestInterface.closeHandlers()) {
-                    closeHandler.accept(event, playerView);
+                    closeHandler.accept(event, (PlayerView<ChestPane>) playerView);
                 }
             }
+        }
 
-            if (playerView instanceof SelfUpdatingInterfaceView) {
-                SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) playerView;
+        if (holder instanceof SelfUpdatingInterfaceView) {
+            SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) holder;
 
-                if (selfUpdating.updates()) {
-                    Bukkit.getScheduler().cancelTask(this.updatingRunnables.get(selfUpdating));
-                    this.updatingRunnables.remove(selfUpdating);
-                }
+            if (selfUpdating.updates()) {
+                Bukkit.getScheduler().cancelTask(this.updatingRunnablesIds.get(selfUpdating));
+                this.updatingRunnablesIds.remove(selfUpdating);
+            }
+        }
+
+        if (holder instanceof TaskableView) {
+            TaskableView taskableView = (TaskableView) holder;
+
+            for (final Integer task : taskableView.taskIds()) {
+                Bukkit.getScheduler().cancelTask(task);
             }
         }
     }
@@ -152,9 +164,11 @@ public class PaperInterfaceListeners implements Listener {
         }
 
         if (holder instanceof ChestView) {
+            final @NonNull ChestClickContext context = new ChestClickContext(event);
+
             ChestView chestView = (ChestView) holder;
             // Handle parent interface click event
-            chestView.backing().clickHandler().accept(event, chestView);
+            chestView.backing().clickHandler().accept(context);
 
             // Handle element click event
             if (event.getSlotType() == InventoryType.SlotType.CONTAINER) {
@@ -162,8 +176,8 @@ public class PaperInterfaceListeners implements Listener {
                 int x = slot % 9;
                 int y = slot / 9;
 
-                final @NonNull ItemStackElement element = chestView.pane().element(x, y);
-                element.clickHandler().accept(event, (PlayerView) chestView);
+                final @NonNull ItemStackElement<ChestPane> element = chestView.pane().element(x, y);
+                element.clickHandler().accept(context);
             }
         }
     }

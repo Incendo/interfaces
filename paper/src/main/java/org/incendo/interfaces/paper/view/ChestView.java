@@ -3,6 +3,8 @@ package org.incendo.interfaces.paper.view;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.Interface;
@@ -20,13 +22,16 @@ import org.incendo.interfaces.paper.utils.PaperUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 /**
  * The view of a chest.
  */
+@SuppressWarnings("unused")
 public final class ChestView implements
         PlayerView<ChestPane>,
         SelfUpdatingInterfaceView,
@@ -42,6 +47,7 @@ public final class ChestView implements
 
     private final @NonNull Map<Integer, Element> current = new HashMap<>();
     private final @NonNull Map<Integer, ChestPane> panes = new HashMap<>();
+    private final Collection<Integer> tasks = new HashSet<>();
 
     /**
      * Constructs {@code ChestView}.
@@ -96,7 +102,6 @@ public final class ChestView implements
     public @NonNull <T extends PlayerView<?>> T openChild(final @NonNull Interface<?, PlayerViewer> backing) {
         return this.openChild(backing, HashMapInterfaceArguments.empty());
     }
-
 
     private @NonNull ChestPane updatePane(final boolean firstApply) {
         for (final var transform : this.backing.transformations()) {
@@ -165,10 +170,11 @@ public final class ChestView implements
             final @NonNull InterfaceArguments argument
     ) {
         final InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
-
         view.open();
 
-        return (T) view;
+        @SuppressWarnings("unchecked")
+        final T typedView = (T) view;
+        return typedView;
     }
 
     @Override
@@ -293,6 +299,33 @@ public final class ChestView implements
         }
 
         return finalPane;
+    }
+
+    @Override
+    public void addTask(final @NonNull Plugin plugin, final @NonNull Runnable runnable, final int delay) {
+        BukkitRunnable bukkitRunnable = new NestedRunnable(runnable);
+        bukkitRunnable.runTaskLater(plugin, delay);
+        this.tasks.add(bukkitRunnable.getTaskId());
+    }
+
+    @Override
+    public Collection<Integer> taskIds() {
+        return this.tasks;
+    }
+
+    private final class NestedRunnable extends BukkitRunnable {
+
+        private final Runnable runnable;
+
+        private NestedRunnable(final @NonNull Runnable runnable) {
+            this.runnable = runnable;
+        }
+
+        @Override
+        public void run() {
+            this.runnable.run();
+            ChestView.this.tasks.remove(this.getTaskId());
+        }
     }
 
 }

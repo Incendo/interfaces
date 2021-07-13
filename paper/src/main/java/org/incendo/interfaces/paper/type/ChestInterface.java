@@ -1,6 +1,7 @@
 package org.incendo.interfaces.paper.type;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.UpdatingInterface;
@@ -11,7 +12,8 @@ import org.incendo.interfaces.core.transform.Transform;
 import org.incendo.interfaces.core.transform.TransformContext;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
-import org.incendo.interfaces.paper.element.ClickHandler;
+import org.incendo.interfaces.core.click.ClickHandler;
+import org.incendo.interfaces.paper.click.ChestClickContext;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.PlayerView;
@@ -26,7 +28,7 @@ import java.util.List;
 public final class ChestInterface implements
         TitledInterface<ChestPane, PlayerViewer>,
         UpdatingInterface,
-        Clickable<ChestPane>  {
+        Clickable<ChestPane, InventoryClickEvent>  {
 
     private final int rows;
     private final @NonNull List<TransformContext<?, ChestPane>> transformationList;
@@ -34,7 +36,7 @@ public final class ChestInterface implements
     private final @NonNull Component title;
     private final boolean updates;
     private final int updateDelay;
-    private final @NonNull ClickHandler<ChestPane> clickHandler;
+    private final @NonNull ClickHandler<ChestPane, InventoryClickEvent, ChestClickContext> clickHandler;
 
     /**
      * Constructs {@code ChestInterface}.
@@ -54,7 +56,7 @@ public final class ChestInterface implements
             final @NonNull List<CloseHandler<ChestPane>> closeHandlers,
             final boolean updates,
             final int updateDelay,
-            final @NonNull ClickHandler<ChestPane> clickHandler
+            final @NonNull ClickHandler<ChestPane, InventoryClickEvent, ChestClickContext> clickHandler
     ) {
         this.title = title;
         this.transformationList = transforms;
@@ -88,7 +90,7 @@ public final class ChestInterface implements
      *
      * @return the click handler
      */
-    public @NonNull ClickHandler<ChestPane> clickHandler() {
+    public @NonNull ClickHandler<ChestPane, InventoryClickEvent, ChestClickContext> clickHandler() {
         return this.clickHandler;
     }
 
@@ -244,7 +246,7 @@ public final class ChestInterface implements
         /**
          * The top click handler.
          */
-        private final @NonNull ClickHandler<ChestPane> clickHandler;
+        private final @NonNull ClickHandler<ChestPane, InventoryClickEvent, ChestClickContext> clickHandler;
 
         /**
          * Constructs {@code Builder}.
@@ -266,7 +268,7 @@ public final class ChestInterface implements
                 final @NonNull Component title,
                 final boolean updates,
                 final int updateDelay,
-                final @NonNull ClickHandler<ChestPane> clickHandler
+                final @NonNull ClickHandler<ChestPane, InventoryClickEvent, ChestClickContext> clickHandler
         ) {
             this.transformsList = Collections.unmodifiableList(transformsList);
             this.closeHandlerList = Collections.unmodifiableList(closeHandlerList);
@@ -400,7 +402,7 @@ public final class ChestInterface implements
          *
          * @return click handler
          */
-        public @NonNull ClickHandler<ChestPane> clickHandler() {
+        public @NonNull ClickHandler<ChestPane, InventoryClickEvent, ChestClickContext> clickHandler() {
             return this.clickHandler;
         }
 
@@ -410,7 +412,7 @@ public final class ChestInterface implements
          * @param handler the handler
          * @return new builder instance
          */
-        public @NonNull Builder clickHandler(final @NonNull ClickHandler<ChestPane> handler) {
+        public @NonNull Builder clickHandler(final @NonNull ClickHandler<ChestPane, InventoryClickEvent, ChestClickContext> handler) {
             return new Builder(
                     this.transformsList,
                     this.closeHandlerList,

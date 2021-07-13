@@ -5,6 +5,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 /**
  * Represents a target that can view an interface.
  */
+@SuppressWarnings("unused")
 public interface InterfaceViewer {
 
     /**
@@ -13,5 +14,10 @@ public interface InterfaceViewer {
      * @param pane the pane
      */
     void open(@NonNull InterfaceView<?, ?> pane);
+
+    /**
+     * Closes the open view, if any.
+     */
+    void close();
 
 }

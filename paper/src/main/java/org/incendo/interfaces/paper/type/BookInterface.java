@@ -20,6 +20,7 @@ import java.util.List;
 /**
  * An interface using a book.
  */
+@SuppressWarnings("unused")
 public final class BookInterface implements TitledInterface<BookPane, PlayerViewer> {
 
     private final @NonNull List<TransformContext<?, BookPane>> transforms;
