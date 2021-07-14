@@ -8,20 +8,20 @@ import org.incendo.interfaces.paper.PlayerViewer;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Event emitted when a {@link InterfaceView} is opened.
+ * Event emitted when a {@link InterfaceView} is closed.
  */
-public final class ViewOpenEvent extends PlayerEvent {
+public final class ViewCloseEvent extends PlayerEvent {
 
     private static final HandlerList handlers = new HandlerList();
 
     private final @NotNull InterfaceView<?, PlayerViewer> view;
 
     /**
-     * Construct a new {@code ViewOpenEvent}
+     * Construct a new {@code ViewCloseEvent}
      *
      * @param view the view
      */
-    public ViewOpenEvent(final @NotNull InterfaceView<?, PlayerViewer> view) {
+    public ViewCloseEvent(final @NotNull InterfaceView<?, PlayerViewer> view) {
         super(view.viewer().player());
         this.view = view;
     }

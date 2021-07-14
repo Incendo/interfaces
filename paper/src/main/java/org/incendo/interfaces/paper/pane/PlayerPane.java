@@ -222,7 +222,16 @@ public final class PlayerPane implements Pane {
         );
     }
 
-    private @NonNull PlayerPane setAdjusted(
+    /**
+     * Sets the element in the given [index], where the index is
+     * relative to the [slotType].
+     *
+     * @param index    the index of the item
+     * @param slotType the slot type
+     * @param element  the element
+     * @return the updated pane
+     */
+    public @NonNull PlayerPane setAdjusted(
             final int index,
             final @NonNull SlotType slotType,
             final @NonNull ItemStackElement<PlayerPane> element
@@ -240,7 +249,15 @@ public final class PlayerPane implements Pane {
         return this.element(adjusted, element);
     }
 
-    private @NonNull ItemStackElement<PlayerPane> getAdjusted(
+    /**
+     * Returns the element in the given [index], where the index is
+     * relative to the [slotType].
+     *
+     * @param index    the index of the item
+     * @param slotType the slot type
+     * @return the element
+     */
+    public @NonNull ItemStackElement<PlayerPane> getAdjusted(
             final int index,
             final @NonNull SlotType slotType
     ) {

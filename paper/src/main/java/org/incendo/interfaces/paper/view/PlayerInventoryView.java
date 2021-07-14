@@ -1,9 +1,6 @@
 package org.incendo.interfaces.paper.view;
 
-import java.util.Collection;
-
-import java.util.Collections;
-
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
@@ -18,6 +15,8 @@ import org.incendo.interfaces.paper.pane.PlayerPane;
 import org.incendo.interfaces.paper.type.PlayerInterface;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +34,8 @@ public final class PlayerInventoryView implements
     private final @NonNull InterfaceArguments arguments;
     private @NonNull PlayerPane pane;
 
+    private boolean viewing = true;
+
     private final @NonNull Map<Integer, Element> current = new HashMap<>();
 
     /**
@@ -49,6 +50,13 @@ public final class PlayerInventoryView implements
             final @NonNull PlayerViewer viewer,
             final @NonNull InterfaceArguments argument
     ) {
+        // If an inventory exists for the player, we "close" the old one.
+        final PlayerInventoryView oldView = INVENTORY_VIEW_MAP.remove(viewer.player());
+        if (oldView != null) {
+            oldView.close();
+        }
+
+        // Store the new view.
         INVENTORY_VIEW_MAP.put(viewer.player(), this);
 
         this.viewer = viewer;
@@ -57,8 +65,6 @@ public final class PlayerInventoryView implements
         this.inventory = viewer.player().getInventory();
 
         this.pane = this.updatePane(true);
-
-
     }
 
     /**
@@ -114,7 +120,7 @@ public final class PlayerInventoryView implements
 
     @Override
     public boolean viewing() {
-        return true;
+        return this.viewing;
     }
 
     @Override
@@ -126,6 +132,18 @@ public final class PlayerInventoryView implements
     public void open() {
         this.update();
         this.emitEvent();
+    }
+
+    /**
+     * Closes the inventory for the viewing player.
+     */
+    public void close() {
+        // The player is no longer viewing the inventory,
+        this.viewing = false;
+        // so all items are removed
+        this.inventory.clear();
+        // and an event is emitted.
+        Bukkit.getPluginManager().callEvent(new ViewCloseEvent(this));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.incendo.interfaces.example.kotlin
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.Component.empty
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
@@ -17,12 +18,14 @@ import org.incendo.interfaces.core.transform.InterfaceProperty
 import org.incendo.interfaces.kotlin.*
 import org.incendo.interfaces.kotlin.paper.asElement
 import org.incendo.interfaces.kotlin.paper.buildChestInterface
+import org.incendo.interfaces.kotlin.paper.buildPlayerInterface
 import org.incendo.interfaces.kotlin.paper.open
 import org.incendo.interfaces.paper.PaperInterfaceListeners
 import org.incendo.interfaces.paper.element.ItemStackElement
 import org.incendo.interfaces.paper.pane.ChestPane
 import org.incendo.interfaces.paper.type.ChestInterface
 import org.incendo.interfaces.paper.type.PlayerInterface
+import org.incendo.interfaces.paper.view.PlayerInventoryView
 
 @Suppress("unused")
 public class KotlinPlugin : JavaPlugin() {
@@ -106,26 +109,56 @@ public class KotlinPlugin : JavaPlugin() {
             }
 
         examplePlayer =
-            PlayerInterface.builder()
-                .addTransform { pane, view ->
-                    val tick = Bukkit.getCurrentTick()
-                    val wools = Material.values().filter { "WOOL" in it.name }
+            buildPlayerInterface {
+                withTransform {
+                    val num = (Bukkit.getCurrentTick() / 20) % 16
 
-                    var currentPane = pane
+                    for (i in 0..3) {
+                        val wool =
+                            if (num and (1 shl i) != 0) {
+                                Material.WHITE_WOOL
+                            } else {
+                                Material.BLACK_WOOL
+                            }
+
+                        it.armor[i] =
+                            ItemStackElement.of(
+                                createItemStack(wool, empty()), ClickHandler.cancel())
+                    }
+                }
+
+                withTransform {
+                    val tick = Bukkit.getCurrentTick()
+                    val wools = Material.values().filter { material -> "WOOL" in material.name }
+
                     for (i in 0..8) {
                         val woolIndex = (i + tick) % wools.size
-                        currentPane =
-                            currentPane.hotbar(
-                                i,
-                                ItemStackElement.of(
-                                    createItemStack(wools[woolIndex], text("")),
-                                    ClickHandler.cancel()))
-                    }
 
-                    currentPane
+                        it.hotbar[i] =
+                            ItemStackElement.of(
+                                createItemStack(wools[woolIndex], empty()), ClickHandler.cancel())
+                    }
                 }
-                .updates(true, 1)
-                .build()
+
+                withTransform {
+                    for (x in 0..8) {
+                        for (y in 0..2) {
+                            val wool =
+                                if (((Bukkit.getCurrentTick() / 2) % 9) + y == x) {
+                                    Material.YELLOW_WOOL
+                                } else {
+                                    Material.RED_WOOL
+                                }
+
+                            it.main[x, y] =
+                                ItemStackElement.of(
+                                    createItemStack(wool, empty()), ClickHandler.cancel())
+                        }
+                    }
+                }
+
+                updates(true, 1)
+            }
     }
 
     private fun createItemStack(material: Material, name: Component): ItemStack =
@@ -149,7 +182,7 @@ public class KotlinPlugin : JavaPlugin() {
 
             if (args.isEmpty()) {
                 sender.sendMessage(
-                    text("You must specify one of: chest, player", NamedTextColor.RED))
+                    text("You must specify one of: chest, player, close", NamedTextColor.RED))
                 return false
             }
 
@@ -163,6 +196,11 @@ public class KotlinPlugin : JavaPlugin() {
                         arguments,
                         text("Your Chest: ${sender.name}", NamedTextColor.GREEN))
                 "player" -> sender.open(examplePlayer, arguments)
+                "close" -> {
+                    sender.closeInventory()
+                    // Also close their player interface, if they have one open.
+                    PlayerInventoryView.forPlayer(sender)?.close()
+                }
                 else ->
                     sender.sendMessage(
                         text("Unknown interface type '${args[0]}'", NamedTextColor.RED))

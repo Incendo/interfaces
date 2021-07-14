@@ -6,7 +6,7 @@ import org.incendo.interfaces.paper.element.ItemStackElement
 import org.incendo.interfaces.paper.pane.ChestPane
 import org.incendo.interfaces.paper.view.PlayerView
 
-public class MutableChestPaneView(
+public data class MutableChestPaneView(
     private var internalPane: ChestPane,
     private val view: PlayerView<ChestPane>
 ) : Pane, PlayerView<ChestPane> by view {

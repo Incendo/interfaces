@@ -29,6 +29,7 @@ import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.PlayerInventoryView;
 import org.incendo.interfaces.paper.view.PlayerView;
 import org.incendo.interfaces.paper.view.TaskableView;
+import org.incendo.interfaces.paper.view.ViewCloseEvent;
 import org.incendo.interfaces.paper.view.ViewOpenEvent;
 
 import java.util.HashMap;
@@ -103,7 +104,7 @@ public class PaperInterfaceListeners implements Listener {
     }
 
     /**
-     * Adds an open view
+     * Adds an open view.
      *
      * @param view the view
      */
@@ -174,7 +175,19 @@ public class PaperInterfaceListeners implements Listener {
         final PlayerInventoryView view = PlayerInventoryView.forPlayer(event.getPlayer());
 
         if (view != null) {
-            this.cleanUpView(view);
+            view.close();
+        }
+    }
+
+    /**
+     * Handles the close view event.
+     *
+     * @param event the event
+     */
+    @EventHandler
+    public void onViewClose(final @NonNull ViewCloseEvent event) {
+        if (event.view() instanceof PlayerInventoryView) {
+            this.cleanUpView(event.view());
         }
     }
 
