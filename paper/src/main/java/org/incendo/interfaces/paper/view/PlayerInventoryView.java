@@ -3,7 +3,6 @@ package org.incendo.interfaces.paper.view;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
@@ -15,8 +14,6 @@ import org.incendo.interfaces.paper.pane.PlayerPane;
 import org.incendo.interfaces.paper.type.PlayerInterface;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -144,19 +141,6 @@ public final class PlayerInventoryView implements
         this.inventory.clear();
         // and an event is emitted.
         Bukkit.getPluginManager().callEvent(new ViewCloseEvent(this));
-    }
-
-    @Override
-    public void addTask(
-            @NonNull final Plugin plugin,
-            @NonNull final Runnable runnable, final int delay
-    ) {
-        throw new UnsupportedOperationException("Cannot add tasks to player inventories.");
-    }
-
-    @Override
-    public Collection<Integer> taskIds() {
-        return Collections.emptyList();
     }
 
     @Override

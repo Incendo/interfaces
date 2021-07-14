@@ -12,7 +12,6 @@ import org.incendo.interfaces.paper.PlayerViewer;
  * @param <T> the pane type
  */
 public interface PlayerView<T extends Pane> extends InterfaceView<T, PlayerViewer>,
-        TaskableView,
         InventoryHolder {
 
     /**
