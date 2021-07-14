@@ -80,7 +80,7 @@ public class MutableChestInterfaceBuilder :
     @Suppress("unchecked_cast")
     public fun addTransform(
         property: InterfaceProperty<*> = InterfaceProperty.dummy(),
-        transform: (ChestPane, PlayerView<ChestPane>) -> ChestPane
+        transform: (ChestPane, ChestView) -> ChestPane
     ): Unit = mutate {
         internalBuilder.addTransform(
             property, transform as (ChestPane, InterfaceView<ChestPane, *>) -> ChestPane)
@@ -114,8 +114,9 @@ public class MutableChestInterfaceBuilder :
      *
      * @param handler close handler to add
      */
-    public fun withCloseHandler(handler: (InventoryCloseEvent, PlayerView<ChestPane>) -> Unit) {
-        addCloseHandler(handler)
+    @Suppress("unchecked_cast")
+    public fun withCloseHandler(handler: (InventoryCloseEvent, ChestView) -> Unit) {
+        addCloseHandler(handler as (InventoryCloseEvent, PlayerView<ChestPane>) -> Unit)
     }
     // </editor-fold>
 
