@@ -24,23 +24,33 @@ public final class PlayerPane implements Pane {
     public static final int ARMOR_MIN = 36;
     public static final int ARMOR_MAX = 39;
     public static final int OFF_HAND = 40;
+    public static final int CRAFTING_MIN = 0;
+    public static final int CRAFTING_MAX = 4;
 
     private final ItemStackElement[] elements;
+    private final ItemStackElement[] craftingElements;
 
     /**
      * Constructs {@code PlayerPane}.
      */
     public PlayerPane() {
         this.elements = new ItemStackElement[41];
+        this.craftingElements = new ItemStackElement[5];
+
         for (int i = 0; i < this.elements.length; i++) {
             this.elements[i] = ItemStackElement.empty();
+        }
+        for (int i = 0; i < this.craftingElements.length; i++) {
+            this.craftingElements[i] = ItemStackElement.empty();
         }
     }
 
     private PlayerPane(
-            final @NonNull ItemStackElement @NonNull[] elements
+            final @NonNull ItemStackElement @NonNull[] elements,
+            final @NonNull ItemStackElement @NonNull[] craftingElements
     ) {
         this.elements = elements;
+        this.craftingElements = craftingElements;
     }
 
     @Override
@@ -64,6 +74,19 @@ public final class PlayerPane implements Pane {
     }
 
     /**
+     * Returns a list containing all crafting area elements in this interface
+     *
+     * @return the elements
+     */
+    public @NonNull List<@NonNull ItemStackElement<PlayerPane>> craftingElements() {
+        final List<ItemStackElement<PlayerPane>> craftingElements = new ArrayList<>(this.elements.length);
+        for (var element : this.craftingElements) {
+            craftingElements.add((ItemStackElement<PlayerPane>) element);
+        }
+        return craftingElements;
+    }
+
+    /**
      * Sets an element at the given position.
      * <p>
      * This methods returns an updated instance of PlayerPane with the new element.
@@ -79,7 +102,7 @@ public final class PlayerPane implements Pane {
         final ItemStackElement[] elements = new ItemStackElement[this.elements.length];
         System.arraycopy(this.elements, 0, elements, 0, this.elements.length);
         elements[index] = element;
-        return new PlayerPane(elements);
+        return new PlayerPane(elements, this.craftingElements);
     }
 
     /**
@@ -90,6 +113,35 @@ public final class PlayerPane implements Pane {
      */
     public @NonNull ItemStackElement<PlayerPane> element(final @IntRange(from = 0, to = 40) int index) {
         return this.elements[index];
+    }
+
+    /**
+     * Sets a element at the given position in the crafting area.
+     * <p>
+     * This methods returns an updated instance of PlayerPane with the new element.
+     *
+     * @param index   the index
+     * @param element the element
+     * @return a new {@code PlayerPane}
+     */
+    public @NonNull PlayerPane craftingElement(
+            final @IntRange(from = 0, to = 4) int index,
+            final @NonNull ItemStackElement<PlayerPane> element
+    ) {
+        final ItemStackElement[] craftingElements = new ItemStackElement[this.craftingElements.length];
+        System.arraycopy(this.craftingElements, 0, craftingElements, 0, this.craftingElements.length);
+        craftingElements[index] = element;
+        return new PlayerPane(this.elements, craftingElements);
+    }
+
+    /**
+     * Returns the element at the given index.
+     *
+     * @param index the index
+     * @return the element
+     */
+    public @NonNull ItemStackElement<PlayerPane> craftingElement(final @IntRange(from = 0, to = 4) int index) {
+        return this.craftingElements[index];
     }
 
     /**
@@ -236,6 +288,10 @@ public final class PlayerPane implements Pane {
             final @NonNull SlotType slotType,
             final @NonNull ItemStackElement<PlayerPane> element
     ) {
+        if (slotType == SlotType.CRAFTING) {
+            return this.craftingElement(index, element);
+        }
+
         final int adjusted = index + slotType.minIndex();
         if (adjusted > slotType.maxIndex()) {
             throw new ArrayIndexOutOfBoundsException(
@@ -261,6 +317,10 @@ public final class PlayerPane implements Pane {
             final int index,
             final @NonNull SlotType slotType
     ) {
+        if (slotType == SlotType.CRAFTING) {
+            return this.craftingElement(index);
+        }
+
         final int adjusted = index + slotType.minIndex();
         if (adjusted > slotType.maxIndex()) {
             throw new ArrayIndexOutOfBoundsException(
@@ -282,7 +342,9 @@ public final class PlayerPane implements Pane {
         /** The armor slots. */
         ARMOR(ARMOR_MIN, ARMOR_MAX),
         /** The off hand slot. */
-        OFF_HAND(PlayerPane.OFF_HAND,  PlayerPane.OFF_HAND);
+        OFF_HAND(PlayerPane.OFF_HAND,  PlayerPane.OFF_HAND),
+        /** The player crafting area. */
+        CRAFTING(CRAFTING_MIN, CRAFTING_MAX);
 
         private final int minIndex;
         private final int maxIndex;

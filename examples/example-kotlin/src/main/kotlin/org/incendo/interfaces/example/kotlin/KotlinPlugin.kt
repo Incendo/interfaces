@@ -21,6 +21,7 @@ import org.incendo.interfaces.kotlin.paper.buildChestInterface
 import org.incendo.interfaces.kotlin.paper.buildPlayerInterface
 import org.incendo.interfaces.kotlin.paper.open
 import org.incendo.interfaces.paper.PaperInterfaceListeners
+import org.incendo.interfaces.paper.click.InventoryClickContext
 import org.incendo.interfaces.paper.element.ItemStackElement
 import org.incendo.interfaces.paper.pane.ChestPane
 import org.incendo.interfaces.paper.type.ChestInterface
@@ -157,7 +158,21 @@ public class KotlinPlugin : JavaPlugin() {
                     }
                 }
 
-                updates(true, 1)
+                withTransform { view ->
+                    view.crafting[3] =
+                        createItemStack(Material.DIAMOND, text("Crafting thing")).asElement { click
+                            ->
+                            // TODO: ??
+                            val player =
+                                (click as InventoryClickContext<*, *>).cause().whoClicked as Player
+                            player.sendMessage(text("heyyyy"))
+                        }
+
+                    view.crafting[0] =
+                        createItemStack(Material.DIAMOND, text("Result thing")).asElement()
+                }
+
+                updates(true, 3)
             }
     }
 

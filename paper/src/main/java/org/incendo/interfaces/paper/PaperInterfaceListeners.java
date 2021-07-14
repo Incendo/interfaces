@@ -9,9 +9,9 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -241,7 +241,10 @@ public class PaperInterfaceListeners implements Listener {
                 final @NonNull ItemStackElement<ChestPane> element = chestView.pane().element(x, y);
                 element.clickHandler().accept(context);
             }
-        } else if (event.getClickedInventory() != null && event.getClickedInventory() instanceof PlayerInventory) {
+        } else if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Player) {
+            Inventory clickedInventory = event.getClickedInventory();
+            boolean isCraftGrid = clickedInventory instanceof CraftingInventory;
+
             if (PlayerInventoryView.forPlayer((Player) event.getWhoClicked()) == null) {
                 return;
             }
@@ -252,8 +255,13 @@ public class PaperInterfaceListeners implements Listener {
             );
 
             PlayerInventoryView playerInventoryView = context.view();
+            final @NonNull ItemStackElement<PlayerPane> element;
 
-            final @NonNull ItemStackElement<PlayerPane> element = playerInventoryView.pane().element(event.getSlot());
+            if (!isCraftGrid) {
+                element = playerInventoryView.pane().element(event.getSlot());
+            } else {
+                element = playerInventoryView.pane().craftingElement(event.getSlot());
+            }
             element.clickHandler().accept(context);
         }
     }

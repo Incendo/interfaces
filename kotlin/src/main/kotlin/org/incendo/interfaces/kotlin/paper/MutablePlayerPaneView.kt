@@ -23,6 +23,9 @@ public data class MutablePlayerPaneView(
     /** Access to the armor slots. */
     public val armor: ElementAccess = ElementAccess(PlayerPane.SlotType.ARMOR)
 
+    /** Access to the crafting slots. */
+    public val crafting: ElementAccess = ElementAccess(PlayerPane.SlotType.CRAFTING)
+
     /** Access to the off hand element. */
     public var offHand: ItemStackElement<PlayerPane>
         get() = internalPane.offHand()
