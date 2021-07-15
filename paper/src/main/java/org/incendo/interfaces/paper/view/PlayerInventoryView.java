@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -37,6 +36,7 @@ public final class PlayerInventoryView implements
     private boolean viewing = true;
 
     private final @NonNull Map<Integer, Element> current = new HashMap<>();
+    private final @NonNull Map<Integer, Element> currentCrafting = new HashMap<>();
 
     /**
      * Constructs {@code PlayerInventoryView}.
@@ -179,16 +179,19 @@ public final class PlayerInventoryView implements
 
         final @NonNull List<ItemStackElement<PlayerPane>> craftingElements = this.pane.craftingElements();
 
-        ItemStack[] contents = new ItemStack[4];
         for (int i = 1; i < craftingElements.size(); i++) {
-            final @NonNull ItemStackElement<PlayerPane> element = craftingElements.get(i);
-            contents[i - 1] = element.itemStack();
+            final @Nullable Element currentElement = this.currentCrafting.get(i);
+            final ItemStackElement<PlayerPane> element = craftingElements.get(i);
+
+            if (element.equals(currentElement)) {
+                continue;
+            }
+
+            this.currentCrafting.put(i, element);
+            craftingInventory.setItem(i, element.itemStack());
         }
 
-        craftingInventory.setMatrix(contents);
         craftingInventory.setResult(craftingElements.get(0).itemStack());
-
-        // Needed for result
         this.viewer.player().updateInventory();
     }
 
