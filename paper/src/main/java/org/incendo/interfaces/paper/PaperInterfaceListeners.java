@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -32,8 +33,10 @@ import org.incendo.interfaces.paper.view.TaskableView;
 import org.incendo.interfaces.paper.view.ViewCloseEvent;
 import org.incendo.interfaces.paper.view.ViewOpenEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -162,6 +165,37 @@ public class PaperInterfaceListeners implements Listener {
 
         if (holder instanceof InterfaceView) {
             this.cleanUpView((InterfaceView<?, PlayerViewer>) holder);
+        }
+
+        if (inventory instanceof CraftingInventory) {
+            Player player = (Player) event.getPlayer();
+            CraftingInventory craftingInventory = (CraftingInventory) inventory;
+            PlayerInventoryView playerInventoryView = PlayerInventoryView.forPlayer(player);
+
+            if (playerInventoryView == null) {
+                return;
+            }
+
+            List<ItemStack> viewItemStacks = new ArrayList<>();
+
+            for (final ItemStackElement<PlayerPane> craftingElement : playerInventoryView.pane().craftingElements()) {
+                viewItemStacks.add(craftingElement.itemStack());
+            }
+
+            ItemStack[] matrix = craftingInventory.getMatrix();
+            for (int i = 0; i < matrix.length; i++) {
+                ItemStack matrixItem = matrix[i];
+                if (viewItemStacks.contains(matrixItem)) {
+                    matrix[i] = null;
+                }
+            }
+            craftingInventory.setMatrix(matrix);
+
+            if (viewItemStacks.contains(craftingInventory.getResult())) {
+                craftingInventory.setResult(null);
+            }
+
+            player.updateInventory();
         }
     }
 
