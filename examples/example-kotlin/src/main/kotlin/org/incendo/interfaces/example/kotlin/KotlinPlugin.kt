@@ -160,19 +160,21 @@ public class KotlinPlugin : JavaPlugin() {
 
                 withTransform { view ->
                     view.crafting[3] =
-                        createItemStack(Material.DIAMOND, text("Crafting thing")).asElement { click
-                            ->
-                            // TODO: ??
-                            val player =
-                                (click as InventoryClickContext<*, *>).cause().whoClicked as Player
-                            player.sendMessage(text("heyyyy"))
-                        }
+                        createItemStack(Material.DIAMOND, text("Crafting thing"))
+                            .asElement(
+                                ClickHandler.canceling { click ->
+                                    val player =
+                                        (click as InventoryClickContext<*, *>).cause().whoClicked as
+                                            Player
+                                    player.sendMessage(text("heyyyy"))
+                                })
 
                     view.crafting[0] =
-                        createItemStack(Material.DIAMOND, text("Result thing")).asElement()
+                        createItemStack(Material.DIAMOND, text("Result thing"))
+                            .asElement(ClickHandler.cancel())
                 }
 
-                updates(true, 3)
+                updates(true, 1)
             }
     }
 
