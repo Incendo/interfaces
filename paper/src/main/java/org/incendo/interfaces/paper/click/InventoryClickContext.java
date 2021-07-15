@@ -11,7 +11,6 @@ import org.incendo.interfaces.core.click.ClickContext;
 import org.incendo.interfaces.core.click.clicks.Clicks;
 import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.core.view.InterfaceView;
-import org.incendo.interfaces.core.view.InterfaceViewer;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.PlayerInventoryView;
@@ -25,8 +24,8 @@ import java.util.Objects;
  * @param <U> the viewer type
  */
 @SuppressWarnings("unused")
-public final class InventoryClickContext<T extends Pane, U extends InterfaceView<T, ?>> implements
-        ClickContext<T, InventoryClickEvent> {
+public final class InventoryClickContext<T extends Pane, U extends InterfaceView<T, PlayerViewer>> implements
+        ClickContext<T, InventoryClickEvent, PlayerViewer> {
 
     private final @NonNull InventoryClickEvent event;
     private final @NonNull U view;
@@ -92,7 +91,7 @@ public final class InventoryClickContext<T extends Pane, U extends InterfaceView
     }
 
     @Override
-    public @NonNull InterfaceViewer viewer() {
+    public @NonNull PlayerViewer viewer() {
         return PlayerViewer.of((Player) this.event.getWhoClicked());
     }
 

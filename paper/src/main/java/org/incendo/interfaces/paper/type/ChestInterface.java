@@ -28,7 +28,7 @@ import java.util.List;
 public final class ChestInterface implements
         TitledInterface<ChestPane, PlayerViewer>,
         UpdatingInterface,
-        Clickable<ChestPane, InventoryClickEvent> {
+        Clickable<ChestPane, InventoryClickEvent, PlayerViewer> {
 
     private final int rows;
     private final @NonNull List<TransformContext<?, ChestPane, PlayerViewer>> transformationList;
@@ -36,7 +36,8 @@ public final class ChestInterface implements
     private final @NonNull Component title;
     private final boolean updates;
     private final int updateDelay;
-    private final @NonNull ClickHandler<ChestPane, InventoryClickEvent, InventoryClickContext<ChestPane, ChestView>> clickHandler;
+    private final @NonNull ClickHandler<ChestPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<ChestPane,
+            ChestView>> clickHandler;
 
     /**
      * Constructs {@code ChestInterface}.
@@ -56,7 +57,8 @@ public final class ChestInterface implements
             final @NonNull List<CloseHandler<ChestPane>> closeHandlers,
             final boolean updates,
             final int updateDelay,
-            final @NonNull ClickHandler<ChestPane, InventoryClickEvent, InventoryClickContext<ChestPane, ChestView>> clickHandler
+            final @NonNull ClickHandler<ChestPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<ChestPane,
+                    ChestView>> clickHandler
     ) {
         this.title = title;
         this.transformationList = transforms;
@@ -86,7 +88,8 @@ public final class ChestInterface implements
     }
 
     @Override
-    public @NonNull ClickHandler<ChestPane, InventoryClickEvent, InventoryClickContext<ChestPane, ChestView>> clickHandler() {
+    public @NonNull ClickHandler<ChestPane, InventoryClickEvent, PlayerViewer,
+            InventoryClickContext<ChestPane, ChestView>> clickHandler() {
         return this.clickHandler;
     }
 
@@ -230,7 +233,8 @@ public final class ChestInterface implements
         /**
          * The top click handler.
          */
-        private final @NonNull ClickHandler<ChestPane, InventoryClickEvent, InventoryClickContext<ChestPane, ChestView>> clickHandler;
+        private final @NonNull ClickHandler<ChestPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<ChestPane,
+                ChestView>> clickHandler;
 
         /**
          * Constructs {@code Builder}.
@@ -252,7 +256,8 @@ public final class ChestInterface implements
                 final @NonNull Component title,
                 final boolean updates,
                 final int updateDelay,
-                final @NonNull ClickHandler<ChestPane, InventoryClickEvent, InventoryClickContext<ChestPane, ChestView>> clickHandler
+                final @NonNull ClickHandler<ChestPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<ChestPane,
+                        ChestView>> clickHandler
         ) {
             this.transformsList = Collections.unmodifiableList(transformsList);
             this.closeHandlerList = Collections.unmodifiableList(closeHandlerList);
@@ -384,7 +389,8 @@ public final class ChestInterface implements
          *
          * @return click handler
          */
-        public @NonNull ClickHandler<ChestPane, InventoryClickEvent, InventoryClickContext<ChestPane, ChestView>> clickHandler() {
+        public @NonNull ClickHandler<ChestPane, InventoryClickEvent, PlayerViewer,
+                InventoryClickContext<ChestPane, ChestView>> clickHandler() {
             return this.clickHandler;
         }
 
@@ -395,7 +401,7 @@ public final class ChestInterface implements
          * @return new builder instance
          */
         public @NonNull Builder clickHandler(final @NonNull ClickHandler<ChestPane, InventoryClickEvent,
-                InventoryClickContext<ChestPane, ChestView>> handler) {
+                PlayerViewer, InventoryClickContext<ChestPane, ChestView>> handler) {
             return new Builder(
                     this.transformsList,
                     this.closeHandlerList,

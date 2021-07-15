@@ -19,7 +19,7 @@ import org.incendo.interfaces.paper.view.PlayerView
 @Suppress("unused")
 public class MutableChestInterfaceBuilder :
     MutableInterfaceBuilder<
-        ChestPane, InventoryClickEvent, InventoryClickContext<ChestPane, ChestView>> {
+        ChestPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<ChestPane, ChestView>> {
 
     private var internalBuilder: ChestInterface.Builder = ChestInterface.builder()
 
@@ -36,7 +36,11 @@ public class MutableChestInterfaceBuilder :
 
     /** The click handler of the interface. */
     public var clickHandler:
-        ClickHandler<ChestPane, InventoryClickEvent, InventoryClickContext<ChestPane, ChestView>>
+        ClickHandler<
+            ChestPane,
+            InventoryClickEvent,
+            PlayerViewer,
+            InventoryClickContext<ChestPane, ChestView>>
         get() = internalBuilder.clickHandler()
         set(value) = mutate { internalBuilder.clickHandler(value) }
     // </editor-fold>
@@ -60,7 +64,10 @@ public class MutableChestInterfaceBuilder :
     public fun clickHandler(
         handler:
             ClickHandler<
-                ChestPane, InventoryClickEvent, InventoryClickContext<ChestPane, ChestView>>
+                ChestPane,
+                InventoryClickEvent,
+                PlayerViewer,
+                InventoryClickContext<ChestPane, ChestView>>
     ): Unit = mutate { internalBuilder.clickHandler(handler) }
 
     /**
