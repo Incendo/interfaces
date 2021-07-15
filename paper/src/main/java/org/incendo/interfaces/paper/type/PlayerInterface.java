@@ -24,13 +24,13 @@ import java.util.List;
 public final class PlayerInterface implements
         Interface<PlayerPane, PlayerViewer>,
         UpdatingInterface,
-        Clickable<PlayerPane, InventoryClickEvent> {
+        Clickable<PlayerPane, InventoryClickEvent, PlayerViewer> {
 
     private final @NonNull List<TransformContext<?, PlayerPane, PlayerViewer>> transformationList;
     private final boolean updates;
     private final int updateDelay;
     private final @NonNull ClickHandler<PlayerPane, InventoryClickEvent,
-            InventoryClickContext<PlayerPane, PlayerInventoryView>> clickHandler;
+            PlayerViewer, InventoryClickContext<PlayerPane, PlayerInventoryView>> clickHandler;
 
     /**
      * Constructs {@code PlayerInterface}.
@@ -44,7 +44,7 @@ public final class PlayerInterface implements
             final @NonNull List<TransformContext<?, PlayerPane, PlayerViewer>> transforms,
             final boolean updates,
             final int updateDelay,
-            final @NonNull ClickHandler<PlayerPane, InventoryClickEvent, InventoryClickContext<PlayerPane,
+            final @NonNull ClickHandler<PlayerPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<PlayerPane,
                     PlayerInventoryView>> clickHandler
     ) {
         this.transformationList = transforms;
@@ -122,7 +122,8 @@ public final class PlayerInterface implements
     }
 
     @Override
-    public @NonNull ClickHandler<PlayerPane, InventoryClickEvent, ? extends ClickContext<PlayerPane, InventoryClickEvent>> clickHandler() {
+    public @NonNull ClickHandler<PlayerPane, InventoryClickEvent, PlayerViewer, ? extends ClickContext<PlayerPane,
+            InventoryClickEvent, PlayerViewer>> clickHandler() {
         return this.clickHandler;
     }
 
@@ -149,7 +150,7 @@ public final class PlayerInterface implements
         /**
          * The top click handler.
          */
-        private final @NonNull ClickHandler<PlayerPane, InventoryClickEvent, InventoryClickContext<PlayerPane,
+        private final @NonNull ClickHandler<PlayerPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<PlayerPane,
                 PlayerInventoryView>> clickHandler;
 
         /**
@@ -166,7 +167,7 @@ public final class PlayerInterface implements
                 final @NonNull List<TransformContext<?, PlayerPane, PlayerViewer>> transformsList,
                 final boolean updates,
                 final int updateDelay,
-                final @NonNull ClickHandler<PlayerPane, InventoryClickEvent, InventoryClickContext<PlayerPane,
+                final @NonNull ClickHandler<PlayerPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<PlayerPane,
                         PlayerInventoryView>> clickHandler
         ) {
             this.transformsList = Collections.unmodifiableList(transformsList);
@@ -219,7 +220,7 @@ public final class PlayerInterface implements
          * @return click handler
          */
         public @NonNull ClickHandler<PlayerPane, InventoryClickEvent,
-                InventoryClickContext<PlayerPane, PlayerInventoryView>> clickHandler() {
+                PlayerViewer, InventoryClickContext<PlayerPane, PlayerInventoryView>> clickHandler() {
             return this.clickHandler;
         }
 
@@ -230,7 +231,7 @@ public final class PlayerInterface implements
          * @return new builder instance
          */
         public @NonNull Builder clickHandler(final @NonNull ClickHandler<PlayerPane, InventoryClickEvent,
-                InventoryClickContext<PlayerPane, PlayerInventoryView>> handler) {
+                PlayerViewer, InventoryClickContext<PlayerPane, PlayerInventoryView>> handler) {
             return new Builder(
                     this.transformsList,
                     this.updates,

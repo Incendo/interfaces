@@ -16,7 +16,10 @@ import org.incendo.interfaces.paper.view.PlayerView
 @Suppress("unused")
 public class MutablePlayerInterfaceBuilder :
     MutableInterfaceBuilder<
-        PlayerPane, InventoryClickEvent, InventoryClickContext<PlayerPane, PlayerInventoryView>> {
+        PlayerPane,
+        InventoryClickEvent,
+        PlayerViewer,
+        InventoryClickContext<PlayerPane, PlayerInventoryView>> {
 
     private var internalBuilder: PlayerInterface.Builder = PlayerInterface.builder()
 
@@ -24,7 +27,10 @@ public class MutablePlayerInterfaceBuilder :
     /** The click handler of the interface. */
     public var clickHandler:
         ClickHandler<
-            PlayerPane, InventoryClickEvent, InventoryClickContext<PlayerPane, PlayerInventoryView>>
+            PlayerPane,
+            InventoryClickEvent,
+            PlayerViewer,
+            InventoryClickContext<PlayerPane, PlayerInventoryView>>
         get() = internalBuilder.clickHandler()
         set(value) = mutate { internalBuilder.clickHandler(value) }
     // </editor-fold>

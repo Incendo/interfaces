@@ -79,6 +79,12 @@ public fun Player.asViewer(): PlayerViewer = PlayerViewer.of(this)
  * @return element instance
  */
 public fun <T : Pane> ItemStack.asElement(
-    handler: ClickHandler<T, InventoryClickEvent, ClickContext<T, InventoryClickEvent>>? = null
+    handler:
+        ClickHandler<
+            T,
+            InventoryClickEvent,
+            PlayerViewer,
+            ClickContext<T, InventoryClickEvent, PlayerViewer>>? =
+        null
 ): ItemStackElement<T> =
     if (handler == null) ItemStackElement.of(this) else ItemStackElement.of(this, handler)

@@ -65,8 +65,8 @@ public class KotlinPlugin : JavaPlugin() {
 
                 clickHandler(
                     canceling {
-                        it.cause()
-                            .whoClicked
+                        it.viewer()
+                            .player()
                             .sendMessage(
                                 text("You clicked ", NamedTextColor.GRAY)
                                     .append(text(it.slot().toString(), NamedTextColor.GOLD)))
