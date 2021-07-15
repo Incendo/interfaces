@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -36,7 +37,6 @@ public final class PlayerInventoryView implements
     private boolean viewing = true;
 
     private final @NonNull Map<Integer, Element> current = new HashMap<>();
-    private final @NonNull Map<Integer, Element> currentCrafting = new HashMap<>();
 
     /**
      * Constructs {@code PlayerInventoryView}.
@@ -181,24 +181,21 @@ public final class PlayerInventoryView implements
         boolean hasChanged = false;
 
         for (int i = 1; i < craftingElements.size(); i++) {
-            final @Nullable Element currentElement = this.currentCrafting.get(i);
             final ItemStackElement<PlayerPane> element = craftingElements.get(i);
 
-            if (element.equals(currentElement)) {
+            if (element.itemStack().equals(craftingInventory.getItem(i))) {
                 continue;
             }
 
-            this.currentCrafting.put(i, element);
             craftingInventory.setItem(i, element.itemStack());
             hasChanged = true;
         }
 
         ItemStackElement<PlayerPane> resultElement = craftingElements.get(0);
-        Element currentResult = this.currentCrafting.get(0);
+        ItemStack currentResult = craftingInventory.getResult();
 
-        if (hasChanged || !resultElement.equals(currentResult)) {
+        if (hasChanged || !resultElement.itemStack().equals(currentResult)) {
             craftingInventory.setResult(resultElement.itemStack());
-            this.currentCrafting.put(0, resultElement);
             this.viewer.player().updateInventory();
         }
     }
