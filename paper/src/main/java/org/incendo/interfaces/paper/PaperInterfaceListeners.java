@@ -260,44 +260,57 @@ public class PaperInterfaceListeners implements Listener {
         final @Nullable InventoryHolder holder = inventory.getHolder();
 
         if (holder instanceof ChestView) {
-            final InventoryClickContext<ChestPane, ChestView> context = new InventoryClickContext<>(event, false);
-
-            ChestView chestView = (ChestView) holder;
-            // Handle parent interface click event
-            chestView.backing().clickHandler().accept(context);
-
-            // Handle element click event
-            if (event.getSlotType() == InventoryType.SlotType.CONTAINER) {
-                int slot = event.getSlot();
-                int x = slot % 9;
-                int y = slot / 9;
-
-                final @NonNull ItemStackElement<ChestPane> element = chestView.pane().element(x, y);
-                element.clickHandler().accept(context);
-            }
+            this.handleChestViewClick(event, holder);
         } else if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Player) {
-            Inventory clickedInventory = event.getClickedInventory();
-            boolean isCraftGrid = clickedInventory instanceof CraftingInventory;
+            this.handlePlayerViewClick(event);
+        }
+    }
 
-            if (PlayerInventoryView.forPlayer((Player) event.getWhoClicked()) == null) {
-                return;
-            }
+    private void handleChestViewClick(final @NonNull InventoryClickEvent event, final @NonNull InventoryHolder holder) {
+        if (event.getSlot() != event.getRawSlot()) {
+            this.handlePlayerViewClick(event);
+            return;
+        }
 
-            final InventoryClickContext<PlayerPane, PlayerInventoryView> context = new InventoryClickContext<>(
-                    event,
-                    true
-            );
+        final InventoryClickContext<ChestPane, ChestView> context = new InventoryClickContext<>(event, false);
 
-            PlayerInventoryView playerInventoryView = context.view();
-            final @NonNull ItemStackElement<PlayerPane> element;
+        ChestView chestView = (ChestView) holder;
+        // Handle parent interface click event
+        chestView.backing().clickHandler().accept(context);
 
-            if (!isCraftGrid) {
-                element = playerInventoryView.pane().element(event.getSlot());
-            } else {
-                element = playerInventoryView.pane().craftingElement(event.getSlot());
-            }
+        // Handle element click event
+        if (event.getSlotType() == InventoryType.SlotType.CONTAINER) {
+            int slot = event.getSlot();
+            int x = slot % 9;
+            int y = slot / 9;
+
+            final @NonNull ItemStackElement<ChestPane> element = chestView.pane().element(x, y);
             element.clickHandler().accept(context);
         }
+    }
+
+    private void handlePlayerViewClick(final @NonNull InventoryClickEvent event) {
+        Inventory clickedInventory = event.getClickedInventory();
+        boolean isCraftGrid = clickedInventory instanceof CraftingInventory;
+
+        if (PlayerInventoryView.forPlayer((Player) event.getWhoClicked()) == null) {
+            return;
+        }
+
+        final InventoryClickContext<PlayerPane, PlayerInventoryView> context = new InventoryClickContext<>(
+                event,
+                true
+        );
+
+        PlayerInventoryView playerInventoryView = context.view();
+        final @NonNull ItemStackElement<PlayerPane> element;
+
+        if (!isCraftGrid) {
+            element = playerInventoryView.pane().element(event.getSlot());
+        } else {
+            element = playerInventoryView.pane().craftingElement(event.getSlot());
+        }
+        element.clickHandler().accept(context);
     }
 
 }

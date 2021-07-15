@@ -51,7 +51,12 @@ public final class InventoryClickContext<T extends Pane, U extends InterfaceView
                         "The InventoryHolder wasn't a ChestView."
                 );
             }
-            this.view = (U) inventory.getHolder();
+
+            if (event.getSlot() != event.getRawSlot()) {
+                this.view = (U) Objects.requireNonNull(PlayerInventoryView.forPlayer((Player) event.getWhoClicked()));
+            } else {
+                this.view = (U) inventory.getHolder();
+            }
         } else if (player) {
             this.view = (U) Objects.requireNonNull(PlayerInventoryView.forPlayer((Player) event.getWhoClicked()));
         } else {
