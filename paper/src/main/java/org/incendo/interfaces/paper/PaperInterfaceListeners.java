@@ -9,9 +9,9 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -226,36 +226,52 @@ public class PaperInterfaceListeners implements Listener {
         final @Nullable InventoryHolder holder = inventory.getHolder();
 
         if (holder instanceof ChestView) {
-            final InventoryClickContext<ChestPane, ChestView> context = new InventoryClickContext<>(event, false);
+            this.handleChestViewClick(event, holder);
+        } else if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Player) {
+            this.handlePlayerViewClick(event);
+        }
+    }
 
-            ChestView chestView = (ChestView) holder;
-            // Handle parent interface click event
-            chestView.backing().clickHandler().accept(context);
+    private void handleChestViewClick(final @NonNull InventoryClickEvent event, final @NonNull InventoryHolder holder) {
+        if (event.getSlot() != event.getRawSlot()) {
+            this.handlePlayerViewClick(event);
+            return;
+        }
 
-            // Handle element click event
-            if (event.getSlotType() == InventoryType.SlotType.CONTAINER) {
-                int slot = event.getSlot();
-                int x = slot % 9;
-                int y = slot / 9;
+        final InventoryClickContext<ChestPane, ChestView> context = new InventoryClickContext<>(event, false);
 
-                final @NonNull ItemStackElement<ChestPane> element = chestView.pane().element(x, y);
-                element.clickHandler().accept(context);
-            }
-        } else if (event.getClickedInventory() != null && event.getClickedInventory() instanceof PlayerInventory) {
-            if (PlayerInventoryView.forPlayer((Player) event.getWhoClicked()) == null) {
-                return;
-            }
+        ChestView chestView = (ChestView) holder;
+        // Handle parent interface click event
+        chestView.backing().clickHandler().accept(context);
 
-            final InventoryClickContext<PlayerPane, PlayerInventoryView> context = new InventoryClickContext<>(
-                    event,
-                    true
-            );
+        // Handle element click event
+        if (event.getSlotType() == InventoryType.SlotType.CONTAINER) {
+            int slot = event.getSlot();
+            int x = slot % 9;
+            int y = slot / 9;
 
-            PlayerInventoryView playerInventoryView = context.view();
-
-            final @NonNull ItemStackElement<PlayerPane> element = playerInventoryView.pane().element(event.getSlot());
+            final @NonNull ItemStackElement<ChestPane> element = chestView.pane().element(x, y);
             element.clickHandler().accept(context);
         }
+    }
+
+    private void handlePlayerViewClick(final @NonNull InventoryClickEvent event) {
+        Inventory clickedInventory = event.getClickedInventory();
+        boolean isCraftGrid = clickedInventory instanceof CraftingInventory;
+
+        if (PlayerInventoryView.forPlayer((Player) event.getWhoClicked()) == null) {
+            return;
+        }
+
+        final InventoryClickContext<PlayerPane, PlayerInventoryView> context = new InventoryClickContext<>(
+                event,
+                true
+        );
+
+        PlayerInventoryView playerInventoryView = context.view();
+
+        final @NonNull ItemStackElement<PlayerPane> element = playerInventoryView.pane().element(event.getSlot());
+        element.clickHandler().accept(context);
     }
 
 }
