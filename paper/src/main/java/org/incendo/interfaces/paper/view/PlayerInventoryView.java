@@ -178,6 +178,7 @@ public final class PlayerInventoryView implements
         CraftingInventory craftingInventory = (CraftingInventory) openInventory;
 
         final @NonNull List<ItemStackElement<PlayerPane>> craftingElements = this.pane.craftingElements();
+        boolean hasChanged = false;
 
         for (int i = 1; i < craftingElements.size(); i++) {
             final @Nullable Element currentElement = this.currentCrafting.get(i);
@@ -189,10 +190,17 @@ public final class PlayerInventoryView implements
 
             this.currentCrafting.put(i, element);
             craftingInventory.setItem(i, element.itemStack());
+            hasChanged = true;
         }
 
-        craftingInventory.setResult(craftingElements.get(0).itemStack());
-        this.viewer.player().updateInventory();
+        ItemStackElement<PlayerPane> resultElement = craftingElements.get(0);
+        Element currentResult = this.currentCrafting.get(0);
+
+        if (hasChanged || !resultElement.equals(currentResult)) {
+            craftingInventory.setResult(resultElement.itemStack());
+            this.currentCrafting.put(0, resultElement);
+            this.viewer.player().updateInventory();
+        }
     }
 
     @Override
