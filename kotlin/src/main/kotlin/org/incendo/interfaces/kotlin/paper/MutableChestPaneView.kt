@@ -4,12 +4,14 @@ import org.incendo.interfaces.core.element.Element
 import org.incendo.interfaces.core.pane.Pane
 import org.incendo.interfaces.paper.element.ItemStackElement
 import org.incendo.interfaces.paper.pane.ChestPane
+import org.incendo.interfaces.paper.view.ChestView
 import org.incendo.interfaces.paper.view.PlayerView
+import org.incendo.interfaces.paper.view.TaskableView
 
-public class MutableChestPaneView(
+public data class MutableChestPaneView(
     private var internalPane: ChestPane,
-    private val view: PlayerView<ChestPane>
-) : Pane, PlayerView<ChestPane> by view {
+    private val view: ChestView
+) : Pane, PlayerView<ChestPane> by view, TaskableView by view {
 
     override fun elements(): MutableCollection<Element> = internalPane.elements()
 

@@ -16,7 +16,7 @@ public fun mutableInterfaceArgumentOf(vararg entries: ArgumentPair<*>): MutableI
 
     entries.forEach { (key, value) ->
         // erase the type
-        builder.with(ArgumentKey.of(key.key()), value as Any?)
+        builder.with(ArgumentKey.of(key.key()), value)
     }
 
     return builder.build()

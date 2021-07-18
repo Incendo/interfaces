@@ -1,11 +1,11 @@
 package org.incendo.interfaces.core.transform;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.function.BiConsumer;
-
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 class InterfacePropertyImpl<T> implements InterfaceProperty<T> {
 

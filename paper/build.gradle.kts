@@ -1,5 +1,5 @@
 dependencies {
-    api(project(":interfaces-core"))
+    api(projects.interfacesCore)
 
     compileOnlyApi(libs.adventure.api)
     compileOnlyApi(libs.paper.api) {
