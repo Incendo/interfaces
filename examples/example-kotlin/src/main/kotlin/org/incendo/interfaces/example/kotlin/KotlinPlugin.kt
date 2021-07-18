@@ -75,7 +75,7 @@ public class KotlinPlugin : JavaPlugin() {
                                     .append(text(it.slot().toString(), NamedTextColor.GOLD)))
                     })
 
-                withTransform(priority = 5) { view ->
+                withTransform { view ->
                     println("rendering black concrete backing")
 
                     val displayElement: ItemStackElement<ChestPane> =
@@ -98,7 +98,7 @@ public class KotlinPlugin : JavaPlugin() {
                     }
                 }
 
-                withTransform(_selectedOption) { view ->
+                withTransform(_selectedOption, priority = 2) { view ->
                     println("rendering selected option")
 
                     // Extract an argument from the view
