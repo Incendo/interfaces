@@ -6,6 +6,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.view.BookView;
 import org.incendo.interfaces.paper.view.ChestView;
+import org.incendo.interfaces.paper.view.PlayerInventoryView;
 
 final class PlayerViewerImpl implements PlayerViewer {
 
@@ -20,37 +21,29 @@ final class PlayerViewerImpl implements PlayerViewer {
         this.player = player;
     }
 
-    /**
-     * Opens a chest pane.
-     *
-     * @param chestView the chest view
-     */
     private void openChestView(final @NonNull ChestView chestView) {
         this.player.openInventory(chestView.getInventory());
     }
 
-    /**
-     * Opens a book pane.
-     *
-     * @param bookView the book view
-     */
     private void openBookView(final @NonNull BookView bookView) {
         this.player.openBook(bookView.book());
     }
 
+    private void openPlayerView(final @NonNull PlayerInventoryView inventoryView) {
+        inventoryView.open();
+    }
+
     @Override
-    public void open(final @NonNull InterfaceView<?, ?> pane) {
-        if (pane instanceof ChestView) {
-            this.openChestView((ChestView) pane);
-            return;
+    public void open(final @NonNull InterfaceView<?, ?> view) {
+        if (view instanceof ChestView) {
+            this.openChestView((ChestView) view);
+        } else if (view instanceof BookView) {
+            this.openBookView((BookView) view);
+        } else if (view instanceof PlayerInventoryView) {
+            this.openPlayerView((PlayerInventoryView) view);
+        } else {
+            throw new UnsupportedOperationException("Cannot open view of type " + view.getClass().getName() + ".");
         }
-
-        if (pane instanceof BookView) {
-            this.openBookView((BookView) pane);
-            return;
-        }
-
-        throw new UnsupportedOperationException("Cannot open view of type " + pane.getClass().getName() + ".");
     }
 
     @Override

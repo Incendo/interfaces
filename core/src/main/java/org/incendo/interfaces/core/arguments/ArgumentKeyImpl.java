@@ -1,8 +1,8 @@
 package org.incendo.interfaces.core.arguments;
 
-import java.util.Objects;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.Objects;
 
 class ArgumentKeyImpl<T> implements ArgumentKey<T> {
 

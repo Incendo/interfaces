@@ -10,9 +10,10 @@ import org.incendo.interfaces.core.view.InterfaceViewer;
  *
  * @param <T> the pane's type
  * @param <U> the click cause
+ * @param <V> the viewer type
  */
 @SuppressWarnings("unused")
-public interface ClickContext<T extends Pane, U> {
+public interface ClickContext<T extends Pane, U, V extends InterfaceViewer> {
 
     /**
      * The click cause
@@ -40,14 +41,14 @@ public interface ClickContext<T extends Pane, U> {
      *
      * @return the view
      */
-    @NonNull InterfaceView<T, ?> view();
+    @NonNull InterfaceView<T, V> view();
 
     /**
      * Returns the viewer (the one who clicked).
      *
      * @return the viewer
      */
-    @NonNull InterfaceViewer viewer();
+    @NonNull V viewer();
 
     /**
      * Returns the click associated with this context.
