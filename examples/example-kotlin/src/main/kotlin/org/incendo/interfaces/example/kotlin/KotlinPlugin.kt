@@ -58,7 +58,7 @@ public class KotlinPlugin : JavaPlugin() {
         PaperInterfaceListeners.install(this)
 
         // Update the dependent value every time the server ticks.
-        var selectedOption: SelectionOptions by _selectedOption
+        val selectedOption: SelectionOptions by _selectedOption
 
         // Build a chest interface.
         exampleChest =
@@ -81,7 +81,7 @@ public class KotlinPlugin : JavaPlugin() {
                     val displayElement: ItemStackElement<ChestPane> =
                         createItemStack(Material.BLACK_CONCRETE, text("")).asElement()
 
-                    for (x in 3 until CHEST_COLUMNS - 1) {
+                    for (x in 3 until CHEST_COLUMNS) {
                         for (y in 0 until CHEST_ROWS) {
                             view[x, y] = displayElement
                         }
