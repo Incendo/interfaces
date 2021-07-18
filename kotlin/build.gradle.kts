@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.4.31"
+    kotlin("jvm")
     id("org.jetbrains.dokka")
     id("com.ncorti.ktfmt.gradle")
 }
@@ -23,8 +23,8 @@ kotlin {
 }
 
 dependencies {
-    api(project(":interfaces-core"))
-    api(project(":interfaces-paper"))
+    api(projects.interfacesCore)
+    api(projects.interfacesPaper)
 
     // Needed for Paper extensions.
     compileOnlyApi(libs.paper.api) {

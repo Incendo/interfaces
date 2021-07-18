@@ -3,8 +3,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":interfaces-core"))
-    implementation(project(":interfaces-paper"))
+    implementation(projects.interfacesCore)
+    implementation(projects.interfacesPaper)
 
     compileOnlyApi(libs.paper.api) {
         exclude(module = "guava")

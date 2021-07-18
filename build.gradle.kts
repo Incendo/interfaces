@@ -9,6 +9,9 @@ plugins {
     id("net.kyori.indra.checkstyle") apply false
     id("xyz.jpenilla.run-paper") apply false
 
+    // Kotlin plugin prefers to be applied to parent when it's used in multiple projects.
+    kotlin("jvm") version "1.4.31" apply false
+
     // Auto-generates project files.
     idea
 }
