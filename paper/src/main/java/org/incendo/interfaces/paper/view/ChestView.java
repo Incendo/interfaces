@@ -122,7 +122,7 @@ public final class ChestView implements
         return this.mergePanes();
     }
 
-    private @NonNull ChestPane updatePaneByProperty(final InterfaceProperty<?> interfaceProperty) {
+    private @NonNull ChestPane updatePaneByProperty(final @NonNull InterfaceProperty<?> interfaceProperty) {
         for (final var transform : this.backing.transformations()) {
             if (transform.property() != interfaceProperty) {
                 continue;
@@ -137,13 +137,13 @@ public final class ChestView implements
         return this.mergePanes();
     }
 
-    private void updateByProperty(final InterfaceProperty<?> interfaceProperty) {
+    private void updateByProperty(final @NonNull InterfaceProperty<?> interfaceProperty) {
         this.pane = this.updatePaneByProperty(interfaceProperty);
         this.reapplyInventory();
     }
 
     private void reapplyInventory() {
-        final Map<Vector2, ItemStackElement<ChestPane>> elements = this.pane.chestElements();
+        Map<Vector2, ItemStackElement<ChestPane>> elements = this.pane.chestElements();
 
         for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
             for (int y = 0; y < this.backing.rows(); y++) {
@@ -175,11 +175,11 @@ public final class ChestView implements
             final @NonNull Interface<?, PlayerViewer> backing,
             final @NonNull InterfaceArguments argument
     ) {
-        final InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
+        InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
         view.open();
 
         @SuppressWarnings("unchecked")
-        final T typedView = (T) view;
+        T typedView = (T) view;
         return typedView;
     }
 
@@ -343,11 +343,11 @@ public final class ChestView implements
             this.pane = pane;
         }
 
-        public @NonNull TransformContext<?, ChestPane, PlayerViewer> context() {
+        private @NonNull TransformContext<?, ChestPane, PlayerViewer> context() {
             return this.context;
         }
 
-        public @NonNull ChestPane pane() {
+        private @NonNull ChestPane pane() {
             return this.pane;
         }
 
