@@ -98,6 +98,7 @@ public final class ChestInterface implements
         this.transformationList.add(
                 TransformContext.of(
                         InterfaceProperty.dummy(),
+                        1,
                         transform
                 )
         );
@@ -352,12 +353,14 @@ public final class ChestInterface implements
         @Override
         public @NonNull <T> Builder addTransform(
                 final @NonNull InterfaceProperty<T> property,
+                final int priority,
                 final @NonNull Transform<ChestPane, PlayerViewer> transform
         ) {
             final List<TransformContext<?, ChestPane, PlayerViewer>> transforms = new ArrayList<>(this.transformsList);
             transforms.add(
                     TransformContext.of(
                             property,
+                            priority,
                             transform
                     )
             );
@@ -381,7 +384,7 @@ public final class ChestInterface implements
          */
         @Override
         public @NonNull Builder addTransform(final @NonNull Transform<ChestPane, PlayerViewer> transform) {
-            return this.addTransform(InterfaceProperty.dummy(), transform);
+            return this.addTransform(InterfaceProperty.dummy(), 1, transform);
         }
 
         /**

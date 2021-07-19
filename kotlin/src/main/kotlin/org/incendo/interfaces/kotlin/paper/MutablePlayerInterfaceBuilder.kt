@@ -63,10 +63,13 @@ public class MutablePlayerInterfaceBuilder :
     @Suppress("unchecked_cast")
     public fun addTransform(
         property: InterfaceProperty<*> = InterfaceProperty.dummy(),
+        priority: Int = 1,
         transform: (PlayerPane, PlayerView<PlayerPane>) -> PlayerPane
     ): Unit = mutate {
         internalBuilder.addTransform(
-            property, transform as (PlayerPane, InterfaceView<PlayerPane, *>) -> PlayerPane)
+            property,
+            priority,
+            transform as (PlayerPane, InterfaceView<PlayerPane, *>) -> PlayerPane)
     }
 
     /**

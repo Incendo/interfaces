@@ -8,9 +8,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.Interface;
+import org.incendo.interfaces.core.transform.InterfaceProperty;
 import org.incendo.interfaces.core.arguments.HashMapInterfaceArguments;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.element.Element;
+import org.incendo.interfaces.core.transform.TransformContext;
 import org.incendo.interfaces.core.util.Vector2;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
@@ -20,9 +22,12 @@ import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
 import org.incendo.interfaces.paper.utils.PaperUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,6 +49,7 @@ public final class ChestView implements
     private @NonNull ChestPane pane;
 
     private final @NonNull Map<Integer, Element> current = new HashMap<>();
+    private final @NonNull List<ContextCompletedChestPane> panes = new ArrayList<>();
     private final Collection<Integer> tasks = new HashSet<>();
 
     /**
@@ -101,19 +107,60 @@ public final class ChestView implements
     }
 
     private @NonNull ChestPane updatePane(final boolean firstApply) {
-        @NonNull ChestPane pane = new ChestPane(this.backing.rows());
-
         for (final var transform : this.backing.transformations()) {
-            pane = transform.transform().apply(pane, this);
-
+            ChestPane newPane = transform.transform().apply(new ChestPane(this.backing.rows()), this);
             // If it's the first time we apply the transform, then
             // we add update listeners to all the dependent properties
             if (firstApply) {
-                transform.property().addListener((oldValue, newValue) -> this.update());
+                transform.property().addListener((oldValue, newValue) -> this.updateByProperty(transform.property()));
             }
+
+            this.panes.removeIf(completedPane -> completedPane.context().equals(transform));
+            this.panes.add(new ContextCompletedChestPane(transform, newPane));
         }
 
-        return pane;
+        return this.mergePanes();
+    }
+
+    private @NonNull ChestPane updatePaneByProperty(final @NonNull InterfaceProperty<?> interfaceProperty) {
+        for (final var transform : this.backing.transformations()) {
+            if (transform.property() != interfaceProperty) {
+                continue;
+            }
+
+            ChestPane newPane = transform.transform().apply(new ChestPane(this.backing.rows()), this);
+
+            this.panes.removeIf(completedPane -> completedPane.context().equals(transform));
+            this.panes.add(new ContextCompletedChestPane(transform, newPane));
+        }
+
+        return this.mergePanes();
+    }
+
+    private void updateByProperty(final @NonNull InterfaceProperty<?> interfaceProperty) {
+        this.pane = this.updatePaneByProperty(interfaceProperty);
+        this.reapplyInventory();
+    }
+
+    private void reapplyInventory() {
+        Map<Vector2, ItemStackElement<ChestPane>> elements = this.pane.chestElements();
+
+        for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
+            for (int y = 0; y < this.backing.rows(); y++) {
+                Vector2 position = Vector2.at(x, y);
+                int slot = PaperUtils.gridToSlot(x, y);
+
+                final @Nullable Element currentElement = this.current.get(slot);
+                final @NonNull ItemStackElement<ChestPane> element = elements.get(position);
+
+                if (element.equals(currentElement)) {
+                    continue;
+                }
+
+                this.current.put(slot, element);
+                this.inventory.setItem(slot, element.itemStack());
+            }
+        }
     }
 
     /**
@@ -128,11 +175,11 @@ public final class ChestView implements
             final @NonNull Interface<?, PlayerViewer> backing,
             final @NonNull InterfaceArguments argument
     ) {
-        final InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
+        InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
         view.open();
 
         @SuppressWarnings("unchecked")
-        final T typedView = (T) view;
+        T typedView = (T) view;
         return typedView;
     }
 
@@ -149,22 +196,7 @@ public final class ChestView implements
     @Override
     public void update() {
         this.pane = this.updatePane(false);
-
-        final @NonNull Map<Vector2, ItemStackElement<ChestPane>> elements = this.pane.chestElements();
-
-        for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
-            for (int y = 0; y < this.backing.rows(); y++) {
-                final @Nullable Element currentElement = this.current.get(PaperUtils.gridToSlot(x, y));
-                final @NonNull ItemStackElement<ChestPane> element = elements.get(Vector2.at(x, y));
-
-                if (element.equals(currentElement)) {
-                    continue;
-                }
-
-                this.current.put(PaperUtils.gridToSlot(x, y), element);
-                this.inventory.setItem(PaperUtils.gridToSlot(x, y), element.itemStack());
-            }
-        }
+        this.reapplyInventory();
     }
 
     /**
@@ -250,6 +282,27 @@ public final class ChestView implements
         return this.backing().updates();
     }
 
+    private @NonNull ChestPane mergePanes() {
+        ItemStackElement<ChestPane> empty = ItemStackElement.empty();
+        ChestPane finalPane = new ChestPane(this.backing.rows());
+
+        this.panes.sort(Comparator.comparingInt(pane -> pane.context().priority()));
+
+        for (final var completedPane : this.panes) {
+            Map<Vector2, ItemStackElement<ChestPane>> elements = completedPane.pane().chestElements();
+
+            for (Vector2 position : elements.keySet()) {
+                ItemStackElement<ChestPane> value = elements.get(position);
+
+                if (!value.equals(empty)) {
+                    finalPane = finalPane.element(value, position.x(), position.y());
+                }
+            }
+        }
+
+        return finalPane;
+    }
+
     @Override
     public void addTask(final @NonNull Plugin plugin, final @NonNull Runnable runnable, final int delay) {
         BukkitRunnable bukkitRunnable = new NestedRunnable(runnable);
@@ -274,6 +327,28 @@ public final class ChestView implements
         public void run() {
             this.runnable.run();
             ChestView.this.tasks.remove(this.getTaskId());
+        }
+    }
+
+    private static final class ContextCompletedChestPane {
+
+        private final TransformContext<?, ChestPane, PlayerViewer> context;
+        private final ChestPane pane;
+
+        private ContextCompletedChestPane(
+                final @NonNull TransformContext<?, ChestPane, PlayerViewer> context,
+                final @NonNull ChestPane pane
+        ) {
+            this.context = context;
+            this.pane = pane;
+        }
+
+        private @NonNull TransformContext<?, ChestPane, PlayerViewer> context() {
+            return this.context;
+        }
+
+        private @NonNull ChestPane pane() {
+            return this.pane;
         }
 
     }

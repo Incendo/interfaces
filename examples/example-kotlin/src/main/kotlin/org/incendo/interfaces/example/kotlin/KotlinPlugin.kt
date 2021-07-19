@@ -16,10 +16,13 @@ import org.incendo.interfaces.core.arguments.ArgumentKey
 import org.incendo.interfaces.core.click.ClickHandler
 import org.incendo.interfaces.core.transform.InterfaceProperty
 import org.incendo.interfaces.kotlin.*
+import org.incendo.interfaces.kotlin.getValue
+import org.incendo.interfaces.kotlin.interfaceArgumentOf
 import org.incendo.interfaces.kotlin.paper.asElement
 import org.incendo.interfaces.kotlin.paper.buildChestInterface
 import org.incendo.interfaces.kotlin.paper.buildPlayerInterface
 import org.incendo.interfaces.kotlin.paper.open
+import org.incendo.interfaces.kotlin.setValue
 import org.incendo.interfaces.paper.PaperInterfaceListeners
 import org.incendo.interfaces.paper.element.ItemStackElement
 import org.incendo.interfaces.paper.pane.ChestPane
@@ -95,7 +98,7 @@ public class KotlinPlugin : JavaPlugin() {
                     }
                 }
 
-                withTransform(_selectedOption) { view ->
+                withTransform(_selectedOption, priority = 2) { view ->
                     println("rendering selected option")
 
                     // Extract an argument from the view

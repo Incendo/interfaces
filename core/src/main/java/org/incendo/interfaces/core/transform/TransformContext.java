@@ -13,12 +13,15 @@ public final class TransformContext<T, U extends Pane, V extends InterfaceViewer
 
     private final InterfaceProperty<T> property;
     private final Transform<U, V> transform;
+    private final int priority;
 
     private TransformContext(
             final @NonNull InterfaceProperty<T> property,
+            final int priority,
             final @NonNull Transform<U, V> transform
     ) {
         this.property = property;
+        this.priority = priority;
         this.transform = transform;
     }
 
@@ -26,6 +29,7 @@ public final class TransformContext<T, U extends Pane, V extends InterfaceViewer
      * Creates a new transform context instance
      *
      * @param property the property
+     * @param priority the priority
      * @param transform the transform
      * @param <T> the type of the value this context is dependent on
      * @param <U> the type of the pane that this transform is applied to
@@ -34,9 +38,10 @@ public final class TransformContext<T, U extends Pane, V extends InterfaceViewer
      */
     public static <T, U extends Pane, V extends InterfaceViewer> @NonNull TransformContext<T, U, V> of(
             final @NonNull InterfaceProperty<T> property,
+            final int priority,
             final @NonNull Transform<U, V> transform
     ) {
-        return new TransformContext<>(property, transform);
+        return new TransformContext<>(property, priority, transform);
     }
 
     /**
@@ -55,6 +60,15 @@ public final class TransformContext<T, U extends Pane, V extends InterfaceViewer
      */
     public @NonNull Transform<U, V> transform() {
         return this.transform;
+    }
+
+    /**
+     * Returns the priority in which the transformation should be applied
+     *
+     * @return the priority
+     */
+    public int priority() {
+        return this.priority;
     }
 
 }
