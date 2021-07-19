@@ -4,11 +4,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -67,6 +69,22 @@ public class PaperInterfaceListeners implements Listener {
      */
     public static void install(final @NonNull Plugin plugin) {
         Bukkit.getPluginManager().registerEvents(new PaperInterfaceListeners(plugin), plugin);
+    }
+
+    /**
+     * Handles the plugin disable event.
+     *
+     * @param event the event
+     */
+    @EventHandler
+    public void onDisable(final @NonNull PluginDisableEvent event) {
+        if (event.getPlugin() != this.plugin) {
+            return;
+        }
+
+        for (final PlayerInventoryView view : PlayerInventoryView.getAllAndClear()) {
+            view.close();
+        }
     }
 
     /**
@@ -173,9 +191,24 @@ public class PaperInterfaceListeners implements Listener {
     @EventHandler
     public void onPlayerQuit(final @NonNull PlayerQuitEvent event) {
         final PlayerInventoryView view = PlayerInventoryView.forPlayer(event.getPlayer());
-
         if (view != null) {
             view.close();
+        }
+    }
+
+    /**
+     * Handles the player death event.
+     *
+     * @param event the event
+     */
+    @EventHandler
+    public void onPlayerDeath(final @NonNull PlayerDeathEvent event) {
+        final Player player = event.getEntity();
+        final PlayerInventoryView view = PlayerInventoryView.forPlayer(player);
+
+        if (view != null) {
+            event.getDrops().clear();
+            event.setKeepInventory(true);
         }
     }
 

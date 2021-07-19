@@ -14,6 +14,8 @@ import org.incendo.interfaces.paper.pane.PlayerPane;
 import org.incendo.interfaces.paper.type.PlayerInterface;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +64,18 @@ public final class PlayerInventoryView implements
         this.inventory = viewer.player().getInventory();
 
         this.pane = this.updatePane(true);
+    }
+
+    /**
+     * Returns all the open player inventory views
+     *
+     * @return the views in a collection
+     */
+    public static @NonNull Collection<PlayerInventoryView> getAllAndClear() {
+        Collection<PlayerInventoryView> values = new ArrayList<>(INVENTORY_VIEW_MAP.values());
+        INVENTORY_VIEW_MAP.clear();
+
+        return values;
     }
 
     /**
