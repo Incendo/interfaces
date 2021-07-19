@@ -3,7 +3,7 @@ package org.incendo.interfaces.paper.pane;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.common.value.qual.IntRange;
 import org.incendo.interfaces.core.element.Element;
-import org.incendo.interfaces.core.pane.Pane;
+import org.incendo.interfaces.core.pane.GridPane;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.utils.PaperUtils;
 
@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * A pane based off of a player inventory.
  */
-public final class PlayerPane implements Pane {
+public final class PlayerPane implements GridPane<PlayerPane, ItemStackElement<PlayerPane>> {
 
     public static final int HOTBAR_MIN = 0;
     public static final int HOTBAR_MAX = 8;
@@ -272,6 +272,20 @@ public final class PlayerPane implements Pane {
             );
         }
         return this.element(adjusted);
+    }
+
+    @Override
+    public @NonNull PlayerPane element(
+            @NonNull final ItemStackElement<PlayerPane> element,
+            final int x,
+            final int y
+    ) {
+        return this.main(PaperUtils.gridToSlot(x, y), element);
+    }
+
+    @Override
+    public @NonNull ItemStackElement<PlayerPane> element(final int x, final int y) {
+        return this.main(PaperUtils.gridToSlot(x, y));
     }
 
     public enum SlotType {

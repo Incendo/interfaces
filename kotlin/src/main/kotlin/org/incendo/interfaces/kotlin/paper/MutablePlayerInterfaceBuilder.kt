@@ -3,6 +3,7 @@ package org.incendo.interfaces.kotlin.paper
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.incendo.interfaces.core.click.ClickHandler
 import org.incendo.interfaces.core.transform.InterfaceProperty
+import org.incendo.interfaces.core.transform.ReactiveTransform
 import org.incendo.interfaces.core.transform.Transform
 import org.incendo.interfaces.core.view.InterfaceView
 import org.incendo.interfaces.kotlin.MutableInterfaceBuilder
@@ -50,9 +51,17 @@ public class MutablePlayerInterfaceBuilder :
      * Adds the given [transform] to the interface.
      *
      * @param transform transform to add
+     * @param priority the priority
      */
-    public fun addTransform(transform: Transform<PlayerPane, PlayerViewer>): Unit = mutate {
-        internalBuilder.addTransform(transform)
+    public fun addTransform(
+        transform: Transform<PlayerPane, PlayerViewer>,
+        priority: Int = 1
+    ): Unit = mutate {
+        if (transform is ReactiveTransform<PlayerPane, PlayerViewer, *>) {
+            internalBuilder.addReactiveTransform(priority, transform) as PlayerInterface.Builder
+        } else {
+            internalBuilder.addTransform(InterfaceProperty.dummy(), priority, transform)
+        }
     }
 
     /**

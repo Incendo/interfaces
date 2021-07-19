@@ -195,7 +195,7 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
         }
 
         @Override
-        public <S> Builder addTransform(
+        public <S> @NonNull Builder addTransform(
                 final @NonNull InterfaceProperty<S> property,
                 final int priority,
                 final @NonNull Transform<BookPane, PlayerViewer> transform

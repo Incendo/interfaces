@@ -11,10 +11,14 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.plugin.java.JavaPlugin
 import org.incendo.interfaces.core.arguments.ArgumentKey
 import org.incendo.interfaces.core.click.ClickHandler
 import org.incendo.interfaces.core.transform.InterfaceProperty
+import org.incendo.interfaces.core.transform.types.PaginatedTransform
+import org.incendo.interfaces.core.transform.types.SlidingWindowTransform
+import org.incendo.interfaces.core.util.Vector2
 import org.incendo.interfaces.kotlin.*
 import org.incendo.interfaces.kotlin.getValue
 import org.incendo.interfaces.kotlin.interfaceArgumentOf
@@ -24,6 +28,7 @@ import org.incendo.interfaces.kotlin.paper.buildPlayerInterface
 import org.incendo.interfaces.kotlin.paper.open
 import org.incendo.interfaces.kotlin.setValue
 import org.incendo.interfaces.paper.PaperInterfaceListeners
+import org.incendo.interfaces.paper.PlayerViewer
 import org.incendo.interfaces.paper.element.ItemStackElement
 import org.incendo.interfaces.paper.pane.ChestPane
 import org.incendo.interfaces.paper.type.ChestInterface
@@ -46,6 +51,8 @@ public class KotlinPlugin : JavaPlugin() {
 
     private lateinit var exampleChest: ChestInterface
     private lateinit var examplePlayer: PlayerInterface
+    private lateinit var examplePaginated: ChestInterface
+    private lateinit var exampleSliding: ChestInterface
 
     private var _selectedOption: InterfaceProperty<SelectionOptions> =
         InterfaceProperty.of(SelectionOptions.ONE)
@@ -162,11 +169,80 @@ public class KotlinPlugin : JavaPlugin() {
 
                 updates(true, 1)
             }
+
+        examplePaginated =
+            buildChestInterface {
+                rows = 4
+
+                val reactiveTransform:
+                    PaginatedTransform<ItemStackElement<ChestPane>, ChestPane, PlayerViewer> =
+                    PaginatedTransform(
+                        Vector2.at(2, 1),
+                        Vector2.at(6, 2),
+                        (1..30).map {
+                            createItemStack(
+                                    Material.PAPER, text(it.toString(), NamedTextColor.BLUE))
+                                .asElement(ClickHandler.cancel())
+                        })
+                reactiveTransform.backwardElement(Vector2.at(0, 0)) { transform ->
+                    createSkull(text("Previous Page"), "MHF_ArrowLeft").asElement {
+                        transform.previousPage()
+                    }
+                }
+                reactiveTransform.forwardElement(Vector2.at(8, 3)) { transform ->
+                    createSkull(text("Next Page"), "MHF_ArrowRight").asElement {
+                        transform.nextPage()
+                    }
+                }
+
+                addTransform(reactiveTransform)
+            }
+
+        exampleSliding =
+            buildChestInterface {
+                rows = 4
+
+                val elements = mutableListOf<ItemStackElement<ChestPane>>()
+                var index = 0
+                for (material in Material.values().filter { "WOOL" in it.name }) {
+                    repeat(2) {
+                        elements.add(
+                            createItemStack(material, text(index++.toString()))
+                                .asElement(ClickHandler.cancel()))
+                    }
+                }
+
+                val reactiveTransform:
+                    SlidingWindowTransform<ItemStackElement<ChestPane>, ChestPane, PlayerViewer> =
+                    SlidingWindowTransform(Vector2.at(2, 1), Vector2.at(6, 2), elements)
+
+                reactiveTransform.backwardElement(Vector2.at(0, 0)) { transform ->
+                    createSkull(text("Slide Back"), "MHF_ArrowLeft").asElement {
+                        transform.slideBack()
+                    }
+                }
+                reactiveTransform.forwardElement(Vector2.at(8, 3)) { transform ->
+                    createSkull(text("Slide Forward"), "MHF_ArrowRight").asElement {
+                        transform.slideForward()
+                    }
+                }
+
+                addTransform(reactiveTransform)
+            }
     }
 
     private fun createItemStack(material: Material, name: Component): ItemStack =
         ItemStack(material).also {
             it.itemMeta = it.itemMeta.also { meta -> meta.displayName(name) }
+        }
+
+    private fun createSkull(name: Component, owner: String): ItemStack =
+        ItemStack(Material.PLAYER_HEAD).also {
+            it.itemMeta =
+                it.itemMeta.also { meta ->
+                    meta.displayName(name)
+                    (meta as SkullMeta).owner = owner
+                }
         }
 
     private inner class InterfaceCommandHandler : CommandExecutor {
@@ -185,7 +261,9 @@ public class KotlinPlugin : JavaPlugin() {
 
             if (args.isEmpty()) {
                 sender.sendMessage(
-                    text("You must specify one of: chest, player, close", NamedTextColor.RED))
+                    text(
+                        "You must specify one of: chest, player, close, paginated, sliding",
+                        NamedTextColor.RED))
                 return false
             }
 
@@ -199,6 +277,8 @@ public class KotlinPlugin : JavaPlugin() {
                         arguments,
                         text("Your Chest: ${sender.name}", NamedTextColor.GREEN))
                 "player" -> sender.open(examplePlayer, arguments)
+                "paginated" -> sender.open(examplePaginated, arguments)
+                "sliding" -> sender.open(exampleSliding, arguments)
                 "close" -> {
                     sender.closeInventory()
                     // Also close their player interface, if they have one open.

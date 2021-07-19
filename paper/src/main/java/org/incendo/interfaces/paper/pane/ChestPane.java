@@ -2,7 +2,7 @@ package org.incendo.interfaces.paper.pane;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.element.Element;
-import org.incendo.interfaces.core.pane.Pane;
+import org.incendo.interfaces.core.pane.GridPane;
 import org.incendo.interfaces.core.util.Vector2;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 
@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * A pane based off of a Minecraft chest inventory.
  */
-public final class ChestPane implements Pane {
+public final class ChestPane implements GridPane<ChestPane, ItemStackElement<ChestPane>> {
 
     public static final int MINECRAFT_CHEST_WIDTH = 9;
 
@@ -87,17 +87,12 @@ public final class ChestPane implements Pane {
         return tempElements;
     }
 
-    /**
-     * Sets an element at the given position.
-     * <p>
-     * This method returns an updated instance of ChestPane with the new element.
-     *
-     * @param element the element
-     * @param x       the x coordinate
-     * @param y       the y coordinate
-     * @return a new {@code ChestPane}
-     */
-    public @NonNull ChestPane element(final @NonNull ItemStackElement<ChestPane> element, final int x, final int y) {
+    @Override
+    public @NonNull ChestPane element(
+            final @NonNull ItemStackElement<ChestPane> element,
+            final int x,
+            final int y
+    ) {
         final Map<@NonNull Vector2, @NonNull ItemStackElement<ChestPane>> newElements = new HashMap<>(this.elements);
 
         newElements.put(Vector2.at(x, y), element);
@@ -105,13 +100,7 @@ public final class ChestPane implements Pane {
         return new ChestPane(this.rows, newElements);
     }
 
-    /**
-     * Returns the element at the given position.
-     *
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @return the element
-     */
+    @Override
     public @NonNull ItemStackElement<ChestPane> element(final int x, final int y) {
         return this.elements.get(Vector2.at(x, y));
     }
