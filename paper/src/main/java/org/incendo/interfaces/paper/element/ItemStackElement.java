@@ -117,7 +117,7 @@ public class ItemStackElement<T extends Pane> implements Element, Clickable<T, I
             return false;
         }
         ItemStackElement<?> that = (ItemStackElement<?>) o;
-        return this.itemStack.equals(that.itemStack);
+        return this.itemStack.equals(that.itemStack) && this.handler.equals(that.handler);
     }
 
     @Override
