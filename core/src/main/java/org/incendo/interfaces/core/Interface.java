@@ -4,6 +4,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.core.transform.InterfaceProperty;
+import org.incendo.interfaces.core.transform.ReactiveTransform;
 import org.incendo.interfaces.core.transform.Transform;
 import org.incendo.interfaces.core.transform.TransformContext;
 import org.incendo.interfaces.core.view.InterfaceView;
@@ -84,7 +85,7 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
          * @param transform the transformation to add
          * @return the builder
          */
-        Builder<T, U, V> addTransform(@NonNull Transform<T, U> transform);
+        @NonNull Builder<T, U, V> addTransform(@NonNull Transform<T, U> transform);
 
         /**
          * Adds a transformation to the Interface that will update automatically when it's {@link InterfaceProperty} is changed.
@@ -95,7 +96,7 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
          * @param <S>       the value type the interface property holds
          * @return the builder
          */
-        default <S> Builder<T, U, V> addTransform(
+        default <S> @NonNull Builder<T, U, V> addTransform(
                 @NonNull InterfaceProperty<S> property,
                 @NonNull Transform<T, U> transform
         ) {
@@ -112,11 +113,42 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
          * @param <S> the value type the interface property holds
          * @return the builder
          */
-        <S> Builder<T, U, V> addTransform(
+        <S> @NonNull Builder<T, U, V> addTransform(
                 @NonNull InterfaceProperty<S> property,
                 int priority,
                 @NonNull Transform<T, U> transform
         );
+
+        /**
+         * Adds a transformation to the Interface that will update automatically when it's {@link InterfaceProperty} is changed
+         * This transformation will use the provided priority.
+         *
+         * @param priority the priority of the transformation
+         * @param transform the transformation to add
+         * @param <S> the value type the interface property holds
+         * @return the builder
+         */
+        default <S> @NonNull Builder<T, U, V> addReactiveTransform(
+                int priority,
+                @NonNull ReactiveTransform<T, U, S> transform
+        ) {
+            return this.addTransform(transform.property(), priority, transform);
+        }
+
+        /**
+         * Adds a transformation to the Interface that will update automatically when it's {@link InterfaceProperty} is changed
+         * This transformation will use the provided priority.
+         *
+         * @param transform the transformation to add
+         * @param <S> the value type the interface property holds
+         * @return the builder
+         */
+        default <S> @NonNull Builder<T, U, V> addReactiveTransform(
+                @NonNull ReactiveTransform<T, U, S> transform
+        ) {
+            return this.addTransform(transform.property(), 1, transform);
+        }
+
 
         /**
          * Builds the interface and returns it.
