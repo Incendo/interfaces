@@ -22,16 +22,14 @@ import org.incendo.interfaces.core.util.Vector2
 import org.incendo.interfaces.kotlin.*
 import org.incendo.interfaces.kotlin.getValue
 import org.incendo.interfaces.kotlin.interfaceArgumentOf
-import org.incendo.interfaces.kotlin.paper.asElement
-import org.incendo.interfaces.kotlin.paper.buildChestInterface
-import org.incendo.interfaces.kotlin.paper.buildPlayerInterface
-import org.incendo.interfaces.kotlin.paper.open
+import org.incendo.interfaces.kotlin.paper.*
 import org.incendo.interfaces.kotlin.setValue
 import org.incendo.interfaces.paper.PaperInterfaceListeners
 import org.incendo.interfaces.paper.PlayerViewer
 import org.incendo.interfaces.paper.element.ItemStackElement
 import org.incendo.interfaces.paper.pane.ChestPane
 import org.incendo.interfaces.paper.type.ChestInterface
+import org.incendo.interfaces.paper.type.CombinedInterface
 import org.incendo.interfaces.paper.type.PlayerInterface
 import org.incendo.interfaces.paper.view.PlayerInventoryView
 
@@ -53,6 +51,7 @@ public class KotlinPlugin : JavaPlugin() {
     private lateinit var examplePlayer: PlayerInterface
     private lateinit var examplePaginated: ChestInterface
     private lateinit var exampleSliding: ChestInterface
+    private lateinit var exampleCombined: CombinedInterface
 
     private var _selectedOption: InterfaceProperty<SelectionOptions> =
         InterfaceProperty.of(SelectionOptions.ONE)
@@ -229,6 +228,25 @@ public class KotlinPlugin : JavaPlugin() {
 
                 addTransform(reactiveTransform)
             }
+
+        exampleCombined =
+            buildCombinedInterface {
+                chestRows = 2
+
+                clickHandler(canceling())
+
+                withTransform { view ->
+                    for (x in 0 until 9) {
+                        for (y in 0 until 4) {
+                            view[x, y] =
+                                createItemStack(Material.COMPASS, text("hi $y")).asElement()
+                        }
+                    }
+
+                    view.hotbar(
+                        4, createItemStack(Material.LIME_CONCRETE, text("wooo")).asElement())
+                }
+            }
     }
 
     private fun createItemStack(material: Material, name: Component): ItemStack =
@@ -279,6 +297,7 @@ public class KotlinPlugin : JavaPlugin() {
                 "player" -> sender.open(examplePlayer, arguments)
                 "paginated" -> sender.open(examplePaginated, arguments)
                 "sliding" -> sender.open(exampleSliding, arguments)
+                "combined" -> sender.open(exampleCombined, arguments)
                 "close" -> {
                     sender.closeInventory()
                     // Also close their player interface, if they have one open.

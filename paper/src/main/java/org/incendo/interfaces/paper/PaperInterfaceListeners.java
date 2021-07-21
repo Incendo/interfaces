@@ -24,12 +24,15 @@ import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
 import org.incendo.interfaces.paper.click.InventoryClickContext;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
+import org.incendo.interfaces.paper.pane.CombinedPane;
 import org.incendo.interfaces.paper.pane.PlayerPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
 import org.incendo.interfaces.paper.type.CloseHandler;
 import org.incendo.interfaces.paper.view.ChestView;
+import org.incendo.interfaces.paper.view.CombinedView;
 import org.incendo.interfaces.paper.view.PlayerInventoryView;
-import org.incendo.interfaces.paper.view.PlayerView;
+import org.incendo.interfaces.paper
+        .view.PlayerView;
 import org.incendo.interfaces.paper.view.TaskableView;
 import org.incendo.interfaces.paper.view.ViewCloseEvent;
 import org.incendo.interfaces.paper.view.ViewOpenEvent;
@@ -260,6 +263,8 @@ public class PaperInterfaceListeners implements Listener {
 
         if (holder instanceof ChestView) {
             this.handleChestViewClick(event, holder);
+        } else if (holder instanceof CombinedView) {
+            this.handleCombinedViewClick(event, holder);
         } else if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Player) {
             this.handlePlayerViewClick(event);
         }
@@ -284,6 +289,28 @@ public class PaperInterfaceListeners implements Listener {
             int y = slot / 9;
 
             final @NonNull ItemStackElement<ChestPane> element = chestView.pane().element(x, y);
+            element.clickHandler().accept(context);
+        }
+    }
+
+    private void handleCombinedViewClick(final @NonNull InventoryClickEvent event, final @NonNull InventoryHolder holder) {
+        final InventoryClickContext<CombinedPane, CombinedView> context = new InventoryClickContext<>(event, false);
+
+        CombinedView combinedView = (CombinedView) holder;
+        // Handle parent interface click event
+        combinedView.backing().clickHandler().accept(context);
+
+        // Handle element click event
+        if (event.getSlotType() == InventoryType.SlotType.CONTAINER) {
+            int slot = event.getSlot();
+            int x = slot % 9;
+            int y = slot / 9;
+
+            if (event.getSlot() != event.getRawSlot()) {
+                y += combinedView.backing().chestRows() - 1;
+            }
+
+            final @NonNull ItemStackElement<CombinedPane> element = combinedView.pane().element(x, y);
             element.clickHandler().accept(context);
         }
     }
