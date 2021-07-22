@@ -6,6 +6,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.view.BookView;
 import org.incendo.interfaces.paper.view.ChestView;
+import org.incendo.interfaces.paper.view.CombinedView;
 import org.incendo.interfaces.paper.view.PlayerInventoryView;
 
 final class PlayerViewerImpl implements PlayerViewer {
@@ -25,6 +26,10 @@ final class PlayerViewerImpl implements PlayerViewer {
         this.player.openInventory(chestView.getInventory());
     }
 
+    private void openCombinedView(final @NonNull CombinedView combinedView) {
+        this.player.openInventory(combinedView.getInventory());
+    }
+
     private void openBookView(final @NonNull BookView bookView) {
         this.player.openBook(bookView.book());
     }
@@ -37,6 +42,8 @@ final class PlayerViewerImpl implements PlayerViewer {
     public void open(final @NonNull InterfaceView<?, ?> view) {
         if (view instanceof ChestView) {
             this.openChestView((ChestView) view);
+        } else if (view instanceof CombinedView) {
+            this.openCombinedView((CombinedView) view);
         } else if (view instanceof BookView) {
             this.openBookView((BookView) view);
         } else if (view instanceof PlayerInventoryView) {

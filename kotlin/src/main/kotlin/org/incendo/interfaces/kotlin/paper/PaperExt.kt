@@ -13,6 +13,7 @@ import org.incendo.interfaces.core.view.InterfaceView
 import org.incendo.interfaces.paper.PlayerViewer
 import org.incendo.interfaces.paper.element.ItemStackElement
 import org.incendo.interfaces.paper.type.ChestInterface
+import org.incendo.interfaces.paper.type.CombinedInterface
 import org.incendo.interfaces.paper.type.PlayerInterface
 import org.incendo.interfaces.paper.type.TitledInterface
 
@@ -32,6 +33,15 @@ public fun buildChestInterface(builder: MutableChestInterfaceBuilder.() -> Unit)
 public fun buildPlayerInterface(
     builder: MutablePlayerInterfaceBuilder.() -> Unit
 ): PlayerInterface = MutablePlayerInterfaceBuilder().also(builder).toBuilder().build()
+
+/**
+ * Builds a new [CombinedInterface] using the given builder.
+ *
+ * @return build interface
+ */
+public fun buildCombinedInterface(
+    builder: MutableCombinedInterfaceBuilder.() -> Unit
+): CombinedInterface = MutableCombinedInterfaceBuilder().also(builder).toBuilder().build()
 
 // <editor-fold desc="Player Extensions">
 /**

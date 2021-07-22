@@ -5,6 +5,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.click.Click;
 import org.incendo.interfaces.core.click.ClickContext;
@@ -13,6 +14,7 @@ import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.view.ChestView;
+import org.incendo.interfaces.paper.view.CombinedView;
 import org.incendo.interfaces.paper.view.PlayerInventoryView;
 
 import java.util.Objects;
@@ -46,16 +48,20 @@ public final class InventoryClickContext<T extends Pane, U extends InterfaceView
 
         final @NonNull Inventory inventory = event.getInventory();
         if (inventory.getType() == InventoryType.CHEST) {
-            if (!(inventory.getHolder() instanceof ChestView)) {
+            InventoryHolder holder = inventory.getHolder();
+
+            if (holder instanceof CombinedView) {
+                this.view = this.viewFromCombinedClick();
+            } else if (!(inventory.getHolder() instanceof ChestView)) {
                 throw new IllegalArgumentException(
                         "The InventoryHolder wasn't a ChestView."
                 );
-            }
-
-            if (event.getSlot() != event.getRawSlot()) {
-                this.view = (U) Objects.requireNonNull(PlayerInventoryView.forPlayer((Player) event.getWhoClicked()));
             } else {
-                this.view = (U) inventory.getHolder();
+                if (event.getSlot() != event.getRawSlot()) {
+                    this.view = (U) Objects.requireNonNull(PlayerInventoryView.forPlayer((Player) event.getWhoClicked()));
+                } else {
+                    this.view = (U) inventory.getHolder();
+                }
             }
         } else if (player) {
             this.view = (U) Objects.requireNonNull(PlayerInventoryView.forPlayer((Player) event.getWhoClicked()));
@@ -121,6 +127,10 @@ public final class InventoryClickContext<T extends Pane, U extends InterfaceView
      */
     public int rawSlot() {
         return this.event.getRawSlot();
+    }
+
+    private U viewFromCombinedClick() {
+        return (U) this.event.getInventory().getHolder();
     }
 
 }
