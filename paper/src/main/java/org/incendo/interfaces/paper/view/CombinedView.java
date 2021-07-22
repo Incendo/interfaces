@@ -13,7 +13,6 @@ import org.incendo.interfaces.core.arguments.HashMapInterfaceArguments;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.transform.InterfaceProperty;
-import org.incendo.interfaces.core.transform.TransformContext;
 import org.incendo.interfaces.core.util.Vector2;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
@@ -118,7 +117,7 @@ public final class CombinedView implements
             }
 
             this.panes.removeIf(completedPane -> completedPane.context().equals(transform));
-            this.panes.add(new ContextCompletedCombinedPane(transform, newPane));
+            this.panes.add(new ContextCompletedPane<>(transform, newPane));
         }
 
         return this.mergePanes();
@@ -133,7 +132,7 @@ public final class CombinedView implements
             CombinedPane newPane = transform.transform().apply(new CombinedPane(this.backing.totalRows()), this);
 
             this.panes.removeIf(completedPane -> completedPane.context().equals(transform));
-            this.panes.add(new ContextCompletedCombinedPane(transform, newPane));
+            this.panes.add(new ContextCompletedPane<>(transform, newPane));
         }
 
         return this.mergePanes();
@@ -362,29 +361,6 @@ public final class CombinedView implements
         public void run() {
             this.runnable.run();
             CombinedView.this.tasks.remove(this.getTaskId());
-        }
-
-    }
-
-    private static final class ContextCompletedCombinedPane {
-
-        private final TransformContext<?, CombinedPane, PlayerViewer> context;
-        private final CombinedPane pane;
-
-        private ContextCompletedCombinedPane(
-                final @NonNull TransformContext<?, CombinedPane, PlayerViewer> context,
-                final @NonNull CombinedPane pane
-        ) {
-            this.context = context;
-            this.pane = pane;
-        }
-
-        private @NonNull TransformContext<?, CombinedPane, PlayerViewer> context() {
-            return this.context;
-        }
-
-        private @NonNull CombinedPane pane() {
-            return this.pane;
         }
 
     }

@@ -12,7 +12,6 @@ import org.incendo.interfaces.core.transform.InterfaceProperty;
 import org.incendo.interfaces.core.arguments.HashMapInterfaceArguments;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.element.Element;
-import org.incendo.interfaces.core.transform.TransformContext;
 import org.incendo.interfaces.core.util.Vector2;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
@@ -49,7 +48,7 @@ public final class ChestView implements
     private @NonNull ChestPane pane;
 
     private final @NonNull Map<Integer, Element> current = new HashMap<>();
-    private final @NonNull List<ContextCompletedChestPane> panes = new ArrayList<>();
+    private final @NonNull List<ContextCompletedPane<ChestPane>> panes = new ArrayList<>();
     private final Collection<Integer> tasks = new HashSet<>();
 
     /**
@@ -116,7 +115,7 @@ public final class ChestView implements
             }
 
             this.panes.removeIf(completedPane -> completedPane.context().equals(transform));
-            this.panes.add(new ContextCompletedChestPane(transform, newPane));
+            this.panes.add(new ContextCompletedPane<>(transform, newPane));
         }
 
         return this.mergePanes();
@@ -131,7 +130,7 @@ public final class ChestView implements
             ChestPane newPane = transform.transform().apply(new ChestPane(this.backing.rows()), this);
 
             this.panes.removeIf(completedPane -> completedPane.context().equals(transform));
-            this.panes.add(new ContextCompletedChestPane(transform, newPane));
+            this.panes.add(new ContextCompletedPane<>(transform, newPane));
         }
 
         return this.mergePanes();
@@ -328,29 +327,6 @@ public final class ChestView implements
             this.runnable.run();
             ChestView.this.tasks.remove(this.getTaskId());
         }
-    }
-
-    private static final class ContextCompletedChestPane {
-
-        private final TransformContext<?, ChestPane, PlayerViewer> context;
-        private final ChestPane pane;
-
-        private ContextCompletedChestPane(
-                final @NonNull TransformContext<?, ChestPane, PlayerViewer> context,
-                final @NonNull ChestPane pane
-        ) {
-            this.context = context;
-            this.pane = pane;
-        }
-
-        private @NonNull TransformContext<?, ChestPane, PlayerViewer> context() {
-            return this.context;
-        }
-
-        private @NonNull ChestPane pane() {
-            return this.pane;
-        }
-
     }
 
 }
