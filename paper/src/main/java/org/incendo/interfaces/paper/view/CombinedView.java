@@ -50,7 +50,7 @@ public final class CombinedView implements
     private @NonNull CombinedPane pane;
 
     private final @NonNull Map<Vector2, Element> current = new HashMap<>();
-    private final @NonNull List<ContextCompletedCombinedPane> panes = new ArrayList<>();
+    private final @NonNull List<ContextCompletedPane<CombinedPane>> panes = new ArrayList<>();
     private final Collection<Integer> tasks = new HashSet<>();
 
     /**
@@ -94,6 +94,7 @@ public final class CombinedView implements
         this.pane = this.updatePane(true);
 
         this.inventory = this.createInventory();
+        this.reapplyInventory();
     }
 
     /**
@@ -147,20 +148,54 @@ public final class CombinedView implements
         Map<Vector2, ItemStackElement<CombinedPane>> elements = this.pane.inventoryElements();
 
         for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
-            for (int y = 0; y < this.backing.totalRows(); y++) {
+            for (int y = 0; y < this.backing.chestRows(); y++) {
                 Vector2 position = Vector2.at(x, y);
-                int slot = PaperUtils.gridToSlot(x, y);
 
-                final @Nullable Element currentElement = this.current.get(position);
-                final @NonNull ItemStackElement<CombinedPane> element = elements.get(position);
+                Element currentElement = this.current.get(position);
+                ItemStackElement<CombinedPane> element = elements.get(Vector2.at(x, y));
 
                 if (element.equals(currentElement)) {
                     continue;
                 }
 
                 this.current.put(position, element);
-                this.inventory.setItem(slot, element.itemStack());
+                this.inventory.setItem(PaperUtils.gridToSlot(x, y), element.itemStack());
             }
+        }
+
+        PlayerInventory playerInventory = this.viewer.player().getInventory();
+
+        for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
+            for (int y = this.backing.chestRows(); y < this.backing.totalRows(); y++) {
+                Vector2 position = Vector2.at(x, y);
+                int playerY = y - this.backing.chestRows() + 1;
+
+                Element currentElement = this.current.get(position);
+                ItemStackElement<CombinedPane> element = elements.get(position);
+
+                if (element.equals(currentElement)) {
+                    continue;
+                }
+
+                this.current.put(position, element);
+                playerInventory.setItem(PaperUtils.gridToSlot(x, playerY), element.itemStack());
+            }
+        }
+
+        ItemStackElement<CombinedPane>[] hotbar = this.pane.hotbarElements();
+
+        for (int x = 0; x < hotbar.length; x++) {
+            Vector2 position = Vector2.at(x, 999);
+
+            Element currentElement = this.current.get(position);
+            ItemStackElement<CombinedPane> element = hotbar[x];
+
+            if (element.equals(currentElement)) {
+                continue;
+            }
+
+            this.current.put(position, hotbar[x]);
+            playerInventory.setItem(x, hotbar[x].itemStack());
         }
     }
 
@@ -258,47 +293,11 @@ public final class CombinedView implements
      * @return the inventory
      */
     private @NonNull Inventory createInventory() {
-        final @NonNull Inventory inventory = Bukkit.createInventory(
+        return Bukkit.createInventory(
                 this,
                 this.backing.chestRows() * 9,
                 this.title
         );
-
-        final @NonNull Map<Vector2, ItemStackElement<CombinedPane>> elements = this.pane.inventoryElements();
-
-        for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
-            for (int y = 0; y < this.backing.chestRows(); y++) {
-                final Vector2 position = Vector2.at(x, y);
-                final @NonNull ItemStackElement<CombinedPane> element = elements.get(Vector2.at(x, y));
-
-                this.current.put(position, element);
-                inventory.setItem(PaperUtils.gridToSlot(x, y), element.itemStack());
-            }
-        }
-
-        PlayerInventory playerInventory = this.viewer.player().getInventory();
-
-        for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
-            for (int y = this.backing.chestRows(); y < this.backing.totalRows(); y++) {
-                final Vector2 position = Vector2.at(x, y);
-                final int playerY = y - this.backing.chestRows() + 1;
-                final @NonNull ItemStackElement<CombinedPane> element = elements.get(position);
-
-                this.current.put(position, element);
-                playerInventory.setItem(PaperUtils.gridToSlot(x, playerY), element.itemStack());
-            }
-        }
-
-        final @NonNull ItemStackElement<CombinedPane>[] hotbar = this.pane.hotbarElements();
-
-        for (int x = 0; x < hotbar.length; x++) {
-            final Vector2 position = Vector2.at(x, 999);
-
-            this.current.put(position, hotbar[x]);
-            playerInventory.setItem(x, hotbar[x].itemStack());
-        }
-
-        return inventory;
     }
 
     @Override

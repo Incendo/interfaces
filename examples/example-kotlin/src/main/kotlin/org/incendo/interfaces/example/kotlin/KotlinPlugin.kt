@@ -242,10 +242,14 @@ public class KotlinPlugin : JavaPlugin() {
                                 createItemStack(Material.COMPASS, text("hi $y")).asElement()
                         }
                     }
+                }
 
+                withTransform { view ->
                     view.hotbar(
                         4, createItemStack(Material.LIME_CONCRETE, text("wooo")).asElement())
                 }
+
+                updates(true, 5)
             }
     }
 
