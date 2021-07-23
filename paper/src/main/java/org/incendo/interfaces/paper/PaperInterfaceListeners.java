@@ -31,8 +31,7 @@ import org.incendo.interfaces.paper.type.CloseHandler;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.CombinedView;
 import org.incendo.interfaces.paper.view.PlayerInventoryView;
-import org.incendo.interfaces.paper
-        .view.PlayerView;
+import org.incendo.interfaces.paper.view.PlayerView;
 import org.incendo.interfaces.paper.view.TaskableView;
 import org.incendo.interfaces.paper.view.ViewCloseEvent;
 import org.incendo.interfaces.paper.view.ViewOpenEvent;
@@ -184,6 +183,15 @@ public class PaperInterfaceListeners implements Listener {
         if (holder instanceof InterfaceView) {
             this.cleanUpView((InterfaceView<?, PlayerViewer>) holder);
         }
+
+        if (!(holder instanceof Player)) {
+            Player player = (Player) event.getPlayer();
+            PlayerInventoryView playerInventoryView = PlayerInventoryView.forPlayer(player);
+
+            if (playerInventoryView != null) {
+                playerInventoryView.open();
+            }
+        }
     }
 
     /**
@@ -243,6 +251,11 @@ public class PaperInterfaceListeners implements Listener {
             for (final Integer task : taskableView.taskIds()) {
                 Bukkit.getScheduler().cancelTask(task);
             }
+        }
+
+        if (view instanceof CombinedView) {
+            //todo: Other ways we could handle this?
+            view.viewer().player().getInventory().clear();
         }
 
         if (view instanceof PlayerInventoryView) {
