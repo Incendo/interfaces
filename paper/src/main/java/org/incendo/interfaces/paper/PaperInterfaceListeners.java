@@ -2,18 +2,25 @@ package org.incendo.interfaces.paper;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -36,6 +43,7 @@ import org.incendo.interfaces.paper.view.TaskableView;
 import org.incendo.interfaces.paper.view.ViewCloseEvent;
 import org.incendo.interfaces.paper.view.ViewOpenEvent;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -48,6 +56,11 @@ import java.util.Set;
  */
 @SuppressWarnings("unused")
 public class PaperInterfaceListeners implements Listener {
+
+    private static final @NonNull Set<Action> VALID_ACTIONS = EnumSet.of(
+            Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK,
+            Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK
+    );
 
     private final @NonNull Set<@NonNull InterfaceView<?, PlayerViewer>> openViews;
     private final @NonNull Map<@NonNull SelfUpdatingInterfaceView, @NonNull Integer> updatingRunnablesIds;
@@ -235,6 +248,65 @@ public class PaperInterfaceListeners implements Listener {
         }
     }
 
+    /**
+     * Handles the player interact event.
+     *
+     * @param event the event
+     */
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerInteract(final @NonNull PlayerInteractEvent event) {
+        if (!VALID_ACTIONS.contains(event.getAction())) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        PlayerInventoryView view = PlayerInventoryView.forPlayer(player);
+
+        if (view == null) {
+            return;
+        }
+
+        ItemStack item = event.getItem();
+        int hotbarSlot = player.getInventory().getHeldItemSlot();
+        ItemStackElement<PlayerPane> hotbar = view.pane().hotbar(hotbarSlot);
+
+        if (hotbar.equals(ItemStackElement.empty())) {
+            return;
+        }
+
+        InventoryClickEvent inventoryClickEvent = new InventoryClickEvent(
+                player.getOpenInventory(),
+                InventoryType.SlotType.QUICKBAR,
+                hotbarSlot,
+                this.clickTypeFromAction(event.getAction(), player.isSneaking()),
+                InventoryAction.NOTHING
+        );
+
+        event.setCancelled(true);
+        event.setUseItemInHand(Event.Result.DENY);
+        hotbar.clickHandler().accept(new InventoryClickContext<PlayerPane, PlayerInventoryView>(inventoryClickEvent, true));
+    }
+
+    private ClickType clickTypeFromAction(final @NonNull Action action, final boolean sneaking) {
+        if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+            if (sneaking) {
+                return ClickType.SHIFT_RIGHT;
+            }
+
+            return ClickType.RIGHT;
+        }
+
+        if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+            if (sneaking) {
+                return ClickType.SHIFT_LEFT;
+            }
+
+            return ClickType.LEFT;
+        }
+
+        return ClickType.UNKNOWN;
+    }
+
     private void cleanUpView(final @NonNull InterfaceView<?, PlayerViewer> view) {
         if (view instanceof SelfUpdatingInterfaceView) {
             SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
@@ -346,6 +418,7 @@ public class PaperInterfaceListeners implements Listener {
         );
 
         PlayerInventoryView playerInventoryView = context.view();
+        playerInventoryView.backing().clickHandler().accept(context);
 
         final @NonNull ItemStackElement<PlayerPane> element = playerInventoryView.pane().element(event.getSlot());
         element.clickHandler().accept(context);
