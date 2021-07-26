@@ -6,7 +6,6 @@ import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.UpdatingInterface;
 import org.incendo.interfaces.core.arguments.HashMapInterfaceArguments;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
-import org.incendo.interfaces.core.click.ClickContext;
 import org.incendo.interfaces.core.click.ClickHandler;
 import org.incendo.interfaces.core.transform.InterfaceProperty;
 import org.incendo.interfaces.core.transform.Transform;
@@ -123,8 +122,11 @@ public final class PlayerInterface implements
     }
 
     @Override
-    public @NonNull ClickHandler<PlayerPane, InventoryClickEvent, PlayerViewer, ? extends ClickContext<PlayerPane,
-            InventoryClickEvent, PlayerViewer>> clickHandler() {
+    public @NonNull ClickHandler<
+            PlayerPane,
+            InventoryClickEvent,
+            PlayerViewer,
+            InventoryClickContext<PlayerPane, PlayerInventoryView>> clickHandler() {
         return this.clickHandler;
     }
 
@@ -233,8 +235,10 @@ public final class PlayerInterface implements
          * @param handler the handler
          * @return new builder instance
          */
-        public @NonNull Builder clickHandler(final @NonNull ClickHandler<PlayerPane, InventoryClickEvent,
-                PlayerViewer, InventoryClickContext<PlayerPane, PlayerInventoryView>> handler) {
+        public @NonNull Builder clickHandler(
+                final @NonNull ClickHandler<PlayerPane, InventoryClickEvent,
+                        PlayerViewer, InventoryClickContext<PlayerPane, PlayerInventoryView>> handler
+        ) {
             return new Builder(
                     this.transformsList,
                     this.updates,
