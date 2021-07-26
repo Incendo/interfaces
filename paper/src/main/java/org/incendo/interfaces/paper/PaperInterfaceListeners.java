@@ -326,6 +326,10 @@ public class PaperInterfaceListeners implements Listener {
             final @NonNull ItemStackElement<CombinedPane> element = combinedView.pane().element(x, y);
             element.clickHandler().accept(context);
         }
+
+        if (event.getSlotType() == InventoryType.SlotType.QUICKBAR) {
+            combinedView.pane().hotbar(event.getSlot()).clickHandler().accept(context);
+        }
     }
 
     private void handlePlayerViewClick(final @NonNull InventoryClickEvent event) {

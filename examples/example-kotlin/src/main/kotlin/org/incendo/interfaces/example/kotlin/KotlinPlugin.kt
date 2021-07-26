@@ -263,7 +263,10 @@ public class KotlinPlugin : JavaPlugin() {
 
                 withTransform { view ->
                     view.hotbar(
-                        4, createItemStack(Material.LIME_CONCRETE, text("wooo")).asElement())
+                        4,
+                        createItemStack(Material.LIME_CONCRETE, text("wooo")).asElement {
+                            it.viewer().player().sendMessage(text("hi"))
+                        })
                 }
 
                 updates(true, 5)
