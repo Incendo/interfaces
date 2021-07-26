@@ -141,6 +141,7 @@ public final class PlayerInventoryView implements
 
     @Override
     public void open() {
+        this.current.clear();
         this.update();
         this.emitEvent();
     }

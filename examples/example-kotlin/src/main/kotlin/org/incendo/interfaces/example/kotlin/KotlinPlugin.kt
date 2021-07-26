@@ -48,6 +48,7 @@ public class KotlinPlugin : JavaPlugin() {
     }
 
     private lateinit var exampleChest: ChestInterface
+    private lateinit var exampleBasicPlayer: PlayerInterface
     private lateinit var examplePlayer: PlayerInterface
     private lateinit var examplePaginated: ChestInterface
     private lateinit var exampleSliding: ChestInterface
@@ -115,6 +116,22 @@ public class KotlinPlugin : JavaPlugin() {
                 }
 
                 withCloseHandler { event, _ -> event.player.sendMessage(text("bye")) }
+            }
+
+        exampleBasicPlayer =
+            buildPlayerInterface {
+                clickHandler = canceling()
+
+                withTransform {
+                    it.hotbar[2] =
+                        createItemStack(Material.COMPASS, text("TIME")).asElement { click ->
+                            val player = click.viewer().player()
+
+                            player.sendMessage(
+                                text("The time is: ")
+                                    .append(text(player.world.time, NamedTextColor.RED)))
+                        }
+                }
             }
 
         examplePlayer =
@@ -298,6 +315,7 @@ public class KotlinPlugin : JavaPlugin() {
                         exampleChest,
                         arguments,
                         text("Your Chest: ${sender.name}", NamedTextColor.GREEN))
+                "basicplayer" -> sender.open(exampleBasicPlayer, arguments)
                 "player" -> sender.open(examplePlayer, arguments)
                 "paginated" -> sender.open(examplePaginated, arguments)
                 "sliding" -> sender.open(exampleSliding, arguments)
