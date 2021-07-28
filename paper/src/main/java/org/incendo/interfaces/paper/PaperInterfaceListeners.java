@@ -62,6 +62,10 @@ public class PaperInterfaceListeners implements Listener {
             Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK
     );
 
+    private static final @NonNull Set<InventoryCloseEvent.Reason> VALID_REASON = EnumSet.of(
+            InventoryCloseEvent.Reason.PLAYER, InventoryCloseEvent.Reason.UNKNOWN, InventoryCloseEvent.Reason.PLUGIN
+    );
+
     private final @NonNull Set<@NonNull InterfaceView<?, PlayerViewer>> openViews;
     private final @NonNull Map<@NonNull SelfUpdatingInterfaceView, @NonNull Integer> updatingRunnablesIds;
     private final @NonNull Plugin plugin;
@@ -201,7 +205,7 @@ public class PaperInterfaceListeners implements Listener {
             Player player = (Player) event.getPlayer();
             PlayerInventoryView playerInventoryView = PlayerInventoryView.forPlayer(player);
 
-            if (playerInventoryView != null) {
+            if (playerInventoryView != null && VALID_REASON.contains(event.getReason())) {
                 playerInventoryView.open();
             }
         }
