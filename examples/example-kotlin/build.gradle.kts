@@ -40,7 +40,7 @@ dependencies {
 
 tasks {
     runServer {
-        minecraftVersion("1.16.5")
+        minecraftVersion("1.17.1")
         jvmArgs("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005")
     }
 }
