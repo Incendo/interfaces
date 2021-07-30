@@ -3,7 +3,7 @@ package org.incendo.interfaces.paper.view;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -163,22 +163,27 @@ public final class CombinedView implements
             }
         }
 
-        PlayerInventory playerInventory = this.viewer.player().getInventory();
+        this.reapplyPlayerInventory();
+    }
+
+    private void reapplyPlayerInventory() {
+        Map<Vector2, ItemStackElement<CombinedPane>> elements = this.pane.inventoryElements();
+        Inventory playerInventory = this.viewer.player().getOpenInventory().getBottomInventory();
 
         for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
             for (int y = this.backing.chestRows(); y < this.backing.totalRows(); y++) {
-                Vector2 position = Vector2.at(x, y);
                 int playerY = y - this.backing.chestRows() + 1;
+                int gridSlot = PaperUtils.gridToSlot(x, playerY);
+                Vector2 position = Vector2.at(x, y);
 
-                Element currentElement = this.current.get(position);
+                ItemStack currentItem = playerInventory.getItem(gridSlot);
                 ItemStackElement<CombinedPane> element = elements.get(position);
 
-                if (element.equals(currentElement)) {
+                if (element.itemStack().equals(currentItem)) {
                     continue;
                 }
 
-                this.current.put(position, element);
-                playerInventory.setItem(PaperUtils.gridToSlot(x, playerY), element.itemStack());
+                playerInventory.setItem(gridSlot, element.itemStack());
             }
         }
 
@@ -187,14 +192,13 @@ public final class CombinedView implements
         for (int x = 0; x < hotbar.length; x++) {
             Vector2 position = Vector2.at(x, 999);
 
-            Element currentElement = this.current.get(position);
+            ItemStack currentElement = playerInventory.getItem(x);
             ItemStackElement<CombinedPane> element = hotbar[x];
 
-            if (element.equals(currentElement)) {
+            if (element.itemStack().equals(currentElement)) {
                 continue;
             }
 
-            this.current.put(position, hotbar[x]);
             playerInventory.setItem(x, hotbar[x].itemStack());
         }
     }
@@ -274,6 +278,7 @@ public final class CombinedView implements
     @Override
     public void open() {
         this.viewer.open(this);
+        this.reapplyPlayerInventory();
         this.emitEvent();
     }
 
