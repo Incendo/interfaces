@@ -136,7 +136,7 @@ public final class PaginatedTransform<S extends Element, T extends GridPane<T, S
      * @return the maximum page (0-indexed)
      */
     public @IntRange(from = 0) int maxPage() {
-        return this.pages - 1;
+        return Math.max(this.pages - 1, 0);
     }
 
     /**
