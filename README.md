@@ -40,8 +40,6 @@ with panes.
 
 ## Usage
 
-## Usage
-
 Snapshots of this repository are hosted at https://repo.incendo.org/content/repositories/snapshots/.
 
 Gradle example:
