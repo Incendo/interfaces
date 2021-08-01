@@ -25,22 +25,8 @@ kotlin {
 }
 
 dependencies {
-    implementation(projects.interfacesCore)
     implementation(projects.interfacesPaper)
     implementation(projects.interfacesKotlin)
 
-    // Needed for Paper extensions.
-    compileOnlyApi(libs.paper.api) {
-        exclude(module = "guava")
-        exclude(module = "gson")
-        exclude(module = "snakeyaml")
-        exclude(module = "commons-lang")
-    }
-}
-
-tasks {
-    runServer {
-        minecraftVersion("1.17.1")
-        jvmArgs("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005")
-    }
+    compileOnly(libs.paper.api)
 }

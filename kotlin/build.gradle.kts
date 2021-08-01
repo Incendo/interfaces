@@ -24,13 +24,10 @@ kotlin {
 
 dependencies {
     api(projects.interfacesCore)
-    api(projects.interfacesPaper)
 
     // Needed for Paper extensions.
-    compileOnlyApi(libs.paper.api) {
-        exclude(module = "guava")
-        exclude(module = "gson")
-        exclude(module = "snakeyaml")
-        exclude(module = "commons-lang")
+    implementation(projects.interfacesPaper)
+    implementation(libs.paper.api) {
+        isTransitive = false
     }
 }
