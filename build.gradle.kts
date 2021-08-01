@@ -2,6 +2,7 @@ import net.kyori.indra.IndraCheckstylePlugin
 import net.kyori.indra.IndraPlugin
 import net.kyori.indra.IndraPublishingPlugin
 import net.kyori.indra.repository.sonatypeSnapshots
+import xyz.jpenilla.runpaper.task.RunServerTask
 
 plugins {
     id("net.kyori.indra")
@@ -11,9 +12,6 @@ plugins {
 
     // Kotlin plugin prefers to be applied to parent when it's used in multiple projects.
     kotlin("jvm") version "1.4.31" apply false
-
-    // Auto-generates project files.
-    idea
 }
 
 group = "org.incendo.interfaces"
@@ -22,8 +20,10 @@ description = "A builder-style user interface library."
 
 subprojects {
     apply<IndraPlugin>()
-    apply<IndraPublishingPlugin>()
     apply<IndraCheckstylePlugin>()
+
+    // Don't publish examples
+    if (!name.startsWith("example-")) apply<IndraPublishingPlugin>()
 
     repositories {
         mavenCentral()
@@ -58,5 +58,11 @@ subprojects {
                 }
             }
         }
+    }
+
+    // Configure any existing RunServerTasks
+    tasks.withType<RunServerTask> {
+        minecraftVersion("1.17.1")
+        jvmArgs("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005")
     }
 }
