@@ -45,7 +45,6 @@ import org.incendo.interfaces.paper.view.ViewOpenEvent;
 
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -66,9 +65,8 @@ public class PaperInterfaceListeners implements Listener {
             InventoryCloseEvent.Reason.PLAYER, InventoryCloseEvent.Reason.UNKNOWN, InventoryCloseEvent.Reason.PLUGIN
     );
 
-    private final @NonNull Set<@NonNull InterfaceView<?, PlayerViewer>> openViews;
-    private final @NonNull Map<@NonNull SelfUpdatingInterfaceView, @NonNull Integer> updatingRunnablesIds;
     private final @NonNull Plugin plugin;
+    private final @NonNull Map<@NonNull SelfUpdatingInterfaceView, @NonNull Integer> updatingRunnables;
 
     /**
      * Constructs {@code PaperInterfaceListeners}.
@@ -76,9 +74,8 @@ public class PaperInterfaceListeners implements Listener {
      * @param plugin the plugin instance to register against
      */
     public PaperInterfaceListeners(final @NonNull Plugin plugin) {
-        this.openViews = new HashSet<>();
-        this.updatingRunnablesIds = new HashMap<>();
         this.plugin = plugin;
+        this.updatingRunnables = new HashMap<>();
     }
 
     /**
@@ -113,8 +110,8 @@ public class PaperInterfaceListeners implements Listener {
      */
     @EventHandler
     public void onInventoryOpen(final @NonNull InventoryOpenEvent event) {
-        final @NonNull Inventory inventory = event.getInventory();
-        final @Nullable InventoryHolder holder = inventory.getHolder();
+        Inventory inventory = event.getInventory();
+        InventoryHolder holder = inventory.getHolder();
 
         if (holder == null) {
             return;
@@ -146,8 +143,6 @@ public class PaperInterfaceListeners implements Listener {
      * @param view the view
      */
     public void addOpenView(final @NonNull InterfaceView<?, PlayerViewer> view) {
-        this.openViews.add(view);
-
         if (view.backing() instanceof UpdatingInterface) {
             UpdatingInterface updatingInterface = (UpdatingInterface) view.backing();
             if (updatingInterface.updates()) {
@@ -161,7 +156,7 @@ public class PaperInterfaceListeners implements Listener {
                 if (view instanceof SelfUpdatingInterfaceView) {
                     SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
                     runnable.runTaskTimer(this.plugin, updatingInterface.updateDelay(), updatingInterface.updateDelay());
-                    this.updatingRunnablesIds.put(selfUpdating, runnable.getTaskId());
+                    this.updatingRunnables.put(selfUpdating, runnable.getTaskId());
                 } else {
                     runnable.runTaskLater(this.plugin, updatingInterface.updateDelay());
                 }
@@ -177,16 +172,15 @@ public class PaperInterfaceListeners implements Listener {
     @EventHandler
     @SuppressWarnings("unchecked")
     public void onInventoryClose(final @NonNull InventoryCloseEvent event) {
-        final @NonNull Inventory inventory = event.getInventory();
-        final @Nullable InventoryHolder holder = inventory.getHolder();
+        Inventory inventory = event.getInventory();
+        InventoryHolder holder = inventory.getHolder();
 
         if (holder == null) {
             return;
         }
 
         if (holder instanceof PlayerView) {
-            final PlayerView<?> playerView = (PlayerView<?>) holder;
-            this.openViews.remove(playerView);
+            PlayerView<?> playerView = (PlayerView<?>) holder;
 
             if (playerView.backing() instanceof ChestInterface) {
                 final ChestInterface chestInterface = (ChestInterface) playerView.backing();
@@ -278,6 +272,7 @@ public class PaperInterfaceListeners implements Listener {
             return;
         }
 
+        // Mimic bukkit inventory click event for hotbar interactions
         InventoryClickEvent inventoryClickEvent = new InventoryClickEvent(
                 player.getOpenInventory(),
                 InventoryType.SlotType.QUICKBAR,
@@ -291,33 +286,13 @@ public class PaperInterfaceListeners implements Listener {
         hotbar.clickHandler().accept(new InventoryClickContext<PlayerPane, PlayerInventoryView>(inventoryClickEvent, true));
     }
 
-    private ClickType clickTypeFromAction(final @NonNull Action action, final boolean sneaking) {
-        if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-            if (sneaking) {
-                return ClickType.SHIFT_RIGHT;
-            }
-
-            return ClickType.RIGHT;
-        }
-
-        if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-            if (sneaking) {
-                return ClickType.SHIFT_LEFT;
-            }
-
-            return ClickType.LEFT;
-        }
-
-        return ClickType.UNKNOWN;
-    }
-
     private void cleanUpView(final @NonNull InterfaceView<?, PlayerViewer> view) {
         if (view instanceof SelfUpdatingInterfaceView) {
             SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
 
             if (selfUpdating.updates()) {
-                Bukkit.getScheduler().cancelTask(this.updatingRunnablesIds.get(selfUpdating));
-                this.updatingRunnablesIds.remove(selfUpdating);
+                Bukkit.getScheduler().cancelTask(this.updatingRunnables.get(selfUpdating));
+                this.updatingRunnables.remove(selfUpdating);
             }
         }
 
@@ -346,9 +321,8 @@ public class PaperInterfaceListeners implements Listener {
      */
     @EventHandler
     public void onInventoryClick(final @NonNull InventoryClickEvent event) {
-        final @NonNull Inventory inventory = event.getInventory();
-
-        final @Nullable InventoryHolder holder = inventory.getHolder();
+        Inventory inventory = event.getInventory();
+        InventoryHolder holder = inventory.getHolder();
 
         if (holder instanceof ChestView) {
             this.handleChestViewClick(event, holder);
@@ -365,7 +339,7 @@ public class PaperInterfaceListeners implements Listener {
             return;
         }
 
-        final InventoryClickContext<ChestPane, ChestView> context = new InventoryClickContext<>(event, false);
+        InventoryClickContext<ChestPane, ChestView> context = new InventoryClickContext<>(event, false);
 
         ChestView chestView = (ChestView) holder;
         // Handle parent interface click event
@@ -377,13 +351,15 @@ public class PaperInterfaceListeners implements Listener {
             int x = slot % 9;
             int y = slot / 9;
 
-            final @NonNull ItemStackElement<ChestPane> element = chestView.pane().element(x, y);
-            element.clickHandler().accept(context);
+            chestView.pane()
+                    .element(x, y)
+                    .clickHandler()
+                    .accept(context);
         }
     }
 
     private void handleCombinedViewClick(final @NonNull InventoryClickEvent event, final @NonNull InventoryHolder holder) {
-        final InventoryClickContext<CombinedPane, CombinedView> context = new InventoryClickContext<>(event, false);
+        InventoryClickContext<CombinedPane, CombinedView> context = new InventoryClickContext<>(event, false);
 
         CombinedView combinedView = (CombinedView) holder;
         // Handle parent interface click event
@@ -399,8 +375,10 @@ public class PaperInterfaceListeners implements Listener {
                 y += combinedView.backing().chestRows() - 1;
             }
 
-            final @NonNull ItemStackElement<CombinedPane> element = combinedView.pane().element(x, y);
-            element.clickHandler().accept(context);
+            combinedView.pane()
+                    .element(x, y)
+                    .clickHandler()
+                    .accept(context);
         }
 
         if (event.getSlotType() == InventoryType.SlotType.QUICKBAR) {
@@ -424,8 +402,30 @@ public class PaperInterfaceListeners implements Listener {
         PlayerInventoryView playerInventoryView = context.view();
         playerInventoryView.backing().clickHandler().accept(context);
 
-        final @NonNull ItemStackElement<PlayerPane> element = playerInventoryView.pane().element(event.getSlot());
-        element.clickHandler().accept(context);
+        playerInventoryView.pane()
+                .element(event.getSlot())
+                .clickHandler()
+                .accept(context);
+    }
+
+    private ClickType clickTypeFromAction(final @NonNull Action action, final boolean sneaking) {
+        if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+            if (sneaking) {
+                return ClickType.SHIFT_RIGHT;
+            }
+
+            return ClickType.RIGHT;
+        }
+
+        if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+            if (sneaking) {
+                return ClickType.SHIFT_LEFT;
+            }
+
+            return ClickType.LEFT;
+        }
+
+        return ClickType.UNKNOWN;
     }
 
 }
