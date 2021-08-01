@@ -99,7 +99,7 @@ public final class PaginatedTransform<S extends Element, T extends GridPane<T, S
         for (int y = this.min.y(); y <= this.max.y(); y++) {
             for (int x = this.min.x(); x <= this.max.x() && elementIndex < elements.size(); x++) {
                  pane = pane.element(elements.get(elementIndex), x, y);
-                 // Incremenet the element index.
+                 // Increment the element index.
                 elementIndex++;
             }
         }
