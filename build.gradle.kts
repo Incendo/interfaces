@@ -32,7 +32,7 @@ subprojects {
     }
 
     dependencies {
-        compileOnly(rootProject.libs.checker.qual)
+        compileOnlyApi(rootProject.libs.checker.qual)
     }
 
     indra {
