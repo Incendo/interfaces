@@ -1,4 +1,4 @@
-package org.incendo.interfaces.paper.element;
+package org.incendo.interfaces.paper.element.text;
 
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * An element containing a piece of text.
  */
-public class TextElement implements Element {
+public class BaseTextElement implements TextElement {
 
     private final @NonNull Component text;
 
@@ -18,18 +18,8 @@ public class TextElement implements Element {
      *
      * @param text the text
      */
-    public TextElement(final @NonNull Component text) {
+    public BaseTextElement(final @NonNull Component text) {
         this.text = text;
-    }
-
-    /**
-     * Creates a new TextElement.
-     *
-     * @param text the text
-     * @return the element
-     */
-    public static @NonNull TextElement of(final @NonNull Component text) {
-        return new TextElement(text);
     }
 
     /**
@@ -49,7 +39,7 @@ public class TextElement implements Element {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        TextElement that = (TextElement) o;
+        BaseTextElement that = (BaseTextElement) o;
         return this.text.equals(that.text);
     }
 
