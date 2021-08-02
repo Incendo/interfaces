@@ -148,7 +148,7 @@ public final class ChestView implements
         for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
             for (int y = 0; y < this.backing.rows(); y++) {
                 Vector2 position = Vector2.at(x, y);
-                int slot = PaperUtils.gridToSlot(x, y);
+                int slot = PaperUtils.gridToSlot(position);
 
                 final @Nullable Element currentElement = this.current.get(slot);
                 final @NonNull ItemStackElement<ChestPane> element = elements.get(position);
@@ -267,10 +267,12 @@ public final class ChestView implements
 
         for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
             for (int y = 0; y < this.backing.rows(); y++) {
-                final @NonNull ItemStackElement<ChestPane> element = elements.get(Vector2.at(x, y));
+                Vector2 position = Vector2.at(x, y);
+                int slot = PaperUtils.gridToSlot(position);
+                ItemStackElement<ChestPane> element = elements.get(position);
 
-                this.current.put(PaperUtils.gridToSlot(x, y), element);
-                inventory.setItem(PaperUtils.gridToSlot(x, y), element.itemStack());
+                this.current.put(slot, element);
+                inventory.setItem(slot, element.itemStack());
             }
         }
 

@@ -2,6 +2,7 @@ package org.incendo.interfaces.kotlin.paper
 
 import org.incendo.interfaces.core.element.Element
 import org.incendo.interfaces.core.pane.Pane
+import org.incendo.interfaces.core.util.Vector2
 import org.incendo.interfaces.paper.element.ItemStackElement
 import org.incendo.interfaces.paper.pane.PlayerPane
 import org.incendo.interfaces.paper.utils.PaperUtils
@@ -56,7 +57,7 @@ public data class MutablePlayerPaneView(
          * @return the element
          */
         public operator fun get(x: Int, y: Int): ItemStackElement<PlayerPane> =
-            get(PaperUtils.gridToSlot(x, y))
+            get(PaperUtils.gridToSlot(Vector2.at(x, y)))
 
         /**
          * Sets the [element] in the given [slot].
@@ -76,7 +77,7 @@ public data class MutablePlayerPaneView(
          * @param element the element
          */
         public operator fun set(x: Int, y: Int, element: ItemStackElement<PlayerPane>) {
-            set(PaperUtils.gridToSlot(x, y), element)
+            set(PaperUtils.gridToSlot(Vector2.at(x, y)), element)
         }
     }
 }

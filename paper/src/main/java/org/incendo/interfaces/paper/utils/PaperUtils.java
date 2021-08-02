@@ -1,5 +1,7 @@
 package org.incendo.interfaces.paper.utils;
 
+import org.incendo.interfaces.core.util.Vector2;
+
 /**
  * A collection of utility methods.
  */
@@ -12,19 +14,18 @@ public final class PaperUtils {
      * @param slot the slot
      * @return the x/y position
      */
-    public static int[] slotToGrid(final int slot) {
-        return new int[]{slot % 9, slot / 9};
+    public static Vector2 slotToGrid(final int slot) {
+        return Vector2.at(slot % 9, slot / 9);
     }
 
     /**
      * Converts the x/y position to a Bukkit slot index.
      *
-     * @param x the x position
-     * @param y the y position
+     * @param vector the vector
      * @return the slot
      */
-    public static int gridToSlot(final int x, final int y) {
-        return y * 9 + x;
+    public static int gridToSlot(final Vector2 vector) {
+        return vector.y() * 9 + vector.x();
     }
 
     private PaperUtils() {}

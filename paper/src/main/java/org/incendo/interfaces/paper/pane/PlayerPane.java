@@ -4,6 +4,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.common.value.qual.IntRange;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.pane.GridPane;
+import org.incendo.interfaces.core.util.Vector2;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.utils.PaperUtils;
 
@@ -186,7 +187,7 @@ public final class PlayerPane implements GridPane<PlayerPane, ItemStackElement<P
             final @NonNull ItemStackElement<PlayerPane> element
     ) {
         return this.setAdjusted(
-                PaperUtils.gridToSlot(x, y),
+                PaperUtils.gridToSlot(Vector2.at(x, y)),
                 SlotType.MAIN,
                 element
         );
@@ -280,12 +281,12 @@ public final class PlayerPane implements GridPane<PlayerPane, ItemStackElement<P
             final int x,
             final int y
     ) {
-        return this.main(PaperUtils.gridToSlot(x, y), element);
+        return this.main(PaperUtils.gridToSlot(Vector2.at(x, y)), element);
     }
 
     @Override
     public @NonNull ItemStackElement<PlayerPane> element(final int x, final int y) {
-        return this.main(PaperUtils.gridToSlot(x, y));
+        return this.main(PaperUtils.gridToSlot(Vector2.at(x, y)));
     }
 
     public enum SlotType {
