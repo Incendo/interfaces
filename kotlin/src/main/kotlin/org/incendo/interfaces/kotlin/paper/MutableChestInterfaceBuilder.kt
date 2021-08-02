@@ -84,7 +84,7 @@ public class MutableChestInterfaceBuilder :
         if (transform is ReactiveTransform<ChestPane, PlayerViewer, *>) {
             internalBuilder.addReactiveTransform(priority, transform) as ChestInterface.Builder
         } else {
-            internalBuilder.addTransform(InterfaceProperty.dummy(), priority, transform)
+            internalBuilder.addTransform(priority, transform, InterfaceProperty.dummy())
         }
     }
 
@@ -95,12 +95,14 @@ public class MutableChestInterfaceBuilder :
      */
     @Suppress("unchecked_cast")
     public fun addTransform(
-        property: InterfaceProperty<*> = InterfaceProperty.dummy(),
         priority: Int = 1,
+        vararg properties: InterfaceProperty<*>,
         transform: (ChestPane, ChestView) -> ChestPane
     ): Unit = mutate {
-        internalBuilder.addTransform(
-            property, priority, transform as (ChestPane, InterfaceView<ChestPane, *>) -> ChestPane)
+        return@mutate internalBuilder.addTransform(
+            priority,
+            transform as (ChestPane, InterfaceView<ChestPane, *>) -> ChestPane,
+            *properties)
     }
 
     /**
@@ -109,11 +111,11 @@ public class MutableChestInterfaceBuilder :
      * @param transform transform to add
      */
     public fun withTransform(
-        property: InterfaceProperty<*> = InterfaceProperty.dummy(),
         priority: Int = 1,
+        vararg properties: InterfaceProperty<*>,
         transform: (MutableChestPaneView) -> Unit
     ) {
-        addTransform(property, priority) { chestPane, interfaceView ->
+        addTransform(priority, *properties) { chestPane, interfaceView ->
             MutableChestPaneView(chestPane, interfaceView).also(transform).toChestPane()
         }
     }

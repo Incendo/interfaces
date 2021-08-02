@@ -112,7 +112,9 @@ public final class ChestView implements
             // If it's the first time we apply the transform, then
             // we add update listeners to all the dependent properties
             if (firstApply) {
-                transform.property().addListener((oldValue, newValue) -> this.updateByProperty(transform.property()));
+                for (final InterfaceProperty<?> property : transform.properties()) {
+                    property.addListener((oldValue, newValue) -> this.updateByProperty(property));
+                }
             }
 
             this.panes.removeIf(completedPane -> completedPane.context().equals(transform));
@@ -124,7 +126,7 @@ public final class ChestView implements
 
     private @NonNull ChestPane updatePaneByProperty(final @NonNull InterfaceProperty<?> interfaceProperty) {
         for (final var transform : this.backing.transformations()) {
-            if (transform.property() != interfaceProperty) {
+            if (!transform.properties().contains(interfaceProperty)) {
                 continue;
             }
 

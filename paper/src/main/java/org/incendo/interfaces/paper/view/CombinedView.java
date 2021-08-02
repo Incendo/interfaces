@@ -115,7 +115,9 @@ public final class CombinedView implements
             // If it's the first time we apply the transform, then
             // we add update listeners to all the dependent properties
             if (firstApply) {
-                transform.property().addListener((oldValue, newValue) -> this.updateByProperty(transform.property()));
+                for (final InterfaceProperty<?> property : transform.properties()) {
+                    property.addListener((oldValue, newValue) -> this.updateByProperty(property));
+                }
             }
 
             this.panes.removeIf(completedPane -> completedPane.context().equals(transform));
@@ -127,7 +129,7 @@ public final class CombinedView implements
 
     private @NonNull CombinedPane updatePaneByProperty(final @NonNull InterfaceProperty<?> interfaceProperty) {
         for (final var transform : this.backing.transformations()) {
-            if (transform.property() != interfaceProperty) {
+            if (!transform.properties().contains(interfaceProperty)) {
                 continue;
             }
 
@@ -193,8 +195,6 @@ public final class CombinedView implements
         ItemStackElement<CombinedPane>[] hotbar = this.pane.hotbarElements();
 
         for (int x = 0; x < hotbar.length; x++) {
-            Vector2 position = Vector2.at(x, 999);
-
             ItemStack currentElement = playerInventory.getItem(x);
             ItemStackElement<CombinedPane> element = hotbar[x];
 

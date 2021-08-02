@@ -31,7 +31,7 @@ public final class CombinedInterface implements
         Clickable<CombinedPane, InventoryClickEvent, PlayerViewer> {
 
     private final int rows;
-    private final @NonNull List<TransformContext<?, CombinedPane, PlayerViewer>> transformationList;
+    private final @NonNull List<TransformContext<CombinedPane, PlayerViewer>> transformationList;
     private final @NonNull List<CloseHandler<CombinedPane>> closeHandlerList;
     private final @NonNull Component title;
     private final boolean updates;
@@ -53,7 +53,7 @@ public final class CombinedInterface implements
     public CombinedInterface(
             final int chestRows,
             final @NonNull Component title,
-            final @NonNull List<TransformContext<?, CombinedPane, PlayerViewer>> transforms,
+            final @NonNull List<TransformContext<CombinedPane, PlayerViewer>> transforms,
             final @NonNull List<CloseHandler<CombinedPane>> closeHandlers,
             final boolean updates,
             final int updateDelay,
@@ -106,7 +106,6 @@ public final class CombinedInterface implements
     public @NonNull CombinedInterface transform(final @NonNull Transform<CombinedPane, PlayerViewer> transform) {
         this.transformationList.add(
                 TransformContext.of(
-                        InterfaceProperty.dummy(),
                         1,
                         transform
                 )
@@ -115,7 +114,7 @@ public final class CombinedInterface implements
     }
 
     @Override
-    public @NonNull List<TransformContext<?, CombinedPane, PlayerViewer>> transformations() {
+    public @NonNull List<TransformContext<CombinedPane, PlayerViewer>> transformations() {
         return List.copyOf(this.transformationList);
     }
 
@@ -213,7 +212,7 @@ public final class CombinedInterface implements
         /**
          * The list of transformations.
          */
-        private final @NonNull List<@NonNull TransformContext<?, CombinedPane, PlayerViewer>> transformsList;
+        private final @NonNull List<@NonNull TransformContext<CombinedPane, PlayerViewer>> transformsList;
 
         /**
          * The list of close handlers.
@@ -260,7 +259,7 @@ public final class CombinedInterface implements
         }
 
         private Builder(
-                final @NonNull List<TransformContext<?, CombinedPane, PlayerViewer>> transformsList,
+                final @NonNull List<TransformContext<CombinedPane, PlayerViewer>> transformsList,
                 final @NonNull List<CloseHandler<CombinedPane>> closeHandlerList,
                 final int chestRows,
                 final @NonNull Component title,
@@ -360,17 +359,17 @@ public final class CombinedInterface implements
          * @return new builder instance.
          */
         @Override
-        public @NonNull <T> Builder addTransform(
-                final @NonNull InterfaceProperty<T> property,
+        public @NonNull Builder addTransform(
                 final int priority,
-                final @NonNull Transform<CombinedPane, PlayerViewer> transform
+                final @NonNull Transform<CombinedPane, PlayerViewer> transform,
+                final @NonNull InterfaceProperty<?>... properties
         ) {
-            final List<TransformContext<?, CombinedPane, PlayerViewer>> transforms = new ArrayList<>(this.transformsList);
+            final List<TransformContext<CombinedPane, PlayerViewer>> transforms = new ArrayList<>(this.transformsList);
             transforms.add(
                     TransformContext.of(
-                            property,
                             priority,
-                            transform
+                            transform,
+                            properties
                     )
             );
 
@@ -393,7 +392,7 @@ public final class CombinedInterface implements
          */
         @Override
         public @NonNull Builder addTransform(final @NonNull Transform<CombinedPane, PlayerViewer> transform) {
-            return this.addTransform(InterfaceProperty.dummy(), 1, transform);
+            return this.addTransform(1, transform, InterfaceProperty.dummy());
         }
 
         /**

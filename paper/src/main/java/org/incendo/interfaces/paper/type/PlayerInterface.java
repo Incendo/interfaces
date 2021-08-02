@@ -25,7 +25,7 @@ public final class PlayerInterface implements
         UpdatingInterface,
         Clickable<PlayerPane, InventoryClickEvent, PlayerViewer> {
 
-    private final @NonNull List<TransformContext<?, PlayerPane, PlayerViewer>> transformationList;
+    private final @NonNull List<TransformContext<PlayerPane, PlayerViewer>> transformationList;
     private final boolean updates;
     private final int updateDelay;
     private final @NonNull ClickHandler<PlayerPane, InventoryClickEvent,
@@ -40,7 +40,7 @@ public final class PlayerInterface implements
      * @param clickHandler the handler to run on click
      */
     public PlayerInterface(
-            final @NonNull List<TransformContext<?, PlayerPane, PlayerViewer>> transforms,
+            final @NonNull List<TransformContext<PlayerPane, PlayerViewer>> transforms,
             final boolean updates,
             final int updateDelay,
             final @NonNull ClickHandler<PlayerPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<PlayerPane,
@@ -67,7 +67,6 @@ public final class PlayerInterface implements
     ) {
         this.transformationList.add(
                 TransformContext.of(
-                        InterfaceProperty.dummy(),
                         1,
                         transform
                 )
@@ -76,7 +75,7 @@ public final class PlayerInterface implements
     }
 
     @Override
-    public @NonNull List<TransformContext<?, PlayerPane, PlayerViewer>> transformations() {
+    public @NonNull List<TransformContext<PlayerPane, PlayerViewer>> transformations() {
         return List.copyOf(this.transformationList);
     }
 
@@ -138,7 +137,7 @@ public final class PlayerInterface implements
         /**
          * The list of transformations.
          */
-        private final @NonNull List<@NonNull TransformContext<?, PlayerPane, PlayerViewer>> transformsList;
+        private final @NonNull List<@NonNull TransformContext<PlayerPane, PlayerViewer>> transformsList;
 
         /**
          * True if updating interface, false if not.
@@ -167,7 +166,7 @@ public final class PlayerInterface implements
         }
 
         private Builder(
-                final @NonNull List<TransformContext<?, PlayerPane, PlayerViewer>> transformsList,
+                final @NonNull List<TransformContext<PlayerPane, PlayerViewer>> transformsList,
                 final boolean updates,
                 final int updateDelay,
                 final @NonNull ClickHandler<PlayerPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<PlayerPane,
@@ -186,17 +185,17 @@ public final class PlayerInterface implements
          * @return new builder instance.
          */
         @Override
-        public @NonNull <T> Builder addTransform(
-                final @NonNull InterfaceProperty<T> property,
+        public @NonNull Builder addTransform(
                 final int priority,
-                final @NonNull Transform<PlayerPane, PlayerViewer> transform
+                final @NonNull Transform<PlayerPane, PlayerViewer> transform,
+                final @NonNull InterfaceProperty<?>... properties
         ) {
-            final List<TransformContext<?, PlayerPane, PlayerViewer>> transforms = new ArrayList<>(this.transformsList);
+            final List<TransformContext<PlayerPane, PlayerViewer>> transforms = new ArrayList<>(this.transformsList);
             transforms.add(
                     TransformContext.of(
-                            property,
                             priority,
-                            transform
+                            transform,
+                            properties
                     )
             );
 
@@ -216,7 +215,7 @@ public final class PlayerInterface implements
          */
         @Override
         public @NonNull Builder addTransform(final @NonNull Transform<PlayerPane, PlayerViewer> transform) {
-            return this.addTransform(InterfaceProperty.dummy(), 1, transform);
+            return this.addTransform(1, transform, InterfaceProperty.dummy());
         }
 
         /**
