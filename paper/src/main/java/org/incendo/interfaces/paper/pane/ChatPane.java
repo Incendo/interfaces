@@ -12,14 +12,14 @@ import java.util.List;
  * A pane based off of a Minecraft book.
  */
 @SuppressWarnings("unused")
-public class BookPane implements TextPane {
+public class ChatPane implements TextPane {
 
     private final @NonNull List<TextElement> pages;
 
     /**
      * Constructs {@code BookPane}.
      */
-    public BookPane() {
+    public ChatPane() {
         this.pages = new ArrayList<>();
     }
 
@@ -28,7 +28,7 @@ public class BookPane implements TextPane {
      *
      * @param pages the pages
      */
-    public BookPane(final @NonNull List<TextElement> pages) {
+    public ChatPane(final @NonNull List<TextElement> pages) {
         this.pages = pages;
     }
 
@@ -47,10 +47,10 @@ public class BookPane implements TextPane {
      * @param element the element
      * @return a new {@code BookPane}
      */
-    public @NonNull BookPane add(final @NonNull TextElement element) {
+    public @NonNull ChatPane add(final @NonNull TextElement element) {
         final @NonNull List<TextElement> pages = new ArrayList<>(this.pages);
         pages.add(element);
-        return new BookPane(pages);
+        return new ChatPane(pages);
     }
 
     /**
@@ -61,10 +61,10 @@ public class BookPane implements TextPane {
      * @return a new {@code BookPane}
      * @throws IndexOutOfBoundsException if index is greater than the pane size or lesser than 0
      */
-    public @NonNull BookPane add(final int index, final @NonNull TextElement element) {
+    public @NonNull ChatPane add(final int index, final @NonNull TextElement element) {
         final @NonNull List<TextElement> pages = new ArrayList<>(this.pages);
         pages.add(index, element);
-        return new BookPane(pages);
+        return new ChatPane(pages);
     }
 
     /**
@@ -74,10 +74,10 @@ public class BookPane implements TextPane {
      * @return a new {@code BookPane}
      * @throws IndexOutOfBoundsException if index is greater than the pane size or lesser than 0
      */
-    public @NonNull BookPane remove(final int index) {
+    public @NonNull ChatPane remove(final int index) {
         final @NonNull List<TextElement> pages = new ArrayList<>(this.pages);
         pages.remove(index);
-        return new BookPane(pages);
+        return new ChatPane(pages);
     }
 
     /**
