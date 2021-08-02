@@ -6,7 +6,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.transform.Transform;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
-import org.incendo.interfaces.paper.element.text.BaseTextElement;
+import org.incendo.interfaces.paper.element.text.TextElement;
 import org.incendo.interfaces.paper.pane.BookPane;
 import org.incendo.interfaces.paper.pane.ChestPane;
 
@@ -45,8 +45,10 @@ public interface PaperTransform {
      * @param y       the y coordinate
      * @return the transform
      */
-    static @NonNull Transform<ChestPane, PlayerViewer> chestItem(final @NonNull ItemStackElement<ChestPane> element, final int x,
-                                                    final int y) {
+    static @NonNull Transform<ChestPane, PlayerViewer> chestItem(
+            final @NonNull ItemStackElement<ChestPane> element, final int x,
+            final int y
+    ) {
         return (pane, view) -> pane.element(element, x, y);
     }
 
@@ -61,7 +63,7 @@ public interface PaperTransform {
             @NonNull BookPane bookPane = pane;
 
             for (final @NonNull Component page : pages) {
-                bookPane = bookPane.add(BaseTextElement.of(page));
+                bookPane = bookPane.add(TextElement.of(page));
             }
 
             return bookPane;

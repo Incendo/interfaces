@@ -2,7 +2,6 @@ package org.incendo.interfaces.paper.element.text;
 
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.interfaces.core.element.Element;
 
 import java.util.Objects;
 
