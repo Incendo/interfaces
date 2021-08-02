@@ -54,13 +54,13 @@ public class MutablePlayerInterfaceBuilder :
      * @param priority the priority
      */
     public fun addTransform(
-        transform: Transform<PlayerPane, PlayerViewer>,
-        priority: Int = 1
+        priority: Int = 1,
+        transform: Transform<PlayerPane, PlayerViewer>
     ): Unit = mutate {
         if (transform is ReactiveTransform<PlayerPane, PlayerViewer, *>) {
             internalBuilder.addReactiveTransform(priority, transform) as PlayerInterface.Builder
         } else {
-            internalBuilder.addTransform(InterfaceProperty.dummy(), priority, transform)
+            internalBuilder.addTransform(priority, transform)
         }
     }
 
@@ -71,14 +71,14 @@ public class MutablePlayerInterfaceBuilder :
      */
     @Suppress("unchecked_cast")
     public fun addTransform(
-        property: InterfaceProperty<*> = InterfaceProperty.dummy(),
         priority: Int = 1,
+        vararg properties: InterfaceProperty<*>,
         transform: (PlayerPane, PlayerView<PlayerPane>) -> PlayerPane
     ): Unit = mutate {
         internalBuilder.addTransform(
-            property,
             priority,
-            transform as (PlayerPane, InterfaceView<PlayerPane, *>) -> PlayerPane)
+            transform as (PlayerPane, InterfaceView<PlayerPane, *>) -> PlayerPane,
+            *properties)
     }
 
     /**
@@ -87,10 +87,10 @@ public class MutablePlayerInterfaceBuilder :
      * @param transform transform to add
      */
     public fun withTransform(
-        property: InterfaceProperty<*> = InterfaceProperty.dummy(),
+        vararg properties: InterfaceProperty<*>,
         transform: (MutablePlayerPaneView) -> Unit
     ) {
-        addTransform(property) { PlayerPane, interfaceView ->
+        addTransform(1, *properties) { PlayerPane, interfaceView ->
             MutablePlayerPaneView(PlayerPane, interfaceView).also(transform).toPlayerPane()
         }
     }
