@@ -3,7 +3,7 @@ package org.incendo.interfaces.paper.pane;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.pane.Pane;
-import org.incendo.interfaces.paper.element.text.BaseTextElement;
+import org.incendo.interfaces.paper.element.text.TextElement;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,7 +15,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class BookPane implements Pane {
 
-    private final @NonNull List<BaseTextElement> pages;
+    private final @NonNull List<TextElement> pages;
 
     /**
      * Constructs {@code BookPane}.
@@ -29,7 +29,7 @@ public class BookPane implements Pane {
      *
      * @param pages the pages
      */
-    public BookPane(final @NonNull List<BaseTextElement> pages) {
+    public BookPane(final @NonNull List<TextElement> pages) {
         this.pages = pages;
     }
 
@@ -48,8 +48,8 @@ public class BookPane implements Pane {
      * @param element the element
      * @return a new {@code BookPane}
      */
-    public @NonNull BookPane add(final @NonNull BaseTextElement element) {
-        final @NonNull List<BaseTextElement> pages = new ArrayList<>(this.pages);
+    public @NonNull BookPane add(final @NonNull TextElement element) {
+        final @NonNull List<TextElement> pages = new ArrayList<>(this.pages);
         pages.add(element);
         return new BookPane(pages);
     }
@@ -62,8 +62,8 @@ public class BookPane implements Pane {
      * @return a new {@code BookPane}
      * @throws IndexOutOfBoundsException if index is greater than the pane size or lesser than 0
      */
-    public @NonNull BookPane add(final int index, final @NonNull BaseTextElement element) {
-        final @NonNull List<BaseTextElement> pages = new ArrayList<>(this.pages);
+    public @NonNull BookPane add(final int index, final @NonNull TextElement element) {
+        final @NonNull List<TextElement> pages = new ArrayList<>(this.pages);
         pages.add(index, element);
         return new BookPane(pages);
     }
@@ -76,7 +76,7 @@ public class BookPane implements Pane {
      * @throws IndexOutOfBoundsException if index is greater than the pane size or lesser than 0
      */
     public @NonNull BookPane remove(final int index) {
-        final @NonNull List<BaseTextElement> pages = new ArrayList<>(this.pages);
+        final @NonNull List<TextElement> pages = new ArrayList<>(this.pages);
         pages.remove(index);
         return new BookPane(pages);
     }
@@ -96,7 +96,7 @@ public class BookPane implements Pane {
      *
      * @return the list of pages
      */
-    public @NonNull List<BaseTextElement> pages() {
+    public @NonNull List<TextElement> pages() {
         return List.copyOf(this.pages);
     }
 

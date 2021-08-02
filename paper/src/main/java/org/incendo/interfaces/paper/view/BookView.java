@@ -6,7 +6,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
-import org.incendo.interfaces.paper.element.text.BaseTextElement;
+import org.incendo.interfaces.paper.element.text.TextElement;
 import org.incendo.interfaces.paper.pane.BookPane;
 import org.incendo.interfaces.paper.type.BookInterface;
 
@@ -52,7 +52,7 @@ public final class BookView implements InterfaceView<BookPane, PlayerViewer> {
 
         final @NonNull List<Component> pages = new ArrayList<>();
 
-        for (final @NonNull BaseTextElement element : this.pane.pages()) {
+        for (final @NonNull TextElement element : this.pane.pages()) {
             pages.add(element.text());
         }
 
