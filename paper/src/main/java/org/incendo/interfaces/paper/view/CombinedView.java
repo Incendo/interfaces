@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The view of a chest.
@@ -51,7 +52,7 @@ public final class CombinedView implements
 
     private final @NonNull Map<Vector2, Element> current = new HashMap<>();
     private final @NonNull List<ContextCompletedPane<CombinedPane>> panes = new ArrayList<>();
-    private final Collection<Integer> tasks = new HashSet<>();
+    private final Set<Integer> tasks = new HashSet<>();
 
     /**
      * Constructs {@code ChestView}.
@@ -343,7 +344,7 @@ public final class CombinedView implements
 
     @Override
     public void addTask(final @NonNull Plugin plugin, final @NonNull Runnable runnable, final int delay) {
-        BukkitRunnable bukkitRunnable = new NestedRunnable(runnable);
+        BukkitRunnable bukkitRunnable = new BukkitNestedRunnable(this.tasks, runnable);
         bukkitRunnable.runTaskLater(plugin, delay);
         this.tasks.add(bukkitRunnable.getTaskId());
     }
@@ -351,22 +352,6 @@ public final class CombinedView implements
     @Override
     public Collection<Integer> taskIds() {
         return this.tasks;
-    }
-
-    private final class NestedRunnable extends BukkitRunnable {
-
-        private final Runnable runnable;
-
-        private NestedRunnable(final @NonNull Runnable runnable) {
-            this.runnable = runnable;
-        }
-
-        @Override
-        public void run() {
-            this.runnable.run();
-            CombinedView.this.tasks.remove(this.getTaskId());
-        }
-
     }
 
 }
