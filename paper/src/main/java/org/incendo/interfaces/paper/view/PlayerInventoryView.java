@@ -7,6 +7,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.element.Element;
+import org.incendo.interfaces.core.transform.InterfaceProperty;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
@@ -106,7 +107,9 @@ public final class PlayerInventoryView implements
             // If it's the first time we apply the transform, then
             // we add update listeners to all the dependent properties
             if (firstApply) {
-                transform.property().addListener((oldValue, newValue) -> this.update());
+                for (final InterfaceProperty<?> property : transform.properties()) {
+                    property.addListener((oldValue, newValue) -> this.update());
+                }
             }
         }
 

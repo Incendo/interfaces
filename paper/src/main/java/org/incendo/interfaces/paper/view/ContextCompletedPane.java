@@ -7,18 +7,18 @@ import org.incendo.interfaces.paper.PlayerViewer;
 
 final class ContextCompletedPane<P extends Pane> {
 
-    private final TransformContext<?, P, PlayerViewer> context;
+    private final TransformContext<P, PlayerViewer> context;
     private final P pane;
 
     ContextCompletedPane(
-            final @NonNull TransformContext<?, P, PlayerViewer> context,
+            final @NonNull TransformContext<P, PlayerViewer> context,
             final @NonNull P pane
     ) {
         this.context = context;
         this.pane = pane;
     }
 
-    @NonNull TransformContext<?, P, PlayerViewer> context() {
+    @NonNull TransformContext<P, PlayerViewer> context() {
         return this.context;
     }
 

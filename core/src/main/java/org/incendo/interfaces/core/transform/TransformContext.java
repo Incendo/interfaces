@@ -4,23 +4,25 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.core.view.InterfaceViewer;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 /**
- * @param <T> the type of the value this context is dependent on
  * @param <U> the type of the pane that this transform is applied to
  * @param <V> the type of the viewer
  */
-public final class TransformContext<T, U extends Pane, V extends InterfaceViewer> {
+public final class TransformContext<U extends Pane, V extends InterfaceViewer> {
 
-    private final InterfaceProperty<T> property;
-    private final Transform<U, V> transform;
     private final int priority;
+    private final Transform<U, V> transform;
+    private final Collection<InterfaceProperty<?>> properties;
 
     private TransformContext(
-            final @NonNull InterfaceProperty<T> property,
             final int priority,
-            final @NonNull Transform<U, V> transform
+            final @NonNull Transform<U, V> transform,
+            final @NonNull InterfaceProperty<?>[] properties
     ) {
-        this.property = property;
+        this.properties = Arrays.asList(properties);
         this.priority = priority;
         this.transform = transform;
     }
@@ -28,29 +30,28 @@ public final class TransformContext<T, U extends Pane, V extends InterfaceViewer
     /**
      * Creates a new transform context instance
      *
-     * @param property the property
      * @param priority the priority
      * @param transform the transform
-     * @param <T> the type of the value this context is dependent on
+     * @param properties the properties
      * @param <U> the type of the pane that this transform is applied to
      * @param <V> the type of the viewer
      * @return the context
      */
-    public static <T, U extends Pane, V extends InterfaceViewer> @NonNull TransformContext<T, U, V> of(
-            final @NonNull InterfaceProperty<T> property,
+    public static <U extends Pane, V extends InterfaceViewer> @NonNull TransformContext<U, V> of(
             final int priority,
-            final @NonNull Transform<U, V> transform
+            final @NonNull Transform<U, V> transform,
+            final @NonNull InterfaceProperty<?>... properties
     ) {
-        return new TransformContext<>(property, priority, transform);
+        return new TransformContext<>(priority, transform, properties);
     }
 
     /**
-     * Returns the interface property of this context
+     * Returns the priority in which the transformation should be applied
      *
-     * @return the property
+     * @return the priority
      */
-    public @NonNull InterfaceProperty<T> property() {
-        return this.property;
+    public int priority() {
+        return this.priority;
     }
 
     /**
@@ -63,12 +64,12 @@ public final class TransformContext<T, U extends Pane, V extends InterfaceViewer
     }
 
     /**
-     * Returns the priority in which the transformation should be applied
+     * Returns the interface property of this context
      *
-     * @return the priority
+     * @return the property
      */
-    public int priority() {
-        return this.priority;
+    public @NonNull Collection<@NonNull  InterfaceProperty<?>> properties() {
+        return this.properties;
     }
 
 }

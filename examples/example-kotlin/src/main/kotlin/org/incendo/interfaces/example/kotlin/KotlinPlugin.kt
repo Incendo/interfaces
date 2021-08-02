@@ -105,7 +105,7 @@ public class KotlinPlugin : JavaPlugin() {
                     }
                 }
 
-                withTransform(_selectedOption, priority = 2) { view ->
+                withTransform(2, _selectedOption) { view ->
                     println("rendering selected option")
 
                     // Extract an argument from the view

@@ -36,7 +36,7 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
      *
      * @return the transformations
      */
-    @NonNull List<TransformContext<?, T, U>> transformations();
+    @NonNull List<TransformContext<T, U>> transformations();
 
     /**
      * Opens this interface to the viewer.
@@ -77,6 +77,7 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
      * @param <U> the viewer type
      * @param <V> the interface type
      */
+    @SuppressWarnings("unchecked")
     interface Builder<T extends Pane, U extends InterfaceViewer, V extends Interface<T, U>> {
 
         /**
@@ -91,32 +92,30 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
          * Adds a transformation to the Interface that will update automatically when it's {@link InterfaceProperty} is changed.
          * This transformation will have a priority of {@code 1}.
          *
-         * @param property  the interface property to depend on
+         * @param properties  the interface properties to depend on
          * @param transform the transformation to add
-         * @param <S>       the value type the interface property holds
          * @return the builder
          */
-        default <S> @NonNull Builder<T, U, V> addTransform(
-                @NonNull InterfaceProperty<S> property,
-                @NonNull Transform<T, U> transform
+        default @NonNull Builder<T, U, V> addTransform(
+                @NonNull Transform<T, U> transform,
+                @NonNull InterfaceProperty<?>... properties
         ) {
-            return this.addTransform(property, 1, transform);
+            return this.addTransform(1, transform, properties);
         }
 
         /**
          * Adds a transformation to the Interface that will update automatically when it's {@link InterfaceProperty} is changed
          * This transformation will use the provided priority.
          *
-         * @param property the interface property to depend on
+         * @param properties the interface properties to depend on
          * @param priority the priority of the transformation
          * @param transform the transformation to add
-         * @param <S> the value type the interface property holds
          * @return the builder
          */
-        <S> @NonNull Builder<T, U, V> addTransform(
-                @NonNull InterfaceProperty<S> property,
+        @NonNull Builder<T, U, V> addTransform(
                 int priority,
-                @NonNull Transform<T, U> transform
+                @NonNull Transform<T, U> transform,
+                @NonNull InterfaceProperty<?>... properties
         );
 
         /**
@@ -125,14 +124,13 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
          *
          * @param priority the priority of the transformation
          * @param transform the transformation to add
-         * @param <S> the value type the interface property holds
          * @return the builder
          */
-        default <S> @NonNull Builder<T, U, V> addReactiveTransform(
+        default @NonNull Builder<T, U, V> addReactiveTransform(
                 int priority,
-                @NonNull ReactiveTransform<T, U, S> transform
+                @NonNull ReactiveTransform<T, U, ?> transform
         ) {
-            return this.addTransform(transform.property(), priority, transform);
+            return this.addTransform(priority, transform, transform.property());
         }
 
         /**
@@ -146,7 +144,7 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
         default <S> @NonNull Builder<T, U, V> addReactiveTransform(
                 @NonNull ReactiveTransform<T, U, S> transform
         ) {
-            return this.addTransform(transform.property(), 1, transform);
+            return this.addTransform(1, transform, transform.property());
         }
 
 
