@@ -151,16 +151,17 @@ public final class CombinedView implements
         for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
             for (int y = 0; y < this.backing.chestRows(); y++) {
                 Vector2 position = Vector2.at(x, y);
+                int slot = PaperUtils.gridToSlot(position);
 
                 Element currentElement = this.current.get(position);
-                ItemStackElement<CombinedPane> element = elements.get(Vector2.at(x, y));
+                ItemStackElement<CombinedPane> element = elements.get(position);
 
                 if (element.equals(currentElement)) {
                     continue;
                 }
 
                 this.current.put(position, element);
-                this.inventory.setItem(PaperUtils.gridToSlot(x, y), element.itemStack());
+                this.inventory.setItem(slot, element.itemStack());
             }
         }
 
@@ -173,9 +174,10 @@ public final class CombinedView implements
 
         for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
             for (int y = this.backing.chestRows(); y < this.backing.totalRows(); y++) {
-                int playerY = y - this.backing.chestRows() + 1;
-                int gridSlot = PaperUtils.gridToSlot(x, playerY);
                 Vector2 position = Vector2.at(x, y);
+
+                int playerY = y - this.backing.chestRows() + 1;
+                int gridSlot = PaperUtils.gridToSlot(Vector2.at(x, playerY));
 
                 ItemStack currentItem = playerInventory.getItem(gridSlot);
                 ItemStackElement<CombinedPane> element = elements.get(position);
