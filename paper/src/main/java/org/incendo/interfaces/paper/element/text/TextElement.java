@@ -10,7 +10,7 @@ import org.incendo.interfaces.core.element.Element;
 public interface TextElement extends Element {
 
     /**
-     * Creates a new TextElement.
+     * Creates a new {@link TextElement}.
      *
      * @param text the text
      * @return the element
@@ -20,7 +20,7 @@ public interface TextElement extends Element {
     }
 
     /**
-     * Creates a new CombinedTextElement.
+     * Creates a new {@link MultiTextElement}.
      *
      * @param text the text
      * @return the element
