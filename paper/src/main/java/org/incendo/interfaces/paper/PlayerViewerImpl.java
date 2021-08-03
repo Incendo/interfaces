@@ -1,13 +1,18 @@
 package org.incendo.interfaces.paper;
 
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.view.InterfaceView;
+import org.incendo.interfaces.paper.element.text.TextElement;
 import org.incendo.interfaces.paper.view.BookView;
+import org.incendo.interfaces.paper.view.ChatView;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.CombinedView;
 import org.incendo.interfaces.paper.view.PlayerInventoryView;
+
+import java.util.List;
 
 final class PlayerViewerImpl implements PlayerViewer {
 
@@ -34,6 +39,14 @@ final class PlayerViewerImpl implements PlayerViewer {
         this.player.openBook(bookView.book());
     }
 
+    private void openChatView(final @NonNull ChatView chatView) {
+        final @NonNull List<TextElement> elements = chatView.pane().textElements();
+
+        for (final @NonNull TextElement element : elements) {
+            Audience.audience(player).sendMessage(element.text());
+        }
+    }
+
     private void openPlayerView(final @NonNull PlayerInventoryView inventoryView) {
         inventoryView.open();
     }
@@ -48,6 +61,8 @@ final class PlayerViewerImpl implements PlayerViewer {
             this.openBookView((BookView) view);
         } else if (view instanceof PlayerInventoryView) {
             this.openPlayerView((PlayerInventoryView) view);
+        } else if (view instanceof ChatView) {
+            this.openChatView((ChatView) view);
         } else {
             throw new UnsupportedOperationException("Cannot open view of type " + view.getClass().getName() + ".");
         }
