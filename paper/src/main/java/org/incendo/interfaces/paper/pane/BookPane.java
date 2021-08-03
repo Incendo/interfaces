@@ -12,7 +12,7 @@ import java.util.List;
  * A pane based off of a Minecraft book.
  */
 @SuppressWarnings("unused")
-public class BookPane implements TextPane {
+public final class BookPane implements TextPane {
 
     private final @NonNull List<TextElement> pages;
 

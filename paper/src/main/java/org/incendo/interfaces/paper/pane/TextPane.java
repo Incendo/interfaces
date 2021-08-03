@@ -13,6 +13,8 @@ public interface TextPane extends Pane {
 
     /**
      * Returns the list of elements.
+     *
+     * @return the list of elements
      */
     @NonNull List<TextElement> textElements();
 

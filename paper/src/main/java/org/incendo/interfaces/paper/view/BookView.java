@@ -4,12 +4,10 @@ import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
-import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.text.TextElement;
 import org.incendo.interfaces.paper.pane.BookPane;
 import org.incendo.interfaces.paper.type.BookInterface;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;

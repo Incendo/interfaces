@@ -14,7 +14,8 @@ import java.util.UUID;
 /**
  * Represents a text element that can be clicked.
  */
-public class ClickableTextElement extends BaseTextElement implements ClickableElement<TextPane, TextClickCause, PlayerViewer> {
+public final class ClickableTextElement extends BaseTextElement implements ClickableElement<TextPane, TextClickCause,
+        PlayerViewer> {
 
     private final @NonNull UUID uuid;
     private final @NonNull ClickHandler<TextPane, TextClickCause, PlayerViewer, ?> handler;
@@ -22,10 +23,13 @@ public class ClickableTextElement extends BaseTextElement implements ClickableEl
     /**
      * Constructs {@code TextElement}.
      *
-     * @param text the text
+     * @param text    the text
+     * @param handler the click handler
      */
-    public ClickableTextElement(final @NonNull Component text,
-                                final @NonNull ClickHandler<TextPane, TextClickCause, PlayerViewer, ?> handler) {
+    public ClickableTextElement(
+            final @NonNull Component text,
+            final @NonNull ClickHandler<TextPane, TextClickCause, PlayerViewer, ?> handler
+    ) {
         super(text);
         this.handler = handler;
         this.uuid = UUID.randomUUID();
@@ -37,7 +41,8 @@ public class ClickableTextElement extends BaseTextElement implements ClickableEl
     }
 
     @Override
-    public @NonNull ClickHandler<TextPane, TextClickCause, PlayerViewer, ? extends ClickContext<TextPane, TextClickCause, PlayerViewer>> clickHandler() {
+    public @NonNull ClickHandler<TextPane, TextClickCause, PlayerViewer,
+            ? extends ClickContext<TextPane, TextClickCause, PlayerViewer>> clickHandler() {
         return this.handler;
     }
 

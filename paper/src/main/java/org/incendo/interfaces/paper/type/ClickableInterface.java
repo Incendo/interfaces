@@ -6,8 +6,6 @@ import org.incendo.interfaces.core.click.ClickHandler;
 import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.core.view.InterfaceViewer;
 
-import java.util.UUID;
-
 /**
  * Represents a clickable interface.
  * <p>

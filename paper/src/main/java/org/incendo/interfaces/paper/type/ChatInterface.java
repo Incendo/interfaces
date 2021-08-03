@@ -14,10 +14,19 @@ import org.incendo.interfaces.paper.view.ChatView;
 
 import java.util.List;
 
-public class ChatInterface implements Interface<ChatPane, PlayerViewer> {
+/**
+ * An interface inside the Minecraft chat.
+ */
+@SuppressWarnings("unused")
+public final class ChatInterface implements Interface<ChatPane, PlayerViewer> {
 
     private final @NonNull List<TransformContext<?, ChatPane, PlayerViewer>> transforms;
 
+    /**
+     * Constructs {@code ChatInterface}.
+     *
+     * @param transforms the list of transforms
+     */
     public ChatInterface(final @NonNull List<TransformContext<?, ChatPane, PlayerViewer>> transforms) {
         this.transforms = transforms;
     }
