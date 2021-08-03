@@ -23,7 +23,6 @@ import org.incendo.interfaces.kotlin.*
 import org.incendo.interfaces.kotlin.getValue
 import org.incendo.interfaces.kotlin.interfaceArgumentOf
 import org.incendo.interfaces.kotlin.paper.*
-import org.incendo.interfaces.kotlin.setValue
 import org.incendo.interfaces.paper.PaperInterfaceListeners
 import org.incendo.interfaces.paper.PlayerViewer
 import org.incendo.interfaces.paper.element.ItemStackElement
@@ -44,7 +43,7 @@ public class KotlinPlugin : JavaPlugin() {
         private val LEAVES =
             setOf(Material.EMERALD_BLOCK, Material.DIAMOND_BLOCK, Material.IRON_BLOCK)
 
-        private val ARGUMENT_CONCRETE: ArgumentKey<Material> = argumentKeyOf("concrete")
+        private val ARGUMENT_CONCRETE: ArgumentKey<List<Material>> = argumentKeyOf("concrete")
     }
 
     private lateinit var exampleChest: ChestInterface
@@ -57,6 +56,8 @@ public class KotlinPlugin : JavaPlugin() {
     private var _selectedOption: InterfaceProperty<SelectionOptions> =
         InterfaceProperty.of(SelectionOptions.ONE)
 
+    private var _selectedConcrete: InterfaceProperty<Int> = InterfaceProperty.of(0)
+
     override fun onEnable() {
         // Register the command.
         getCommand("interfaces")?.setExecutor(InterfaceCommandHandler())
@@ -64,8 +65,8 @@ public class KotlinPlugin : JavaPlugin() {
         // Register event listeners.
         PaperInterfaceListeners.install(this)
 
-        // Update the dependent value every time the server ticks.
         val selectedOption: SelectionOptions by _selectedOption
+        var selectedConcrete: Int by _selectedConcrete
 
         // Build a chest interface.
         exampleChest =
@@ -105,14 +106,32 @@ public class KotlinPlugin : JavaPlugin() {
                     }
                 }
 
-                withTransform(2, _selectedOption) { view ->
+                withTransform(2, _selectedOption, _selectedConcrete) { view ->
                     println("rendering selected option")
 
                     // Extract an argument from the view
-                    val concrete = view.arguments[ARGUMENT_CONCRETE]
+                    val concreteList = view.arguments[ARGUMENT_CONCRETE]
+                    val concrete = concreteList[selectedConcrete]
 
                     val displayElement = createItemStack(concrete, text("")).asElement<ChestPane>()
                     selectedOption.art.forEach { (x, y) -> view[x, y] = displayElement }
+                }
+
+                withTransform(2, _selectedConcrete) { view ->
+                    println("rendering concrete selection button")
+
+                    // Extract an argument from the view
+                    val concreteList = view.arguments[ARGUMENT_CONCRETE]
+                    val concrete = concreteList[selectedConcrete]
+
+                    view[0, 4] =
+                        createItemStack(concrete, text("CHANGE CONCRETE")).asElement {
+                            var newSelection = selectedConcrete + 1
+                            if (newSelection == concreteList.size) {
+                                newSelection = 0
+                            }
+                            selectedConcrete = newSelection
+                        }
                 }
 
                 withCloseHandler { event, _ -> event.player.sendMessage(text("bye")) }
@@ -310,7 +329,13 @@ public class KotlinPlugin : JavaPlugin() {
             }
 
             // Pass an argument to the interface.
-            val arguments = interfaceArgumentOf(ARGUMENT_CONCRETE to Material.LIME_CONCRETE)
+            val arguments =
+                interfaceArgumentOf(
+                    ARGUMENT_CONCRETE to
+                        listOf(
+                            Material.LIME_CONCRETE,
+                            Material.WHITE_CONCRETE,
+                            Material.BLUE_CONCRETE))
 
             when (args[0].toLowerCase()) {
                 "chest" ->
