@@ -1,6 +1,7 @@
 package org.incendo.interfaces.paper.element;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.interfaces.core.click.ClickContext;
 import org.incendo.interfaces.core.click.ClickHandler;
 import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.core.view.InterfaceViewer;
@@ -28,6 +29,6 @@ public interface ClickableElement<T extends Pane, U, V extends InterfaceViewer> 
      *
      * @return the click handler
      */
-    @NonNull ClickHandler<T, U, V, ?> clickHandler();
+    @NonNull ClickHandler<T, U, V, ClickContext<T, U, V>> clickHandler();
 
 }

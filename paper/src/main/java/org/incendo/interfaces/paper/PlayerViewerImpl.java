@@ -43,7 +43,7 @@ final class PlayerViewerImpl implements PlayerViewer {
         final @NonNull List<TextElement> elements = chatView.pane().textElements();
 
         for (final @NonNull TextElement element : elements) {
-            Audience.audience(this.player).sendMessage(element.text());
+            this.player.sendMessage(element.text()); // won't compile
         }
     }
 
