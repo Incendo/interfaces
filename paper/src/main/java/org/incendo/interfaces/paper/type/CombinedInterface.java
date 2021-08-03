@@ -28,7 +28,7 @@ import java.util.List;
 public final class CombinedInterface implements
         TitledInterface<CombinedPane, PlayerViewer>,
         UpdatingInterface,
-        Clickable<CombinedPane, InventoryClickEvent, PlayerViewer> {
+        ClickableInterface<CombinedPane, InventoryClickEvent, PlayerViewer> {
 
     private final int rows;
     private final @NonNull List<TransformContext<?, CombinedPane, PlayerViewer>> transformationList;

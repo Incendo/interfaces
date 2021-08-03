@@ -6,23 +6,39 @@ import org.incendo.interfaces.core.click.ClickContext;
 import org.incendo.interfaces.core.click.ClickHandler;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.click.TextClickCause;
+import org.incendo.interfaces.paper.element.ClickableElement;
 import org.incendo.interfaces.paper.pane.TextPane;
-import org.incendo.interfaces.paper.type.Clickable;
 
-public class ClickableTextElement extends BaseTextElement implements Clickable<TextPane, TextClickCause, PlayerViewer> {
+import java.util.UUID;
+
+/**
+ * Represents a text element that can be clicked.
+ */
+public class ClickableTextElement extends BaseTextElement implements ClickableElement<TextPane, TextClickCause, PlayerViewer> {
+
+    private final @NonNull UUID uuid;
+    private final @NonNull ClickHandler<TextPane, TextClickCause, PlayerViewer, ?> handler;
 
     /**
      * Constructs {@code TextElement}.
      *
      * @param text the text
      */
-    public ClickableTextElement(final @NonNull Component text) {
+    public ClickableTextElement(final @NonNull Component text,
+                                final @NonNull ClickHandler<TextPane, TextClickCause, PlayerViewer, ?> handler) {
         super(text);
+        this.handler = handler;
+        this.uuid = UUID.randomUUID();
+    }
+
+    @Override
+    public @NonNull UUID uuid() {
+        return this.uuid;
     }
 
     @Override
     public @NonNull ClickHandler<TextPane, TextClickCause, PlayerViewer, ? extends ClickContext<TextPane, TextClickCause, PlayerViewer>> clickHandler() {
-        return null;
+        return this.handler;
     }
 
 }

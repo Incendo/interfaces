@@ -23,7 +23,7 @@ import java.util.List;
 public final class PlayerInterface implements
         Interface<PlayerPane, PlayerViewer>,
         UpdatingInterface,
-        Clickable<PlayerPane, InventoryClickEvent, PlayerViewer> {
+        ClickableInterface<PlayerPane, InventoryClickEvent, PlayerViewer> {
 
     private final @NonNull List<TransformContext<?, PlayerPane, PlayerViewer>> transformationList;
     private final boolean updates;

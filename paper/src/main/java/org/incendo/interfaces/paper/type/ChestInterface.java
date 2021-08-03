@@ -28,7 +28,7 @@ import java.util.List;
 public final class ChestInterface implements
         TitledInterface<ChestPane, PlayerViewer>,
         UpdatingInterface,
-        Clickable<ChestPane, InventoryClickEvent, PlayerViewer> {
+        ClickableInterface<ChestPane, InventoryClickEvent, PlayerViewer> {
 
     private final int rows;
     private final @NonNull List<TransformContext<?, ChestPane, PlayerViewer>> transformationList;

@@ -10,7 +10,7 @@ import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.pane.ChestPane;
-import org.incendo.interfaces.paper.type.Clickable;
+import org.incendo.interfaces.paper.type.ClickableInterface;
 
 import java.util.Objects;
 
@@ -20,7 +20,7 @@ import java.util.Objects;
  * @param <T> the pane type
  * @see ChestPane
  */
-public class ItemStackElement<T extends Pane> implements Element, Clickable<T, InventoryClickEvent, PlayerViewer> {
+public class ItemStackElement<T extends Pane> implements Element, ClickableInterface<T, InventoryClickEvent, PlayerViewer> {
 
     private final @NonNull ItemStack itemStack;
     private final @NonNull ClickHandler<T, InventoryClickEvent, PlayerViewer,

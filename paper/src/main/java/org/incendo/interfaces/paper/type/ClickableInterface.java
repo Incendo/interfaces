@@ -6,6 +6,8 @@ import org.incendo.interfaces.core.click.ClickHandler;
 import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.core.view.InterfaceViewer;
 
+import java.util.UUID;
+
 /**
  * Represents a clickable interface.
  * <p>
@@ -15,7 +17,7 @@ import org.incendo.interfaces.core.view.InterfaceViewer;
  * @param <U> the click cause type
  * @param <V> the viewer type
  */
-public interface Clickable<T extends Pane, U, V extends InterfaceViewer> {
+public interface ClickableInterface<T extends Pane, U, V extends InterfaceViewer> {
 
     /**
      * Returns the top click handler.

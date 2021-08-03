@@ -1,28 +1,20 @@
 package org.incendo.interfaces.paper.view;
 
-import net.kyori.adventure.inventory.Book;
-import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
-import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
-import org.incendo.interfaces.paper.element.text.TextElement;
-import org.incendo.interfaces.paper.pane.BookPane;
-import org.incendo.interfaces.paper.type.BookInterface;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.incendo.interfaces.paper.pane.ChatPane;
+import org.incendo.interfaces.paper.type.ChatInterface;
 
 /**
  * The view of a Book-based interface.
  */
-public final class BookView implements TextView<BookPane> {
+public final class ChatView implements TextView<ChatPane> {
 
-    private final @NonNull BookInterface parent;
+    private final @NonNull ChatInterface parent;
     private final @NonNull PlayerViewer viewer;
     private final @NonNull InterfaceArguments argument;
-    private final @NonNull BookPane pane;
-    private final @NonNull Book book;
+    private final @NonNull ChatPane pane;
 
     /**
      * Constructs {@code BookView}.
@@ -30,33 +22,23 @@ public final class BookView implements TextView<BookPane> {
      * @param parent   the parent
      * @param viewer   the viewer
      * @param argument the argument
-     * @param title    the title
      */
-    public BookView(
-            final @NonNull BookInterface parent,
+    public ChatView(
+            final @NonNull ChatInterface parent,
             final @NonNull PlayerViewer viewer,
-            final @NonNull InterfaceArguments argument,
-            final @NonNull Component title
+            final @NonNull InterfaceArguments argument
     ) {
         this.parent = parent;
         this.viewer = viewer;
         this.argument = argument;
 
-        @NonNull BookPane pane = new BookPane();
+        @NonNull ChatPane pane = new ChatPane();
 
         for (final var transform : this.parent.transformations()) {
             pane = transform.transform().apply(pane, this);
         }
 
         this.pane = pane;
-
-        final @NonNull List<Component> pages = new ArrayList<>();
-
-        for (final @NonNull TextElement element : this.pane.textElements()) {
-            pages.add(element.text());
-        }
-
-        this.book = Book.book(title, Component.empty(), pages);
     }
 
     /**
@@ -77,7 +59,7 @@ public final class BookView implements TextView<BookPane> {
      * @return the parent
      */
     @Override
-    public @NonNull BookInterface backing() {
+    public @NonNull ChatInterface backing() {
         return this.parent;
     }
 
@@ -115,17 +97,8 @@ public final class BookView implements TextView<BookPane> {
      * @return the pane
      */
     @Override
-    public @NonNull BookPane pane() {
+    public @NonNull ChatPane pane() {
         return this.pane;
-    }
-
-    /**
-     * Returns the book.
-     *
-     * @return the book
-     */
-    public @NonNull Book book() {
-        return this.book;
     }
 
 }
