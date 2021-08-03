@@ -6,11 +6,14 @@ import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.pane.ChatPane;
 import org.incendo.interfaces.paper.type.ChatInterface;
 
+import java.util.UUID;
+
 /**
  * The view of a Book-based interface.
  */
 public final class ChatView implements TextView<ChatPane> {
 
+    private final @NonNull UUID uuid;
     private final @NonNull ChatInterface parent;
     private final @NonNull PlayerViewer viewer;
     private final @NonNull InterfaceArguments argument;
@@ -31,6 +34,7 @@ public final class ChatView implements TextView<ChatPane> {
         this.parent = parent;
         this.viewer = viewer;
         this.argument = argument;
+        this.uuid = UUID.randomUUID();
 
         @NonNull ChatPane pane = new ChatPane();
 
@@ -41,11 +45,6 @@ public final class ChatView implements TextView<ChatPane> {
         this.pane = pane;
     }
 
-    /**
-     * Always returns false.
-     *
-     * @return false
-     */
     @Override
     public boolean viewing() {
         // Not sure how to properly implement this, or even if it can be done reliably. Editing a book sends an event,
@@ -53,52 +52,34 @@ public final class ChatView implements TextView<ChatPane> {
         return false;
     }
 
-    /**
-     * Returns the parent.
-     *
-     * @return the parent
-     */
     @Override
     public @NonNull ChatInterface backing() {
         return this.parent;
     }
 
-    /**
-     * Returns the viewer.
-     *
-     * @return the viewer
-     */
     @Override
     public @NonNull PlayerViewer viewer() {
         return this.viewer;
     }
 
-    /**
-     * Returns the argument.
-     *
-     * @return the argument
-     */
     @Override
     public @NonNull InterfaceArguments arguments() {
         return this.argument;
     }
 
-    /**
-     * Opens the view to the viewer.
-     */
     @Override
     public void open() {
         this.viewer.open(this);
     }
 
-    /**
-     * Returns the pane.
-     *
-     * @return the pane
-     */
     @Override
     public @NonNull ChatPane pane() {
         return this.pane;
+    }
+
+    @Override
+    public @NonNull UUID uuid() {
+        return this.uuid;
     }
 
 }

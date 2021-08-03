@@ -9,15 +9,18 @@ import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.text.TextElement;
 import org.incendo.interfaces.paper.pane.BookPane;
 import org.incendo.interfaces.paper.type.BookInterface;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The view of a Book-based interface.
  */
 public final class BookView implements TextView<BookPane> {
 
+    private final @NonNull UUID uuid;
     private final @NonNull BookInterface parent;
     private final @NonNull PlayerViewer viewer;
     private final @NonNull InterfaceArguments argument;
@@ -57,13 +60,10 @@ public final class BookView implements TextView<BookPane> {
         }
 
         this.book = Book.book(title, Component.empty(), pages);
+
+        this.uuid = UUID.randomUUID();
     }
 
-    /**
-     * Always returns false.
-     *
-     * @return false
-     */
     @Override
     public boolean viewing() {
         // Not sure how to properly implement this, or even if it can be done reliably. Editing a book sends an event,
@@ -71,52 +71,34 @@ public final class BookView implements TextView<BookPane> {
         return false;
     }
 
-    /**
-     * Returns the parent.
-     *
-     * @return the parent
-     */
     @Override
     public @NonNull BookInterface backing() {
         return this.parent;
     }
 
-    /**
-     * Returns the viewer.
-     *
-     * @return the viewer
-     */
     @Override
     public @NonNull PlayerViewer viewer() {
         return this.viewer;
     }
 
-    /**
-     * Returns the argument.
-     *
-     * @return the argument
-     */
     @Override
     public @NonNull InterfaceArguments arguments() {
         return this.argument;
     }
 
-    /**
-     * Opens the view to the viewer.
-     */
     @Override
     public void open() {
         this.viewer.open(this);
     }
 
-    /**
-     * Returns the pane.
-     *
-     * @return the pane
-     */
     @Override
     public @NonNull BookPane pane() {
         return this.pane;
+    }
+
+    @Override
+    public @NonNull UUID uuid() {
+        return this.uuid;
     }
 
     /**
