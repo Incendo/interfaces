@@ -15,7 +15,7 @@ tasks {
 }
 
 ktfmt {
-    dropboxStyle()
+    kotlinLangStyle()
 }
 
 kotlin {

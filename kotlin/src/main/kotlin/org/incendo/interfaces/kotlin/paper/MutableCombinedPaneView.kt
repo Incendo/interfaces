@@ -33,7 +33,7 @@ public data class MutableCombinedPaneView(
      * @param element the element
      */
     public operator fun set(x: Int, y: Int, element: ItemStackElement<CombinedPane>): Unit =
-        mutate {
+            mutate {
         element(element, x, y)
     }
 

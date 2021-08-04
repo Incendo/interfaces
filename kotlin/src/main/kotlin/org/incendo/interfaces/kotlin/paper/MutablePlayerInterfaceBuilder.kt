@@ -78,7 +78,8 @@ public class MutablePlayerInterfaceBuilder :
         internalBuilder.addTransform(
             priority,
             transform as (PlayerPane, InterfaceView<PlayerPane, *>) -> PlayerPane,
-            *properties)
+            *properties
+        )
     }
 
     /**

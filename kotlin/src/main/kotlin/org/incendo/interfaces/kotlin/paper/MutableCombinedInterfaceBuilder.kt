@@ -105,7 +105,8 @@ public class MutableCombinedInterfaceBuilder :
         internalBuilder.addTransform(
             priority,
             transform as (CombinedPane, InterfaceView<CombinedPane, *>) -> CombinedPane,
-            *properties)
+            *properties
+        )
     }
 
     /**

@@ -102,7 +102,8 @@ public class MutableChestInterfaceBuilder :
         return@mutate internalBuilder.addTransform(
             priority,
             transform as (ChestPane, InterfaceView<ChestPane, *>) -> ChestPane,
-            *properties)
+            *properties
+        )
     }
 
     /**

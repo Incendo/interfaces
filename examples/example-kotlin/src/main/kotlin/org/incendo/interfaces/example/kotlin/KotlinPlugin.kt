@@ -80,8 +80,10 @@ public class KotlinPlugin : JavaPlugin() {
                             .player()
                             .sendMessage(
                                 text("You clicked ", NamedTextColor.GRAY)
-                                    .append(text(it.slot().toString(), NamedTextColor.GOLD)))
-                    })
+                                    .append(text(it.slot().toString(), NamedTextColor.GOLD))
+                            )
+                    }
+                )
 
                 withTransform { view ->
                     println("rendering black concrete backing")
@@ -148,7 +150,8 @@ public class KotlinPlugin : JavaPlugin() {
 
                             player.sendMessage(
                                 text("The time is: ")
-                                    .append(text(player.world.time, NamedTextColor.RED)))
+                                    .append(text(player.world.time, NamedTextColor.RED))
+                            )
                         }
                 }
             }
@@ -168,7 +171,9 @@ public class KotlinPlugin : JavaPlugin() {
 
                         it.armor[i] =
                             ItemStackElement.of(
-                                createItemStack(wool, empty()), ClickHandler.cancel())
+                                createItemStack(wool, empty()),
+                                ClickHandler.cancel()
+                            )
                     }
                 }
 
@@ -181,7 +186,9 @@ public class KotlinPlugin : JavaPlugin() {
 
                         it.hotbar[i] =
                             ItemStackElement.of(
-                                createItemStack(wools[woolIndex], empty()), ClickHandler.cancel())
+                                createItemStack(wools[woolIndex], empty()),
+                                ClickHandler.cancel()
+                            )
                     }
                 }
 
@@ -197,7 +204,9 @@ public class KotlinPlugin : JavaPlugin() {
 
                             it.main[x, y] =
                                 ItemStackElement.of(
-                                    createItemStack(wool, empty()), ClickHandler.cancel())
+                                    createItemStack(wool, empty()),
+                                    ClickHandler.cancel()
+                                )
                         }
                     }
                 }
@@ -216,9 +225,12 @@ public class KotlinPlugin : JavaPlugin() {
                         Vector2.at(6, 2),
                         (1..30).map {
                             createItemStack(
-                                    Material.PAPER, text(it.toString(), NamedTextColor.BLUE))
+                                    Material.PAPER,
+                                    text(it.toString(), NamedTextColor.BLUE)
+                                )
                                 .asElement(ClickHandler.cancel())
-                        })
+                        }
+                    )
                 reactiveTransform.backwardElement(Vector2.at(0, 0)) { transform ->
                     createSkull(text("Previous Page"), "MHF_ArrowLeft").asElement {
                         transform.previousPage()
@@ -243,7 +255,8 @@ public class KotlinPlugin : JavaPlugin() {
                     repeat(2) {
                         elements.add(
                             createItemStack(material, text(index++.toString()))
-                                .asElement(ClickHandler.cancel()))
+                                .asElement(ClickHandler.cancel())
+                        )
                     }
                 }
 
@@ -285,7 +298,8 @@ public class KotlinPlugin : JavaPlugin() {
                         4,
                         createItemStack(Material.LIME_CONCRETE, text("wooo")).asElement {
                             it.viewer().player().sendMessage(text("hi"))
-                        })
+                        }
+                    )
                 }
 
                 updates(true, 5)
@@ -316,7 +330,8 @@ public class KotlinPlugin : JavaPlugin() {
         ): Boolean {
             if (sender !is Player) {
                 sender.sendMessage(
-                    text("Only players may execute this command", NamedTextColor.RED))
+                    text("Only players may execute this command", NamedTextColor.RED)
+                )
                 return false
             }
 
@@ -324,7 +339,9 @@ public class KotlinPlugin : JavaPlugin() {
                 sender.sendMessage(
                     text(
                         "You must specify one of: chest, player, close, paginated, sliding",
-                        NamedTextColor.RED))
+                        NamedTextColor.RED
+                    )
+                )
                 return false
             }
 
@@ -335,14 +352,17 @@ public class KotlinPlugin : JavaPlugin() {
                         listOf(
                             Material.LIME_CONCRETE,
                             Material.WHITE_CONCRETE,
-                            Material.BLUE_CONCRETE))
+                            Material.BLUE_CONCRETE
+                        )
+                )
 
             when (args[0].toLowerCase()) {
                 "chest" ->
                     sender.open(
                         exampleChest,
                         arguments,
-                        text("Your Chest: ${sender.name}", NamedTextColor.GREEN))
+                        text("Your Chest: ${sender.name}", NamedTextColor.GREEN)
+                    )
                 "basicplayer" -> sender.open(exampleBasicPlayer, arguments)
                 "player" -> sender.open(examplePlayer, arguments)
                 "paginated" -> sender.open(examplePaginated, arguments)
@@ -355,7 +375,8 @@ public class KotlinPlugin : JavaPlugin() {
                 }
                 else ->
                     sender.sendMessage(
-                        text("Unknown interface type '${args[0]}'", NamedTextColor.RED))
+                        text("Unknown interface type '${args[0]}'", NamedTextColor.RED)
+                    )
             }
 
             return true
