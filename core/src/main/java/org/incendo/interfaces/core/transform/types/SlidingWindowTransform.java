@@ -71,8 +71,8 @@ public final class SlidingWindowTransform<S extends Element, T extends GridPane<
     }
 
     @Override
-    public @NonNull InterfaceProperty<Integer> property() {
-        return this.offsetProperty;
+    public @NonNull InterfaceProperty<?>[] properties() {
+        return new InterfaceProperty[]{this.offsetProperty};
     }
 
     @Override
