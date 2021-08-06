@@ -130,7 +130,7 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
                 int priority,
                 @NonNull ReactiveTransform<T, U, ?> transform
         ) {
-            return this.addTransform(priority, transform, transform.property());
+            return this.addTransform(priority, transform, transform.properties());
         }
 
         /**
@@ -144,7 +144,7 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
         default <S> @NonNull Builder<T, U, V> addReactiveTransform(
                 @NonNull ReactiveTransform<T, U, S> transform
         ) {
-            return this.addTransform(1, transform, transform.property());
+            return this.addTransform(1, transform, transform.properties());
         }
 
 

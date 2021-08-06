@@ -66,8 +66,8 @@ public final class PaginatedTransform<S extends Element, T extends GridPane<T, S
     }
 
     @Override
-    public @NonNull InterfaceProperty<Integer> property() {
-        return this.pageProperty;
+    public @NonNull InterfaceProperty<?>[] properties() {
+        return new InterfaceProperty[]{this.pageProperty};
     }
 
     @Override
