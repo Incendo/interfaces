@@ -9,7 +9,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.Interface;
-import org.incendo.interfaces.core.arguments.HashMapInterfaceArguments;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.transform.InterfaceProperty;
@@ -96,17 +95,6 @@ public final class CombinedView implements
 
         this.inventory = this.createInventory();
         this.reapplyInventory();
-    }
-
-    /**
-     * Opens a child interface.
-     *
-     * @param backing the backing interface
-     * @param <T>     the type of view
-     * @return the view
-     */
-    public @NonNull <T extends PlayerView<?>> T openChild(final @NonNull Interface<?, PlayerViewer> backing) {
-        return this.openChild(backing, HashMapInterfaceArguments.empty());
     }
 
     private @NonNull CombinedPane updatePane(final boolean firstApply) {
@@ -206,15 +194,8 @@ public final class CombinedView implements
         }
     }
 
-    /**
-     * Opens a child interface.
-     *
-     * @param backing  the backing interface
-     * @param argument the argument
-     * @param <T>      the type of view
-     * @return the view
-     */
-    public @NonNull <T extends PlayerView<?>> T openChild(
+    @Override
+    public @NonNull <C extends PlayerView<?>> C openChild(
             final @NonNull Interface<?, PlayerViewer> backing,
             final @NonNull InterfaceArguments argument
     ) {
@@ -222,7 +203,7 @@ public final class CombinedView implements
         view.open();
 
         @SuppressWarnings("unchecked")
-        T typedView = (T) view;
+        C typedView = (C) view;
         return typedView;
     }
 

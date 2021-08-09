@@ -9,7 +9,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.transform.InterfaceProperty;
-import org.incendo.interfaces.core.arguments.HashMapInterfaceArguments;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.util.Vector2;
@@ -95,17 +94,6 @@ public final class ChestView implements
         this.inventory = this.createInventory();
     }
 
-    /**
-     * Opens a child interface.
-     *
-     * @param backing the backing interface
-     * @param <T>     the type of view
-     * @return the view
-     */
-    public @NonNull <T extends PlayerView<?>> T openChild(final @NonNull Interface<?, PlayerViewer> backing) {
-        return this.openChild(backing, HashMapInterfaceArguments.empty());
-    }
-
     private @NonNull ChestPane updatePane(final boolean firstApply) {
         for (final var transform : this.backing.transformations()) {
             ChestPane newPane = transform.transform().apply(new ChestPane(this.backing.rows()), this);
@@ -165,15 +153,8 @@ public final class ChestView implements
         }
     }
 
-    /**
-     * Opens a child interface.
-     *
-     * @param backing  the backing interface
-     * @param argument the argument
-     * @param <T>      the type of view
-     * @return the view
-     */
-    public @NonNull <T extends PlayerView<?>> T openChild(
+    @Override
+    public @NonNull <C extends PlayerView<?>> C openChild(
             final @NonNull Interface<?, PlayerViewer> backing,
             final @NonNull InterfaceArguments argument
     ) {
@@ -181,7 +162,7 @@ public final class ChestView implements
         view.open();
 
         @SuppressWarnings("unchecked")
-        T typedView = (T) view;
+        C typedView = (C) view;
         return typedView;
     }
 
