@@ -5,9 +5,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.transform.InterfaceProperty;
+import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
@@ -188,6 +190,19 @@ public final class PlayerInventoryView implements
     @Override
     public boolean updates() {
         return this.backing().updates();
+    }
+
+    @Override
+    public <C extends PlayerView<?>> @NonNull C openChild(
+            @NonNull final Interface<?, PlayerViewer> backing,
+            @NonNull final InterfaceArguments argument
+    ) {
+        InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
+        view.open();
+
+        @SuppressWarnings("unchecked")
+        C typedView = (C) view;
+        return typedView;
     }
 
 }
