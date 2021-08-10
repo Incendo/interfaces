@@ -1,5 +1,6 @@
 package org.incendo.interfaces.paper.view;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
@@ -14,6 +15,7 @@ import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.PlayerPane;
+import org.incendo.interfaces.paper.type.ChildTitledInterface;
 import org.incendo.interfaces.paper.type.PlayerInterface;
 import org.jetbrains.annotations.NotNull;
 
@@ -198,6 +200,20 @@ public final class PlayerInventoryView implements
             @NonNull final InterfaceArguments argument
     ) {
         InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
+        view.open();
+
+        @SuppressWarnings("unchecked")
+        C typedView = (C) view;
+        return typedView;
+    }
+
+    @Override
+    public <C extends PlayerView<?>> @NonNull C openChild(
+            @NonNull final ChildTitledInterface<?, PlayerViewer> backing,
+            @NonNull final InterfaceArguments argument,
+            @NonNull final Component title
+    ) {
+        InterfaceView<?, PlayerViewer> view = backing.open(this, argument, title);
         view.open();
 
         @SuppressWarnings("unchecked")

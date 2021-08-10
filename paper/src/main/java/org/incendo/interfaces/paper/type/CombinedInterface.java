@@ -26,7 +26,7 @@ import java.util.List;
  * An interface using a chest.
  */
 public final class CombinedInterface implements
-        TitledInterface<CombinedPane, PlayerViewer>,
+        ChildTitledInterface<CombinedPane, PlayerViewer>,
         UpdatingInterface,
         Clickable<CombinedPane, InventoryClickEvent, PlayerViewer> {
 
@@ -155,6 +155,19 @@ public final class CombinedInterface implements
             final @NonNull Component title
     ) {
         final @NonNull CombinedView view = new CombinedView(this, viewer, arguments, title);
+
+        view.open();
+
+        return view;
+    }
+
+    @Override
+    public @NonNull InterfaceView<CombinedPane, PlayerViewer> open(
+            @NonNull final InterfaceView<?, PlayerViewer> parent,
+            @NonNull final InterfaceArguments arguments,
+            @NonNull final Component title
+    ) {
+        final @NonNull CombinedView view = new CombinedView((PlayerView<?>) parent, this, parent.viewer(), arguments, title);
 
         view.open();
 
