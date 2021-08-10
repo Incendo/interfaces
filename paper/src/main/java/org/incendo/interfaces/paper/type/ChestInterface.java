@@ -26,7 +26,7 @@ import java.util.List;
  * An interface using a chest.
  */
 public final class ChestInterface implements
-        TitledInterface<ChestPane, PlayerViewer>,
+        ChildTitledInterface<ChestPane, PlayerViewer>,
         UpdatingInterface,
         Clickable<ChestPane, InventoryClickEvent, PlayerViewer> {
 
@@ -146,6 +146,19 @@ public final class ChestInterface implements
             final @NonNull Component title
     ) {
         final @NonNull ChestView view = new ChestView(this, viewer, arguments, title);
+
+        view.open();
+
+        return view;
+    }
+
+    @Override
+    public @NonNull InterfaceView<ChestPane, PlayerViewer> open(
+            @NonNull final InterfaceView<?, PlayerViewer> parent,
+            @NonNull final InterfaceArguments arguments,
+            @NonNull final Component title
+    ) {
+        final @NonNull ChestView view = new ChestView((PlayerView<?>) parent, this, parent.viewer(), arguments, title);
 
         view.open();
 

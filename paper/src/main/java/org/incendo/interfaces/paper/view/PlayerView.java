@@ -1,5 +1,6 @@
 package org.incendo.interfaces.paper.view;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.InventoryHolder;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -9,6 +10,7 @@ import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
+import org.incendo.interfaces.paper.type.ChildTitledInterface;
 
 /**
  * An InterfaceView containing a Bukkit inventory.
@@ -29,6 +31,21 @@ public interface PlayerView<T extends Pane> extends InterfaceView<T, PlayerViewe
     @NonNull <C extends PlayerView<?>> C openChild(
             @NonNull Interface<?, PlayerViewer> backing,
             @NonNull InterfaceArguments argument
+    );
+
+    /**
+     * Opens a titled child interface.
+     *
+     * @param backing  the backing interface
+     * @param argument the argument
+     * @param title    the title to open the interface with
+     * @param <C>      the type of view
+     * @return the view
+     */
+    @NonNull <C extends PlayerView<?>> C openChild(
+            @NonNull ChildTitledInterface<?, PlayerViewer> backing,
+            @NonNull InterfaceArguments argument,
+            @NonNull Component title
     );
 
     /**

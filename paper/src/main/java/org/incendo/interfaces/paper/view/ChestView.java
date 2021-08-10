@@ -18,6 +18,7 @@ import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
+import org.incendo.interfaces.paper.type.ChildTitledInterface;
 import org.incendo.interfaces.paper.utils.PaperUtils;
 
 import java.util.ArrayList;
@@ -159,6 +160,20 @@ public final class ChestView implements
             final @NonNull InterfaceArguments argument
     ) {
         InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
+        view.open();
+
+        @SuppressWarnings("unchecked")
+        C typedView = (C) view;
+        return typedView;
+    }
+
+    @Override
+    public <C extends PlayerView<?>> @NonNull C openChild(
+            @NonNull final ChildTitledInterface<?, PlayerViewer> backing,
+            @NonNull final InterfaceArguments argument,
+            @NonNull final Component title
+    ) {
+        InterfaceView<?, PlayerViewer> view = backing.open(this, argument, title);
         view.open();
 
         @SuppressWarnings("unchecked")
