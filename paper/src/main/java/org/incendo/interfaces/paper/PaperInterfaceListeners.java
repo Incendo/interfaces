@@ -280,9 +280,17 @@ public class PaperInterfaceListeners implements Listener {
                 InventoryAction.NOTHING
         );
 
-        event.setCancelled(true);
-        event.setUseItemInHand(Event.Result.DENY);
-        hotbar.clickHandler().accept(new InventoryClickContext<PlayerPane, PlayerInventoryView>(inventoryClickEvent, true));
+        InventoryClickContext<PlayerPane, PlayerInventoryView> fakeContext = new InventoryClickContext<>(
+                inventoryClickEvent,
+                true
+        );
+
+        hotbar.clickHandler().accept(fakeContext);
+
+        if (fakeContext.cancelled()) {
+            event.setCancelled(true);
+            event.setUseItemInHand(Event.Result.DENY);
+        }
     }
 
     private void cleanUpView(final @NonNull InterfaceView<?, PlayerViewer> view) {
