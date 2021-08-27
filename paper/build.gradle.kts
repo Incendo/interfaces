@@ -5,4 +5,5 @@ dependencies {
     compileOnlyApi(libs.paper.api) {
         isTransitive = false
     }
+    compileOnlyApi(libs.guava)
 }
