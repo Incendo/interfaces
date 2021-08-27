@@ -1,5 +1,13 @@
 package org.incendo.interfaces.paper;
 
+import com.google.common.cache.Cache;
+
+import com.google.common.cache.CacheBuilder;
+
+import java.util.UUID;
+
+import java.util.concurrent.TimeUnit;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -24,6 +32,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.UpdatingInterface;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
@@ -67,6 +76,8 @@ public class PaperInterfaceListeners implements Listener {
     private final @NonNull Plugin plugin;
     private final @NonNull Map<@NonNull SelfUpdatingInterfaceView, @NonNull Integer> updatingRunnables;
 
+    private final @Nullable Cache<UUID, Long> spamPrevention;
+
     /**
      * Constructs {@code PaperInterfaceListeners}.
      *
@@ -75,6 +86,22 @@ public class PaperInterfaceListeners implements Listener {
     public PaperInterfaceListeners(final @NonNull Plugin plugin) {
         this.plugin = plugin;
         this.updatingRunnables = new HashMap<>();
+        this.spamPrevention = null;
+    }
+
+    /**
+     * Constructs {@code PaperInterfaceListeners}.
+     *
+     * @param plugin        the plugin instance to register against
+     * @param clickThrottle the minimum amount of ticks between every accepted click
+     */
+    public PaperInterfaceListeners(final @NonNull Plugin plugin, final long clickThrottle) {
+        this.plugin = plugin;
+        this.updatingRunnables = new HashMap<>();
+        this.spamPrevention = CacheBuilder.newBuilder().expireAfterWrite(
+                50L * clickThrottle,
+                TimeUnit.MILLISECONDS
+        ).build();
     }
 
     /**
@@ -321,6 +348,20 @@ public class PaperInterfaceListeners implements Listener {
         }
     }
 
+    private boolean shouldThrottle(final @NonNull Player player) {
+        if (this.spamPrevention == null) {
+            return false;
+        }
+
+        if (this.spamPrevention.getIfPresent(player.getUniqueId()) != null) {
+            return true;
+        } else {
+            this.spamPrevention.put(player.getUniqueId(), System.currentTimeMillis());
+        }
+
+        return false;
+    }
+
     /**
      * Handles an inventory click.
      *
@@ -332,9 +373,17 @@ public class PaperInterfaceListeners implements Listener {
         InventoryHolder holder = inventory.getHolder();
 
         if (holder instanceof ChestView) {
-            this.handleChestViewClick(event, holder);
+            if (this.shouldThrottle((Player) event.getWhoClicked())) {
+                event.setCancelled(true);
+            } else {
+                this.handleChestViewClick(event, holder);
+            }
         } else if (holder instanceof CombinedView) {
-            this.handleCombinedViewClick(event, holder);
+            if (this.shouldThrottle((Player) event.getWhoClicked())) {
+                event.setCancelled(true);
+            } else {
+                this.handleCombinedViewClick(event, holder);
+            }
         } else if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Player) {
             this.handlePlayerViewClick(event);
         }
@@ -398,6 +447,11 @@ public class PaperInterfaceListeners implements Listener {
         boolean isCraftGrid = clickedInventory instanceof CraftingInventory;
 
         if (PlayerInventoryView.forPlayer((Player) event.getWhoClicked()) == null) {
+            return;
+        }
+
+        if (this.shouldThrottle((Player) event.getWhoClicked())) {
+            event.setCancelled(true);
             return;
         }
 
