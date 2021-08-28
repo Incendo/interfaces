@@ -26,5 +26,5 @@ dependencies {
     api(projects.interfacesCore)
 
     // Needed for Paper extensions.
-    implementation(projects.interfacesPaper)
+    compileOnly(projects.interfacesPaper)
 }
