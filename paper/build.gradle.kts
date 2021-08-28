@@ -2,7 +2,7 @@ dependencies {
     api(projects.interfacesCore)
 
     compileOnlyApi(libs.adventure.api)
-    compileOnlyApi(libs.paper.api) {
+    compileOnly(libs.paper.api) {
         isTransitive = false
     }
     compileOnlyApi(libs.guava)
