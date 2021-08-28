@@ -27,7 +27,4 @@ dependencies {
 
     // Needed for Paper extensions.
     implementation(projects.interfacesPaper)
-    implementation(libs.paper.api) {
-        isTransitive = false
-    }
 }
