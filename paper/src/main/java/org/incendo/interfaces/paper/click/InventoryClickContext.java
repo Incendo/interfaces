@@ -36,13 +36,15 @@ public final class InventoryClickContext<T extends Pane, U extends InterfaceView
     /**
      * Constructs {@code ChestClickContext}.
      *
-     * @param event  the event
-     * @param player whether or not the player clicked their own inventory
+     * @param event    the event
+     * @param player   whether or not the player clicked their own inventory
+     * @param interact whether or nor the click was triggered by an interact event
      */
     @SuppressWarnings("unchecked")
     public InventoryClickContext(
             final @NonNull InventoryClickEvent event,
-            final boolean player
+            final boolean player,
+            final boolean interact
     ) {
         this.event = event;
 
@@ -70,11 +72,23 @@ public final class InventoryClickContext<T extends Pane, U extends InterfaceView
         }
 
         if (this.event.isLeftClick()) {
-            this.click = Clicks.leftClick(this.event, this.event.isShiftClick());
+            this.click = Clicks.leftClick(
+                    this.event,
+                    this.event.isShiftClick(),
+                    interact
+            );
         } else if (this.event.isRightClick()) {
-            this.click = Clicks.rightClick(this.event, this.event.isShiftClick());
+            this.click = Clicks.rightClick(
+                    this.event,
+                    this.event.isShiftClick(),
+                    interact
+            );
         } else if (this.event.getClick() == ClickType.MIDDLE) {
-            this.click = Clicks.rightClick(this.event, this.event.isShiftClick());
+            this.click = Clicks.rightClick(
+                    this.event,
+                    this.event.isShiftClick(),
+                    interact
+            );
         } else {
             /* ??? */
             this.click = Clicks.unknownClick(this.event);
@@ -87,13 +101,28 @@ public final class InventoryClickContext<T extends Pane, U extends InterfaceView
     }
 
     @Override
-    public boolean cancelled() {
-        return this.event.isCancelled();
+    public @NonNull ClickStatus status() {
+        if (this.event.isCancelled()) {
+            return ClickStatus.ALLOW;
+        } else {
+            return ClickStatus.DENY;
+        }
     }
 
     @Override
-    public void cancel(final boolean cancelled) {
-        this.event.setCancelled(cancelled);
+    public void status(
+            @NonNull final ClickStatus status
+    ) {
+        switch (status) {
+            case ALLOW:
+                this.event.setCancelled(false);
+                break;
+            case DENY:
+                this.event.setCancelled(true);
+                break;
+            default:
+                break;
+        }
     }
 
     @Override

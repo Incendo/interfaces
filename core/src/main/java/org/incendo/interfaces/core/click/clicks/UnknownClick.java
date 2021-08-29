@@ -39,6 +39,11 @@ public final class UnknownClick<T> implements Click<T> {
     }
 
     @Override
+    public boolean interact() {
+        return false;
+    }
+
+    @Override
     public boolean shiftClick() {
         return false;
     }

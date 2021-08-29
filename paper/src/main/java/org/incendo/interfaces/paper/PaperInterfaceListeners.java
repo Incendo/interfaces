@@ -309,6 +309,7 @@ public class PaperInterfaceListeners implements Listener {
 
         InventoryClickContext<PlayerPane, PlayerInventoryView> fakeContext = new InventoryClickContext<>(
                 inventoryClickEvent,
+                true,
                 true
         );
 
@@ -395,7 +396,11 @@ public class PaperInterfaceListeners implements Listener {
             return;
         }
 
-        InventoryClickContext<ChestPane, ChestView> context = new InventoryClickContext<>(event, false);
+        InventoryClickContext<ChestPane, ChestView> context = new InventoryClickContext<>(
+                event,
+                false,
+                false
+        );
 
         ChestView chestView = (ChestView) holder;
         // Handle parent interface click event
@@ -415,7 +420,11 @@ public class PaperInterfaceListeners implements Listener {
     }
 
     private void handleCombinedViewClick(final @NonNull InventoryClickEvent event, final @NonNull InventoryHolder holder) {
-        InventoryClickContext<CombinedPane, CombinedView> context = new InventoryClickContext<>(event, false);
+        InventoryClickContext<CombinedPane, CombinedView> context = new InventoryClickContext<>(
+                event,
+                false,
+                false
+        );
 
         CombinedView combinedView = (CombinedView) holder;
         // Handle parent interface click event
@@ -457,7 +466,8 @@ public class PaperInterfaceListeners implements Listener {
 
         final InventoryClickContext<PlayerPane, PlayerInventoryView> context = new InventoryClickContext<>(
                 event,
-                true
+                true,
+                false
         );
 
         PlayerInventoryView playerInventoryView = context.view();

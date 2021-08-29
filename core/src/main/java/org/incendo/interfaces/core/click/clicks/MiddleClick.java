@@ -42,6 +42,11 @@ public final class MiddleClick<T> implements Click<T> {
     }
 
     @Override
+    public boolean interact() {
+        return false;
+    }
+
+    @Override
     public @NonNull T cause() {
         return this.cause;
     }

@@ -22,6 +22,7 @@ import org.incendo.interfaces.core.view.InterfaceViewer;
  * @param <T> the pane type
  * @param <U> the viewer type
  */
+@SuppressWarnings("unused")
 public final class PaginatedTransform<S extends Element, T extends GridPane<T, S>, U extends InterfaceViewer>
         implements ReactiveTransform<T, U, Integer> {
 
@@ -67,7 +68,7 @@ public final class PaginatedTransform<S extends Element, T extends GridPane<T, S
 
     @Override
     public @NonNull InterfaceProperty<?>[] properties() {
-        return new InterfaceProperty[]{this.pageProperty};
+        return new InterfaceProperty<?>[]{this.pageProperty};
     }
 
     @Override

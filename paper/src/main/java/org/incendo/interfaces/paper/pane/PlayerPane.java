@@ -16,6 +16,7 @@ import java.util.List;
 /**
  * A pane based off of a player inventory.
  */
+@SuppressWarnings("unused")
 public final class PlayerPane implements GridPane<PlayerPane, ItemStackElement<PlayerPane>> {
 
     public static final int HOTBAR_MIN = 0;
@@ -26,6 +27,7 @@ public final class PlayerPane implements GridPane<PlayerPane, ItemStackElement<P
     public static final int ARMOR_MAX = 39;
     public static final int OFF_HAND = 40;
 
+    @SuppressWarnings("rawtypes")
     private final ItemStackElement[] elements;
 
     /**
@@ -38,6 +40,7 @@ public final class PlayerPane implements GridPane<PlayerPane, ItemStackElement<P
         }
     }
 
+    @SuppressWarnings("rawtypes")
     private PlayerPane(
             final @NonNull ItemStackElement @NonNull[] elements
     ) {
@@ -56,6 +59,7 @@ public final class PlayerPane implements GridPane<PlayerPane, ItemStackElement<P
      *
      * @return the elements
      */
+    @SuppressWarnings("unchecked")
     public @NonNull List<@NonNull ItemStackElement<PlayerPane>> inventoryElements() {
         final List<ItemStackElement<PlayerPane>> elements = new ArrayList<>(this.elements.length);
         for (var element : this.elements) {
@@ -77,6 +81,7 @@ public final class PlayerPane implements GridPane<PlayerPane, ItemStackElement<P
             final @IntRange(from = 0, to = 40) int index,
             final @NonNull ItemStackElement<PlayerPane> element
     ) {
+        @SuppressWarnings("rawtypes")
         final ItemStackElement[] elements = new ItemStackElement[this.elements.length];
         System.arraycopy(this.elements, 0, elements, 0, this.elements.length);
         elements[index] = element;
@@ -89,6 +94,7 @@ public final class PlayerPane implements GridPane<PlayerPane, ItemStackElement<P
      * @param index the index
      * @return the element
      */
+    @SuppressWarnings("unchecked")
     public @NonNull ItemStackElement<PlayerPane> element(final @IntRange(from = 0, to = 40) int index) {
         return this.elements[index];
     }
