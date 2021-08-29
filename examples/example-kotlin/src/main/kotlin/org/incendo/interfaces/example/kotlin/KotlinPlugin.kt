@@ -6,14 +6,17 @@ import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.plugin.java.JavaPlugin
 import org.incendo.interfaces.core.arguments.ArgumentKey
+import org.incendo.interfaces.core.click.ClickContext
 import org.incendo.interfaces.core.click.ClickHandler
 import org.incendo.interfaces.core.transform.InterfaceProperty
 import org.incendo.interfaces.core.transform.types.PaginatedTransform
@@ -27,6 +30,7 @@ import org.incendo.interfaces.paper.PaperInterfaceListeners
 import org.incendo.interfaces.paper.PlayerViewer
 import org.incendo.interfaces.paper.element.ItemStackElement
 import org.incendo.interfaces.paper.pane.ChestPane
+import org.incendo.interfaces.paper.pane.CombinedPane
 import org.incendo.interfaces.paper.type.ChestInterface
 import org.incendo.interfaces.paper.type.CombinedInterface
 import org.incendo.interfaces.paper.type.PlayerInterface
@@ -280,12 +284,29 @@ public class KotlinPlugin : JavaPlugin() {
                     }
                 }
 
+                val soundHandler:
+                    ClickHandler<
+                        CombinedPane,
+                        InventoryClickEvent,
+                        PlayerViewer,
+                        ClickContext<CombinedPane, InventoryClickEvent, PlayerViewer>> =
+                    ClickHandler {
+                    it.viewer()
+                        .player()
+                        .playSound(
+                            net.kyori.adventure.sound.Sound.sound(
+                                Sound.UI_BUTTON_CLICK.key(),
+                                net.kyori.adventure.sound.Sound.Source.MASTER,
+                                1f,
+                                1f))
+                }
+
                 withTransform { view ->
                     view.hotbar(
                         4,
-                        createItemStack(Material.LIME_CONCRETE, text("wooo")).asElement {
-                            it.viewer().player().sendMessage(text("hi"))
-                        })
+                        createItemStack(Material.LIME_CONCRETE, text("wooo"))
+                            .asElement(
+                                soundHandler + { it.viewer().player().sendMessage(text("hi")) }))
                 }
 
                 updates(true, 5)

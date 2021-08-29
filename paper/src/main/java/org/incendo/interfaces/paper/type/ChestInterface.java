@@ -363,8 +363,7 @@ public final class ChestInterface implements
          * @return new builder instance.
          */
         @Override
-        @SafeVarargs
-        public final @NonNull Builder addTransform(
+        public @NonNull Builder addTransform(
                 final int priority,
                 final @NonNull Transform<ChestPane, PlayerViewer> transform,
                 final @NonNull InterfaceProperty<?>... property

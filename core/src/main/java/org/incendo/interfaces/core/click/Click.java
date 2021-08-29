@@ -45,4 +45,11 @@ public interface Click<T> {
      */
     boolean shiftClick();
 
+    /**
+     * Returns true if this click was triggered by an interact event.
+     *
+     * @return true if this click was triggered by an interact event
+     */
+    boolean interact();
+
 }

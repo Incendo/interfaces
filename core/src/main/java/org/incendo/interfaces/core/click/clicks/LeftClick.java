@@ -12,13 +12,16 @@ public final class LeftClick<T> implements Click<T> {
 
     private final T cause;
     private final boolean shift;
+    private final boolean interact;
 
     LeftClick(
             final @NonNull T cause,
-            final boolean shift
+            final boolean shift,
+            final boolean interact
     ) {
         this.cause = cause;
         this.shift = shift;
+        this.interact = interact;
     }
 
     @Override
@@ -39,6 +42,11 @@ public final class LeftClick<T> implements Click<T> {
     @Override
     public boolean shiftClick() {
         return this.shift;
+    }
+
+    @Override
+    public boolean interact() {
+        return this.interact;
     }
 
     @Override

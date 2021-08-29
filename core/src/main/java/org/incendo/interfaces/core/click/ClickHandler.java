@@ -32,7 +32,7 @@ public interface ClickHandler<T extends Pane, U, V extends InterfaceViewer, W ex
             final @NonNull ClickHandler<T, U, V, W> clickHandler
     ) {
         return (ctx) -> {
-            ctx.cancel(true);
+            ctx.status(ClickContext.ClickStatus.DENY);
             clickHandler.accept(ctx);
         };
     }
@@ -48,7 +48,22 @@ public interface ClickHandler<T extends Pane, U, V extends InterfaceViewer, W ex
      */
     static @NonNull <T extends Pane, U, V extends InterfaceViewer,
             W extends ClickContext<T, U, V>> ClickHandler<T, U, V, W> cancel() {
-        return (ctx) -> ctx.cancel(true);
+        return (ctx) -> ctx.status(ClickContext.ClickStatus.DENY);
+    }
+
+    /**
+     * Returns a new {@link ClickHandler} that first executes the current handler, and then
+     * executes the other handler.
+     *
+     * @param other the other handler
+     * @return a combination of this and the given click handler
+     */
+    default @NonNull ClickHandler<T, U, V, W> andThen(final @NonNull ClickHandler<T, U, V, W> other) {
+        final ClickHandler<T, U, V, W> current = this;
+        return (w) -> {
+            current.accept(w);
+            other.accept(w);
+        };
     }
 
 }
