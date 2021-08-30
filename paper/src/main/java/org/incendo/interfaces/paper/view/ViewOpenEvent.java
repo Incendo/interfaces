@@ -1,5 +1,6 @@
 package org.incendo.interfaces.paper.view;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -22,7 +23,7 @@ public final class ViewOpenEvent extends PlayerEvent {
      * @param view the view
      */
     public ViewOpenEvent(final @NotNull InterfaceView<?, PlayerViewer> view) {
-        super(view.viewer().player(), true);
+        super(view.viewer().player(), !Bukkit.isPrimaryThread());
         this.view = view;
     }
 
