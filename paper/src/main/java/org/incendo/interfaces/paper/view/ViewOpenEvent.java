@@ -22,7 +22,7 @@ public final class ViewOpenEvent extends PlayerEvent {
      * @param view the view
      */
     public ViewOpenEvent(final @NotNull InterfaceView<?, PlayerViewer> view) {
-        super(view.viewer().player());
+        super(view.viewer().player(), true);
         this.view = view;
     }
 

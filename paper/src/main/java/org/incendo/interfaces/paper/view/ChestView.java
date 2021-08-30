@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.PluginClassLoader;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -43,14 +44,16 @@ public final class ChestView implements
     private final @NonNull PlayerViewer viewer;
     private final @NonNull ChestInterface backing;
     private final @Nullable PlayerView<?> parent;
-    private final @NonNull Inventory inventory;
     private final @NonNull InterfaceArguments arguments;
     private final @NonNull Component title;
     private @NonNull ChestPane pane;
+    private @NonNull Inventory inventory;
 
     private final @NonNull Map<Integer, Element> current = new HashMap<>();
     private final @NonNull List<ContextCompletedPane<ChestPane>> panes = new ArrayList<>();
     private final Set<Integer> tasks = new HashSet<>();
+
+    private final Plugin plugin;
 
     /**
      * Constructs {@code ChestView}.
@@ -92,7 +95,21 @@ public final class ChestView implements
         this.title = title;
         this.pane = this.updatePane(true);
 
-        this.inventory = this.createInventory();
+        this.plugin = ((PluginClassLoader) this.getClass().getClassLoader()).getPlugin();
+
+        if (Bukkit.isPrimaryThread()) {
+            this.inventory = this.createInventory();
+        } else {
+            try {
+                Bukkit.getScheduler().callSyncMethod(this.plugin, () -> {
+                    this.inventory = this.createInventory();
+
+                    return null;
+                }).wait();
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private @NonNull ChestPane updatePane(final boolean firstApply) {
@@ -130,7 +147,8 @@ public final class ChestView implements
 
     private void updateByProperty(final @NonNull InterfaceProperty<?> interfaceProperty) {
         this.pane = this.updatePaneByProperty(interfaceProperty);
-        this.reapplyInventory();
+
+        this.reApplySync();
     }
 
     private void reapplyInventory() {
@@ -194,7 +212,23 @@ public final class ChestView implements
     @Override
     public void update() {
         this.pane = this.updatePane(false);
-        this.reapplyInventory();
+        this.reApplySync();
+    }
+
+    private void reApplySync() {
+        if (Bukkit.isPrimaryThread()) {
+            this.reapplyInventory();
+        } else {
+            try {
+                Bukkit.getScheduler().callSyncMethod(this.plugin, () -> {
+                    this.reapplyInventory();
+
+                    return null;
+                }).wait();
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     /**

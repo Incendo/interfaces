@@ -181,10 +181,10 @@ public class PaperInterfaceListeners implements Listener {
 
                 if (view instanceof SelfUpdatingInterfaceView) {
                     SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
-                    runnable.runTaskTimer(this.plugin, updatingInterface.updateDelay(), updatingInterface.updateDelay());
+                    runnable.runTaskTimerAsynchronously(this.plugin, updatingInterface.updateDelay(), updatingInterface.updateDelay());
                     this.updatingRunnables.put(selfUpdating, runnable.getTaskId());
                 } else {
-                    runnable.runTaskLater(this.plugin, updatingInterface.updateDelay());
+                    runnable.runTaskLaterAsynchronously(this.plugin, updatingInterface.updateDelay());
                 }
             }
         }
