@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.PluginClassLoader;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -45,14 +46,16 @@ public final class CombinedView implements
     private final @NonNull PlayerViewer viewer;
     private final @NonNull CombinedInterface backing;
     private final @Nullable PlayerView<?> parent;
-    private final @NonNull Inventory inventory;
     private final @NonNull InterfaceArguments arguments;
     private final @NonNull Component title;
+    private @NonNull Inventory inventory;
     private @NonNull CombinedPane pane;
 
     private final @NonNull Map<Vector2, Element> current = new HashMap<>();
     private final @NonNull List<ContextCompletedPane<CombinedPane>> panes = new ArrayList<>();
     private final Set<Integer> tasks = new HashSet<>();
+
+    private final Plugin plugin;
 
     /**
      * Constructs {@code ChestView}.
@@ -94,8 +97,23 @@ public final class CombinedView implements
         this.title = title;
         this.pane = this.updatePane(true);
 
-        this.inventory = this.createInventory();
-        this.reapplyInventory();
+        this.plugin = ((PluginClassLoader) this.getClass().getClassLoader()).getPlugin();
+
+        if (Bukkit.isPrimaryThread()) {
+            this.inventory = this.createInventory();
+            this.reapplyInventory();
+        } else {
+            try {
+                Bukkit.getScheduler().callSyncMethod(this.plugin, () -> {
+                    this.inventory = this.createInventory();
+                    this.reapplyInventory();
+
+                    return null;
+                }).wait();
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private @NonNull CombinedPane updatePane(final boolean firstApply) {
@@ -133,7 +151,7 @@ public final class CombinedView implements
 
     private void updateByProperty(final @NonNull InterfaceProperty<?> interfaceProperty) {
         this.pane = this.updatePaneByProperty(interfaceProperty);
-        this.reapplyInventory();
+        this.reApplySync();
     }
 
     private void reapplyInventory() {
@@ -235,7 +253,23 @@ public final class CombinedView implements
     @Override
     public void update() {
         this.pane = this.updatePane(false);
-        this.reapplyInventory();
+        this.reApplySync();
+    }
+
+    private void reApplySync() {
+        if (Bukkit.isPrimaryThread()) {
+            this.reapplyInventory();
+        } else {
+            try {
+                Bukkit.getScheduler().callSyncMethod(this.plugin, () -> {
+                    this.reapplyInventory();
+
+                    return null;
+                }).wait();
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     /**

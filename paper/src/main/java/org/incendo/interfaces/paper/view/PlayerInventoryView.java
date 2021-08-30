@@ -4,6 +4,8 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.PluginClassLoader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.Interface;
@@ -42,6 +44,8 @@ public final class PlayerInventoryView implements
 
     private final @NonNull Map<Integer, Element> current = new HashMap<>();
 
+    private final Plugin plugin;
+
     /**
      * Constructs {@code PlayerInventoryView}.
      *
@@ -59,6 +63,8 @@ public final class PlayerInventoryView implements
         if (oldView != null) {
             oldView.close();
         }
+
+        this.plugin = ((PluginClassLoader) getClass().getClassLoader()).getPlugin();
 
         // Store the new view.
         INVENTORY_VIEW_MAP.put(viewer.player(), this);
@@ -169,6 +175,22 @@ public final class PlayerInventoryView implements
     public void update() {
         this.pane = this.updatePane(false);
 
+        if (Bukkit.isPrimaryThread()) {
+            this.reapplyInventory();
+        } else {
+            try {
+                Bukkit.getScheduler().callSyncMethod(this.plugin, () -> {
+                    this.reapplyInventory();
+
+                    return null;
+                }).wait();
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void reapplyInventory() {
         final @NonNull List<ItemStackElement<PlayerPane>> elements = this.pane.inventoryElements();
 
         for (int i = 0; i < elements.size(); i++) {
