@@ -109,7 +109,7 @@ public final class CombinedView implements
                     this.reapplyInventory();
 
                     return null;
-                }).wait();
+                }).get();
             } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
@@ -265,7 +265,7 @@ public final class CombinedView implements
                     this.reapplyInventory();
 
                     return null;
-                }).wait();
+                }).get();
             } catch (final Exception e) {
                 throw new RuntimeException(e);
             }

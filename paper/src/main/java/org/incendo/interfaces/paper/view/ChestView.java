@@ -105,7 +105,7 @@ public final class ChestView implements
                     this.inventory = this.createInventory();
 
                     return null;
-                }).wait();
+                }).get();
             } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
@@ -224,7 +224,7 @@ public final class ChestView implements
                     this.reapplyInventory();
 
                     return null;
-                }).wait();
+                }).get();
             } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
