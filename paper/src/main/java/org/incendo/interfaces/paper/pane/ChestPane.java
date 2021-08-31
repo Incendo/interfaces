@@ -102,6 +102,10 @@ public final class ChestPane implements GridPane<ChestPane, ItemStackElement<Che
 
     @Override
     public @NonNull ItemStackElement<ChestPane> element(final int x, final int y) {
+        if (y >= this.rows || x >= 8) {
+            throw new IllegalArgumentException("Cannot access element outside of the bounds of this chest pane.");
+        }
+
         return this.elements.get(Vector2.at(x, y));
     }
 

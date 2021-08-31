@@ -407,19 +407,20 @@ public class PaperInterfaceListeners implements Listener {
         );
 
         ChestView chestView = (ChestView) holder;
-        // Handle parent interface click event
-        chestView.backing().clickHandler().accept(context);
 
         // Handle element click event
         if (event.getSlotType() == InventoryType.SlotType.CONTAINER) {
             int slot = event.getSlot();
             int x = slot % 9;
             int y = slot / 9;
+            ChestPane pane = chestView.pane();
 
-            chestView.pane()
-                    .element(x, y)
-                    .clickHandler()
-                    .accept(context);
+            if (y < pane.rows()) {
+                // Handle parent interface click event
+                chestView.backing().clickHandler().accept(context);
+
+                pane.element(x, y).clickHandler().accept(context);
+            }
         }
     }
 
