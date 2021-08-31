@@ -193,6 +193,8 @@ public final class PlayerInventoryView implements
     private void reapplyInventory() {
         final @NonNull List<ItemStackElement<PlayerPane>> elements = this.pane.inventoryElements();
 
+        boolean changed = false;
+
         for (int i = 0; i < elements.size(); i++) {
             final @Nullable Element currentElement = this.current.get(i);
             final @NonNull ItemStackElement<PlayerPane> element = elements.get(i);
@@ -203,6 +205,12 @@ public final class PlayerInventoryView implements
 
             this.current.put(i, element);
             this.inventory.setItem(i, element.itemStack());
+
+            changed = true;
+        }
+
+        if (changed) {
+            this.viewer.player().updateInventory();
         }
     }
 
