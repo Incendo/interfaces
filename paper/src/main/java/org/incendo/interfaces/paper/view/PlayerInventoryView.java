@@ -13,6 +13,7 @@ import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.transform.InterfaceProperty;
+import org.incendo.interfaces.core.transform.InterruptUpdateException;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
@@ -75,7 +76,11 @@ public final class PlayerInventoryView implements
         this.arguments = argument;
         this.inventory = viewer.player().getInventory();
 
-        this.pane = this.updatePane(true);
+        try {
+            this.pane = this.updatePane(true);
+        } catch (final InterruptUpdateException ignored) {
+            this.pane = new PlayerPane();
+        }
     }
 
     /**
@@ -174,7 +179,11 @@ public final class PlayerInventoryView implements
 
     @Override
     public void update() {
-        this.pane = this.updatePane(false);
+        try {
+            this.pane = this.updatePane(false);
+        } catch (final InterruptUpdateException ignored) {
+            return;
+        }
 
         if (Bukkit.isPrimaryThread()) {
             this.reapplyInventory();

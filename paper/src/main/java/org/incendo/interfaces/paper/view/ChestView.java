@@ -12,6 +12,7 @@ import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.transform.InterfaceProperty;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.element.Element;
+import org.incendo.interfaces.core.transform.InterruptUpdateException;
 import org.incendo.interfaces.core.util.Vector2;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
@@ -93,7 +94,12 @@ public final class ChestView implements
         this.backing = backing;
         this.arguments = arguments;
         this.title = title;
-        this.pane = this.updatePane(true);
+
+        try {
+            this.pane = this.updatePane(true);
+        } catch (final InterruptUpdateException ignored) {
+            this.pane = new ChestPane(this.backing.rows());
+        }
 
         this.plugin = ((PluginClassLoader) this.getClass().getClassLoader()).getPlugin();
 
@@ -146,8 +152,11 @@ public final class ChestView implements
     }
 
     private void updateByProperty(final @NonNull InterfaceProperty<?> interfaceProperty) {
-        this.pane = this.updatePaneByProperty(interfaceProperty);
-
+        try {
+            this.pane = this.updatePaneByProperty(interfaceProperty);
+        } catch (final InterruptUpdateException ignored) {
+            return;
+        }
         this.reApplySync();
     }
 
@@ -211,7 +220,11 @@ public final class ChestView implements
 
     @Override
     public void update() {
-        this.pane = this.updatePane(false);
+        try {
+            this.pane = this.updatePane(false);
+        } catch (final InterruptUpdateException ignored) {
+            return;
+        }
         this.reApplySync();
     }
 
