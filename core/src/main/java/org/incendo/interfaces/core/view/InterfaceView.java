@@ -4,6 +4,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.pane.Pane;
+import org.incendo.interfaces.core.transform.InterruptUpdateException;
 
 /**
  * Represents a currently open interface (a "view").
@@ -66,7 +67,10 @@ public interface InterfaceView<T extends Pane, U extends InterfaceViewer> {
      */
     default void update() {
         if (this.viewing()) {
-            this.backing().open(this.viewer(), this.arguments());
+            try {
+                this.backing().open(this.viewer(), this.arguments());
+            } catch (final InterruptUpdateException ignored) {
+            }
         }
     }
 
