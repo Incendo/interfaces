@@ -3,6 +3,7 @@ package org.incendo.interfaces.paper.view;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.PluginClassLoader;
@@ -209,7 +210,7 @@ public final class PlayerInventoryView implements
             changed = true;
         }
 
-        if (changed) {
+        if (changed && this.viewer.player().getOpenInventory().getTopInventory().getType() == InventoryType.CRAFTING) {
             this.viewer.player().updateInventory();
         }
     }
