@@ -3,6 +3,8 @@ package org.incendo.interfaces.paper.view;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.PluginClassLoader;
@@ -165,6 +167,11 @@ public final class CombinedView implements
     }
 
     private void reapplyInventory() {
+        // Double check that the player is actually viewing this view.
+        if (!this.isOpen()) {
+            return;
+        }
+
         Map<Vector2, ItemStackElement<CombinedPane>> elements = this.pane.inventoryElements();
 
         for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
@@ -187,7 +194,19 @@ public final class CombinedView implements
         this.reapplyPlayerInventory();
     }
 
+    private boolean isOpen() {
+        final InventoryView open = this.viewer.player().getOpenInventory();
+        final Inventory topInventory = open.getTopInventory();
+        final InventoryHolder inventoryHolder = topInventory.getHolder();
+        return this.equals(inventoryHolder);
+    }
+
     private void reapplyPlayerInventory() {
+        // Double check that the player is actually viewing this view.
+        if (!this.isOpen()) {
+            return;
+        }
+
         Map<Vector2, ItemStackElement<CombinedPane>> elements = this.pane.inventoryElements();
         Inventory playerInventory = this.viewer.player().getOpenInventory().getBottomInventory();
 
