@@ -281,6 +281,11 @@ public final class CombinedView implements
 
     @Override
     public void update() {
+
+        if (!this.viewer.player().isOnline()) {
+            return;
+        }
+
         try {
             this.pane = this.updatePane(false);
         } catch (final InterruptUpdateException ignored) {
