@@ -2,6 +2,7 @@ package org.incendo.interfaces.kotlin.paper
 
 import org.incendo.interfaces.core.element.Element
 import org.incendo.interfaces.core.pane.Pane
+import org.incendo.interfaces.core.util.Vector2
 import org.incendo.interfaces.paper.element.ItemStackElement
 import org.incendo.interfaces.paper.pane.CombinedPane
 import org.incendo.interfaces.paper.view.CombinedView
@@ -35,6 +36,17 @@ public data class MutableCombinedPaneView(
     public operator fun set(x: Int, y: Int, element: ItemStackElement<CombinedPane>): Unit =
         mutate {
             element(element, x, y)
+        }
+
+    /**
+     * Sets an element at the given position.
+     *
+     * @param position the vector coordinate
+     * @param element the element
+     */
+    public operator fun set(position: Vector2, element: ItemStackElement<CombinedPane>): Unit =
+        mutate {
+            element(element, position.x, position.y)
         }
 
     public fun hotbar(x: Int): ItemStackElement<CombinedPane> = internalPane.hotbar(x)
