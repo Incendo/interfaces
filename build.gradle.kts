@@ -10,8 +10,9 @@ plugins {
     id("net.kyori.indra.checkstyle") apply false
     id("xyz.jpenilla.run-paper") apply false
 
-    // Kotlin plugin prefers to be applied to parent when it's used in multiple projects.
-    kotlin("jvm") version "1.4.31" apply false
+    // Kotlin plugin prefers to be applied to parent when it's used in multiple sub-modules.
+    kotlin("jvm") version "1.5.31" apply false
+    id("org.jlleitschuh.gradle.ktlint") apply false
 }
 
 group = "org.incendo.interfaces"
