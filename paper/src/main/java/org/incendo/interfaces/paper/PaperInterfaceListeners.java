@@ -345,7 +345,7 @@ public class PaperInterfaceListeners implements Listener {
 
         if (view instanceof CombinedView) {
             //todo: Other ways we could handle this?
-            view.viewer().player().getInventory().clear();
+            view.viewer().player().getInventory().setStorageContents(new ItemStack[36]);
         }
 
         if (view instanceof PlayerInventoryView) {
