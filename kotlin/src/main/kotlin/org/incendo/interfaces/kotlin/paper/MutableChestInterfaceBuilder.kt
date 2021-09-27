@@ -42,8 +42,8 @@ public class MutableChestInterfaceBuilder :
             InventoryClickEvent,
             PlayerViewer,
             InventoryClickContext<ChestPane, ChestView>>
-        get() = internalBuilder.clickHandler()
-        set(value) = mutate { internalBuilder.clickHandler(value) }
+            get() = internalBuilder.clickHandler()
+            set(value) = mutate { internalBuilder.clickHandler(value) }
     // </editor-fold>
 
     // <editor-fold desc="Mutating Functions">
@@ -102,7 +102,8 @@ public class MutableChestInterfaceBuilder :
         return@mutate internalBuilder.addTransform(
             priority,
             transform as (ChestPane, InterfaceView<ChestPane, *>) -> ChestPane,
-            *properties)
+            *properties
+        )
     }
 
     /**

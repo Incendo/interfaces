@@ -52,7 +52,7 @@ public data class MutablePlayerPaneView(
             internalPane.getAdjusted(slot, slotType)
 
         /**
-         * Returns the element at the given [x],[y]-coordinates.
+         * Returns the element at the given [x], [y]-coordinates.
          *
          * @return the element
          */
@@ -70,7 +70,7 @@ public data class MutablePlayerPaneView(
         }
 
         /**
-         * Sets the element at the given [x],[y]-coordinates.
+         * Sets the element at the given [x], [y]-coordinates.
          *
          * @param x the x coordinate
          * @param y the y coordinate

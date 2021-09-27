@@ -32,8 +32,8 @@ public class MutablePlayerInterfaceBuilder :
             InventoryClickEvent,
             PlayerViewer,
             InventoryClickContext<PlayerPane, PlayerInventoryView>>
-        get() = internalBuilder.clickHandler()
-        set(value) = mutate { internalBuilder.clickHandler(value) }
+            get() = internalBuilder.clickHandler()
+            set(value) = mutate { internalBuilder.clickHandler(value) }
     // </editor-fold>
 
     // <editor-fold desc="Mutating Functions">
@@ -78,7 +78,8 @@ public class MutablePlayerInterfaceBuilder :
         internalBuilder.addTransform(
             priority,
             transform as (PlayerPane, InterfaceView<PlayerPane, *>) -> PlayerPane,
-            *properties)
+            *properties
+        )
     }
 
     /**
