@@ -1,7 +1,7 @@
 package org.incendo.interfaces.kotlin
 
-import kotlin.reflect.KProperty
 import org.incendo.interfaces.core.transform.InterfaceProperty
+import kotlin.reflect.KProperty
 
 /** Setter delegate. */
 public operator fun <T> InterfaceProperty<T>.setValue(

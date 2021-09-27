@@ -34,8 +34,8 @@ public data class MutableCombinedPaneView(
      */
     public operator fun set(x: Int, y: Int, element: ItemStackElement<CombinedPane>): Unit =
         mutate {
-        element(element, x, y)
-    }
+            element(element, x, y)
+        }
 
     public fun hotbar(x: Int): ItemStackElement<CombinedPane> = internalPane.hotbar(x)
 

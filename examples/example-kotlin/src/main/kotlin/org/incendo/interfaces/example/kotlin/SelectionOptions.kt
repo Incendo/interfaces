@@ -17,11 +17,13 @@ public enum class SelectionOptions(
             6 to 2,
             6 to 3,
             6 to 4,
-        )),
+        )
+    ),
     TWO(
         2,
         Material.GOLD_BLOCK,
-        arrayOf(5 to 0, 6 to 0, 4 to 1, 7 to 1, 6 to 2, 5 to 3, 4 to 4, 5 to 4, 6 to 4, 7 to 4)),
+        arrayOf(5 to 0, 6 to 0, 4 to 1, 7 to 1, 6 to 2, 5 to 3, 4 to 4, 5 to 4, 6 to 4, 7 to 4)
+    ),
     THREE(
         3,
         Material.DIAMOND_BLOCK,
@@ -39,5 +41,7 @@ public enum class SelectionOptions(
             4 to 4,
             5 to 4,
             6 to 4,
-            7 to 4))
+            7 to 4
+        )
+    )
 }
