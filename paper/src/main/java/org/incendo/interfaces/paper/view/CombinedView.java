@@ -164,7 +164,7 @@ public final class CombinedView implements
         Inventory playerInventory = this.viewer.player().getOpenInventory().getBottomInventory();
 
         for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
-            for (int y = this.backing.chestRows(); y < this.backing.totalRows(); y++) {
+            for (int y = this.backing.chestRows(); y < this.backing.totalRows() - 1; y++) {
                 Vector2 position = Vector2.at(x, y);
 
                 int playerY = y - this.backing.chestRows() + 1;
