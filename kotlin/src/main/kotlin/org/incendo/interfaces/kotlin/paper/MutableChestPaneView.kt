@@ -2,6 +2,7 @@ package org.incendo.interfaces.kotlin.paper
 
 import org.incendo.interfaces.core.element.Element
 import org.incendo.interfaces.core.pane.Pane
+import org.incendo.interfaces.core.util.Vector2
 import org.incendo.interfaces.paper.element.ItemStackElement
 import org.incendo.interfaces.paper.pane.ChestPane
 import org.incendo.interfaces.paper.view.ChestView
@@ -35,6 +36,17 @@ public data class MutableChestPaneView(
     public operator fun set(x: Int, y: Int, element: ItemStackElement<ChestPane>): Unit = mutate {
         element(element, x, y)
     }
+
+    /**
+     * Sets an element at the given position.
+     *
+     * @param position the vector coordinate
+     * @param element the element
+     */
+    public operator fun set(position: Vector2, element: ItemStackElement<ChestPane>): Unit =
+        mutate {
+            element(element, position.x, position.y)
+        }
 
     private fun mutate(mutator: ChestPane.() -> ChestPane) {
         this.internalPane = internalPane.mutator()

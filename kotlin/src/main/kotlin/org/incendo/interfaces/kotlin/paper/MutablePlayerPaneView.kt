@@ -79,5 +79,16 @@ public data class MutablePlayerPaneView(
         public operator fun set(x: Int, y: Int, element: ItemStackElement<PlayerPane>) {
             set(PaperUtils.gridToSlot(Vector2.at(x, y)), element)
         }
+
+        /**
+         * Sets an element at the given position.
+         *
+         * @param position the vector coordinate
+         * @param element the element
+         */
+        public operator fun set(position: Vector2, element: ItemStackElement<PlayerPane>): Unit =
+            mutate {
+                element(element, position.x, position.y)
+            }
     }
 }
