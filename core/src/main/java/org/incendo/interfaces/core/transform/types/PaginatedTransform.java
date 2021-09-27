@@ -70,6 +70,15 @@ public final class PaginatedTransform<S extends Element, T extends GridPane<T, S
         return new InterfaceProperty[]{this.pageProperty};
     }
 
+    /**
+     * Get the property containing the pagination's current page.
+     *
+     * @return an Integer InterfaceProperty
+     */
+    public @NonNull InterfaceProperty<Integer> pageProperty() {
+        return this.pageProperty;
+    }
+
     @Override
     @SuppressWarnings("ALL")
     public T apply(
