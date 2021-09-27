@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
     id("org.jetbrains.dokka")
-    id("com.ncorti.ktfmt.gradle")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 tasks {
@@ -14,8 +14,8 @@ tasks {
     }
 }
 
-ktfmt {
-    dropboxStyle()
+ktlint {
+    version.set("0.42.1")
 }
 
 kotlin {
