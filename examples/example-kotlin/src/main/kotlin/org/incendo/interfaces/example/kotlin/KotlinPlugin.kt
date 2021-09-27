@@ -311,7 +311,7 @@ public class KotlinPlugin : JavaPlugin() {
                 }
             }
 
-            updates(true, 5)
+//            updates(true, 5)
         }
     }
 

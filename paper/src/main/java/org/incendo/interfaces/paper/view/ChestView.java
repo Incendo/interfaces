@@ -162,16 +162,20 @@ public final class ChestView implements
         this.reApplySync();
     }
 
-    private boolean isOpen() {
+    private boolean isOpen(final boolean firstOpen) {
+        if (firstOpen) {
+            return true;
+        }
+
         final InventoryView open = this.viewer.player().getOpenInventory();
         final Inventory topInventory = open.getTopInventory();
         final InventoryHolder inventoryHolder = topInventory.getHolder();
         return this.equals(inventoryHolder);
     }
 
-    private void reapplyInventory() {
+    private void reapplyInventory(final boolean firstOpen) {
         // Double check that the player is actually viewing this view.
-        if (!this.isOpen()) {
+        if (!this.isOpen(firstOpen)) {
             return;
         }
 
@@ -244,11 +248,11 @@ public final class ChestView implements
 
     private void reApplySync() {
         if (Bukkit.isPrimaryThread()) {
-            this.reapplyInventory();
+            this.reapplyInventory(false);
         } else {
             try {
                 Bukkit.getScheduler().callSyncMethod(this.plugin, () -> {
-                    this.reapplyInventory();
+                    this.reapplyInventory(false);
 
                     return null;
                 }).get();
