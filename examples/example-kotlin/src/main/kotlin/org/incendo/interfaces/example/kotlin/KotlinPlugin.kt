@@ -362,7 +362,7 @@ public class KotlinPlugin : JavaPlugin() {
                     )
                 )
 
-            when (args[0].toLowerCase()) {
+            when (args[0].lowercase()) {
                 "chest" -> sender.open(
                     exampleChest,
                     arguments,
