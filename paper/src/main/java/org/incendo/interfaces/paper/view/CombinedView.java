@@ -109,12 +109,12 @@ public final class CombinedView implements
 
         if (Bukkit.isPrimaryThread()) {
             this.inventory = this.createInventory();
-            this.reapplyInventory();
+            this.reapplyInventory(true);
         } else {
             try {
                 Bukkit.getScheduler().callSyncMethod(this.plugin, () -> {
                     this.inventory = this.createInventory();
-                    this.reapplyInventory();
+                    this.reapplyInventory(true);
 
                     return null;
                 }).get();
@@ -166,9 +166,9 @@ public final class CombinedView implements
         this.reApplySync();
     }
 
-    private void reapplyInventory() {
+    private void reapplyInventory(final boolean firstOpen) {
         // Double check that the player is actually viewing this view.
-        if (!this.isOpen()) {
+        if (!this.isOpen(firstOpen)) {
             return;
         }
 
@@ -191,19 +191,23 @@ public final class CombinedView implements
             }
         }
 
-        this.reapplyPlayerInventory();
+        this.reapplyPlayerInventory(firstOpen);
     }
 
-    private boolean isOpen() {
+    private boolean isOpen(final boolean firstOpen) {
+        if (firstOpen) {
+            return true;
+        }
+
         final InventoryView open = this.viewer.player().getOpenInventory();
         final Inventory topInventory = open.getTopInventory();
         final InventoryHolder inventoryHolder = topInventory.getHolder();
         return this.equals(inventoryHolder);
     }
 
-    private void reapplyPlayerInventory() {
+    private void reapplyPlayerInventory(final boolean firstOpen) {
         // Double check that the player is actually viewing this view.
-        if (!this.isOpen()) {
+        if (!this.isOpen(firstOpen)) {
             return;
         }
 
@@ -291,11 +295,11 @@ public final class CombinedView implements
 
     private void reApplySync() {
         if (Bukkit.isPrimaryThread()) {
-            this.reapplyInventory();
+            this.reapplyInventory(false);
         } else {
             try {
                 Bukkit.getScheduler().callSyncMethod(this.plugin, () -> {
-                    this.reapplyInventory();
+                    this.reapplyInventory(false);
 
                     return null;
                 }).get();
@@ -344,7 +348,7 @@ public final class CombinedView implements
     @Override
     public void open() {
         this.viewer.open(this);
-        this.reapplyPlayerInventory();
+        this.reapplyPlayerInventory(true);
         this.emitEvent();
     }
 
