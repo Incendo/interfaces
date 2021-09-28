@@ -460,6 +460,10 @@ public class PaperInterfaceListeners implements Listener {
         Inventory clickedInventory = event.getClickedInventory();
         boolean isCraftGrid = clickedInventory instanceof CraftingInventory;
 
+        if (isCraftGrid) {
+            return;
+        }
+
         if (PlayerInventoryView.forPlayer((Player) event.getWhoClicked()) == null) {
             return;
         }
