@@ -102,7 +102,7 @@ public final class InventoryClickContext<T extends Pane, U extends InterfaceView
 
     @Override
     public @NonNull ClickStatus status() {
-        if (this.event.isCancelled()) {
+        if (!this.event.isCancelled()) {
             return ClickStatus.ALLOW;
         } else {
             return ClickStatus.DENY;
