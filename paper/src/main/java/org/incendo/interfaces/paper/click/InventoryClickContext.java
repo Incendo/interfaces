@@ -34,11 +34,11 @@ public final class InventoryClickContext<T extends Pane, U extends InterfaceView
     private final @NonNull Click<InventoryClickEvent> click;
 
     /**
-     * Constructs {@code ChestClickContext}.
+     * Constructs {@code InventoryClickContext}.
      *
      * @param event    the event
-     * @param player   whether or not the player clicked their own inventory
-     * @param interact whether or nor the click was triggered by an interact event
+     * @param player   whether the player clicked their own inventory
+     * @param interact whether the click was triggered by an interact event
      */
     @SuppressWarnings("unchecked")
     public InventoryClickContext(
@@ -49,7 +49,10 @@ public final class InventoryClickContext<T extends Pane, U extends InterfaceView
         this.event = event;
 
         final @NonNull Inventory inventory = event.getInventory();
-        if (inventory.getType() == InventoryType.CHEST) {
+
+        if (player) {
+            this.view = (U) Objects.requireNonNull(PlayerInventoryView.forPlayer((Player) event.getWhoClicked()));
+        } else if (inventory.getType() == InventoryType.CHEST) {
             InventoryHolder holder = inventory.getHolder();
 
             if (holder instanceof CombinedView) {
@@ -65,8 +68,6 @@ public final class InventoryClickContext<T extends Pane, U extends InterfaceView
                     this.view = (U) inventory.getHolder();
                 }
             }
-        } else if (player) {
-            this.view = (U) Objects.requireNonNull(PlayerInventoryView.forPlayer((Player) event.getWhoClicked()));
         } else {
             throw new IllegalArgumentException("Inventory type " + inventory.getType() + " is not a valid inventory.");
         }
