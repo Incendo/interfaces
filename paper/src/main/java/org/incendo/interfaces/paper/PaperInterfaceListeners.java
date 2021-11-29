@@ -44,6 +44,7 @@ import org.incendo.interfaces.paper.pane.CombinedPane;
 import org.incendo.interfaces.paper.pane.PlayerPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
 import org.incendo.interfaces.paper.type.CloseHandler;
+import org.incendo.interfaces.paper.type.CombinedInterface;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.CombinedView;
 import org.incendo.interfaces.paper.view.PlayerInventoryView;
@@ -214,6 +215,14 @@ public class PaperInterfaceListeners implements Listener {
 
                 for (final CloseHandler<ChestPane> closeHandler : chestInterface.closeHandlers()) {
                     closeHandler.accept(event, (PlayerView<ChestPane>) playerView);
+                }
+            }
+
+            if (playerView.backing() instanceof CombinedInterface) {
+                final CombinedInterface combinedInterface = (CombinedInterface) playerView.backing();
+
+                for (final CloseHandler<CombinedPane> closeHandler : combinedInterface.closeHandlers()) {
+                    closeHandler.accept(event, (PlayerView<CombinedPane>) playerView);
                 }
             }
         }
