@@ -179,7 +179,6 @@ public final class PlayerInventoryView implements
 
     @Override
     public void update() {
-
         if (!this.viewer.player().isOnline()) {
             return;
         }
