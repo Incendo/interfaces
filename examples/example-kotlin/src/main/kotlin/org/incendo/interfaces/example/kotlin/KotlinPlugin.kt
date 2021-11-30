@@ -64,6 +64,7 @@ public class KotlinPlugin : JavaPlugin() {
     private lateinit var examplePaginated: ChestInterface
     private lateinit var exampleSliding: ChestInterface
     private lateinit var exampleCombined: CombinedInterface
+    private lateinit var exampleCombined2: CombinedInterface
 
     private var _selectedOption: InterfaceProperty<SelectionOptions> =
         InterfaceProperty.of(SelectionOptions.ONE)
@@ -274,6 +275,11 @@ public class KotlinPlugin : JavaPlugin() {
 
             clickHandler(canceling())
 
+            withCloseHandler { event, view ->
+                Bukkit.broadcast(text("hallo"))
+                Exception().printStackTrace()
+            }
+
             val soundHandler:
                 ClickHandler<
                     CombinedPane,
@@ -312,6 +318,21 @@ public class KotlinPlugin : JavaPlugin() {
             }
 
 //            updates(true, 5)
+        }
+
+        exampleCombined2 = buildCombinedInterface {
+            chestRows = 2
+
+            withCloseHandler { event, view ->
+                Bukkit.broadcast(text("hey"))
+                Exception().printStackTrace()
+            }
+
+            withTransform { view ->
+                view[0, 0] = ItemStackElement(ItemStack(Material.GRANITE)) {
+                    exampleCombined.open(view.viewer())
+                }
+            }
         }
     }
 
@@ -373,6 +394,7 @@ public class KotlinPlugin : JavaPlugin() {
                 "paginated" -> sender.open(examplePaginated, arguments)
                 "sliding" -> sender.open(exampleSliding, arguments)
                 "combined" -> sender.open(exampleCombined, arguments)
+                "combined2" -> sender.open(exampleCombined2, arguments)
                 "close" -> {
                     sender.closeInventory()
                     // Also close their player interface, if they have one open.

@@ -339,7 +339,12 @@ public class PaperInterfaceListeners implements Listener {
             SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
 
             if (selfUpdating.updates()) {
-                Bukkit.getScheduler().cancelTask(this.updatingRunnables.get(selfUpdating));
+                Integer id = this.updatingRunnables.get(selfUpdating);
+
+                if (id != null) {
+                    Bukkit.getScheduler().cancelTask(id);
+                }
+
                 this.updatingRunnables.remove(selfUpdating);
             }
         }
