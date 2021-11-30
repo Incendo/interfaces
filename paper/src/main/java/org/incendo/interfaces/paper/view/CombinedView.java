@@ -281,7 +281,6 @@ public final class CombinedView implements
 
     @Override
     public void update() {
-
         if (!this.viewer.player().isOnline()) {
             return;
         }
