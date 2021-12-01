@@ -205,7 +205,6 @@ public final class ChestView implements
             final @NonNull InterfaceArguments argument
     ) {
         InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
-        view.open();
 
         @SuppressWarnings("unchecked")
         C typedView = (C) view;
@@ -219,7 +218,6 @@ public final class ChestView implements
             @NonNull final Component title
     ) {
         InterfaceView<?, PlayerViewer> view = backing.open(this, argument, title);
-        view.open();
 
         @SuppressWarnings("unchecked")
         C typedView = (C) view;

@@ -252,7 +252,6 @@ public final class CombinedView implements
             final @NonNull InterfaceArguments argument
     ) {
         InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
-        view.open();
 
         @SuppressWarnings("unchecked")
         C typedView = (C) view;
@@ -266,7 +265,6 @@ public final class CombinedView implements
             @NonNull final Component title
     ) {
         InterfaceView<?, PlayerViewer> view = backing.open(this, argument, title);
-        view.open();
 
         @SuppressWarnings("unchecked")
         C typedView = (C) view;
