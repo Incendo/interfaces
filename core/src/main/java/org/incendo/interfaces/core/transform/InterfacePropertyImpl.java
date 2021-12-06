@@ -47,7 +47,7 @@ class InterfacePropertyImpl<T> implements InterfaceProperty<T> {
             return false;
         }
         final InterfacePropertyImpl<?> that = (InterfacePropertyImpl<?>) o;
-        return this.value.equals(that.value);
+        return Objects.equals(this.value, that.value);
     }
 
     @Override
