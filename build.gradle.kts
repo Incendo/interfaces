@@ -11,7 +11,7 @@ plugins {
     id("xyz.jpenilla.run-paper") apply false
 
     // Kotlin plugin prefers to be applied to parent when it's used in multiple sub-modules.
-    kotlin("jvm") version "1.5.31" apply false
+    kotlin("jvm") version "1.6.10" apply false
     id("org.jlleitschuh.gradle.ktlint") apply false
 }
 
