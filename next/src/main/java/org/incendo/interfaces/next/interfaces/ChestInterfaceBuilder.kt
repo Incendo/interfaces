@@ -3,7 +3,7 @@ package org.incendo.interfaces.next.interfaces
 import org.incendo.interfaces.next.pane.ChestPane
 import org.incendo.interfaces.next.transform.Transform
 
-public class ChestInterfaceBuilder internal constructor() : Interface.Builder<ChestPane, ChestInterface>() {
+public class ChestInterfaceBuilder internal constructor() : InterfaceBuilder<ChestPane, ChestInterface>() {
 
     public var rows: Int = 0
 

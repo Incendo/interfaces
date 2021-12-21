@@ -1,14 +1,15 @@
 package org.incendo.interfaces.next.interfaces
 
+import org.incendo.interfaces.next.element.Element
 import org.incendo.interfaces.next.pane.Pane
+import org.incendo.interfaces.next.transform.AppliedTransform
 import org.incendo.interfaces.next.transform.Transform
+import org.incendo.interfaces.next.utilities.IncrementingInteger
+import org.incendo.interfaces.next.utilities.LayeredGridMap
 
-public interface Interface<P : Pane> {
+public abstract class Interface<P : Pane>(pendingTransforms: Collection<Transform>) {
 
-    public val transforms: Collection<Transform>
+    private val transformCounter by IncrementingInteger()
+    private val transforms = pendingTransforms.map { AppliedTransform(transformCounter, it) }
 
-    public abstract class Builder<P : Pane, T : Interface<P>> {
-
-        public abstract fun build(): T
-    }
 }
