@@ -1,17 +1,19 @@
 package org.incendo.interfaces.next.interfaces
 
 import org.incendo.interfaces.next.pane.ChestPane
-import org.incendo.interfaces.next.transform.PrioritizedTransform
+import org.incendo.interfaces.next.transform.AppliedTransform
 import org.incendo.interfaces.next.transform.Transform
+import org.incendo.interfaces.next.utilities.IncrementingInteger
 
 public class ChestInterfaceBuilder internal constructor() : InterfaceBuilder<ChestPane, ChestInterface>() {
 
     public var rows: Int = 0
 
-    private val transforms: MutableCollection<PrioritizedTransform> = mutableListOf()
+    private val transformCounter by IncrementingInteger()
+    private val transforms: MutableCollection<AppliedTransform> = mutableListOf()
 
-    public fun withTransform(priority: Int = 0, transform: Transform) {
-        transforms.add(PrioritizedTransform(priority, transform))
+    public fun withTransform(transform: Transform) {
+        transforms.add(AppliedTransform(transformCounter, transform))
     }
 
     public override fun build(): ChestInterface = ChestInterface(
