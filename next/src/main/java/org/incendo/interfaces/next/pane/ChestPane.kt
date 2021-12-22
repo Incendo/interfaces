@@ -1,3 +1,3 @@
 package org.incendo.interfaces.next.pane
 
-public class ChestPane : Pane
+public class ChestPane : Pane()
