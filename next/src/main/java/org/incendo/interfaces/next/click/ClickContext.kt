@@ -1,6 +1,10 @@
 package org.incendo.interfaces.next.click
 
-public interface ClickContext {
+import org.bukkit.entity.Player
+import org.incendo.interfaces.next.view.InterfaceView
 
-    public var cancelled: Boolean
-}
+public data class ClickContext(
+    public var cancelled: Boolean,
+    public val player: Player,
+    public val view: InterfaceView<*>
+)

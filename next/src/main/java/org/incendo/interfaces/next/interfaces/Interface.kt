@@ -2,20 +2,13 @@ package org.incendo.interfaces.next.interfaces
 
 import org.incendo.interfaces.next.pane.Pane
 import org.incendo.interfaces.next.transform.AppliedTransform
-import org.incendo.interfaces.next.utilities.CollapsablePaneMap
+import org.incendo.interfaces.next.view.InterfaceView
 
-public abstract class Interface<P : Pane> internal constructor(
-    internal val transforms: Collection<AppliedTransform>
-) {
+public interface Interface<P : Pane> {
 
-    private val panes = CollapsablePaneMap()
+    public val transforms: Collection<AppliedTransform>
 
-    internal fun applyTransform(transform: AppliedTransform) {
-        val pane = createPane()
-        transform(pane)
+    public fun createPane(): P
 
-        panes[transform.priority] = pane
-    }
-
-    protected abstract fun createPane(): P
+    public fun open(): InterfaceView<P>
 }

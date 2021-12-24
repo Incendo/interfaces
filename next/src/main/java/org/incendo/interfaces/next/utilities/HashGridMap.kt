@@ -12,6 +12,15 @@ public class HashGridMap<V> : GridMap<V> {
         set(vector.y, vector.x, value)
     }
 
+    override fun set(consumer: (Int, Int) -> V) {
+        backing.forEach { (column, rowView) ->
+            rowView.keys.forEach { row ->
+                val value = consumer(column, row)
+                set(column, row, value)
+            }
+        }
+    }
+
     override fun get(column: Int, row: Int): V? {
         val rowView = backing[column] ?: return null
         return rowView[row]
