@@ -1,6 +1,6 @@
 package org.incendo.interfaces.next.properties
 
-public sealed interface ListenableHolder {
+public sealed interface Trigger {
 
     public val listeners: MutableList<() -> Unit>
 

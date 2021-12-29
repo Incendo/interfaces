@@ -5,7 +5,7 @@ import kotlin.reflect.KProperty
 
 public class InterfaceProperty<T>(
     defaultValue: T
-) : ObservableProperty<T>(defaultValue), ListenableHolder {
+) : ObservableProperty<T>(defaultValue), Trigger {
 
     override val listeners: MutableList<() -> Unit> = ArrayList()
 

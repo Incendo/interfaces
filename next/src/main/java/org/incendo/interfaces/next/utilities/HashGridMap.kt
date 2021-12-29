@@ -8,7 +8,7 @@ public class HashGridMap<V> : GridMap<V> {
         rowView[row] = value
     }
 
-    override fun set(vector: Vector2, value: V) {
+    override fun set(vector: GridPoint, value: V) {
         set(vector.y, vector.x, value)
     }
 
@@ -26,7 +26,7 @@ public class HashGridMap<V> : GridMap<V> {
         return rowView[row]
     }
 
-    override fun get(vector: Vector2): V? {
+    override fun get(vector: GridPoint): V? {
         return get(vector.y, vector.x)
     }
 
@@ -35,7 +35,7 @@ public class HashGridMap<V> : GridMap<V> {
         return rowView.containsKey(column)
     }
 
-    override fun has(vector: Vector2): Boolean {
+    override fun has(vector: GridPoint): Boolean {
         return has(vector.y, vector.x)
     }
 
