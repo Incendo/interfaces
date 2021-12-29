@@ -1,5 +1,5 @@
 package org.incendo.interfaces.next.properties
 
-public fun <T> interfaceProperty(value: T): InterfaceProperty<T> = ValueInterfaceProperty(value)
+public fun <T> interfaceProperty(value: T): InterfaceProperty<T> = InterfaceProperty(value)
 
-public fun dummyInterfaceProperty(): InterfaceProperty<Nothing?> = DummyInterfaceProperty()
+public fun emptyListenableHolder(): EmptyListenerHolder = EmptyListenerHolder()

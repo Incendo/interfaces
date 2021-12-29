@@ -1,11 +1,17 @@
 package org.incendo.interfaces.next.properties
 
-import kotlin.properties.ReadWriteProperty
+import kotlin.properties.ObservableProperty
+import kotlin.reflect.KProperty
 
-public sealed interface InterfaceProperty<T> : ReadWriteProperty<Any?, T> {
+public class InterfaceProperty<T>(
+    defaultValue: T
+) : ObservableProperty<T>(defaultValue), ListenableHolder {
 
-    public fun addListener(listener: (T, T) -> Unit)
+    override val listeners: MutableList<() -> Unit> = ArrayList()
 
-    public fun forceRefresh()
-
+    override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
+        for (listener in listeners) {
+            listener()
+        }
+    }
 }

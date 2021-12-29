@@ -9,6 +9,10 @@ public class ChestInterface internal constructor(
     override val transforms: Collection<AppliedTransform>,
 ) : Interface<ChestPane> {
 
+    public companion object {
+        public const val NUMBER_OF_COLUMNS: Int = 9
+    }
+
     override fun createPane(): ChestPane = ChestPane()
 
     override fun open(): ChestInterfaceView {

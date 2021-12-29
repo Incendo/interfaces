@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import org.incendo.interfaces.next.element.asElement
 import org.incendo.interfaces.next.interfaces.buildChestInterface
+import org.incendo.interfaces.next.properties.interfaceProperty
 
 public class NextPlugin : JavaPlugin() {
 
@@ -34,6 +35,9 @@ public class NextPlugin : JavaPlugin() {
     private fun simpleInterface(player: Player) = buildChestInterface {
         rows = 6
 
+        val counterProperty = interfaceProperty(5)
+        val counter by counterProperty
+
         withTransform { pane ->
             pane.set { column, row ->
                 val item = ItemStack(Material.WHITE_STAINED_GLASS_PANE).also { itemStack ->
@@ -46,9 +50,9 @@ public class NextPlugin : JavaPlugin() {
             }
         }
 
-        withTransform { pane ->
+        withTransform(counterProperty) { pane ->
             pane[3, 3] = ItemStack(Material.BEE_NEST).asElement {
-                println("hi")
+                println("hi $counter")
             }
         }
     }
