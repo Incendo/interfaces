@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
+import org.incendo.interfaces.next.InterfacesListeners
 import org.incendo.interfaces.next.element.asElement
 import org.incendo.interfaces.next.interfaces.buildChestInterface
 import org.incendo.interfaces.next.open
@@ -48,6 +49,8 @@ public class NextPlugin : JavaPlugin() {
             }
         }
 
+        InterfacesListeners.install(this)
+
         Bukkit.getScheduler().runTaskTimerAsynchronously(
             this,
             Runnable {
@@ -62,24 +65,26 @@ public class NextPlugin : JavaPlugin() {
 
         withTransform { pane ->
             forEachInGrid(9, 6) { column, row ->
-                val item = ItemStack(Material.WHITE_STAINED_GLASS_PANE).also { itemStack ->
-                    itemStack.itemMeta = itemStack.itemMeta.also { meta ->
-                        meta.displayName(Component.text("col: $column, row: $row"))
-                    }
-                }
+                val item = ItemStack(Material.WHITE_STAINED_GLASS_PANE)
+                    .name("col: $column, row: $row")
 
                 pane[column, row] = item.asElement()
             }
         }
 
         withTransform(counterProperty) { pane ->
-            pane[3, 3] = ItemStack(Material.BEE_NEST).also { itemStack ->
-                itemStack.itemMeta = itemStack.itemMeta.also { meta ->
-                    meta.displayName(Component.text("it's been $counter's ticks"))
+            pane[3, 3] = ItemStack(Material.BEE_NEST)
+                .name("it's been $counter's ticks")
+                .asElement {
+                    it.player.sendMessage("hi")
                 }
-            }.asElement {
-                println("hi")
-            }
         }
+    }
+
+    private fun ItemStack.name(name: String): ItemStack {
+        itemMeta = itemMeta.also { meta ->
+            meta.displayName(Component.text(name))
+        }
+        return this
     }
 }
