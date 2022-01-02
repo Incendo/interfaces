@@ -26,6 +26,7 @@ public class ChestInterfaceBuilder internal constructor() : InterfaceBuilder<Che
 
     public override fun build(): ChestInterface = ChestInterface(
         rows,
-        transforms
+        transforms,
+        initialTitle
     )
 }

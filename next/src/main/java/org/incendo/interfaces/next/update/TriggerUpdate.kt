@@ -9,7 +9,7 @@ public class TriggerUpdate(
 ) : Update {
     override fun <P : Pane> apply(target: InterfaceView<P>) {
         val filteredTransforms = target.backing.transforms
-            .filter { transform -> transform.triggers().contains(trigger) }
+            .filter { transform -> transform.triggers.contains(trigger) }
 
         target.applyTransforms(filteredTransforms)
     }

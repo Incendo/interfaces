@@ -6,8 +6,6 @@ public interface GridMap<V> {
 
     public operator fun set(vector: GridPoint, value: V)
 
-    public fun set(consumer: (Int, Int) -> V)
-
     public operator fun get(column: Int, row: Int): V?
 
     public operator fun get(vector: GridPoint): V?

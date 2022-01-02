@@ -8,5 +8,4 @@ public interface Element {
     public fun itemStack(): ItemStack
 
     public fun clickHandler(): ClickHandler
-
 }
