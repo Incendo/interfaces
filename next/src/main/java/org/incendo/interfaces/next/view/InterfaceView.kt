@@ -1,6 +1,5 @@
 package org.incendo.interfaces.next.view
 
-import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
@@ -13,6 +12,7 @@ import org.incendo.interfaces.next.update.CompleteUpdate
 import org.incendo.interfaces.next.update.TriggerUpdate
 import org.incendo.interfaces.next.update.Update
 import org.incendo.interfaces.next.utilities.CollapsablePaneMap
+import org.incendo.interfaces.next.utilities.TitleState
 import org.incendo.interfaces.next.utilities.gridPointToBukkitIndex
 
 public abstract class InterfaceView<P : Pane>(
@@ -24,16 +24,10 @@ public abstract class InterfaceView<P : Pane>(
         private const val COLUMNS = 9
     }
 
-    private var titleChanged = false
-    private var title: Component? = backing.initialTitle
-        private set(value) {
-            titleChanged = true
-            field = value
-        }
+    private val titleState = TitleState(backing.initialTitle)
+    private val panes = CollapsablePaneMap()
 
     private lateinit var currentInventory: Inventory
-
-    private val panes = CollapsablePaneMap()
     public lateinit var pane: Pane
 
     init {
@@ -66,7 +60,7 @@ public abstract class InterfaceView<P : Pane>(
     public override fun getInventory(): Inventory = currentInventory
 
     private fun createInventory(): Inventory {
-        val currentTitle = title
+        val currentTitle = titleState.current
         val rows = backing.rows * COLUMNS
 
         return if (currentTitle != null) {
@@ -86,7 +80,7 @@ public abstract class InterfaceView<P : Pane>(
     }
 
     private fun renderToInventory(firstPaint: Boolean = false): Boolean {
-        val requiresNewInventory = firstPaint || titleChanged
+        val requiresNewInventory = firstPaint || titleState.hasChanged
 
         if (requiresNewInventory) {
             currentInventory = createInventory()
@@ -101,11 +95,11 @@ public abstract class InterfaceView<P : Pane>(
             }
         }
 
-        if (titleChanged && !firstPaint) {
+        if (titleState.hasChanged && !firstPaint) {
             player.updateInventory()
         }
 
-        titleChanged = true
+        titleState.hasChanged = true
 
         return requiresNewInventory
     }
