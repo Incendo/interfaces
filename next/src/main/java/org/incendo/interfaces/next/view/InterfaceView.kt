@@ -33,13 +33,13 @@ public abstract class InterfaceView<P : Pane>(
     init {
         update(CompleteUpdate, true)
 
-        for (transform in backing.transforms) {
-            for (trigger in transform.triggers) {
+        backing.transforms
+            .flatMap(AppliedTransform::triggers)
+            .forEach { trigger ->
                 trigger.addListener {
-                    update(TriggerUpdate(trigger))
+                    TriggerUpdate(trigger)
                 }
             }
-        }
     }
 
     public fun update(update: Update, firstPaint: Boolean = false) {
