@@ -17,11 +17,11 @@ public class ChestInterfaceBuilder internal constructor() : InterfaceBuilder<Che
     private val transforms: MutableCollection<AppliedTransform> = mutableListOf()
 
     public fun withTransform(vararg triggers: Trigger, transform: Transform) {
-        transforms.add(AppliedTransform(transformCounter, triggers, transform))
+        transforms.add(AppliedTransform(transformCounter, triggers.toSet(), transform))
     }
 
     public fun addTransform(reactiveTransform: ReactiveTransform) {
-        transforms.add(AppliedTransform(transformCounter, reactiveTransform.triggers, reactiveTransform))
+        transforms.add(AppliedTransform(transformCounter, reactiveTransform.triggers.toSet(), reactiveTransform))
     }
 
     public override fun build(): ChestInterface = ChestInterface(

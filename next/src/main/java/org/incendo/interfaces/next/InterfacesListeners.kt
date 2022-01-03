@@ -5,8 +5,10 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.plugin.Plugin
 import org.incendo.interfaces.next.click.ClickContext
+import org.incendo.interfaces.next.click.ClickHandler
 import org.incendo.interfaces.next.utilities.GridPoint
 import org.incendo.interfaces.next.view.InterfaceView
 
@@ -16,6 +18,17 @@ public class InterfacesListeners : Listener {
         public fun install(plugin: Plugin) {
             Bukkit.getPluginManager().registerEvents(InterfacesListeners(), plugin)
         }
+    }
+
+    @EventHandler
+    public fun onClose(event: InventoryCloseEvent) {
+        val holder = event.inventory.holder
+
+        if (holder !is InterfaceView<*>) {
+            return
+        }
+
+        holder.close()
     }
 
     @EventHandler
@@ -30,8 +43,17 @@ public class InterfacesListeners : Listener {
         val bukkitIndex = event.slot
         val clickedPoint = GridPoint.at(bukkitIndex % 9, bukkitIndex / 9)
 
+        val clickContext = ClickContext(true, player, holder)
+
+        holder.backing.clickPreprocessors
+            .forEach { handler -> handler.invoke(clickContext) }
+
         holder.pane[clickedPoint]
             ?.clickHandler()
-            ?.invoke(ClickContext(false, player, holder))
+            ?.invoke(clickContext)
+
+        if (clickContext.cancelled) {
+            event.isCancelled = true
+        }
     }
 }

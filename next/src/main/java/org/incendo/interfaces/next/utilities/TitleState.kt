@@ -11,5 +11,4 @@ internal class TitleState(initialState: Component?) {
         }
 
     internal var hasChanged = false
-
 }

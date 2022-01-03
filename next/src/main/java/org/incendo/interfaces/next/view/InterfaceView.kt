@@ -24,6 +24,8 @@ public abstract class InterfaceView<P : Pane>(
         private const val COLUMNS = 9
     }
 
+    private var isOpen = true
+
     private val titleState = TitleState(backing.initialTitle)
     private val panes = CollapsablePaneMap()
 
@@ -37,7 +39,7 @@ public abstract class InterfaceView<P : Pane>(
             .flatMap(AppliedTransform::triggers)
             .forEach { trigger ->
                 trigger.addListener {
-                    TriggerUpdate(trigger)
+                    update(TriggerUpdate(trigger))
                 }
             }
     }
@@ -48,16 +50,25 @@ public abstract class InterfaceView<P : Pane>(
 
         val requiresNewInventory = renderToInventory(firstPaint)
 
-        if (requiresNewInventory) {
-            open()
+        if (!firstPaint && requiresNewInventory && isOpen) {
+            openInventory()
         }
     }
 
-    public fun open(): Unit = runSync {
-        player.openInventory(currentInventory)
+    public fun open() {
+        isOpen = true
+        openInventory()
+    }
+
+    public fun close() {
+        isOpen = false
     }
 
     public override fun getInventory(): Inventory = currentInventory
+
+    private fun openInventory(): Unit = runSync {
+        player.openInventory(currentInventory)
+    }
 
     private fun createInventory(): Inventory {
         val currentTitle = titleState.current
@@ -99,7 +110,7 @@ public abstract class InterfaceView<P : Pane>(
             player.updateInventory()
         }
 
-        titleState.hasChanged = true
+        titleState.hasChanged = false
 
         return requiresNewInventory
     }
