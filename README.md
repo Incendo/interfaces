@@ -140,7 +140,7 @@ infoInterface.open(PlayerViewer.of(player),
 
 _Note: these examples may not reflect the latest version of the `interfaces` API._
 
-Further examples can be found here: https://github.com/AlessioGr/interfaces/tree/master/examples
+Further examples can be found here: https://github.com/Incendo/interfaces/tree/master/examples
 
 ## Credits
 
