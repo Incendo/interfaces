@@ -3,13 +3,13 @@ package org.incendo.interfaces.core.transform;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.BiConsumer;
 
 class InterfacePropertyImpl<T> implements InterfaceProperty<T> {
 
-    private final Collection<BiConsumer<T, T>> updateListeners = new HashSet<>();
+    private final Collection<BiConsumer<T, T>> updateListeners = new CopyOnWriteArraySet<>();
     private T value;
 
     InterfacePropertyImpl(final T value) {
