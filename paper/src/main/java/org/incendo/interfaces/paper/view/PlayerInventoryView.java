@@ -160,6 +160,7 @@ public final class PlayerInventoryView implements
 
     @Override
     public void open() {
+        this.viewing = true;
         this.current.clear();
         this.update();
         this.emitEvent();
@@ -179,6 +180,10 @@ public final class PlayerInventoryView implements
 
     @Override
     public void update() {
+        if (!this.viewing) {
+            return;
+        }
+
         if (!this.viewer.player().isOnline()) {
             return;
         }
