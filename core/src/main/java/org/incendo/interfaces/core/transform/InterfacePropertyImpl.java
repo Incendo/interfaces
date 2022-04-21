@@ -4,12 +4,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiConsumer;
 
 class InterfacePropertyImpl<T> implements InterfaceProperty<T> {
 
-    private final Collection<BiConsumer<T, T>> updateListeners = new CopyOnWriteArraySet<>();
+    private final Collection<BiConsumer<T, T>> updateListeners = new CopyOnWriteArrayList<>();
     private T value;
 
     InterfacePropertyImpl(final T value) {
