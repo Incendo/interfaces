@@ -28,18 +28,16 @@ jobs:
           java-version: 16
       - name: Build
         run: ./gradlew build
-      - name: Determine Status
+      - name: Determine status
         run: |
           if [ "$(./gradlew properties | awk '/^version:/ { print $2; }' | grep '\-SNAPSHOT')" ]; then
             echo "STATUS=snapshot" >> $GITHUB_ENV
           else
             echo "STATUS=release" >> $GITHUB_ENV
           fi
-      - name: Publish Release
-        if: "${{ env.STATUS == 'release' && github.branch == 'master' }}"
-        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
+      - name: "publish"
+        if: "${{ env.STATUS != 'release' && github.event_name == 'push' && startsWith(github.ref, 'refs/heads/main/') }}"
+        run: "./gradlew publish"
         env:
           ORG_GRADLE_PROJECT_sonatypeUsername: "${{ secrets.SONATYPE_USERNAME }}"
           ORG_GRADLE_PROJECT_sonatypePassword: "${{ secrets.SONATYPE_PASSWORD }}"
-          ORG_GRADLE_PROJECT_signingKey: "${{ secrets.SIGNING_KEY }}"
-          ORG_GRADLE_PROJECT_signingPassword: "${{ secrets.SIGNING_PASSWORD }}"
