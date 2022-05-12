@@ -36,7 +36,7 @@ jobs:
             echo "STATUS=release" >> $GITHUB_ENV
           fi
       - name: "publish"
-        if: "${{ env.STATUS != 'release' && github.event_name == 'push' && startsWith(github.ref, 'refs/heads/main/') }}"
+        if: "${{ env.STATUS != 'release' && github.event_name == 'push' && startsWith(github.ref, 'refs/heads/master') }}"
         run: "./gradlew publish"
         env:
           ORG_GRADLE_PROJECT_sonatypeUsername: "${{ secrets.SONATYPE_USERNAME }}"
