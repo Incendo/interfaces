@@ -2,11 +2,13 @@ import net.kyori.indra.IndraCheckstylePlugin
 import net.kyori.indra.IndraPlugin
 import net.kyori.indra.IndraPublishingPlugin
 import net.kyori.indra.repository.sonatypeSnapshots
+import net.kyori.indra.sonatype.IndraSonatypePublishingPlugin
 import xyz.jpenilla.runpaper.task.RunServerTask
 
 plugins {
     id("net.kyori.indra")
     id("net.kyori.indra.publishing") apply false
+    id("net.kyori.indra.publishing.sonatype")
     id("net.kyori.indra.checkstyle") apply false
     id("xyz.jpenilla.run-paper") apply false
 
@@ -24,7 +26,9 @@ subprojects {
     apply<IndraCheckstylePlugin>()
 
     // Don't publish examples
-    if (!name.startsWith("example-")) apply<IndraPublishingPlugin>()
+    if (!name.startsWith("example-")) {
+        apply<IndraPublishingPlugin>()
+    }
 
     repositories {
         mavenCentral()
@@ -38,8 +42,6 @@ subprojects {
 
     indra {
         mitLicense()
-
-        publishSnapshotsTo("incendo", "https://repo.incendo.org/content/repositories/snapshots/")
 
         javaVersions {
             target(11)
