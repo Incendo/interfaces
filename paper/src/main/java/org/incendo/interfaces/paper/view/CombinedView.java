@@ -55,7 +55,7 @@ public final class CombinedView implements
     private @NonNull CombinedPane pane;
 
     private final @NonNull Map<Vector2, Element> current = new HashMap<>();
-    private final @NonNull List<ContextCompletedPane<CombinedPane>> panes = new ArrayList<>();
+    private @NonNull List<ContextCompletedPane<CombinedPane>> panes = new ArrayList<>();
     private final Set<Integer> tasks = new HashSet<>();
 
     private final Plugin plugin;
@@ -143,6 +143,8 @@ public final class CombinedView implements
     }
 
     private @NonNull CombinedPane updatePaneByProperty(final @NonNull InterfaceProperty<?> interfaceProperty) {
+        List<ContextCompletedPane<CombinedPane>> updatedPanes = new ArrayList<>(this.panes);
+
         for (final var transform : this.backing.transformations()) {
             if (!transform.properties().contains(interfaceProperty)) {
                 continue;
@@ -150,10 +152,11 @@ public final class CombinedView implements
 
             CombinedPane newPane = transform.transform().apply(new CombinedPane(this.backing.totalRows()), this);
 
-            this.panes.removeIf(completedPane -> completedPane.context().equals(transform));
-            this.panes.add(new ContextCompletedPane<>(transform, newPane));
+            updatedPanes.removeIf(completedPane -> completedPane.context().equals(transform));
+            updatedPanes.add(new ContextCompletedPane<>(transform, newPane));
         }
 
+        this.panes = updatedPanes;
         return this.mergePanes();
     }
 
