@@ -9,13 +9,13 @@ import org.incendo.interfaces.next.view.InterfaceView
 
 public interface Interface<P : Pane> {
 
+    public val rows: Int
+
     public val initialTitle: Component?
 
     public val transforms: Collection<AppliedTransform>
 
     public val clickPreprocessors: Collection<ClickHandler>
-
-    public val rows: Int
 
     public fun createPane(): P
 

@@ -5,4 +5,5 @@ import org.incendo.interfaces.next.properties.Trigger
 public interface ReactiveTransform : Transform {
 
     public val triggers: Array<Trigger>
+
 }

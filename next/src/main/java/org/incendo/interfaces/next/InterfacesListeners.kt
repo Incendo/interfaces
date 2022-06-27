@@ -8,8 +8,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.plugin.Plugin
 import org.incendo.interfaces.next.click.ClickContext
-import org.incendo.interfaces.next.click.ClickHandler
-import org.incendo.interfaces.next.utilities.GridPoint
+import org.incendo.interfaces.next.grid.GridPoint
 import org.incendo.interfaces.next.view.InterfaceView
 
 public class InterfacesListeners : Listener {

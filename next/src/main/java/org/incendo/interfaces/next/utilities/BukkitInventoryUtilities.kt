@@ -1,5 +1,7 @@
 package org.incendo.interfaces.next.utilities
 
+import org.incendo.interfaces.next.grid.GridPoint
+
 public fun gridPointToBukkitIndex(column: Int, row: Int): Int {
     return row * 9 + column
 }

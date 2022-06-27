@@ -1,4 +1,4 @@
-package org.incendo.interfaces.next.utilities
+package org.incendo.interfaces.next.grid
 
 public class HashGridMap<V> : GridMap<V> {
     private val backing: MutableMap<Int, MutableMap<Int, V>> = HashMap()

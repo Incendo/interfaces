@@ -4,7 +4,6 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
-import org.incendo.interfaces.next.element.component1
 import org.incendo.interfaces.next.interfaces.Interface
 import org.incendo.interfaces.next.pane.Pane
 import org.incendo.interfaces.next.transform.AppliedTransform
@@ -98,7 +97,7 @@ public abstract class InterfaceView<P : Pane>(
         }
 
         pane.forEach { column, row, element ->
-            val (itemStack) = element
+            val itemStack = element.itemStack(player)
             val bukkitIndex = gridPointToBukkitIndex(column, row)
 
             if (currentInventory.getItem(bukkitIndex) != itemStack) {

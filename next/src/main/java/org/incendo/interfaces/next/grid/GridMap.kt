@@ -1,4 +1,4 @@
-package org.incendo.interfaces.next.utilities
+package org.incendo.interfaces.next.grid
 
 public interface GridMap<V> {
 
