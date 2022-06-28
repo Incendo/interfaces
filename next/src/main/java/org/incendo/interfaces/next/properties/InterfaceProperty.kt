@@ -9,7 +9,7 @@ public class InterfaceProperty<T>(
 
     override val listeners: MutableList<() -> Unit> = ArrayList()
 
-    public constructor(defaultValue: T, vararg defaultListeners: () -> Unit): this(defaultValue) {
+    public constructor(defaultValue: T, vararg defaultListeners: () -> Unit) : this(defaultValue) {
         listeners += defaultListeners
     }
 

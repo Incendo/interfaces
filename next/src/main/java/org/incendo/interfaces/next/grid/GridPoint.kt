@@ -12,5 +12,4 @@ public data class GridPoint(val x: Int, val y: Int) {
     public operator fun minus(other: GridPoint): GridPoint {
         return GridPoint(x - other.x, y - other.y)
     }
-
 }

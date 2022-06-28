@@ -30,5 +30,4 @@ public class PaginationTransformation(
             pane[point] = values[index + offset]
         }
     }
-
 }
