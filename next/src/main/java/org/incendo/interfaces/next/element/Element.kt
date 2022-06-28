@@ -1,12 +1,11 @@
 package org.incendo.interfaces.next.element
 
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import org.incendo.interfaces.next.click.ClickHandler
+import org.incendo.interfaces.next.drawable.Drawable
 
 public interface Element {
 
-    public fun itemStack(player: Player): ItemStack
+    public fun drawable(): Drawable
 
     public fun clickHandler(): ClickHandler
 }

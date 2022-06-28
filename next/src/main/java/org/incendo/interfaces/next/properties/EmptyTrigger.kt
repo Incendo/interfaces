@@ -1,6 +1,12 @@
 package org.incendo.interfaces.next.properties
 
-public class EmptyTrigger : Trigger {
+public object EmptyTrigger : Trigger {
 
-    override val listeners: MutableList<() -> Unit> = ArrayList()
+    override fun trigger() {
+        // no behaviour
+    }
+
+    override fun addListener(listener: () -> Unit) {
+        // no behaviour
+    }
 }

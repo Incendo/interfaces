@@ -1,15 +1,14 @@
 package org.incendo.interfaces.next.element
 
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import org.incendo.interfaces.next.click.ClickHandler
+import org.incendo.interfaces.next.drawable.Drawable
 
 public class StaticElement(
-    private val itemStack: ItemStack,
+    private val drawable: Drawable,
     private val clickHandler: ClickHandler = {}
 ) : Element {
 
-    override fun itemStack(player: Player): ItemStack = itemStack
+    override fun drawable(): Drawable = drawable
 
     override fun clickHandler(): ClickHandler = clickHandler
 }

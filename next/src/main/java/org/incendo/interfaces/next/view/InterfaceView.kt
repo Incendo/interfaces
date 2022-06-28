@@ -97,7 +97,7 @@ public abstract class InterfaceView<P : Pane>(
         }
 
         pane.forEach { column, row, element ->
-            val itemStack = element.itemStack(player)
+            val itemStack = element.drawable().draw(player)
             val bukkitIndex = gridPointToBukkitIndex(column, row)
 
             if (currentInventory.getItem(bukkitIndex) != itemStack) {

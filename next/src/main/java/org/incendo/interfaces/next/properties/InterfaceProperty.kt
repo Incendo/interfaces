@@ -7,15 +7,28 @@ public class InterfaceProperty<T>(
     defaultValue: T
 ) : ObservableProperty<T>(defaultValue), Trigger {
 
-    override val listeners: MutableList<() -> Unit> = ArrayList()
+    private val listeners: MutableList<(T) -> Unit> = ArrayList()
 
-    public constructor(defaultValue: T, vararg defaultListeners: () -> Unit) : this(defaultValue) {
-        listeners += defaultListeners
+    public constructor(defaultValue: T, defaultListener: (T) -> Unit) : this(defaultValue) {
+        listeners += defaultListener
+    }
+
+    public fun addListener(listener: (T) -> Unit) {
+        listeners += listener
     }
 
     override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
         for (listener in listeners) {
-            listener()
+            listener(newValue)
         }
+    }
+
+    override fun trigger() {
+        val value by this
+        listeners.forEach { listener -> listener.invoke(value) }
+    }
+
+    override fun addListener(listener: () -> Unit) {
+        listeners += { listener.invoke() }
     }
 }
