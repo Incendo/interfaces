@@ -21,7 +21,6 @@ import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.PlayerPane;
 import org.incendo.interfaces.paper.type.ChildTitledInterface;
 import org.incendo.interfaces.paper.type.PlayerInterface;
-import org.incendo.interfaces.paper.utils.InterfacesUpdateExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -41,7 +40,6 @@ public final class PlayerInventoryView implements
     private final @NonNull PlayerInterface backing;
     private final @NonNull PlayerInventory inventory;
     private final @NonNull InterfaceArguments arguments;
-    private final @NonNull InterfacesUpdateExecutor updateExecutor;
 
     private @NonNull PlayerPane pane;
 
@@ -57,15 +55,12 @@ public final class PlayerInventoryView implements
      * @param backing  the backing interface
      * @param viewer   the viewer
      * @param argument the interface argument
-     * @param updateExecutor the update executor
      */
     public PlayerInventoryView(
             final @NonNull PlayerInterface backing,
             final @NonNull PlayerViewer viewer,
-            final @NonNull InterfaceArguments argument,
-            final @NonNull InterfacesUpdateExecutor updateExecutor
+            final @NonNull InterfaceArguments argument
     ) {
-        this.updateExecutor = updateExecutor;
         // If an inventory exists for the player, we "close" the old one.
         final PlayerInventoryView oldView = INVENTORY_VIEW_MAP.remove(viewer.player());
         if (oldView != null) {
@@ -194,7 +189,7 @@ public final class PlayerInventoryView implements
             return;
         }
 
-        this.updateExecutor.execute(this.plugin, this::actuallyUpdate);
+        this.backing.updateExecutor().execute(this.plugin, this::actuallyUpdate);
     }
 
     private void actuallyUpdate() {

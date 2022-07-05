@@ -15,6 +15,8 @@ import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.click.InventoryClickContext;
 import org.incendo.interfaces.paper.pane.CombinedPane;
+import org.incendo.interfaces.paper.utils.DefaultInterfacesUpdateExecutor;
+import org.incendo.interfaces.paper.utils.InterfacesUpdateExecutor;
 import org.incendo.interfaces.paper.view.CombinedView;
 import org.incendo.interfaces.paper.view.PlayerView;
 
@@ -38,17 +40,19 @@ public final class CombinedInterface implements
     private final int updateDelay;
     private final @NonNull ClickHandler<CombinedPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<CombinedPane,
             CombinedView>> clickHandler;
+    private final @NonNull InterfacesUpdateExecutor updateExecutor;
 
     /**
      * Constructs {@code ChestInterface}.
      *
-     * @param chestRows          the rows
+     * @param chestRows     the rows
      * @param title         the interfaces title
      * @param transforms    the transformations to apply
      * @param closeHandlers the close handlers to apply
      * @param updates       {@code true} if the interface is an updating interface
      * @param updateDelay   the update delay
      * @param clickHandler  the handler to run on click
+     * @param updateExecutor the executor to run update tasks on
      */
     public CombinedInterface(
             final int chestRows,
@@ -58,7 +62,8 @@ public final class CombinedInterface implements
             final boolean updates,
             final int updateDelay,
             final @NonNull ClickHandler<CombinedPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<CombinedPane,
-                    CombinedView>> clickHandler
+                    CombinedView>> clickHandler,
+            final @NonNull InterfacesUpdateExecutor updateExecutor
     ) {
         this.title = title;
         this.transformationList = transforms;
@@ -67,6 +72,7 @@ public final class CombinedInterface implements
         this.updateDelay = updateDelay;
         this.rows = chestRows + CombinedPane.PLAYER_INVENTORY_ROWS;
         this.clickHandler = clickHandler;
+        this.updateExecutor = updateExecutor;
     }
 
     /**
@@ -218,6 +224,14 @@ public final class CombinedInterface implements
     }
 
     /**
+     * The executor in which to run update tasks on.
+     * @return the executor
+     */
+    public InterfacesUpdateExecutor updateExecutor() {
+        return this.updateExecutor;
+    }
+
+    /**
      * A class that builds a chest interface.
      */
     public static final class Builder implements Interface.Builder<CombinedPane, PlayerViewer, CombinedInterface> {
@@ -252,6 +266,8 @@ public final class CombinedInterface implements
          */
         private final int updateDelay;
 
+        private final InterfacesUpdateExecutor updateExecutor;
+
         /**
          * The top click handler.
          */
@@ -268,6 +284,7 @@ public final class CombinedInterface implements
             this.title = Component.empty();
             this.updates = false;
             this.updateDelay = 1;
+            this.updateExecutor = new DefaultInterfacesUpdateExecutor();
             this.clickHandler = ClickHandler.cancel();
         }
 
@@ -279,7 +296,8 @@ public final class CombinedInterface implements
                 final boolean updates,
                 final int updateDelay,
                 final @NonNull ClickHandler<CombinedPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<CombinedPane,
-                        CombinedView>> clickHandler
+                        CombinedView>> clickHandler,
+                final @NonNull InterfacesUpdateExecutor updateExecutor
         ) {
             this.transformsList = Collections.unmodifiableList(transformsList);
             this.closeHandlerList = Collections.unmodifiableList(closeHandlerList);
@@ -288,6 +306,7 @@ public final class CombinedInterface implements
             this.updates = updates;
             this.updateDelay = updateDelay;
             this.clickHandler = clickHandler;
+            this.updateExecutor = updateExecutor;
         }
 
         /**
@@ -313,7 +332,8 @@ public final class CombinedInterface implements
                     this.title,
                     this.updates,
                     this.updateDelay,
-                    this.clickHandler
+                    this.clickHandler,
+                    this.updateExecutor
             );
         }
 
@@ -340,7 +360,8 @@ public final class CombinedInterface implements
                     title,
                     this.updates,
                     this.updateDelay,
-                    this.clickHandler
+                    this.clickHandler,
+                    this.updateExecutor
             );
         }
 
@@ -361,7 +382,8 @@ public final class CombinedInterface implements
                     this.title,
                     this.updates,
                     this.updateDelay,
-                    this.clickHandler
+                    this.clickHandler,
+                    this.updateExecutor
             );
         }
 
@@ -393,7 +415,8 @@ public final class CombinedInterface implements
                     this.title,
                     this.updates,
                     this.updateDelay,
-                    this.clickHandler
+                    this.clickHandler,
+                    this.updateExecutor
             );
         }
 
@@ -424,8 +447,10 @@ public final class CombinedInterface implements
          * @param handler the handler
          * @return new builder instance
          */
-        public @NonNull Builder clickHandler(final @NonNull ClickHandler<CombinedPane, InventoryClickEvent,
-                PlayerViewer, InventoryClickContext<CombinedPane, CombinedView>> handler) {
+        public @NonNull Builder clickHandler(
+                final @NonNull ClickHandler<CombinedPane, InventoryClickEvent,
+                        PlayerViewer, InventoryClickContext<CombinedPane, CombinedView>> handler
+        ) {
             return new Builder(
                     this.transformsList,
                     this.closeHandlerList,
@@ -433,7 +458,28 @@ public final class CombinedInterface implements
                     this.title,
                     this.updates,
                     this.updateDelay,
-                    handler
+                    handler,
+                    this.updateExecutor
+            );
+        }
+
+        /**
+         * Set your own update executor.
+         * @see org.incendo.interfaces.paper.utils.SynchronousInterfacesUpdateExecutor
+         *
+         * @param updateExecutor the executor
+         * @return new builder instance
+         */
+        public @NonNull Builder updateExecutor(final @NonNull InterfacesUpdateExecutor updateExecutor) {
+            return new Builder(
+                    this.transformsList,
+                    this.closeHandlerList,
+                    this.chestRows,
+                    this.title,
+                    this.updates,
+                    this.updateDelay,
+                    this.clickHandler,
+                    updateExecutor
             );
         }
 
@@ -452,7 +498,8 @@ public final class CombinedInterface implements
                     this.title,
                     updates,
                     updateDelay,
-                    this.clickHandler
+                    this.clickHandler,
+                    this.updateExecutor
             );
         }
 
@@ -470,7 +517,8 @@ public final class CombinedInterface implements
                     this.closeHandlerList,
                     this.updates,
                     this.updateDelay,
-                    this.clickHandler
+                    this.clickHandler,
+                    this.updateExecutor
             );
         }
 

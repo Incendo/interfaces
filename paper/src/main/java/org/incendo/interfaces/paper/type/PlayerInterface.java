@@ -108,8 +108,7 @@ public final class PlayerInterface implements
         final @NonNull PlayerInventoryView view = new PlayerInventoryView(
                 this,
                 viewer,
-                arguments,
-                this.updateExecutor
+                arguments
         );
 
         view.open();
@@ -134,6 +133,14 @@ public final class PlayerInterface implements
             PlayerViewer,
             InventoryClickContext<PlayerPane, PlayerInventoryView>> clickHandler() {
         return this.clickHandler;
+    }
+
+    /**
+     * The executor in which to run update tasks on.
+     * @return the executor
+     */
+    public InterfacesUpdateExecutor updateExecutor() {
+        return this.updateExecutor;
     }
 
     /**

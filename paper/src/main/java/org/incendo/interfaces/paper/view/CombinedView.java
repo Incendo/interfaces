@@ -290,11 +290,16 @@ public final class CombinedView implements
             return;
         }
 
+        this.backing.updateExecutor().execute(this.plugin, this::actuallyUpdate);
+    }
+
+    private void actuallyUpdate() {
         try {
             this.pane = this.updatePane(false);
         } catch (final InterruptUpdateException ignored) {
             return;
         }
+
         this.reApplySync();
     }
 
@@ -304,7 +309,6 @@ public final class CombinedView implements
         } else {
             try {
                 Bukkit.getScheduler().callSyncMethod(this.plugin, () -> {
-                    this.reapplyInventory(false);
 
                     return null;
                 }).get();
