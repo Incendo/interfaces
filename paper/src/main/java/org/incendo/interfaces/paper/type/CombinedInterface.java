@@ -464,6 +464,15 @@ public final class CombinedInterface implements
         }
 
         /**
+         * Returns the update executor.
+         *
+         * @return update executor
+         */
+        public @NonNull InterfacesUpdateExecutor updateExecutor() {
+            return this.updateExecutor;
+        }
+
+        /**
          * Set your own update executor.
          * @see org.incendo.interfaces.paper.utils.SynchronousInterfacesUpdateExecutor
          *
