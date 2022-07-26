@@ -309,6 +309,7 @@ public final class CombinedView implements
         } else {
             try {
                 Bukkit.getScheduler().callSyncMethod(this.plugin, () -> {
+                    this.reapplyInventory(false);
 
                     return null;
                 }).get();
