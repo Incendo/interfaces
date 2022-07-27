@@ -71,53 +71,45 @@ ChestInterface infoInterface = ChestInterface.builder()
     // This interface will update every five ticks.
     .updates(true, 5)
     // Cancel all inventory click events
-    .topClickHandler(ClickHandler.cancel())
+    .clickHandler(ClickHandler.cancel())
     // Fill the background with black stained glass panes
     .addTransform(PaperTransform.chestFill(
-        ItemStackElement.of(new ItemStack(Material.BLACK_STAINED_GLASS_PANE))
+    ItemStackElement.of(new ItemStack(Material.BLACK_STAINED_GLASS_PANE))
     ))
     // Add some information to the pane
     .addTransform((pane, view) -> {
         // Get the view arguments
         // (Keep in mind - these arguments may be coming from a Supplier, so their values can change!)
-        final @NonNull String time = view.argument().get("time");
-        final @NonNull Player player = view.argument().get("player");
+        final String time = view.arguments().get(ArgumentKey.of("time", String.class));
+        final Player player = view.arguments().get(ArgumentKey.of("player", Player.class));
+        final Integer clicks = view.arguments().get(ArgumentKey.of("clicks", Integer.class));
 
-        // Return a pane with 
-        return pane.element(ItemStackElement.of(PaperItemBuilder.paper(Material.PAPER)
-            // Add icon name
-            .name(Component.text()
-                .append(player.displayName())
-                .append(Component.text("'s info"))
-                .decoration(TextDecoration.ITALIC, false)
-                .asComponent())
-            // Add icon lore
-            .loreComponents(
-                Component.text()
-                    .append(Component.text("Current time: "))
-                    .append(Component.text(time))
-                    .color(NamedTextColor.GRAY)
-                    .decoration(TextDecoration.ITALIC, false)
-                    .asComponent(),
-                Component.text()
-                    .append(Component.text("Health: "))
-                    .append(Component.text(Double.toString(player.getHealth())))
-                    .color(NamedTextColor.GRAY)
-                    .decoration(TextDecoration.ITALIC, false)
-                    .asComponent())
-                    .build(),
-                // Handle click
-                (clickEvent, clickView) -> {
-                    final @NonNull InterfaceArgument argument = clickView.argument();
-                    argument.set("clicks", ((Integer) argument.get("clicks")) + 1);
-                    clickView.parent().open(clickView.viewer(), argument);
-                }
-            ), 4, 0);
-        })
-        // Set the title
-        .title(Component.text("interfaces demo"))
-        // Build the interface
-        .build();
+        ItemStack itemStack = new ItemStack(Material.PAPER);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+
+        itemMeta.displayName(Component.text("Item Name", NamedTextColor.GREEN));
+        ArrayList<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Line 1"));
+        lore.add(Component.text("Clicks: " + clicks));
+        itemMeta.lore(lore);
+        itemStack.setItemMeta(itemMeta);
+
+        // Return a pane with
+        return pane.element(ItemStackElement.of(itemStack,
+        // Handle click
+        (clickHandler) -> {
+            final HashMapInterfaceArguments arguments = HashMapInterfaceArguments
+                .with(ArgumentKey.of("clicks", Integer.class), (clickHandler.view().arguments().get(ArgumentKey.of("clicks", Integer.class))) + 1)
+                .with(ArgumentKey.of("player", Player.class), clickHandler.view().arguments().get(ArgumentKey.of("player", Player.class))).build();
+
+            clickHandler.view().backing().open(clickHandler.viewer(), arguments);
+        }
+    ), 4, 0);
+    })
+    // Set the title
+    .title(Component.text("interfaces demo"))
+    // Build the interface
+    .build();
 ```
 </details>
 
@@ -132,13 +124,14 @@ As the interface uses arguments, we can pass in supplier functions to the interf
 infoInterface.open(PlayerViewer.of(player),
     // Create a HashMapInterfaceArgument with a time argument set to a
     // supplier that returns the current time printed all nice and pretty.
-    HashMapInterfaceArgument.with("time", () -> {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
-        return dtf.format(now);
-    })
-        .with("clicks", 0)
-        .build()
+    HashMapInterfaceArguments
+        .with(ArgumentKey.of("player", Player.class), player)
+        .with(ArgumentKey.of("time", String.class), () -> {
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            return dtf.format(now);
+            })
+        .with(ArgumentKey.of("clicks", Integer.class), 0).build()
 );
 ```
 
@@ -146,6 +139,8 @@ infoInterface.open(PlayerViewer.of(player),
 </details>
 
 _Note: these examples may not reflect the latest version of the `interfaces` API._
+
+Further examples can be found here: https://github.com/Incendo/interfaces/tree/master/examples
 
 ## Credits
 
