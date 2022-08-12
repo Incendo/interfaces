@@ -394,9 +394,11 @@ public final class CombinedView implements
         ItemStackElement<CombinedPane> empty = ItemStackElement.empty();
         CombinedPane finalPane = new CombinedPane(this.backing.totalRows());
 
-        this.panes.sort(Comparator.comparingInt(pane -> pane.context().priority()));
+        List<ContextCompletedPane<CombinedPane>> completedPanes = new ArrayList<>(this.panes);
 
-        for (final var completedPane : this.panes) {
+        completedPanes.sort(Comparator.comparingInt(pane -> pane.context().priority()));
+
+        for (final var completedPane : completedPanes) {
             Map<Vector2, ItemStackElement<CombinedPane>> elements = completedPane.pane().inventoryElements();
 
             for (Vector2 position : elements.keySet()) {
