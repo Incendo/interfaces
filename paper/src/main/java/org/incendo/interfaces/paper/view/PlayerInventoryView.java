@@ -68,10 +68,6 @@ public final class PlayerInventoryView implements
         }
 
         this.plugin = ((PluginClassLoader) getClass().getClassLoader()).getPlugin();
-
-        // Store the new view.
-        INVENTORY_VIEW_MAP.put(viewer.player(), this);
-
         this.viewer = viewer;
         this.backing = backing;
         this.arguments = argument;
@@ -82,6 +78,9 @@ public final class PlayerInventoryView implements
         } catch (final InterruptUpdateException ignored) {
             this.pane = new PlayerPane();
         }
+
+        // Store the new view.
+        INVENTORY_VIEW_MAP.put(viewer.player(), this);
     }
 
     /**
