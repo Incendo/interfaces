@@ -404,9 +404,7 @@ public class PaperInterfaceListeners implements Listener {
                 this.handleCombinedViewClick(event, holder);
             }
         } else if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Player) {
-            if (holder instanceof InterfaceView) {
-                this.handlePlayerViewClick(event);
-            }
+            this.handlePlayerViewClick(event);
         }
     }
 
