@@ -153,6 +153,7 @@ public class KotlinPlugin : JavaPlugin() {
 
             withTransform {
                 it.hotbar[2] = createItemStack(Material.COMPASS, text("TIME")).asElement { click ->
+                    click.cancel(true)
                     val player = click.viewer().player()
 
                     player.sendMessage(
@@ -277,7 +278,6 @@ public class KotlinPlugin : JavaPlugin() {
 
             withCloseHandler { event, view ->
                 Bukkit.broadcast(text("hallo"))
-                Exception().printStackTrace()
             }
 
             val soundHandler:
@@ -325,7 +325,6 @@ public class KotlinPlugin : JavaPlugin() {
 
             withCloseHandler { event, view ->
                 Bukkit.broadcast(text("hey"))
-                Exception().printStackTrace()
             }
 
             withTransform { view ->
