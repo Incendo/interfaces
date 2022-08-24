@@ -7,30 +7,23 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.PluginClassLoader;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.element.Element;
-import org.incendo.interfaces.core.transform.InterfaceProperty;
-import org.incendo.interfaces.core.transform.InterruptUpdateException;
 import org.incendo.interfaces.core.util.Vector2;
-import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.pane.CombinedPane;
-import org.incendo.interfaces.paper.type.ChildTitledInterface;
 import org.incendo.interfaces.paper.type.CombinedInterface;
 import org.incendo.interfaces.paper.utils.PaperUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,25 +33,12 @@ import java.util.Set;
  * The view of a chest.
  */
 @SuppressWarnings("unused")
-public final class CombinedView implements
-        PlayerView<CombinedPane>,
-        TaskableView,
-        SelfUpdatingInterfaceView,
-        ChildView {
+public final class CombinedView extends PaperView<CombinedInterface, CombinedPane, Inventory>
+        implements TaskableView, SelfUpdatingInterfaceView, ChildView {
 
-    private final @NonNull PlayerViewer viewer;
-    private final @NonNull CombinedInterface backing;
     private final @Nullable PlayerView<?> parent;
-    private final @NonNull InterfaceArguments arguments;
     private final @NonNull Component title;
-    private @NonNull Inventory inventory;
-    private @NonNull CombinedPane pane;
-
-    private final @NonNull Map<Vector2, Element> current = new HashMap<>();
-    private @NonNull List<ContextCompletedPane<CombinedPane>> panes = new ArrayList<>();
     private final Set<Integer> tasks = new HashSet<>();
-
-    private final Plugin plugin;
 
     /**
      * Constructs {@code ChestView}.
@@ -93,83 +73,16 @@ public final class CombinedView implements
             final @NonNull InterfaceArguments arguments,
             final @NonNull Component title
     ) {
+        super(viewer, arguments, backing);
+
         this.parent = parent;
-        this.viewer = viewer;
-        this.backing = backing;
-        this.arguments = arguments;
         this.title = title;
 
-        try {
-            this.pane = this.updatePane(true);
-        } catch (final InterruptUpdateException ignored) {
-            this.pane = new CombinedPane(this.backing.totalRows());
-        }
-
-        this.plugin = ((PluginClassLoader) this.getClass().getClassLoader()).getPlugin();
-
-        if (Bukkit.isPrimaryThread()) {
-            this.inventory = this.createInventory();
-            this.reapplyInventory(true);
-        } else {
-            try {
-                Bukkit.getScheduler().callSyncMethod(this.plugin, () -> {
-                    this.inventory = this.createInventory();
-                    this.reapplyInventory(true);
-
-                    return null;
-                }).get();
-            } catch (final Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
+        this.finishConstruction();
     }
 
-    private @NonNull CombinedPane updatePane(final boolean firstApply) {
-        for (final var transform : this.backing.transformations()) {
-            CombinedPane newPane = transform.transform().apply(new CombinedPane(this.backing.totalRows()), this);
-            // If it's the first time we apply the transform, then
-            // we add update listeners to all the dependent properties
-            if (firstApply) {
-                for (final InterfaceProperty<?> property : transform.properties()) {
-                    property.addListener((oldValue, newValue) -> this.updateByProperty(property));
-                }
-            }
-
-            this.panes.removeIf(completedPane -> completedPane.context().equals(transform));
-            this.panes.add(new ContextCompletedPane<>(transform, newPane));
-        }
-
-        return this.mergePanes();
-    }
-
-    private @NonNull CombinedPane updatePaneByProperty(final @NonNull InterfaceProperty<?> interfaceProperty) {
-        List<ContextCompletedPane<CombinedPane>> updatedPanes = new ArrayList<>(this.panes);
-
-        for (final var transform : this.backing.transformations()) {
-            if (!transform.properties().contains(interfaceProperty)) {
-                continue;
-            }
-
-            CombinedPane newPane = transform.transform().apply(new CombinedPane(this.backing.totalRows()), this);
-
-            updatedPanes.removeIf(completedPane -> completedPane.context().equals(transform));
-            updatedPanes.add(new ContextCompletedPane<>(transform, newPane));
-        }
-
-        this.panes = updatedPanes;
-        return this.mergePanes();
-    }
-
-    private void updateByProperty(final @NonNull InterfaceProperty<?> interfaceProperty) {
-        try {
-            this.pane = this.updatePaneByProperty(interfaceProperty);
-        } catch (final InterruptUpdateException ignored) {
-            return;
-        }
-        this.reApplySync();
-    }
-
-    private void reapplyInventory(final boolean firstOpen) {
+    @Override
+    protected void applyInventory(final boolean firstOpen) {
         // Double check that the player is actually viewing this view.
         if (!this.isOpen(firstOpen)) {
             return;
@@ -195,6 +108,11 @@ public final class CombinedView implements
         }
 
         this.reapplyPlayerInventory(firstOpen);
+    }
+
+    @Override
+    protected CombinedPane createPane() {
+        return new CombinedPane(this.backing.totalRows());
     }
 
     private boolean isOpen(final boolean firstOpen) {
@@ -250,31 +168,6 @@ public final class CombinedView implements
     }
 
     @Override
-    public @NonNull <C extends PlayerView<?>> C openChild(
-            final @NonNull Interface<?, PlayerViewer> backing,
-            final @NonNull InterfaceArguments argument
-    ) {
-        InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
-
-        @SuppressWarnings("unchecked")
-        C typedView = (C) view;
-        return typedView;
-    }
-
-    @Override
-    public <C extends PlayerView<?>> @NonNull C openChild(
-            @NonNull final ChildTitledInterface<?, PlayerViewer> backing,
-            @NonNull final InterfaceArguments argument,
-            @NonNull final Component title
-    ) {
-        InterfaceView<?, PlayerViewer> view = backing.open(this, argument, title);
-
-        @SuppressWarnings("unchecked")
-        C typedView = (C) view;
-        return typedView;
-    }
-
-    @Override
     public @NonNull PlayerView<?> back() {
         if (this.hasParent()) {
             this.parent.open();
@@ -282,41 +175,6 @@ public final class CombinedView implements
         }
 
         throw new NullPointerException("The view has no parent");
-    }
-
-    @Override
-    public void update() {
-        if (!this.viewer.player().isOnline()) {
-            return;
-        }
-
-        this.backing.updateExecutor().execute(this.plugin, this::actuallyUpdate);
-    }
-
-    private void actuallyUpdate() {
-        try {
-            this.pane = this.updatePane(false);
-        } catch (final InterruptUpdateException ignored) {
-            return;
-        }
-
-        this.reApplySync();
-    }
-
-    private void reApplySync() {
-        if (Bukkit.isPrimaryThread()) {
-            this.reapplyInventory(false);
-        } else {
-            try {
-                Bukkit.getScheduler().callSyncMethod(this.plugin, () -> {
-                    this.reapplyInventory(false);
-
-                    return null;
-                }).get();
-            } catch (final Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     /**
@@ -334,25 +192,9 @@ public final class CombinedView implements
         return this.parent;
     }
 
-
-    @Override
-    public @NonNull CombinedInterface backing() {
-        return this.backing;
-    }
-
-    @Override
-    public @NonNull PlayerViewer viewer() {
-        return this.viewer;
-    }
-
     @Override
     public boolean viewing() {
         return this.inventory.getViewers().contains(this.viewer.player());
-    }
-
-    @Override
-    public @NonNull InterfaceArguments arguments() {
-        return this.arguments;
     }
 
     @Override
@@ -372,12 +214,8 @@ public final class CombinedView implements
         return this.inventory;
     }
 
-    /**
-     * Creates the Bukkit inventory.
-     *
-     * @return the inventory
-     */
-    private @NonNull Inventory createInventory() {
+    @Override
+    protected @NonNull Inventory createInventory() {
         return Bukkit.createInventory(
                 this,
                 this.backing.chestRows() * 9,
@@ -390,7 +228,8 @@ public final class CombinedView implements
         return this.backing().updates();
     }
 
-    private @NonNull CombinedPane mergePanes() {
+    @Override
+    protected @NonNull CombinedPane mergePanes() {
         ItemStackElement<CombinedPane> empty = ItemStackElement.empty();
         CombinedPane finalPane = new CombinedPane(this.backing.totalRows());
 

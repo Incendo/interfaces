@@ -28,6 +28,7 @@ import java.util.List;
  * An interface using a chest.
  */
 public final class CombinedInterface implements
+        PaperInterface<CombinedPane, PlayerViewer>,
         ChildTitledInterface<CombinedPane, PlayerViewer>,
         UpdatingInterface,
         Clickable<CombinedPane, InventoryClickEvent, PlayerViewer> {

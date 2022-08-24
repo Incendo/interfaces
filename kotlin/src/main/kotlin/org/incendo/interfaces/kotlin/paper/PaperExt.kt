@@ -72,9 +72,10 @@ public fun <T : Pane, I : TitledInterface<T, PlayerViewer>> Player.open(
     `interface`: I,
     arguments: InterfaceArguments? = null,
     title: Component = `interface`.title()
-): InterfaceView<T, PlayerViewer> =
-    if (arguments == null) `interface`.open(this.asViewer(), title)
+): InterfaceView<T, PlayerViewer> {
+    return if (arguments == null) `interface`.open(this.asViewer(), title)
     else `interface`.open(this.asViewer(), arguments, title)
+}
 
 /**
  * Returns a [PlayerViewer] instance wrapping `this` player.

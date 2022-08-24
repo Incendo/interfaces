@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 public final class PlayerInterface implements
+        PaperInterface<PlayerPane, PlayerViewer>,
         Interface<PlayerPane, PlayerViewer>,
         UpdatingInterface,
         Clickable<PlayerPane, InventoryClickEvent, PlayerViewer> {
@@ -135,11 +136,8 @@ public final class PlayerInterface implements
         return this.clickHandler;
     }
 
-    /**
-     * The executor in which to run update tasks on.
-     * @return the executor
-     */
-    public InterfacesUpdateExecutor updateExecutor() {
+    @Override
+    public @NonNull InterfacesUpdateExecutor updateExecutor() {
         return this.updateExecutor;
     }
 

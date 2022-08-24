@@ -15,6 +15,8 @@ import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.click.InventoryClickContext;
 import org.incendo.interfaces.paper.pane.ChestPane;
+import org.incendo.interfaces.paper.utils.DefaultInterfacesUpdateExecutor;
+import org.incendo.interfaces.paper.utils.InterfacesUpdateExecutor;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.PlayerView;
 
@@ -26,6 +28,7 @@ import java.util.List;
  * An interface using a chest.
  */
 public final class ChestInterface implements
+        PaperInterface<ChestPane, PlayerViewer>,
         ChildTitledInterface<ChestPane, PlayerViewer>,
         UpdatingInterface,
         Clickable<ChestPane, InventoryClickEvent, PlayerViewer> {
@@ -38,6 +41,8 @@ public final class ChestInterface implements
     private final int updateDelay;
     private final @NonNull ClickHandler<ChestPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<ChestPane,
             ChestView>> clickHandler;
+    private final @NonNull InterfacesUpdateExecutor updateExecutor;
+
 
     /**
      * Constructs {@code ChestInterface}.
@@ -49,6 +54,7 @@ public final class ChestInterface implements
      * @param updates       {@code true} if the interface is an updating interface
      * @param updateDelay   the update delay
      * @param clickHandler  the handler to run on click
+     * @param updateExecutor  the update executor to use
      */
     public ChestInterface(
             final int rows,
@@ -58,7 +64,8 @@ public final class ChestInterface implements
             final boolean updates,
             final int updateDelay,
             final @NonNull ClickHandler<ChestPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<ChestPane,
-                    ChestView>> clickHandler
+                    ChestView>> clickHandler,
+            final @NonNull InterfacesUpdateExecutor updateExecutor
     ) {
         this.title = title;
         this.transformationList = transforms;
@@ -67,6 +74,7 @@ public final class ChestInterface implements
         this.updateDelay = updateDelay;
         this.rows = rows;
         this.clickHandler = clickHandler;
+        this.updateExecutor = updateExecutor;
     }
 
     /**
@@ -208,6 +216,11 @@ public final class ChestInterface implements
         return this.updateDelay;
     }
 
+    @Override
+    public @NonNull InterfacesUpdateExecutor updateExecutor() {
+        return this.updateExecutor;
+    }
+
     /**
      * A class that builds a chest interface.
      */
@@ -243,6 +256,9 @@ public final class ChestInterface implements
          */
         private final int updateDelay;
 
+        private final InterfacesUpdateExecutor updateExecutor;
+
+
         /**
          * The top click handler.
          */
@@ -259,6 +275,7 @@ public final class ChestInterface implements
             this.title = Component.empty();
             this.updates = false;
             this.updateDelay = 1;
+            this.updateExecutor = new DefaultInterfacesUpdateExecutor();
             this.clickHandler = ClickHandler.cancel();
         }
 
@@ -270,7 +287,8 @@ public final class ChestInterface implements
                 final boolean updates,
                 final int updateDelay,
                 final @NonNull ClickHandler<ChestPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<ChestPane,
-                        ChestView>> clickHandler
+                        ChestView>> clickHandler,
+                final @NonNull InterfacesUpdateExecutor updateExecutor
         ) {
             this.transformsList = Collections.unmodifiableList(transformsList);
             this.closeHandlerList = Collections.unmodifiableList(closeHandlerList);
@@ -278,6 +296,7 @@ public final class ChestInterface implements
             this.title = title;
             this.updates = updates;
             this.updateDelay = updateDelay;
+            this.updateExecutor = updateExecutor;
             this.clickHandler = clickHandler;
         }
 
@@ -304,7 +323,8 @@ public final class ChestInterface implements
                     this.title,
                     this.updates,
                     this.updateDelay,
-                    this.clickHandler
+                    this.clickHandler,
+                    this.updateExecutor
             );
         }
 
@@ -331,7 +351,8 @@ public final class ChestInterface implements
                     title,
                     this.updates,
                     this.updateDelay,
-                    this.clickHandler
+                    this.clickHandler,
+                    this.updateExecutor
             );
         }
 
@@ -352,7 +373,28 @@ public final class ChestInterface implements
                     this.title,
                     this.updates,
                     this.updateDelay,
-                    this.clickHandler
+                    this.clickHandler,
+                    this.updateExecutor
+            );
+        }
+
+        /**
+         * Set your own update executor.
+         * @see org.incendo.interfaces.paper.utils.SynchronousInterfacesUpdateExecutor
+         *
+         * @param updateExecutor the executor
+         * @return new builder instance
+         */
+        public @NonNull Builder updateExecutor(final @NonNull InterfacesUpdateExecutor updateExecutor) {
+            return new Builder(
+                    this.transformsList,
+                    this.closeHandlerList,
+                    this.rows,
+                    this.title,
+                    this.updates,
+                    this.updateDelay,
+                    this.clickHandler,
+                    updateExecutor
             );
         }
 
@@ -384,7 +426,8 @@ public final class ChestInterface implements
                     this.title,
                     this.updates,
                     this.updateDelay,
-                    this.clickHandler
+                    this.clickHandler,
+                    this.updateExecutor
             );
         }
 
@@ -424,7 +467,8 @@ public final class ChestInterface implements
                     this.title,
                     this.updates,
                     this.updateDelay,
-                    handler
+                    handler,
+                    this.updateExecutor
             );
         }
 
@@ -443,7 +487,8 @@ public final class ChestInterface implements
                     this.title,
                     updates,
                     updateDelay,
-                    this.clickHandler
+                    this.clickHandler,
+                    this.updateExecutor
             );
         }
 
@@ -461,7 +506,8 @@ public final class ChestInterface implements
                     this.closeHandlerList,
                     this.updates,
                     this.updateDelay,
-                    this.clickHandler
+                    this.clickHandler,
+                    this.updateExecutor
             );
         }
 

@@ -91,8 +91,8 @@ public class MutablePlayerInterfaceBuilder :
         vararg properties: InterfaceProperty<*>,
         transform: (MutablePlayerPaneView) -> Unit
     ) {
-        addTransform(1, *properties) { PlayerPane, interfaceView ->
-            MutablePlayerPaneView(PlayerPane, interfaceView).also(transform).toPlayerPane()
+        addTransform(1, *properties) { playerPane, interfaceView ->
+            MutablePlayerPaneView(playerPane, interfaceView).also(transform).toPlayerPane()
         }
     }
     // </editor-fold>

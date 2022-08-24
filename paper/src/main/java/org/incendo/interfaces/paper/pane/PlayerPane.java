@@ -9,8 +9,8 @@ import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.utils.PaperUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,45 +27,32 @@ public final class PlayerPane implements GridPane<PlayerPane, ItemStackElement<P
     public static final int ARMOR_MAX = 39;
     public static final int OFF_HAND = 40;
 
-    @SuppressWarnings("rawtypes")
-    private final ItemStackElement[] elements;
+    private final List<ItemStackElement<PlayerPane>> elements;
 
     /**
      * Constructs {@code PlayerPane}.
      */
     public PlayerPane() {
-        this.elements = new ItemStackElement[41];
-        for (int i = 0; i < this.elements.length; i++) {
-            this.elements[i] = ItemStackElement.empty();
-        }
+        this.elements = new ArrayList<>(Collections.nCopies(41, ItemStackElement.<PlayerPane>empty()));
     }
 
-    @SuppressWarnings("rawtypes")
-    private PlayerPane(
-            final @NonNull ItemStackElement @NonNull[] elements
-    ) {
+    private PlayerPane(final @NonNull List<ItemStackElement<PlayerPane>> elements) {
         this.elements = elements;
     }
 
     @Override
     public @NonNull Collection<Element> elements() {
-        final List<Element> elements = new ArrayList<>(this.elements.length);
-        elements.addAll(Arrays.asList(this.elements));
-        return elements;
+        return new ArrayList<>(this.elements);
     }
 
     /**
      * Returns a list containing all elements in this interface
+     * todo(josh): integrate this with #elements
      *
      * @return the elements
      */
-    @SuppressWarnings("unchecked")
     public @NonNull List<@NonNull ItemStackElement<PlayerPane>> inventoryElements() {
-        final List<ItemStackElement<PlayerPane>> elements = new ArrayList<>(this.elements.length);
-        for (var element : this.elements) {
-            elements.add((ItemStackElement<PlayerPane>) element);
-        }
-        return elements;
+        return new ArrayList<>(this.elements);
     }
 
     /**
@@ -81,10 +68,8 @@ public final class PlayerPane implements GridPane<PlayerPane, ItemStackElement<P
             final @IntRange(from = 0, to = 40) int index,
             final @NonNull ItemStackElement<PlayerPane> element
     ) {
-        @SuppressWarnings("rawtypes")
-        final ItemStackElement[] elements = new ItemStackElement[this.elements.length];
-        System.arraycopy(this.elements, 0, elements, 0, this.elements.length);
-        elements[index] = element;
+        List<ItemStackElement<PlayerPane>> elements = new ArrayList<>(this.elements);
+        elements.set(index, element);
         return new PlayerPane(elements);
     }
 
@@ -94,9 +79,8 @@ public final class PlayerPane implements GridPane<PlayerPane, ItemStackElement<P
      * @param index the index
      * @return the element
      */
-    @SuppressWarnings("unchecked")
     public @NonNull ItemStackElement<PlayerPane> element(final @IntRange(from = 0, to = 40) int index) {
-        return this.elements[index];
+        return this.elements.get(index);
     }
 
     /**

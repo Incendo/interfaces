@@ -1,53 +1,33 @@
 package org.incendo.interfaces.paper.view;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.PluginClassLoader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.element.Element;
-import org.incendo.interfaces.core.transform.InterfaceProperty;
-import org.incendo.interfaces.core.transform.InterruptUpdateException;
-import org.incendo.interfaces.core.view.InterfaceView;
+import org.incendo.interfaces.core.util.Vector2;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.PlayerPane;
-import org.incendo.interfaces.paper.type.ChildTitledInterface;
 import org.incendo.interfaces.paper.type.PlayerInterface;
+import org.incendo.interfaces.paper.utils.PaperUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-public final class PlayerInventoryView implements
-        PlayerView<PlayerPane>,
-        SelfUpdatingInterfaceView {
+public final class PlayerInventoryView extends PaperView<PlayerInterface, PlayerPane, PlayerInventory>
+        implements SelfUpdatingInterfaceView {
 
     private static final Map<Player, PlayerInventoryView> INVENTORY_VIEW_MAP = new WeakHashMap<>();
-
-    private final @NonNull PlayerViewer viewer;
-    private final @NonNull PlayerInterface backing;
-    private final @NonNull PlayerInventory inventory;
-    private final @NonNull InterfaceArguments arguments;
-
-    private @NonNull PlayerPane pane;
-
-    private boolean viewing = true;
-
-    private final @NonNull Map<Integer, Element> current = new HashMap<>();
-
-    private final Plugin plugin;
 
     /**
      * Constructs {@code PlayerInventoryView}.
@@ -61,23 +41,16 @@ public final class PlayerInventoryView implements
             final @NonNull PlayerViewer viewer,
             final @NonNull InterfaceArguments argument
     ) {
+        super(viewer, argument, backing);
+
         // If an inventory exists for the player, we "close" the old one.
         final PlayerInventoryView oldView = INVENTORY_VIEW_MAP.remove(viewer.player());
+
         if (oldView != null) {
             oldView.close();
         }
 
-        this.plugin = ((PluginClassLoader) getClass().getClassLoader()).getPlugin();
-        this.viewer = viewer;
-        this.backing = backing;
-        this.arguments = argument;
-        this.inventory = viewer.player().getInventory();
-
-        try {
-            this.pane = this.updatePane(true);
-        } catch (final InterruptUpdateException ignored) {
-            this.pane = new PlayerPane();
-        }
+        this.finishConstruction();
 
         // Store the new view.
         INVENTORY_VIEW_MAP.put(viewer.player(), this);
@@ -114,38 +87,64 @@ public final class PlayerInventoryView implements
         INVENTORY_VIEW_MAP.remove(player);
     }
 
-    private @NonNull PlayerPane updatePane(final boolean firstApply) {
-        @NonNull PlayerPane pane = new PlayerPane();
+    @Override
+    protected void applyInventory(final boolean firstApply) {
+        final @NonNull List<ItemStackElement<PlayerPane>> elements = this.pane.inventoryElements();
 
-        for (final var transform : this.backing.transformations()) {
-            pane = transform.transform().apply(pane, this);
+        boolean changed = false;
 
-            // If it's the first time we apply the transform, then
-            // we add update listeners to all the dependent properties
-            if (firstApply) {
-                for (final InterfaceProperty<?> property : transform.properties()) {
-                    property.addListener((oldValue, newValue) -> this.update());
+        for (int i = 0; i < elements.size(); i++) {
+            Vector2 vector = PaperUtils.slotToGrid(i);
+            final @Nullable Element currentElement = this.current.get(vector);
+            final @NonNull ItemStackElement<PlayerPane> element = elements.get(i);
+
+            if (element.equals(currentElement)) {
+                continue;
+            }
+
+            this.current.put(vector, element);
+            this.inventory.setItem(i, element.itemStack());
+
+            changed = true;
+        }
+
+        if (changed && this.viewer.player().getOpenInventory().getTopInventory().getType() == InventoryType.CRAFTING) {
+            this.viewer.player().updateInventory();
+        }
+    }
+
+    @Override
+    protected PlayerPane createPane() {
+        return new PlayerPane();
+    }
+
+    @Override
+    protected PlayerInventory createInventory() {
+        return this.viewer.player().getInventory();
+    }
+
+    @Override
+    protected PlayerPane mergePanes() {
+        ItemStackElement<PlayerPane> empty = ItemStackElement.empty();
+        PlayerPane finalPane = new PlayerPane();
+
+        List<ContextCompletedPane<PlayerPane>> completedPanes = new ArrayList<>(this.panes);
+
+        completedPanes.sort(Comparator.comparingInt(pane -> pane.context().priority()));
+
+        for (final var completedPane : completedPanes) {
+            List<ItemStackElement<PlayerPane>> elements = completedPane.pane().inventoryElements();
+
+            for (int i = 0; i < elements.size(); i++) {
+                ItemStackElement<PlayerPane> element = elements.get(i);
+
+                if (!element.equals(empty)) {
+                    finalPane = finalPane.element(i, element);
                 }
             }
         }
 
-        return pane;
-    }
-
-    @Override
-    public @NonNull PlayerInterface backing() {
-        return this.backing;
-    }
-
-    @Override
-    public @NonNull InterfaceArguments arguments() {
-        return this.arguments;
-    }
-
-    @NonNull
-    @Override
-    public PlayerViewer viewer() {
-        return this.viewer;
+        return finalPane;
     }
 
     @Override
@@ -179,65 +178,6 @@ public final class PlayerInventoryView implements
     }
 
     @Override
-    public void update() {
-        if (!this.viewing) {
-            return;
-        }
-
-        if (!this.viewer.player().isOnline()) {
-            return;
-        }
-
-        this.backing.updateExecutor().execute(this.plugin, this::actuallyUpdate);
-    }
-
-    private void actuallyUpdate() {
-        try {
-            this.pane = this.updatePane(false);
-        } catch (final InterruptUpdateException ignored) {
-            return;
-        }
-
-        if (Bukkit.isPrimaryThread()) {
-            this.reapplyInventory();
-        } else {
-            try {
-                Bukkit.getScheduler().callSyncMethod(this.plugin, () -> {
-                    this.reapplyInventory();
-
-                    return null;
-                }).get();
-            } catch (final Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    private void reapplyInventory() {
-        final @NonNull List<ItemStackElement<PlayerPane>> elements = this.pane.inventoryElements();
-
-        boolean changed = false;
-
-        for (int i = 0; i < elements.size(); i++) {
-            final @Nullable Element currentElement = this.current.get(i);
-            final @NonNull ItemStackElement<PlayerPane> element = elements.get(i);
-
-            if (element.equals(currentElement)) {
-                continue;
-            }
-
-            this.current.put(i, element);
-            this.inventory.setItem(i, element.itemStack());
-
-            changed = true;
-        }
-
-        if (changed && this.viewer.player().getOpenInventory().getTopInventory().getType() == InventoryType.CRAFTING) {
-            this.viewer.player().updateInventory();
-        }
-    }
-
-    @Override
     public @NotNull PlayerInventory getInventory() {
         return this.inventory;
     }
@@ -245,33 +185,6 @@ public final class PlayerInventoryView implements
     @Override
     public boolean updates() {
         return this.backing().updates();
-    }
-
-    @Override
-    public <C extends PlayerView<?>> @NonNull C openChild(
-            @NonNull final Interface<?, PlayerViewer> backing,
-            @NonNull final InterfaceArguments argument
-    ) {
-        InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
-        view.open();
-
-        @SuppressWarnings("unchecked")
-        C typedView = (C) view;
-        return typedView;
-    }
-
-    @Override
-    public <C extends PlayerView<?>> @NonNull C openChild(
-            @NonNull final ChildTitledInterface<?, PlayerViewer> backing,
-            @NonNull final InterfaceArguments argument,
-            @NonNull final Component title
-    ) {
-        InterfaceView<?, PlayerViewer> view = backing.open(this, argument, title);
-        view.open();
-
-        @SuppressWarnings("unchecked")
-        C typedView = (C) view;
-        return typedView;
     }
 
 }
