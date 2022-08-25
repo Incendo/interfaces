@@ -172,7 +172,10 @@ public final class PlayerInventoryView extends PaperView<PlayerInterface, Player
         // The player is no longer viewing the inventory,
         this.viewing = false;
         // so all items are removed
-        this.inventory.clear();
+        //todo(josh): shouldn't be needed but im seeing exceptions where this is null.
+        if (this.inventory != null) {
+            this.inventory.clear();
+        }
         // and an event is emitted.
         Bukkit.getPluginManager().callEvent(new ViewCloseEvent(this));
     }
