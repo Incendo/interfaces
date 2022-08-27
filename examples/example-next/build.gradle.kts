@@ -26,8 +26,8 @@ kotlin {
 
 dependencies {
     implementation(projects.interfacesNext)
-    implementation("cloud.commandframework", "cloud-paper", "1.6.1")
-    implementation("cloud.commandframework", "cloud-kotlin-extensions", "1.6.1")
+    implementation("cloud.commandframework", "cloud-paper", "1.7.1")
+    implementation("cloud.commandframework", "cloud-kotlin-extensions", "1.7.1")
 
     compileOnly(libs.paper.api)
 }

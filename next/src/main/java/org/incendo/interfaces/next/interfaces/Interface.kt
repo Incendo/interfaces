@@ -13,7 +13,7 @@ public interface Interface<P : Pane> {
 
     public val initialTitle: Component?
 
-    public val transforms: Collection<AppliedTransform>
+    public val transforms: Collection<AppliedTransform<P>>
 
     public val clickPreprocessors: Collection<ClickHandler>
 

@@ -12,12 +12,12 @@ import org.incendo.interfaces.next.properties.Trigger
 import org.incendo.interfaces.next.transform.ReactiveTransform
 import org.incendo.interfaces.next.utilities.BoundInteger
 
-public class PaginationTransformation(
+public class PaginationTransformation<P : Pane>(
     default: Collection<Element>,
     private val positionGenerator: GridPositionGenerator,
     private val back: ButtonInformation?,
     private val forward: ButtonInformation?
-) : ReactiveTransform {
+) : ReactiveTransform<P> {
 
     private val boundPage = BoundInteger(0, 1, default.size)
     private var page by boundPage
@@ -29,7 +29,7 @@ public class PaginationTransformation(
 
     override val triggers: Array<Trigger> = arrayOf(pageProperty, valuesProperty)
 
-    override fun invoke(pane: Pane) {
+    override fun invoke(pane: P) {
         val positions = positionGenerator.generate()
         val slots = positions.size
 

@@ -11,7 +11,7 @@ plugins {
     id("xyz.jpenilla.run-paper") apply false
 
     // Kotlin plugin prefers to be applied to parent when it's used in multiple sub-modules.
-    kotlin("jvm") version "1.6.10" apply false
+    kotlin("jvm") version "1.7.10" apply false
     id("org.jlleitschuh.gradle.ktlint") apply false
 }
 
@@ -42,7 +42,8 @@ subprojects {
         publishSnapshotsTo("incendo", "https://repo.incendo.org/content/repositories/snapshots/")
 
         javaVersions {
-            target(11)
+            minimumToolchain(17)
+            target(17)
         }
 
         github("incendo", "interfaces") {
@@ -63,9 +64,6 @@ subprojects {
 
     // Configure any existing RunServerTasks
     tasks.withType<RunServerTask> {
-        minecraftVersion("1.17.1")
-        jvmArgs(
-            "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
-            "-Dio.papermc.paper.suppress.sout.nags=true")
+        minecraftVersion("1.19.2")
     }
 }

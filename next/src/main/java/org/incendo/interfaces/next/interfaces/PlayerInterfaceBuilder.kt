@@ -2,28 +2,27 @@ package org.incendo.interfaces.next.interfaces
 
 import net.kyori.adventure.text.Component
 import org.incendo.interfaces.next.click.ClickHandler
-import org.incendo.interfaces.next.pane.ChestPane
+import org.incendo.interfaces.next.pane.PlayerPane
 import org.incendo.interfaces.next.properties.Trigger
 import org.incendo.interfaces.next.transform.AppliedTransform
 import org.incendo.interfaces.next.transform.ReactiveTransform
 import org.incendo.interfaces.next.transform.Transform
 import org.incendo.interfaces.next.utilities.IncrementingInteger
 
-public class ChestInterfaceBuilder internal constructor() : InterfaceBuilder<ChestPane, ChestInterface>() {
+public class PlayerInterfaceBuilder internal constructor() : InterfaceBuilder<PlayerPane, PlayerInterface>() {
 
-    public var rows: Int = 0
     public var initialTitle: Component? = null
 
     private val transformCounter by IncrementingInteger()
-    private val transforms: MutableCollection<AppliedTransform<ChestPane>> = mutableListOf()
+    private val transforms: MutableCollection<AppliedTransform<PlayerPane>> = mutableListOf()
 
     private val clickPreprocessors: MutableCollection<ClickHandler> = mutableListOf()
 
-    public fun withTransform(vararg triggers: Trigger, transform: Transform<ChestPane>) {
+    public fun withTransform(vararg triggers: Trigger, transform: Transform<PlayerPane>) {
         transforms.add(AppliedTransform(transformCounter, triggers.toSet(), transform))
     }
 
-    public fun addTransform(reactiveTransform: ReactiveTransform<ChestPane>) {
+    public fun addTransform(reactiveTransform: ReactiveTransform<PlayerPane>) {
         transforms.add(AppliedTransform(transformCounter, reactiveTransform.triggers.toSet(), reactiveTransform))
     }
 
@@ -31,8 +30,7 @@ public class ChestInterfaceBuilder internal constructor() : InterfaceBuilder<Che
         clickPreprocessors += handler
     }
 
-    public override fun build(): ChestInterface = ChestInterface(
-        rows,
+    public override fun build(): PlayerInterface = PlayerInterface(
         initialTitle,
         transforms,
         clickPreprocessors

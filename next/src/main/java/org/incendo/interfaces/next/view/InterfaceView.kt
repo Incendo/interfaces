@@ -1,6 +1,5 @@
 package org.incendo.interfaces.next.view
 
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
@@ -19,13 +18,13 @@ public abstract class InterfaceView<P : Pane>(
     public val backing: Interface<P>
 ) : InventoryHolder {
 
-    private companion object {
-        private const val COLUMNS = 9
+    public companion object {
+        public const val COLUMNS_IN_CHEST: Int = 9
     }
 
     private var isOpen = true
 
-    private val titleState = TitleState(backing.initialTitle)
+    internal val titleState = TitleState(backing.initialTitle)
     private val panes = CollapsablePaneMap()
 
     private lateinit var currentInventory: Inventory
@@ -35,7 +34,7 @@ public abstract class InterfaceView<P : Pane>(
         update(CompleteUpdate, true)
 
         backing.transforms
-            .flatMap(AppliedTransform::triggers)
+            .flatMap(AppliedTransform<P>::triggers)
             .forEach { trigger ->
                 trigger.addListener {
                     update(TriggerUpdate(trigger))
@@ -65,22 +64,11 @@ public abstract class InterfaceView<P : Pane>(
 
     public override fun getInventory(): Inventory = currentInventory
 
-    private fun openInventory(): Unit = runSync {
-        player.openInventory(currentInventory)
-    }
+    public abstract fun createInventory(): Inventory
 
-    private fun createInventory(): Inventory {
-        val currentTitle = titleState.current
-        val rows = backing.rows * COLUMNS
+    public abstract fun openInventory()
 
-        return if (currentTitle != null) {
-            Bukkit.createInventory(this, rows, currentTitle)
-        } else {
-            Bukkit.createInventory(this, rows)
-        }
-    }
-
-    internal fun applyTransforms(transforms: Collection<AppliedTransform>) {
+    internal fun applyTransforms(transforms: Collection<AppliedTransform<P>>) {
         for (transform in transforms) {
             val pane = backing.createPane()
             transform(pane)
