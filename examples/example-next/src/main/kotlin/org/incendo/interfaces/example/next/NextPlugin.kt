@@ -3,6 +3,7 @@ package org.incendo.interfaces.example.next
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator
 import cloud.commandframework.kotlin.extension.buildAndRegister
 import cloud.commandframework.paper.PaperCommandManager
+import java.util.concurrent.CompletableFuture
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -14,7 +15,8 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import org.incendo.interfaces.next.InterfacesListeners
-import org.incendo.interfaces.next.element.asElement
+import org.incendo.interfaces.next.drawable.Drawable.Companion.drawable
+import org.incendo.interfaces.next.element.StaticElement
 import org.incendo.interfaces.next.interfaces.buildChestInterface
 import org.incendo.interfaces.next.interfaces.buildPlayerInterface
 import org.incendo.interfaces.next.open
@@ -76,24 +78,44 @@ public class NextPlugin : JavaPlugin(), Listener {
                 val item = ItemStack(Material.WHITE_STAINED_GLASS_PANE)
                     .name("col: $column, row: $row")
 
-                pane[column, row] = item.asElement()
+                pane[column, row] = StaticElement.syncHandler(drawable(item))
             }
         }
 
         withTransform(counterProperty) { pane ->
-            pane[3, 3] = ItemStack(Material.BEE_NEST)
+            val item = ItemStack(Material.BEE_NEST)
                 .name("it's been $counter's ticks")
-                .asElement {
-                    it.player.sendMessage("hi")
+                .description("click to see the ticks now")
+
+            pane[3, 3] = StaticElement.syncHandler(drawable(item)) {
+                it.player.sendMessage("it's been $counter's ticks")
+            }
+        }
+
+        withTransform { pane ->
+            val item = ItemStack(Material.BEE_NEST)
+                .name("block the interface")
+                .description("block interaction and message in 5 seconds")
+
+            pane[5, 3] = StaticElement.asyncHandler(drawable(item)) {
+                val future = CompletableFuture<Unit>()
+
+                runAsync(5) {
+                    println("thing")
+                    it.player.sendMessage("after blocking, it has been $counter's ticks")
+                    future.complete(Unit)
                 }
+
+                return@asyncHandler future
+            }
         }
     }
 
     private fun playerInterface() = buildPlayerInterface {
         withTransform { pane ->
-            pane[5, 0] = ItemStack(Material.COMPASS)
-                .name("interfaces example")
-                .asElement()
+            val item = ItemStack(Material.COMPASS).name("interfaces example")
+
+            pane[5, 0] = StaticElement.syncHandler(drawable(item))
         }
     }
 
@@ -103,4 +125,17 @@ public class NextPlugin : JavaPlugin(), Listener {
         }
         return this
     }
+
+    private fun ItemStack.description(description: String): ItemStack {
+        itemMeta = itemMeta.also { meta ->
+            meta.lore(listOf(Component.text(description)))
+        }
+        return this
+    }
+
+    private fun runAsync(delay: Int, runnable: Runnable) {
+        println(delay * 20L)
+        Bukkit.getScheduler().runTaskLaterAsynchronously(this, runnable, delay * 20L)
+    }
+
 }

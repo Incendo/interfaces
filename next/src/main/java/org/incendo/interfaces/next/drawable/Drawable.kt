@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack
 public fun interface Drawable {
 
     public companion object {
-        public fun item(item: ItemStack): Drawable = Drawable { item }
+        public fun drawable(item: ItemStack): Drawable = Drawable { item }
     }
 
     public fun draw(player: Player): ItemStack

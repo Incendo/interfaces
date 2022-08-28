@@ -38,18 +38,28 @@ public class InterfacesListeners : Listener {
             return
         }
 
+        if (holder.isProcessingClick) {
+            event.isCancelled = true
+            return
+        }
+
+        holder.isProcessingClick = true
+
         val player = event.whoClicked as Player
         val bukkitIndex = event.slot
-        val clickedPoint = GridPoint.at(bukkitIndex % 9, bukkitIndex / 9)
+        val clickedPoint = GridPoint.at(bukkitIndex / 9, bukkitIndex % 9)
 
         val clickContext = ClickContext(true, player, holder, event.click)
 
         holder.backing.clickPreprocessors
-            .forEach { handler -> handler.invoke(clickContext) }
+            .forEach { handler -> handler.handleSynchronous(clickContext) }
+
+        println(holder.pane[clickedPoint]?.drawable()?.draw(player)?.type)
 
         holder.pane[clickedPoint]
             ?.clickHandler()
-            ?.invoke(clickContext)
+            ?.handleAsynchronous(clickContext)
+            ?.thenRun { holder.isProcessingClick = false }
 
         if (clickContext.cancelled) {
             event.isCancelled = true

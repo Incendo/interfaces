@@ -2,7 +2,7 @@ package org.incendo.interfaces.next.interfaces
 
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
-import org.incendo.interfaces.next.click.ClickHandler
+import org.incendo.interfaces.next.click.SynchronousClickHandler
 import org.incendo.interfaces.next.pane.Pane
 import org.incendo.interfaces.next.transform.AppliedTransform
 import org.incendo.interfaces.next.view.InterfaceView
@@ -15,7 +15,7 @@ public interface Interface<P : Pane> {
 
     public val transforms: Collection<AppliedTransform<P>>
 
-    public val clickPreprocessors: Collection<ClickHandler>
+    public val clickPreprocessors: Collection<SynchronousClickHandler>
 
     public fun createPane(): P
 

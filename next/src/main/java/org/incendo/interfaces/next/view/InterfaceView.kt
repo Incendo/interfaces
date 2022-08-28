@@ -22,7 +22,9 @@ public abstract class InterfaceView<P : Pane>(
         public const val COLUMNS_IN_CHEST: Int = 9
     }
 
-    private var isOpen = true
+    //todo(josh): reduce internal abuse?
+    internal var isProcessingClick = false
+    internal var isOpen = true
 
     internal val titleState = TitleState(backing.initialTitle)
     private val panes = CollapsablePaneMap()

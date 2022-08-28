@@ -1,7 +1,7 @@
 package org.incendo.interfaces.next.interfaces
 
 import net.kyori.adventure.text.Component
-import org.incendo.interfaces.next.click.ClickHandler
+import org.incendo.interfaces.next.click.SynchronousClickHandler
 import org.incendo.interfaces.next.pane.PlayerPane
 import org.incendo.interfaces.next.properties.Trigger
 import org.incendo.interfaces.next.transform.AppliedTransform
@@ -16,7 +16,7 @@ public class PlayerInterfaceBuilder internal constructor() : InterfaceBuilder<Pl
     private val transformCounter by IncrementingInteger()
     private val transforms: MutableCollection<AppliedTransform<PlayerPane>> = mutableListOf()
 
-    private val clickPreprocessors: MutableCollection<ClickHandler> = mutableListOf()
+    private val clickPreprocessors: MutableCollection<SynchronousClickHandler> = mutableListOf()
 
     public fun withTransform(vararg triggers: Trigger, transform: Transform<PlayerPane>) {
         transforms.add(AppliedTransform(transformCounter, triggers.toSet(), transform))
@@ -26,7 +26,7 @@ public class PlayerInterfaceBuilder internal constructor() : InterfaceBuilder<Pl
         transforms.add(AppliedTransform(transformCounter, reactiveTransform.triggers.toSet(), reactiveTransform))
     }
 
-    public fun withPreprocessor(handler: ClickHandler) {
+    public fun withPreprocessor(handler: SynchronousClickHandler) {
         clickPreprocessors += handler
     }
 
