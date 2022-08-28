@@ -22,7 +22,7 @@ public abstract class InterfaceView<P : Pane>(
         public const val COLUMNS_IN_CHEST: Int = 9
     }
 
-    //todo(josh): reduce internal abuse?
+    // todo(josh): reduce internal abuse?
     internal var isProcessingClick = false
     internal var isOpen = true
 

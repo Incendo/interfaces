@@ -3,7 +3,7 @@ package org.incendo.interfaces.example.next
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator
 import cloud.commandframework.kotlin.extension.buildAndRegister
 import cloud.commandframework.paper.PaperCommandManager
-import java.util.concurrent.CompletableFuture
+import kotlinx.coroutines.CompletableDeferred
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -98,15 +98,15 @@ public class NextPlugin : JavaPlugin(), Listener {
                 .description("block interaction and message in 5 seconds")
 
             pane[5, 3] = StaticElement.asyncHandler(drawable(item)) {
-                val future = CompletableFuture<Unit>()
+                val deferred = CompletableDeferred<Unit>(null)
 
                 runAsync(5) {
                     println("thing")
                     it.player.sendMessage("after blocking, it has been $counter's ticks")
-                    future.complete(Unit)
+                    deferred.complete(Unit)
                 }
 
-                return@asyncHandler future
+                return@asyncHandler deferred
             }
         }
     }
@@ -137,5 +137,4 @@ public class NextPlugin : JavaPlugin(), Listener {
         println(delay * 20L)
         Bukkit.getScheduler().runTaskLaterAsynchronously(this, runnable, delay * 20L)
     }
-
 }

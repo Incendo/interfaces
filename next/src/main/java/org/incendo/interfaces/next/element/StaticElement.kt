@@ -24,7 +24,6 @@ public class StaticElement private constructor(
             StaticElement {
             return StaticElement(drawable, clickHandler)
         }
-
     }
 
     override fun drawable(): Drawable = drawable

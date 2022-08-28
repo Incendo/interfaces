@@ -59,7 +59,7 @@ public class InterfacesListeners : Listener {
         holder.pane[clickedPoint]
             ?.clickHandler()
             ?.handleAsynchronous(clickContext)
-            ?.thenRun { holder.isProcessingClick = false }
+            ?.invokeOnCompletion { holder.isProcessingClick = false }
 
         if (clickContext.cancelled) {
             event.isCancelled = true
