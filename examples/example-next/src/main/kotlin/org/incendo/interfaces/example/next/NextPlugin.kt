@@ -3,7 +3,6 @@ package org.incendo.interfaces.example.next
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator
 import cloud.commandframework.kotlin.extension.buildAndRegister
 import cloud.commandframework.paper.PaperCommandManager
-import kotlinx.coroutines.CompletableDeferred
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -78,7 +77,7 @@ public class NextPlugin : JavaPlugin(), Listener {
                 val item = ItemStack(Material.WHITE_STAINED_GLASS_PANE)
                     .name("col: $column, row: $row")
 
-                pane[column, row] = StaticElement.syncHandler(drawable(item))
+                pane[column, row] = StaticElement(drawable(item))
             }
         }
 
@@ -87,7 +86,7 @@ public class NextPlugin : JavaPlugin(), Listener {
                 .name("it's been $counter's ticks")
                 .description("click to see the ticks now")
 
-            pane[3, 3] = StaticElement.syncHandler(drawable(item)) {
+            pane[3, 3] = StaticElement(drawable(item)) {
                 it.player.sendMessage("it's been $counter's ticks")
             }
         }
@@ -97,16 +96,13 @@ public class NextPlugin : JavaPlugin(), Listener {
                 .name("block the interface")
                 .description("block interaction and message in 5 seconds")
 
-            pane[5, 3] = StaticElement.asyncHandler(drawable(item)) {
-                val deferred = CompletableDeferred<Unit>(null)
+            pane[5, 3] = StaticElement(drawable(item)) {
+                completingLater = true
 
                 runAsync(5) {
-                    println("thing")
                     it.player.sendMessage("after blocking, it has been $counter's ticks")
-                    deferred.complete(Unit)
+                    complete()
                 }
-
-                return@asyncHandler deferred
             }
         }
     }
@@ -115,7 +111,7 @@ public class NextPlugin : JavaPlugin(), Listener {
         withTransform { pane ->
             val item = ItemStack(Material.COMPASS).name("interfaces example")
 
-            pane[5, 0] = StaticElement.syncHandler(drawable(item))
+            pane[5, 0] = StaticElement(drawable(item))
         }
     }
 
@@ -134,7 +130,6 @@ public class NextPlugin : JavaPlugin(), Listener {
     }
 
     private fun runAsync(delay: Int, runnable: Runnable) {
-        println(delay * 20L)
         Bukkit.getScheduler().runTaskLaterAsynchronously(this, runnable, delay * 20L)
     }
 }

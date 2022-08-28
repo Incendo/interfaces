@@ -1,7 +1,7 @@
 package org.incendo.interfaces.next.interfaces
 
 import net.kyori.adventure.text.Component
-import org.incendo.interfaces.next.click.SynchronousClickHandler
+import org.incendo.interfaces.next.click.ClickHandler
 import org.incendo.interfaces.next.pane.ChestPane
 import org.incendo.interfaces.next.properties.Trigger
 import org.incendo.interfaces.next.transform.AppliedTransform
@@ -17,7 +17,7 @@ public class ChestInterfaceBuilder internal constructor() : InterfaceBuilder<Che
     private val transformCounter by IncrementingInteger()
     private val transforms: MutableCollection<AppliedTransform<ChestPane>> = mutableListOf()
 
-    private val clickPreprocessors: MutableCollection<SynchronousClickHandler> = mutableListOf()
+    private val clickPreprocessors: MutableCollection<ClickHandler> = mutableListOf()
 
     public fun withTransform(vararg triggers: Trigger, transform: Transform<ChestPane>) {
         transforms.add(AppliedTransform(transformCounter, triggers.toSet(), transform))
@@ -27,7 +27,7 @@ public class ChestInterfaceBuilder internal constructor() : InterfaceBuilder<Che
         transforms.add(AppliedTransform(transformCounter, reactiveTransform.triggers.toSet(), reactiveTransform))
     }
 
-    public fun withPreprocessor(handler: SynchronousClickHandler) {
+    public fun withPreprocessor(handler: ClickHandler) {
         clickPreprocessors += handler
     }
 

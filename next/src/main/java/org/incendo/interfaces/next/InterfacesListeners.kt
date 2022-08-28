@@ -8,6 +8,8 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.plugin.Plugin
 import org.incendo.interfaces.next.click.ClickContext
+import org.incendo.interfaces.next.click.ClickHandler
+import org.incendo.interfaces.next.click.CompletableClickHandler
 import org.incendo.interfaces.next.grid.GridPoint
 import org.incendo.interfaces.next.view.InterfaceView
 
@@ -49,20 +51,22 @@ public class InterfacesListeners : Listener {
         val bukkitIndex = event.slot
         val clickedPoint = GridPoint.at(bukkitIndex / 9, bukkitIndex % 9)
 
-        val clickContext = ClickContext(true, player, holder, event.click)
+        val clickContext = ClickContext(player, holder, event.click)
 
         holder.backing.clickPreprocessors
-            .forEach { handler -> handler.handleSynchronous(clickContext) }
+            .forEach { handler -> ClickHandler.process(handler, clickContext) }
 
-        println(holder.pane[clickedPoint]?.drawable()?.draw(player)?.type)
+        val clickHandler = holder.pane[clickedPoint]
+            ?.clickHandler() ?: ClickHandler.EMPTY
 
-        holder.pane[clickedPoint]
-            ?.clickHandler()
-            ?.handleAsynchronous(clickContext)
-            ?.invokeOnCompletion { holder.isProcessingClick = false }
+        val completedClickHandler = clickHandler
+            .run { CompletableClickHandler().apply { handle(clickContext) } }
+            .onComplete { holder.isProcessingClick = false }
 
-        if (clickContext.cancelled) {
-            event.isCancelled = true
+        if (!completedClickHandler.completingLater) {
+            completedClickHandler.complete()
         }
+
+        event.isCancelled = completedClickHandler.cancelled
     }
 }

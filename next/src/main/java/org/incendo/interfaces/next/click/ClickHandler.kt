@@ -1,23 +1,32 @@
 package org.incendo.interfaces.next.click
 
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.CompletionHandler
 
-public fun interface AsynchronousClickHandler {
+public fun interface ClickHandler {
 
-    public fun handleAsynchronous(context: ClickContext): Deferred<Unit>
-}
+    public companion object {
+        public val EMPTY: ClickHandler = ClickHandler { }
 
-public fun interface SynchronousClickHandler : AsynchronousClickHandler {
-    public companion object EMPTY : SynchronousClickHandler {
-        override fun handleSynchronous(context: ClickContext): Unit = Unit
+        public fun process(clickHandler: ClickHandler, context: ClickContext): Unit = with(clickHandler) {
+            CompletableClickHandler().handle(context)
+        }
     }
 
-    public fun handleSynchronous(context: ClickContext)
+    public fun CompletableClickHandler.handle(context: ClickContext)
+}
 
-    override fun handleAsynchronous(context: ClickContext): Deferred<Unit> {
-        handleSynchronous(context)
+public class CompletableClickHandler {
 
-        return CompletableDeferred(Unit)
+    private val deferred = CompletableDeferred<Unit>(null)
+
+    public var cancelled: Boolean = false
+    public var completingLater: Boolean = false
+
+    public fun complete(): Boolean = deferred.complete(Unit)
+
+    public fun onComplete(handler: CompletionHandler): CompletableClickHandler {
+        deferred.invokeOnCompletion(handler)
+        return this
     }
 }

@@ -46,7 +46,7 @@ public class PaginationTransformation<P : Pane>(
     private fun applyButton(pane: Pane, button: ButtonInformation) {
         val (point, drawable, increments) = button
 
-        pane[point] = StaticElement.syncHandler(drawable) { click ->
+        pane[point] = StaticElement(drawable) { click ->
             increments[click.type]?.let { increment -> page += increment }
         }
     }
