@@ -1,37 +1,11 @@
 package org.incendo.interfaces.next.interfaces
 
-import net.kyori.adventure.text.Component
-import org.incendo.interfaces.next.click.ClickHandler
 import org.incendo.interfaces.next.pane.PlayerPane
-import org.incendo.interfaces.next.properties.Trigger
-import org.incendo.interfaces.next.transform.AppliedTransform
-import org.incendo.interfaces.next.transform.ReactiveTransform
-import org.incendo.interfaces.next.transform.Transform
-import org.incendo.interfaces.next.utilities.IncrementingInteger
 
-public class PlayerInterfaceBuilder internal constructor() : InterfaceBuilder<PlayerPane, PlayerInterface>() {
-
-    public var initialTitle: Component? = null
-
-    private val transformCounter by IncrementingInteger()
-    private val transforms: MutableCollection<AppliedTransform<PlayerPane>> = mutableListOf()
-
-    private val clickPreprocessors: MutableCollection<ClickHandler> = mutableListOf()
-
-    public fun withTransform(vararg triggers: Trigger, transform: Transform<PlayerPane>) {
-        transforms.add(AppliedTransform(transformCounter, triggers.toSet(), transform))
-    }
-
-    public fun addTransform(reactiveTransform: ReactiveTransform<PlayerPane>) {
-        transforms.add(AppliedTransform(transformCounter, reactiveTransform.triggers.toSet(), reactiveTransform))
-    }
-
-    public fun withPreprocessor(handler: ClickHandler) {
-        clickPreprocessors += handler
-    }
+public class PlayerInterfaceBuilder internal constructor() : AbstractInterfaceBuilder<PlayerPane, PlayerInterface>() {
 
     public override fun build(): PlayerInterface = PlayerInterface(
-        initialTitle,
+        null,
         transforms,
         clickPreprocessors
     )
