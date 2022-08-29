@@ -1,4 +1,4 @@
-package org.incendo.interfaces.next.view
+package org.incendo.interfaces.next.utilities
 
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.PluginClassLoader

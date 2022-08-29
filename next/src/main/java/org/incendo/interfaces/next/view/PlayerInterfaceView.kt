@@ -4,6 +4,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.incendo.interfaces.next.interfaces.PlayerInterface
 import org.incendo.interfaces.next.pane.PlayerPane
+import org.incendo.interfaces.next.utilities.PlayerDataMap
 
 public class PlayerInterfaceView(
     player: Player,
@@ -12,6 +13,14 @@ public class PlayerInterfaceView(
     player,
     backing
 ) {
+    internal companion object {
+        internal val OPEN_VIEWS = PlayerDataMap()
+    }
+
+    init {
+        OPEN_VIEWS[player] = this
+    }
+
     override fun createInventory(): Inventory {
         return player.inventory
     }

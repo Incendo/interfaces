@@ -5,6 +5,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.incendo.interfaces.next.interfaces.ChestInterface
 import org.incendo.interfaces.next.pane.ChestPane
+import org.incendo.interfaces.next.utilities.runSync
 
 public class ChestInterfaceView(
     player: Player,

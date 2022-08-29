@@ -1,10 +1,8 @@
 package org.incendo.interfaces.next.pane
 
-import org.incendo.interfaces.next.element.Element
+public class PlayerPane : OrderedPane(PANE_ORDERING) {
 
-public class PlayerPane : Pane() {
-
-    public fun hotbar(column: Int, element: Element) {
-        set(column, 0, element)
+    private companion object {
+        private val PANE_ORDERING = listOf(1, 2, 3, 0)
     }
 }

@@ -22,6 +22,8 @@ public abstract class InterfaceView<P : Pane>(
         public const val COLUMNS_IN_CHEST: Int = 9
     }
 
+    private var firstPaint = true
+
     // todo(josh): reduce internal abuse?
     internal var isProcessingClick = false
     internal var isOpen = true
@@ -33,7 +35,7 @@ public abstract class InterfaceView<P : Pane>(
     public lateinit var pane: Pane
 
     init {
-        update(CompleteUpdate, true)
+        update(CompleteUpdate)
 
         backing.transforms
             .flatMap(AppliedTransform<P>::triggers)
@@ -44,20 +46,24 @@ public abstract class InterfaceView<P : Pane>(
             }
     }
 
-    public fun update(update: Update, firstPaint: Boolean = false) {
+    public fun update(update: Update) {
         update.apply(this)
         pane = panes.collapse()
+    }
 
+    private fun renderAndOpen() {
         val requiresNewInventory = renderToInventory(firstPaint)
 
         if (!firstPaint && requiresNewInventory && isOpen) {
             openInventory()
         }
+
+        firstPaint = false
     }
 
     public fun open() {
         isOpen = true
-        openInventory()
+        renderAndOpen()
     }
 
     public fun close() {

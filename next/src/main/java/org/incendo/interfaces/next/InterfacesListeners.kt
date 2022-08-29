@@ -6,12 +6,15 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.inventory.InventoryCloseEvent.Reason
 import org.bukkit.plugin.Plugin
 import org.incendo.interfaces.next.click.ClickContext
 import org.incendo.interfaces.next.click.ClickHandler
 import org.incendo.interfaces.next.click.CompletableClickHandler
 import org.incendo.interfaces.next.grid.GridPoint
 import org.incendo.interfaces.next.view.InterfaceView
+import org.incendo.interfaces.next.view.PlayerInterfaceView
+import java.util.EnumSet
 
 public class InterfacesListeners : Listener {
 
@@ -19,6 +22,10 @@ public class InterfacesListeners : Listener {
         public fun install(plugin: Plugin) {
             Bukkit.getPluginManager().registerEvents(InterfacesListeners(), plugin)
         }
+
+        private val VALID_REASON = EnumSet.of(
+            Reason.PLAYER, Reason.UNKNOWN, Reason.PLUGIN
+        )
     }
 
     @EventHandler
@@ -30,6 +37,10 @@ public class InterfacesListeners : Listener {
         }
 
         holder.close()
+
+        if (event.reason in VALID_REASON) {
+            PlayerInterfaceView.OPEN_VIEWS[event.player]?.open()
+        }
     }
 
     @EventHandler
