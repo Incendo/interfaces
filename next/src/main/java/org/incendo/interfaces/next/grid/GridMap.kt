@@ -2,23 +2,23 @@ package org.incendo.interfaces.next.grid
 
 public interface GridMap<V> {
 
-    public operator fun set(column: Int, row: Int, value: V)
+    public operator fun set(row: Int, column: Int, value: V)
 
     public operator fun set(vector: GridPoint, value: V) {
-        set(vector.y, vector.x, value)
+        set(vector.x, vector.y, value)
     }
 
-    public operator fun get(column: Int, row: Int): V?
+    public operator fun get(row: Int, column: Int): V?
 
     public operator fun get(vector: GridPoint): V? {
-        return get(vector.y, vector.x)
+        return get(vector.x, vector.y)
     }
 
-    public fun has(column: Int, row: Int): Boolean
+    public fun has(row: Int, column: Int): Boolean
 
     public fun has(vector: GridPoint): Boolean {
-        return has(vector.y, vector.x)
+        return has(vector.x, vector.y)
     }
 
-    public fun forEach(consumer: (Int, Int, V) -> Unit)
+    public fun forEach(consumer: (row: Int, column: Int, V) -> Unit)
 }

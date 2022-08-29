@@ -73,11 +73,11 @@ public class NextPlugin : JavaPlugin(), Listener {
         rows = 6
 
         withTransform { pane ->
-            forEachInGrid(9, 6) { column, row ->
+            forEachInGrid(6, 9) { row, column ->
                 val item = ItemStack(Material.WHITE_STAINED_GLASS_PANE)
-                    .name("col: $column, row: $row")
+                    .name("row: $row, column: $column")
 
-                pane[column, row] = StaticElement(drawable(item))
+                pane[row, column] = StaticElement(drawable(item))
             }
         }
 
@@ -111,7 +111,7 @@ public class NextPlugin : JavaPlugin(), Listener {
         withTransform { pane ->
             val item = ItemStack(Material.COMPASS).name("interfaces example")
 
-            pane[4, 3] = StaticElement(drawable(item))
+            pane[3, 4] = StaticElement(drawable(item))
         }
     }
 

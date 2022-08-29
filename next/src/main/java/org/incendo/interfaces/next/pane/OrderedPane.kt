@@ -6,16 +6,16 @@ public abstract class OrderedPane(
     private val ordering: List<Int>
 ) : Pane() {
 
-    override fun get(column: Int, row: Int): Element? {
-        return super.get(column, orderedRow(row))
+    override fun get(row: Int, column: Int): Element? {
+        return super.get(orderedRow(row), column)
     }
 
-    override fun set(column: Int, row: Int, value: Element) {
-        return super.set(column, orderedRow(row), value)
+    override fun set(row: Int, column: Int, value: Element) {
+        return super.set(orderedRow(row), column, value)
     }
 
-    override fun has(column: Int, row: Int): Boolean {
-        return super.has(column, orderedRow(row))
+    override fun has(row: Int, column: Int): Boolean {
+        return super.has(orderedRow(row), column)
     }
 
     private fun orderedRow(row: Int) = ordering[row]

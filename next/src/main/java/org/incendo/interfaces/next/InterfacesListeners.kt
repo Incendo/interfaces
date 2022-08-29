@@ -60,7 +60,7 @@ public class InterfacesListeners : Listener {
 
         val player = event.whoClicked as Player
         val bukkitIndex = event.slot
-        val clickedPoint = GridPoint.at(bukkitIndex / 9, bukkitIndex % 9)
+        val clickedPoint = GridPoint.at(bukkitIndex % 9, bukkitIndex / 9)
 
         val clickContext = ClickContext(player, holder, event.click)
 
