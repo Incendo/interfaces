@@ -1,6 +1,5 @@
 package org.incendo.interfaces.next.interfaces
 
-import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 import org.incendo.interfaces.next.click.ClickHandler
 import org.incendo.interfaces.next.pane.PlayerPane
@@ -9,7 +8,6 @@ import org.incendo.interfaces.next.view.InterfaceView
 import org.incendo.interfaces.next.view.PlayerInterfaceView
 
 public class PlayerInterface internal constructor(
-    override val initialTitle: Component?,
     override val transforms: Collection<AppliedTransform<PlayerPane>>,
     override val clickPreprocessors: Collection<ClickHandler>
 ) : Interface<PlayerPane> {

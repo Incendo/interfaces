@@ -10,7 +10,6 @@ import org.incendo.interfaces.next.update.CompleteUpdate
 import org.incendo.interfaces.next.update.TriggerUpdate
 import org.incendo.interfaces.next.update.Update
 import org.incendo.interfaces.next.utilities.CollapsablePaneMap
-import org.incendo.interfaces.next.utilities.TitleState
 import org.incendo.interfaces.next.utilities.gridPointToBukkitIndex
 
 public abstract class InterfaceView<P : Pane>(
@@ -22,13 +21,12 @@ public abstract class InterfaceView<P : Pane>(
         public const val COLUMNS_IN_CHEST: Int = 9
     }
 
-    private var firstPaint = true
+    protected var firstPaint: Boolean = true
 
     // todo(josh): reduce internal abuse?
     internal var isProcessingClick = false
     internal var isOpen = true
 
-    internal val titleState = TitleState(backing.initialTitle)
     private val panes = CollapsablePaneMap()
 
     private lateinit var currentInventory: Inventory
@@ -52,9 +50,9 @@ public abstract class InterfaceView<P : Pane>(
     }
 
     private fun renderAndOpen() {
-        val requiresNewInventory = renderToInventory(firstPaint)
+        val requiresNewInventory = renderToInventory()
 
-        if (!firstPaint && requiresNewInventory && isOpen) {
+        if (requiresNewInventory && isOpen) {
             openInventory()
         }
 
@@ -85,13 +83,7 @@ public abstract class InterfaceView<P : Pane>(
         }
     }
 
-    private fun renderToInventory(firstPaint: Boolean = false): Boolean {
-        val requiresNewInventory = firstPaint || titleState.hasChanged
-
-        if (requiresNewInventory) {
-            currentInventory = createInventory()
-        }
-
+    private fun drawPaneToInventory() {
         pane.forEach { column, row, element ->
             val itemStack = element.drawable().draw(player)
             val bukkitIndex = gridPointToBukkitIndex(column, row)
@@ -100,12 +92,24 @@ public abstract class InterfaceView<P : Pane>(
                 currentInventory.setItem(bukkitIndex, itemStack)
             }
         }
+    }
 
-        if (titleState.hasChanged && !firstPaint) {
-            player.updateInventory()
+    protected open fun requiresNewInventory(): Boolean = firstPaint
+
+    protected open fun requiresPlayerUpdate(): Boolean = false
+
+    protected open fun renderToInventory(): Boolean {
+        val requiresNewInventory = requiresNewInventory()
+
+        if (requiresNewInventory) {
+            currentInventory = createInventory()
         }
 
-        titleState.hasChanged = false
+        drawPaneToInventory()
+
+        if (requiresPlayerUpdate()) {
+            player.updateInventory()
+        }
 
         return requiresNewInventory
     }

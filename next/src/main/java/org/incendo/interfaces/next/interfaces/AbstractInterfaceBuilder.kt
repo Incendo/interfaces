@@ -8,8 +8,8 @@ import org.incendo.interfaces.next.transform.ReactiveTransform
 import org.incendo.interfaces.next.transform.Transform
 import org.incendo.interfaces.next.utilities.IncrementingInteger
 
-public abstract class AbstractInterfaceBuilder<P : Pane, I : Interface<P>>
-internal constructor() : InterfaceBuilder<P, I>() {
+public abstract class AbstractInterfaceBuilder<P : Pane, I : Interface<P>> internal constructor() :
+    InterfaceBuilder<P, I>() {
 
     private val transformCounter by IncrementingInteger()
 

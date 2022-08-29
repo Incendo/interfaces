@@ -13,7 +13,7 @@ public class ChestInterface internal constructor(
     override val initialTitle: Component?,
     override val transforms: Collection<AppliedTransform<ChestPane>>,
     override val clickPreprocessors: Collection<ClickHandler>
-) : Interface<ChestPane> {
+) : Interface<ChestPane>, TitledInterface {
 
     public companion object {
         public const val NUMBER_OF_COLUMNS: Int = 9

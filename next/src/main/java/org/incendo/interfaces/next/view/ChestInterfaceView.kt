@@ -5,6 +5,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.incendo.interfaces.next.interfaces.ChestInterface
 import org.incendo.interfaces.next.pane.ChestPane
+import org.incendo.interfaces.next.utilities.TitleState
 import org.incendo.interfaces.next.utilities.runSync
 
 public class ChestInterfaceView(
@@ -14,6 +15,8 @@ public class ChestInterfaceView(
     player,
     backing
 ) {
+    private val titleState = TitleState(backing.initialTitle)
+
     override fun createInventory(): Inventory {
         val currentTitle = titleState.current
         val rows = backing.rows * COLUMNS_IN_CHEST
@@ -25,7 +28,15 @@ public class ChestInterfaceView(
         }
     }
 
-    override fun openInventory(): Unit = runSync {
-        player.openInventory(this.inventory)
+    override fun openInventory() {
+        titleState.hasChanged = false
+
+        runSync {
+            player.openInventory(this.inventory)
+        }
     }
+
+    override fun requiresPlayerUpdate(): Boolean = !firstPaint && titleState.hasChanged
+
+    override fun requiresNewInventory(): Boolean = firstPaint || titleState.hasChanged
 }
