@@ -18,7 +18,8 @@ public final class ClickableTextElement extends BaseTextElement implements Click
         PlayerViewer> {
 
     private final @NonNull UUID uuid;
-    private final @NonNull ClickHandler<TextPane, TextClickCause, PlayerViewer, ClickContext<TextPane, TextClickCause, PlayerViewer>> handler;
+    private final @NonNull ClickHandler<TextPane, TextClickCause, PlayerViewer, ClickContext
+            <TextPane, TextClickCause, PlayerViewer>> handler;
 
     /**
      * Constructs {@code TextElement}.
@@ -28,7 +29,8 @@ public final class ClickableTextElement extends BaseTextElement implements Click
      */
     public ClickableTextElement(
             final @NonNull Component text,
-            final @NonNull ClickHandler<TextPane, TextClickCause, PlayerViewer, ClickContext<TextPane, TextClickCause, PlayerViewer>> handler
+            final @NonNull ClickHandler<TextPane, TextClickCause, PlayerViewer, ClickContext
+                    <TextPane, TextClickCause, PlayerViewer>> handler
     ) {
         super(text);
         this.handler = handler;

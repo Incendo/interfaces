@@ -22,14 +22,14 @@ import java.util.List;
 @SuppressWarnings("unused")
 public final class ChatInterface implements Interface<ChatPane, PlayerViewer> {
 
-    private final @NonNull List<TransformContext<?, ChatPane, PlayerViewer>> transforms;
+    private final @NonNull List<TransformContext<ChatPane, PlayerViewer>> transforms;
 
     /**
      * Constructs {@code ChatInterface}.
      *
      * @param transforms the list of transforms
      */
-    public ChatInterface(final @NonNull List<TransformContext<?, ChatPane, PlayerViewer>> transforms) {
+    public ChatInterface(final @NonNull List<TransformContext<ChatPane, PlayerViewer>> transforms) {
         this.transforms = transforms;
     }
 
@@ -46,7 +46,6 @@ public final class ChatInterface implements Interface<ChatPane, PlayerViewer> {
     public @NonNull ChatInterface transform(@NonNull final Transform<ChatPane, PlayerViewer> transform) {
         this.transforms.add(
                 TransformContext.of(
-                        InterfaceProperty.dummy(),
                         1,
                         transform
                 )
@@ -56,7 +55,7 @@ public final class ChatInterface implements Interface<ChatPane, PlayerViewer> {
     }
 
     @Override
-    public @NonNull List<TransformContext<?, ChatPane, PlayerViewer>> transformations() {
+    public @NonNull List<TransformContext<ChatPane, PlayerViewer>> transformations() {
         return List.copyOf(this.transforms);
     }
 
@@ -90,7 +89,7 @@ public final class ChatInterface implements Interface<ChatPane, PlayerViewer> {
      */
     public static final class Builder implements Interface.Builder<ChatPane, PlayerViewer, ChatInterface> {
 
-        private final @NonNull List<@NonNull TransformContext<?, ChatPane, PlayerViewer>> transforms;
+        private final @NonNull List<@NonNull TransformContext<ChatPane, PlayerViewer>> transforms;
 
         /**
          * Constructs {@code Builder}.
@@ -99,36 +98,31 @@ public final class ChatInterface implements Interface<ChatPane, PlayerViewer> {
             this.transforms = new ArrayList<>();
         }
 
-        private Builder(final @NonNull List<@NonNull TransformContext<?, ChatPane, PlayerViewer>> transforms) {
+        private Builder(final @NonNull List<@NonNull TransformContext<ChatPane, PlayerViewer>> transforms) {
             this.transforms = Collections.unmodifiableList(transforms);
         }
 
-        /**
-         * Adds a transformation to the interface.
-         *
-         * @param transform the transformation
-         * @return new builder instance
-         */
         @Override
-        public @NonNull Builder addTransform(final @NonNull Transform<ChatPane, PlayerViewer> transform) {
-            return this.addTransform(InterfaceProperty.dummy(), 1, transform);
+        public Interface.@NonNull Builder<ChatPane, PlayerViewer, ChatInterface> addTransform(
+                final @NonNull Transform<ChatPane, PlayerViewer> transform
+        ) {
+            return null;
         }
 
         @Override
-        public <S> @NonNull Builder addTransform(
-                final @NonNull InterfaceProperty<S> property,
+        public Interface.@NonNull Builder<ChatPane, PlayerViewer, ChatInterface> addTransform(
                 final int priority,
-                final @NonNull Transform<ChatPane, PlayerViewer> transform
+                final @NonNull Transform<ChatPane, PlayerViewer> transform,
+                final @NonNull InterfaceProperty<?>... properties
         ) {
-            final List<TransformContext<?, ChatPane, PlayerViewer>> transforms = new ArrayList<>(this.transforms);
+            final List<TransformContext<ChatPane, PlayerViewer>> transforms = new ArrayList<>(this.transforms);
             transforms.add(
                     TransformContext.of(
-                            property,
                             priority,
-                            transform
+                            transform,
+                            properties
                     )
             );
-
             return new Builder(transforms);
         }
 
