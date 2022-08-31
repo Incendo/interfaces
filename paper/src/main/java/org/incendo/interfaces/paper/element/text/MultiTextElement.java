@@ -18,7 +18,7 @@ public class MultiTextElement implements TextElement{
     /**
      * Constructs {@code TextElement}.
      * <p>
-     * Each {@link Component} within {@code elements} will be converted to a {@link BaseTextElement}.
+     * Each {@link Component} within {@code elements} will be converted to a {@link ComponentElement}.
      *
      * @param elements the elements
      */

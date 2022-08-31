@@ -14,7 +14,7 @@ import java.util.UUID;
 /**
  * Represents a text element that can be clicked.
  */
-public final class ClickableTextElement extends BaseTextElement implements ClickableElement<TextPane, TextClickCause,
+public final class ClickableTextElement extends ComponentElement implements ClickableElement<TextPane, TextClickCause,
         PlayerViewer> {
 
     private final @NonNull UUID uuid;

@@ -16,7 +16,7 @@ public interface TextElement extends Element {
      * @return the element
      */
     static @NonNull TextElement of(final @NonNull Component text) {
-        return new BaseTextElement(text);
+        return new ComponentElement(text);
     }
 
     /**

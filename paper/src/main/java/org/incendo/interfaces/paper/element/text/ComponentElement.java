@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * An element containing a piece of text.
  */
-public class BaseTextElement implements TextElement {
+public class ComponentElement implements TextElement {
 
     private final @NonNull Component text;
 
@@ -17,7 +17,7 @@ public class BaseTextElement implements TextElement {
      *
      * @param text the text
      */
-    public BaseTextElement(final @NonNull Component text) {
+    public ComponentElement(final @NonNull Component text) {
         this.text = text;
     }
 
@@ -38,7 +38,7 @@ public class BaseTextElement implements TextElement {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        BaseTextElement that = (BaseTextElement) o;
+        ComponentElement that = (ComponentElement) o;
         return this.text.equals(that.text);
     }
 
