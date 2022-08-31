@@ -1,7 +1,7 @@
 package org.incendo.interfaces.paper;
 
-import org.bukkit.Bukkit;
 import net.kyori.adventure.audience.Audience;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.plugin.java.PluginClassLoader;
@@ -45,7 +45,7 @@ final class PlayerViewerImpl implements PlayerViewer {
         final @NonNull List<TextElement> elements = chatView.pane().textElements();
 
         for (final @NonNull TextElement element : elements) {
-            this.player.sendMessage(element.text()); // won't compile
+            Audience.audience(this.player).sendMessage(element.text());
         }
     }
 

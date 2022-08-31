@@ -1,13 +1,7 @@
 package org.incendo.interfaces.paper;
 
 import com.google.common.cache.Cache;
-
 import com.google.common.cache.CacheBuilder;
-
-import java.util.UUID;
-
-import java.util.concurrent.TimeUnit;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -22,6 +16,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
@@ -38,7 +33,10 @@ import org.incendo.interfaces.core.UpdatingInterface;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
 import org.incendo.interfaces.paper.click.InventoryClickContext;
+import org.incendo.interfaces.paper.click.TextClickCause;
+import org.incendo.interfaces.paper.click.TextClickContext;
 import org.incendo.interfaces.paper.element.ItemStackElement;
+import org.incendo.interfaces.paper.element.text.TextElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.pane.CombinedPane;
 import org.incendo.interfaces.paper.pane.PlayerPane;
@@ -50,13 +48,18 @@ import org.incendo.interfaces.paper.view.CombinedView;
 import org.incendo.interfaces.paper.view.PlayerInventoryView;
 import org.incendo.interfaces.paper.view.PlayerView;
 import org.incendo.interfaces.paper.view.TaskableView;
+import org.incendo.interfaces.paper.view.TextView;
 import org.incendo.interfaces.paper.view.ViewCloseEvent;
 import org.incendo.interfaces.paper.view.ViewOpenEvent;
 
+import java.time.Instant;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Handles interface-related events.
@@ -70,6 +73,8 @@ public class PaperInterfaceListeners implements Listener {
             Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK,
             Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK
     );
+
+    public static final @NonNull TextElementCache TEXT_CACHE = new TextElementCache();
 
     private static final @NonNull Set<InventoryCloseEvent.Reason> VALID_REASON = EnumSet.of(
             InventoryCloseEvent.Reason.PLAYER, InventoryCloseEvent.Reason.UNKNOWN, InventoryCloseEvent.Reason.PLUGIN
@@ -97,7 +102,7 @@ public class PaperInterfaceListeners implements Listener {
      * @param plugin        the plugin instance to register against
      * @param clickThrottle the minimum amount of ticks between every accepted click
      */
-    public PaperInterfaceListeners(final @NonNull Plugin plugin, final long clickThrottle) {
+    private PaperInterfaceListeners(final @NonNull Plugin plugin, final long clickThrottle) {
         this.plugin = plugin;
         this.updatingRunnables = new HashMap<>();
         this.spamPrevention = CacheBuilder.newBuilder().expireAfterWrite(
@@ -183,7 +188,11 @@ public class PaperInterfaceListeners implements Listener {
 
                 if (view instanceof SelfUpdatingInterfaceView) {
                     SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
-                    runnable.runTaskTimerAsynchronously(this.plugin, updatingInterface.updateDelay(), updatingInterface.updateDelay());
+                    runnable.runTaskTimerAsynchronously(
+                            this.plugin,
+                            updatingInterface.updateDelay(),
+                            updatingInterface.updateDelay()
+                    );
                     this.updatingRunnables.put(selfUpdating, runnable.getTaskId());
                 } else {
                     runnable.runTaskLaterAsynchronously(this.plugin, updatingInterface.updateDelay());
@@ -408,6 +417,64 @@ public class PaperInterfaceListeners implements Listener {
         }
     }
 
+    /**
+     * Handles a "text click" by listening to commands under "/interfaces_text_click"
+     *
+     * @param event the event
+     */
+    @EventHandler
+    public void onTextInterfaceCommand(final @NonNull PlayerCommandPreprocessEvent event) {
+        final String cmd = event.getMessage();
+        if (!(cmd.startsWith("/"))) {
+            return;
+        }
+
+        final String[] parts = cmd
+                .replaceFirst("/", "")
+                .split(" ");
+        if (parts.length != 2) {
+
+            return;
+        }
+
+        final String command = parts[0];
+        final String arg = parts[1];
+        if (!command.equals("interfaces_text_click")) {
+            return;
+        }
+
+        UUID uuid;
+        try {
+            uuid = UUID.fromString(arg);
+        } catch (final Exception e) {
+            return;
+        }
+
+        final Optional<TextElement> elementOpt = TEXT_CACHE.get(uuid);
+        if (elementOpt.isEmpty()) {
+            return;
+        }
+
+        final TextElement element = elementOpt.get();
+        final var handlerOpt = element.clickHandler();
+        if (handlerOpt.isEmpty()) {
+            return;
+        }
+
+        final var handler = handlerOpt.get();
+        final var viewOpt = TEXT_CACHE.getView(element);
+        if (viewOpt.isEmpty()) {
+            throw new RuntimeException("Found a cached TextElement with UUID " + element.uuid() + ", but no view was cached.");
+        }
+        final TextView<?> view = viewOpt.get();
+        handler.accept(new TextClickContext(
+                new TextClickCause(event.getPlayer(), element),
+                PlayerViewer.of(event.getPlayer()),
+                view
+        ));
+        event.setCancelled(true);
+    }
+
     private void handleChestViewClick(final @NonNull InventoryClickEvent event, final @NonNull InventoryHolder holder) {
         if (event.getSlot() != event.getRawSlot()) {
             this.handlePlayerViewClick(event);
@@ -520,6 +587,73 @@ public class PaperInterfaceListeners implements Listener {
         }
 
         return ClickType.UNKNOWN;
+    }
+
+    /**
+     * {@code TextElementCache} maintains a cache of text element for the purpose of handling clicks.
+     */
+    public static final class TextElementCache {
+
+        private final @NonNull Map<UUID, Map.Entry<TextElement, Instant>> textCache;
+        private final @NonNull Map<UUID, TextView<?>> viewCache;
+
+        /**
+         * Constructs {@code TextElementCache}.
+         */
+        private TextElementCache() {
+            this.textCache = new HashMap<>();
+            this.viewCache = new HashMap<>();
+        }
+
+        /**
+         * Adds a {@link TextElement} to the cache.
+         * <p>
+         * If {@code element} does not have a click handler, or it's {@link UUID} is equal to {@code new UUID(0, 0)},
+         * then it will not be cached.
+         *
+         * @param element the element
+         * @param view    the view
+         */
+        public void cache(
+                final @NonNull TextElement element,
+                final @NonNull TextView<?> view
+        ) {
+            if (element.clickHandler().isEmpty()) {
+                return;
+            }
+
+            if (element.uuid().equals(new UUID(0, 0))) {
+                return;
+            }
+
+            this.textCache.put(element.uuid(), Map.entry(element, Instant.now()));
+            this.viewCache.put(element.uuid(), view);
+        }
+
+        /**
+         * Searches for a cached {@link TextElement} in the cache.
+         *
+         * @param uuid the uuid of the element
+         * @return the {@link TextElement}, wrapped in an {@link Optional}
+         */
+        public @NonNull Optional<@NonNull TextElement> get(final @NonNull UUID uuid) {
+            if (this.textCache.containsKey(uuid)) {
+                return Optional.of(this.textCache.get(uuid).getKey());
+            } else {
+                return Optional.empty();
+            }
+        }
+
+        /**
+         * Searches for the {@link TextView} associated with a cached {@link TextElement}..
+         *
+         * @param element the element
+         * @return the {@link TextElement}, wrapped in an {@link Optional}
+         */
+        public @NonNull Optional<@NonNull TextView<?>> getView(final @NonNull TextElement element) {
+            return Optional.ofNullable(this.viewCache.get(element.uuid()));
+        }
+
     }
 
 }

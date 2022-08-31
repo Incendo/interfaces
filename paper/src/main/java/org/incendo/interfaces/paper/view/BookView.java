@@ -4,6 +4,7 @@ import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
+import org.incendo.interfaces.paper.PaperInterfaceListeners;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.text.TextElement;
 import org.incendo.interfaces.paper.pane.BookPane;
@@ -55,11 +56,22 @@ public final class BookView implements TextView<BookPane> {
 
         for (final @NonNull TextElement element : this.pane.textElements()) {
             pages.add(element.text());
+            this.cacheElement(element);
         }
 
         this.book = Book.book(title, Component.empty(), pages);
 
         this.uuid = UUID.randomUUID();
+    }
+
+    private void cacheElement(final @NonNull TextElement element) {
+        if (element.clickHandler().isPresent()) {
+            PaperInterfaceListeners.TEXT_CACHE.cache(element, this);
+        }
+
+        for (final TextElement children : element.children()) {
+            this.cacheElement(children);
+        }
     }
 
     @Override

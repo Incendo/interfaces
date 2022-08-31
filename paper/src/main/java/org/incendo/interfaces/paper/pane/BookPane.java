@@ -80,11 +80,6 @@ public final class BookPane implements TextPane {
         return new BookPane(pages);
     }
 
-    /**
-     * Returns the list of text elements.
-     *
-     * @return the text elements
-     */
     @Override
     public @NonNull Collection<Element> elements() {
         return new ArrayList<>(this.textElements());

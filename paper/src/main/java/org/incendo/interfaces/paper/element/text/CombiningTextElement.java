@@ -1,6 +1,7 @@
 package org.incendo.interfaces.paper.element.text;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -17,36 +18,36 @@ import java.util.UUID;
 /**
  * {@code TextElement} is an element containing a piece of text and an optional click handler.
  */
-public final class ComponentElement implements TextElement {
+public final class CombiningTextElement implements TextElement {
 
-    private final @NonNull Component text;
+    private final @NonNull List<TextElement> elements;
     private final @Nullable ClickHandler<TextPane, TextClickCause, PlayerViewer, ClickContext<TextPane, TextClickCause,
             PlayerViewer>> handler;
     private final @NonNull UUID uuid;
 
+
     /**
      * Constructs {@code TextElement}.
      *
-     * @param text the text
+     * @param elements the elements
      */
-    public ComponentElement(final @NonNull Component text) {
-        this(text, null);
+    public CombiningTextElement(final @NonNull List<TextElement> elements) {
+        this(elements, null);
     }
 
     /**
      * Constructs {@code TextElement}.
      *
-     * @param text    the text
-     * @param handler the click handler
+     * @param elements the text
+     * @param handler  the click handler
      */
-    public ComponentElement(
-            final @NonNull Component text,
+    public CombiningTextElement(
+            final @NonNull List<TextElement> elements,
             final @Nullable ClickHandler<TextPane, TextClickCause, PlayerViewer, ClickContext<TextPane, TextClickCause,
                     PlayerViewer>> handler
     ) {
-        this.text = text;
+        this.elements = elements;
         this.handler = handler;
-
         if (this.handler == null) {
             this.uuid = new UUID(0, 0);
         } else {
@@ -57,18 +58,26 @@ public final class ComponentElement implements TextElement {
     /**
      * Returns the text contained within this element.
      * <p>
-     * If this element has a non-null {@link org.incendo.interfaces.core.click.ClickHandler},
-     * then the {@link Component} returned by this method will have a {@link net.kyori.adventure.text.event.ClickEvent} applied.
+     * If this element has a non-null {@link ClickHandler},
+     * then the {@link Component} returned by this method will have a {@link ClickEvent} applied.
      *
      * @return the text component
      */
     public @NonNull Component text() {
         if (this.handler != null) {
-            return this.text
+            return this.build()
                     .clickEvent(ClickEvent.runCommand("/interfaces_text_click " + this.uuid));
         } else {
-            return this.text;
+            return this.build();
         }
+    }
+
+    private @NonNull Component build() {
+        final TextComponent.Builder builder = Component.text();
+        for (final TextElement element : this.elements) {
+            builder.append(element.text());
+        }
+        return builder.build();
     }
 
     /**
@@ -83,7 +92,7 @@ public final class ComponentElement implements TextElement {
 
     @Override
     public @NonNull List<TextElement> children() {
-        return List.of();
+        return List.copyOf(this.elements);
     }
 
     @Override

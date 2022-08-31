@@ -63,7 +63,7 @@ public interface PaperTransform {
             @NonNull BookPane bookPane = pane;
 
             for (final @NonNull Component page : pages) {
-                bookPane = bookPane.add(TextElement.of(page));
+                bookPane = bookPane.add(TextElement.text(page));
             }
 
             return bookPane;

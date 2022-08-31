@@ -2,7 +2,7 @@ package org.incendo.interfaces.paper.click;
 
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.interfaces.paper.element.text.ClickableTextElement;
+import org.incendo.interfaces.paper.element.text.TextElement;
 
 /**
  * A click that was caused by clicking on a piece of text (i.e. book, chat)
@@ -10,24 +10,24 @@ import org.incendo.interfaces.paper.element.text.ClickableTextElement;
 public class TextClickCause {
 
     private final @NonNull Player player;
-    private final @NonNull ClickableTextElement element;
+    private final @NonNull TextElement element;
 
     /**
-     * Construcst {@code TextClickCause}.
+     * Constructs {@code TextClickCause}.
      *
      * @param player  the player who clicked
      * @param element the element that was clicked
      */
     public TextClickCause(
             final @NonNull Player player,
-            final @NonNull ClickableTextElement element
+            final @NonNull TextElement element
     ) {
         this.player = player;
         this.element = element;
     }
 
     /**
-     * Returns the player
+     * Returns the player.
      *
      * @return the player
      */
@@ -36,11 +36,11 @@ public class TextClickCause {
     }
 
     /**
-     * Returns the element
+     * Returns the element.
      *
      * @return the element
      */
-    public @NonNull ClickableTextElement element() {
+    public @NonNull TextElement element() {
         return this.element;
     }
 
