@@ -6,6 +6,6 @@ import org.incendo.interfaces.next.view.InterfaceView
 
 public data class ClickContext(
     public val player: Player,
-    public val view: InterfaceView<*>,
+    public val view: InterfaceView<*, *>,
     public val type: ClickType
 )

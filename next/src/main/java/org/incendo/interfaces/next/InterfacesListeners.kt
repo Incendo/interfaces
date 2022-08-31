@@ -32,7 +32,7 @@ public class InterfacesListeners : Listener {
     public fun onClose(event: InventoryCloseEvent) {
         val holder = event.inventory.holder
 
-        if (holder !is InterfaceView<*>) {
+        if (holder !is InterfaceView<*, *>) {
             return
         }
 
@@ -47,7 +47,7 @@ public class InterfacesListeners : Listener {
     public fun onClick(event: InventoryClickEvent) {
         val holder = event.inventory.holder
 
-        if (holder !is InterfaceView<*>) {
+        if (holder !is InterfaceView<*, *>) {
             return
         }
 
@@ -60,7 +60,7 @@ public class InterfacesListeners : Listener {
 
         val player = event.whoClicked as Player
         val bukkitIndex = event.slot
-        val clickedPoint = GridPoint.at(bukkitIndex % 9, bukkitIndex / 9)
+        val clickedPoint = GridPoint.at(bukkitIndex / 9, bukkitIndex % 9)
 
         val clickContext = ClickContext(player, holder, event.click)
 

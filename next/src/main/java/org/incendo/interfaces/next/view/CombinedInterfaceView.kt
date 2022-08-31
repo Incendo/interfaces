@@ -3,24 +3,25 @@ package org.incendo.interfaces.next.view
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
-import org.incendo.interfaces.next.interfaces.ChestInterface
-import org.incendo.interfaces.next.inventory.ChestInterfacesInventory
-import org.incendo.interfaces.next.pane.ChestPane
+import org.incendo.interfaces.next.interfaces.CombinedInterface
+import org.incendo.interfaces.next.inventory.CombinedInterfacesInventory
+import org.incendo.interfaces.next.pane.CombinedPane
 import org.incendo.interfaces.next.utilities.TitleState
 import org.incendo.interfaces.next.utilities.runSync
 
-public class ChestInterfaceView(
+public class CombinedInterfaceView(
     player: Player,
-    backing: ChestInterface
-) : InterfaceView<ChestInterfacesInventory, ChestPane>(
+    backing: CombinedInterface
+) : InterfaceView<CombinedInterfacesInventory, CombinedPane>(
     player,
     backing
 ),
     InventoryHolder {
     private val titleState = TitleState(backing.initialTitle)
 
-    override fun createInventory(): ChestInterfacesInventory = ChestInterfacesInventory(
+    override fun createInventory(): CombinedInterfacesInventory = CombinedInterfacesInventory(
         this,
+        player,
         titleState.current,
         backing.rows
     )
@@ -37,5 +38,5 @@ public class ChestInterfaceView(
 
     override fun requiresNewInventory(): Boolean = firstPaint || titleState.hasChanged
 
-    override fun getInventory(): Inventory = currentInventory.chestInventory
+    public override fun getInventory(): Inventory = currentInventory.chestInventory
 }

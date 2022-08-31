@@ -17,6 +17,7 @@ import org.incendo.interfaces.next.InterfacesListeners
 import org.incendo.interfaces.next.drawable.Drawable.Companion.drawable
 import org.incendo.interfaces.next.element.StaticElement
 import org.incendo.interfaces.next.interfaces.buildChestInterface
+import org.incendo.interfaces.next.interfaces.buildCombinedInterface
 import org.incendo.interfaces.next.interfaces.buildPlayerInterface
 import org.incendo.interfaces.next.open
 import org.incendo.interfaces.next.properties.interfaceProperty
@@ -42,6 +43,17 @@ public class NextPlugin : JavaPlugin(), Listener {
                     val simpleInterface = simpleInterface()
 
                     player.open(simpleInterface)
+                }
+            }
+
+            registerCopy {
+                literal("combined")
+
+                handler {
+                    val player = it.sender as Player
+                    val combinedInterface = combinedInterface()
+
+                    player.open(combinedInterface)
                 }
             }
         }
@@ -112,6 +124,19 @@ public class NextPlugin : JavaPlugin(), Listener {
             val item = ItemStack(Material.COMPASS).name("interfaces example")
 
             pane[3, 4] = StaticElement(drawable(item))
+        }
+    }
+
+    private fun combinedInterface() = buildCombinedInterface {
+        rows = 6
+
+        withTransform { pane ->
+            forEachInGrid(10, 9) { row, column ->
+                val item = ItemStack(Material.WHITE_STAINED_GLASS_PANE)
+                    .name("row: $row, column: $column")
+
+                pane[row, column] = StaticElement(drawable(item))
+            }
         }
     }
 

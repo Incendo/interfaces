@@ -20,7 +20,7 @@ public class CompletableClickHandler {
 
     private val deferred = CompletableDeferred<Unit>(null)
 
-    public var cancelled: Boolean = false
+    public var cancelled: Boolean = true
     public var completingLater: Boolean = false
 
     public fun complete(): Boolean = deferred.complete(Unit)

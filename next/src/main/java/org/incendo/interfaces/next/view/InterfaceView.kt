@@ -1,21 +1,19 @@
 package org.incendo.interfaces.next.view
 
 import org.bukkit.entity.Player
-import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.InventoryHolder
 import org.incendo.interfaces.next.interfaces.Interface
+import org.incendo.interfaces.next.inventory.InterfacesInventory
 import org.incendo.interfaces.next.pane.Pane
 import org.incendo.interfaces.next.transform.AppliedTransform
 import org.incendo.interfaces.next.update.CompleteUpdate
 import org.incendo.interfaces.next.update.TriggerUpdate
 import org.incendo.interfaces.next.update.Update
 import org.incendo.interfaces.next.utilities.CollapsablePaneMap
-import org.incendo.interfaces.next.utilities.gridPointToBukkitIndex
 
-public abstract class InterfaceView<P : Pane>(
+public abstract class InterfaceView<I : InterfacesInventory, P : Pane>(
     public val player: Player,
     public val backing: Interface<P>
-) : InventoryHolder {
+) {
 
     public companion object {
         public const val COLUMNS_IN_CHEST: Int = 9
@@ -28,9 +26,9 @@ public abstract class InterfaceView<P : Pane>(
     internal var isOpen = true
 
     private val panes = CollapsablePaneMap()
+    internal lateinit var pane: Pane
 
-    private lateinit var currentInventory: Inventory
-    public lateinit var pane: Pane
+    protected lateinit var currentInventory: I
 
     init {
         update(CompleteUpdate)
@@ -68,9 +66,7 @@ public abstract class InterfaceView<P : Pane>(
         isOpen = false
     }
 
-    public override fun getInventory(): Inventory = currentInventory
-
-    public abstract fun createInventory(): Inventory
+    public abstract fun createInventory(): I
 
     public abstract fun openInventory()
 
@@ -84,13 +80,9 @@ public abstract class InterfaceView<P : Pane>(
     }
 
     private fun drawPaneToInventory() {
-        pane.forEach { column, row, element ->
+        pane.forEach { row, column, element ->
             val itemStack = element.drawable().draw(player)
-            val bukkitIndex = gridPointToBukkitIndex(column, row)
-
-            if (currentInventory.getItem(bukkitIndex) != itemStack) {
-                currentInventory.setItem(bukkitIndex, itemStack)
-            }
+            currentInventory.set(row, column, itemStack)
         }
     }
 
@@ -107,7 +99,7 @@ public abstract class InterfaceView<P : Pane>(
 
         drawPaneToInventory()
 
-        if (requiresPlayerUpdate()) {
+        if (true || requiresPlayerUpdate()) {
             player.updateInventory()
         }
 

@@ -6,7 +6,6 @@ import org.incendo.interfaces.next.click.ClickHandler
 import org.incendo.interfaces.next.pane.ChestPane
 import org.incendo.interfaces.next.transform.AppliedTransform
 import org.incendo.interfaces.next.view.ChestInterfaceView
-import org.incendo.interfaces.next.view.InterfaceView
 
 public class ChestInterface internal constructor(
     override val rows: Int,
@@ -21,7 +20,7 @@ public class ChestInterface internal constructor(
 
     override fun createPane(): ChestPane = ChestPane()
 
-    override fun open(player: Player): InterfaceView<ChestPane> {
+    override fun open(player: Player): ChestInterfaceView {
         val view = ChestInterfaceView(player, this)
         view.open()
 
