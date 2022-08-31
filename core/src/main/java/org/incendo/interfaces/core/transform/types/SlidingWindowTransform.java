@@ -71,7 +71,16 @@ public final class SlidingWindowTransform<S extends Element, T extends GridPane<
     }
 
     @Override
-    public @NonNull InterfaceProperty<Integer> property() {
+    public @NonNull InterfaceProperty<?>[] properties() {
+        return new InterfaceProperty[]{this.offsetProperty};
+    }
+
+    /**
+     * Get the property containing the slides current offset.
+     *
+     * @return an Integer InterfaceProperty
+     */
+    public @NonNull InterfaceProperty<Integer> offsetProperty() {
         return this.offsetProperty;
     }
 

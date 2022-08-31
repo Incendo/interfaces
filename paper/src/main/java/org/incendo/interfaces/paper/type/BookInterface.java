@@ -23,7 +23,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public final class BookInterface implements TitledInterface<BookPane, PlayerViewer> {
 
-    private final @NonNull List<TransformContext<?, BookPane, PlayerViewer>> transforms;
+    private final @NonNull List<TransformContext<BookPane, PlayerViewer>> transforms;
     private final @NonNull Component title;
 
     /**
@@ -38,7 +38,7 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
      *
      * @param transforms the transforms
      */
-    public BookInterface(final @NonNull List<TransformContext<?, BookPane, PlayerViewer>> transforms) {
+    public BookInterface(final @NonNull List<TransformContext<BookPane, PlayerViewer>> transforms) {
         this(transforms, Component.empty());
     }
 
@@ -49,7 +49,7 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
      * @param title      the title
      */
     public BookInterface(
-            final @NonNull List<TransformContext<?, BookPane, PlayerViewer>> transforms,
+            final @NonNull List<TransformContext<BookPane, PlayerViewer>> transforms,
             final @NonNull Component title
     ) {
         this.transforms = transforms;
@@ -75,7 +75,6 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
     public @NonNull BookInterface transform(final @NonNull Transform<BookPane, PlayerViewer> transform) {
         this.transforms.add(
                 TransformContext.of(
-                        InterfaceProperty.dummy(),
                         1,
                         transform
                 )
@@ -90,7 +89,7 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
      * @return the list of transformations
      */
     @Override
-    public @NonNull List<TransformContext<?, BookPane, PlayerViewer>> transformations() {
+    public @NonNull List<TransformContext<BookPane, PlayerViewer>> transformations() {
         return List.copyOf(this.transforms);
     }
 
@@ -164,7 +163,7 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
      */
     public static final class Builder implements Interface.Builder<BookPane, PlayerViewer, BookInterface> {
 
-        private final @NonNull List<@NonNull TransformContext<?, BookPane, PlayerViewer>> transforms;
+        private final @NonNull List<@NonNull TransformContext<BookPane, PlayerViewer>> transforms;
         private final @NonNull Component title;
 
         /**
@@ -176,7 +175,7 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
         }
 
         private Builder(
-                final @NonNull List<@NonNull TransformContext<?, BookPane, PlayerViewer>> transforms,
+                final @NonNull List<@NonNull TransformContext<BookPane, PlayerViewer>> transforms,
                 final @NonNull Component title
         ) {
             this.transforms = Collections.unmodifiableList(transforms);
@@ -191,21 +190,21 @@ public final class BookInterface implements TitledInterface<BookPane, PlayerView
          */
         @Override
         public @NonNull Builder addTransform(final @NonNull Transform<BookPane, PlayerViewer> transform) {
-            return this.addTransform(InterfaceProperty.dummy(), 1, transform);
+            return this.addTransform(1, transform, InterfaceProperty.dummy());
         }
 
         @Override
-        public <S> @NonNull Builder addTransform(
-                final @NonNull InterfaceProperty<S> property,
+        public @NonNull Builder addTransform(
                 final int priority,
-                final @NonNull Transform<BookPane, PlayerViewer> transform
+                final @NonNull Transform<BookPane, PlayerViewer> transform,
+                final @NonNull InterfaceProperty<?>... properties
         ) {
-            final List<TransformContext<?, BookPane, PlayerViewer>> transforms = new ArrayList<>(this.transforms);
+            List<TransformContext<BookPane, PlayerViewer>> transforms = new ArrayList<>(this.transforms);
             transforms.add(
                     TransformContext.of(
-                            property,
                             priority,
-                            transform
+                            transform,
+                            properties
                     )
             );
 

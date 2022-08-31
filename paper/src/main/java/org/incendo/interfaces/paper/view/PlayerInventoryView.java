@@ -1,16 +1,25 @@
 package org.incendo.interfaces.paper.view;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.PluginClassLoader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.interfaces.core.Interface;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.element.Element;
+import org.incendo.interfaces.core.transform.InterfaceProperty;
+import org.incendo.interfaces.core.transform.InterruptUpdateException;
+import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.PlayerPane;
+import org.incendo.interfaces.paper.type.ChildTitledInterface;
 import org.incendo.interfaces.paper.type.PlayerInterface;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,11 +40,14 @@ public final class PlayerInventoryView implements
     private final @NonNull PlayerInterface backing;
     private final @NonNull PlayerInventory inventory;
     private final @NonNull InterfaceArguments arguments;
+
     private @NonNull PlayerPane pane;
 
     private boolean viewing = true;
 
     private final @NonNull Map<Integer, Element> current = new HashMap<>();
+
+    private final Plugin plugin;
 
     /**
      * Constructs {@code PlayerInventoryView}.
@@ -55,15 +67,20 @@ public final class PlayerInventoryView implements
             oldView.close();
         }
 
-        // Store the new view.
-        INVENTORY_VIEW_MAP.put(viewer.player(), this);
-
+        this.plugin = ((PluginClassLoader) getClass().getClassLoader()).getPlugin();
         this.viewer = viewer;
         this.backing = backing;
         this.arguments = argument;
         this.inventory = viewer.player().getInventory();
 
-        this.pane = this.updatePane(true);
+        try {
+            this.pane = this.updatePane(true);
+        } catch (final InterruptUpdateException ignored) {
+            this.pane = new PlayerPane();
+        }
+
+        // Store the new view.
+        INVENTORY_VIEW_MAP.put(viewer.player(), this);
     }
 
     /**
@@ -106,7 +123,9 @@ public final class PlayerInventoryView implements
             // If it's the first time we apply the transform, then
             // we add update listeners to all the dependent properties
             if (firstApply) {
-                transform.property().addListener((oldValue, newValue) -> this.update());
+                for (final InterfaceProperty<?> property : transform.properties()) {
+                    property.addListener((oldValue, newValue) -> this.update());
+                }
             }
         }
 
@@ -141,6 +160,7 @@ public final class PlayerInventoryView implements
 
     @Override
     public void open() {
+        this.viewing = true;
         this.current.clear();
         this.update();
         this.emitEvent();
@@ -160,9 +180,43 @@ public final class PlayerInventoryView implements
 
     @Override
     public void update() {
-        this.pane = this.updatePane(false);
+        if (!this.viewing) {
+            return;
+        }
 
+        if (!this.viewer.player().isOnline()) {
+            return;
+        }
+
+        this.backing.updateExecutor().execute(this.plugin, this::actuallyUpdate);
+    }
+
+    private void actuallyUpdate() {
+        try {
+            this.pane = this.updatePane(false);
+        } catch (final InterruptUpdateException ignored) {
+            return;
+        }
+
+        if (Bukkit.isPrimaryThread()) {
+            this.reapplyInventory();
+        } else {
+            try {
+                Bukkit.getScheduler().callSyncMethod(this.plugin, () -> {
+                    this.reapplyInventory();
+
+                    return null;
+                }).get();
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void reapplyInventory() {
         final @NonNull List<ItemStackElement<PlayerPane>> elements = this.pane.inventoryElements();
+
+        boolean changed = false;
 
         for (int i = 0; i < elements.size(); i++) {
             final @Nullable Element currentElement = this.current.get(i);
@@ -174,6 +228,12 @@ public final class PlayerInventoryView implements
 
             this.current.put(i, element);
             this.inventory.setItem(i, element.itemStack());
+
+            changed = true;
+        }
+
+        if (changed && this.viewer.player().getOpenInventory().getTopInventory().getType() == InventoryType.CRAFTING) {
+            this.viewer.player().updateInventory();
         }
     }
 
@@ -185,6 +245,33 @@ public final class PlayerInventoryView implements
     @Override
     public boolean updates() {
         return this.backing().updates();
+    }
+
+    @Override
+    public <C extends PlayerView<?>> @NonNull C openChild(
+            @NonNull final Interface<?, PlayerViewer> backing,
+            @NonNull final InterfaceArguments argument
+    ) {
+        InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
+        view.open();
+
+        @SuppressWarnings("unchecked")
+        C typedView = (C) view;
+        return typedView;
+    }
+
+    @Override
+    public <C extends PlayerView<?>> @NonNull C openChild(
+            @NonNull final ChildTitledInterface<?, PlayerViewer> backing,
+            @NonNull final InterfaceArguments argument,
+            @NonNull final Component title
+    ) {
+        InterfaceView<?, PlayerViewer> view = backing.open(this, argument, title);
+        view.open();
+
+        @SuppressWarnings("unchecked")
+        C typedView = (C) view;
+        return typedView;
     }
 
 }

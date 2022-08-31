@@ -932,8 +932,6 @@ ij_kotlin_method_call_chain_wrap = off
 ij_kotlin_method_parameters_new_line_after_left_paren = false
 ij_kotlin_method_parameters_right_paren_on_new_line = false
 ij_kotlin_method_parameters_wrap = off
-ij_kotlin_name_count_to_use_star_import = 5
-ij_kotlin_name_count_to_use_star_import_for_members = 3
 ij_kotlin_parameter_annotation_wrap = off
 ij_kotlin_space_after_comma = true
 ij_kotlin_space_after_extend_colon = true
@@ -962,6 +960,11 @@ ij_kotlin_while_on_new_line = false
 ij_kotlin_wrap_elvis_expressions = 1
 ij_kotlin_wrap_expression_body_functions = 0
 ij_kotlin_wrap_first_method_in_call_chain = false
+ij_continuation_indent_size = 4
+ij_kotlin_name_count_to_use_star_import = 1000
+ij_kotlin_name_count_to_use_star_import_for_members = 1000
+ij_kotlin_packages_to_use_import_on_demand = nothing
+ij_kotlin_imports_layout = *
 
 [{*.har, *.jsb2, *.jsb3, *.json, .babelrc, .eslintrc, .stylelintrc, bowerrc, jest.config, mcmod.info}]
 indent_size = 2

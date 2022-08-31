@@ -14,6 +14,7 @@ import org.incendo.interfaces.paper.click.InventoryClickContext
 import org.incendo.interfaces.paper.pane.CombinedPane
 import org.incendo.interfaces.paper.type.CloseHandler
 import org.incendo.interfaces.paper.type.CombinedInterface
+import org.incendo.interfaces.paper.utils.InterfacesUpdateExecutor
 import org.incendo.interfaces.paper.view.CombinedView
 import org.incendo.interfaces.paper.view.PlayerView
 
@@ -45,8 +46,14 @@ public class MutableCombinedInterfaceBuilder :
             InventoryClickEvent,
             PlayerViewer,
             InventoryClickContext<CombinedPane, CombinedView>>
-        get() = internalBuilder.clickHandler()
-        set(value) = mutate { internalBuilder.clickHandler(value) }
+            get() = internalBuilder.clickHandler()
+            set(value) = mutate { internalBuilder.clickHandler(value) }
+
+    /** The update executor of the interface. */
+    public var updateExecutor: InterfacesUpdateExecutor
+        get() = internalBuilder.updateExecutor()
+        set(value) = mutate { internalBuilder.updateExecutor(value) }
+
     // </editor-fold>
 
     // <editor-fold desc="Mutating Functions">
@@ -87,7 +94,7 @@ public class MutableCombinedInterfaceBuilder :
         if (transform is ReactiveTransform<CombinedPane, PlayerViewer, *>) {
             internalBuilder.addReactiveTransform(priority, transform) as CombinedInterface.Builder
         } else {
-            internalBuilder.addTransform(InterfaceProperty.dummy(), priority, transform)
+            internalBuilder.addTransform(priority, transform)
         }
     }
 
@@ -98,14 +105,15 @@ public class MutableCombinedInterfaceBuilder :
      */
     @Suppress("unchecked_cast")
     public fun addTransform(
-        property: InterfaceProperty<*> = InterfaceProperty.dummy(),
         priority: Int = 1,
+        vararg properties: InterfaceProperty<*>,
         transform: (CombinedPane, CombinedView) -> CombinedPane
     ): Unit = mutate {
         internalBuilder.addTransform(
-            property,
             priority,
-            transform as (CombinedPane, InterfaceView<CombinedPane, *>) -> CombinedPane)
+            transform as (CombinedPane, InterfaceView<CombinedPane, *>) -> CombinedPane,
+            *properties
+        )
     }
 
     /**
@@ -114,11 +122,11 @@ public class MutableCombinedInterfaceBuilder :
      * @param transform transform to add
      */
     public fun withTransform(
-        property: InterfaceProperty<*> = InterfaceProperty.dummy(),
         priority: Int = 1,
+        vararg properties: InterfaceProperty<*>,
         transform: (MutableCombinedPaneView) -> Unit
     ) {
-        addTransform(property, priority) { combinedPane, interfaceView ->
+        addTransform(priority, *properties) { combinedPane, interfaceView ->
             MutableCombinedPaneView(combinedPane, interfaceView).also(transform).toCombinedPane()
         }
     }

@@ -3,16 +3,19 @@ package org.incendo.interfaces.paper.view;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.PluginClassLoader;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.Interface;
-import org.incendo.interfaces.core.arguments.HashMapInterfaceArguments;
 import org.incendo.interfaces.core.arguments.InterfaceArguments;
 import org.incendo.interfaces.core.element.Element;
 import org.incendo.interfaces.core.transform.InterfaceProperty;
+import org.incendo.interfaces.core.transform.InterruptUpdateException;
 import org.incendo.interfaces.core.util.Vector2;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
@@ -20,6 +23,7 @@ import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.pane.CombinedPane;
+import org.incendo.interfaces.paper.type.ChildTitledInterface;
 import org.incendo.interfaces.paper.type.CombinedInterface;
 import org.incendo.interfaces.paper.utils.PaperUtils;
 
@@ -45,14 +49,16 @@ public final class CombinedView implements
     private final @NonNull PlayerViewer viewer;
     private final @NonNull CombinedInterface backing;
     private final @Nullable PlayerView<?> parent;
-    private final @NonNull Inventory inventory;
     private final @NonNull InterfaceArguments arguments;
     private final @NonNull Component title;
+    private @NonNull Inventory inventory;
     private @NonNull CombinedPane pane;
 
     private final @NonNull Map<Vector2, Element> current = new HashMap<>();
-    private final @NonNull List<ContextCompletedPane<CombinedPane>> panes = new ArrayList<>();
+    private @NonNull List<ContextCompletedPane<CombinedPane>> panes = new ArrayList<>();
     private final Set<Integer> tasks = new HashSet<>();
+
+    private final Plugin plugin;
 
     /**
      * Constructs {@code ChestView}.
@@ -92,21 +98,30 @@ public final class CombinedView implements
         this.backing = backing;
         this.arguments = arguments;
         this.title = title;
-        this.pane = this.updatePane(true);
 
-        this.inventory = this.createInventory();
-        this.reapplyInventory();
-    }
+        try {
+            this.pane = this.updatePane(true);
+        } catch (final InterruptUpdateException ignored) {
+            this.pane = new CombinedPane(this.backing.totalRows());
+        }
 
-    /**
-     * Opens a child interface.
-     *
-     * @param backing the backing interface
-     * @param <T>     the type of view
-     * @return the view
-     */
-    public @NonNull <T extends PlayerView<?>> T openChild(final @NonNull Interface<?, PlayerViewer> backing) {
-        return this.openChild(backing, HashMapInterfaceArguments.empty());
+        this.plugin = ((PluginClassLoader) this.getClass().getClassLoader()).getPlugin();
+
+        if (Bukkit.isPrimaryThread()) {
+            this.inventory = this.createInventory();
+            this.reapplyInventory(true);
+        } else {
+            try {
+                Bukkit.getScheduler().callSyncMethod(this.plugin, () -> {
+                    this.inventory = this.createInventory();
+                    this.reapplyInventory(true);
+
+                    return null;
+                }).get();
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private @NonNull CombinedPane updatePane(final boolean firstApply) {
@@ -115,7 +130,9 @@ public final class CombinedView implements
             // If it's the first time we apply the transform, then
             // we add update listeners to all the dependent properties
             if (firstApply) {
-                transform.property().addListener((oldValue, newValue) -> this.updateByProperty(transform.property()));
+                for (final InterfaceProperty<?> property : transform.properties()) {
+                    property.addListener((oldValue, newValue) -> this.updateByProperty(property));
+                }
             }
 
             this.panes.removeIf(completedPane -> completedPane.context().equals(transform));
@@ -126,26 +143,38 @@ public final class CombinedView implements
     }
 
     private @NonNull CombinedPane updatePaneByProperty(final @NonNull InterfaceProperty<?> interfaceProperty) {
+        List<ContextCompletedPane<CombinedPane>> updatedPanes = new ArrayList<>(this.panes);
+
         for (final var transform : this.backing.transformations()) {
-            if (transform.property() != interfaceProperty) {
+            if (!transform.properties().contains(interfaceProperty)) {
                 continue;
             }
 
             CombinedPane newPane = transform.transform().apply(new CombinedPane(this.backing.totalRows()), this);
 
-            this.panes.removeIf(completedPane -> completedPane.context().equals(transform));
-            this.panes.add(new ContextCompletedPane<>(transform, newPane));
+            updatedPanes.removeIf(completedPane -> completedPane.context().equals(transform));
+            updatedPanes.add(new ContextCompletedPane<>(transform, newPane));
         }
 
+        this.panes = updatedPanes;
         return this.mergePanes();
     }
 
     private void updateByProperty(final @NonNull InterfaceProperty<?> interfaceProperty) {
-        this.pane = this.updatePaneByProperty(interfaceProperty);
-        this.reapplyInventory();
+        try {
+            this.pane = this.updatePaneByProperty(interfaceProperty);
+        } catch (final InterruptUpdateException ignored) {
+            return;
+        }
+        this.reApplySync();
     }
 
-    private void reapplyInventory() {
+    private void reapplyInventory(final boolean firstOpen) {
+        // Double check that the player is actually viewing this view.
+        if (!this.isOpen(firstOpen)) {
+            return;
+        }
+
         Map<Vector2, ItemStackElement<CombinedPane>> elements = this.pane.inventoryElements();
 
         for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
@@ -165,15 +194,31 @@ public final class CombinedView implements
             }
         }
 
-        this.reapplyPlayerInventory();
+        this.reapplyPlayerInventory(firstOpen);
     }
 
-    private void reapplyPlayerInventory() {
+    private boolean isOpen(final boolean firstOpen) {
+        if (firstOpen) {
+            return true;
+        }
+
+        final InventoryView open = this.viewer.player().getOpenInventory();
+        final Inventory topInventory = open.getTopInventory();
+        final InventoryHolder inventoryHolder = topInventory.getHolder();
+        return this.equals(inventoryHolder);
+    }
+
+    private void reapplyPlayerInventory(final boolean firstOpen) {
+        // Double check that the player is actually viewing this view.
+        if (!this.isOpen(firstOpen)) {
+            return;
+        }
+
         Map<Vector2, ItemStackElement<CombinedPane>> elements = this.pane.inventoryElements();
         Inventory playerInventory = this.viewer.player().getOpenInventory().getBottomInventory();
 
         for (int x = 0; x < ChestPane.MINECRAFT_CHEST_WIDTH; x++) {
-            for (int y = this.backing.chestRows(); y < this.backing.totalRows(); y++) {
+            for (int y = this.backing.chestRows(); y < this.backing.totalRows() - 1; y++) {
                 Vector2 position = Vector2.at(x, y);
 
                 int playerY = y - this.backing.chestRows() + 1;
@@ -193,8 +238,6 @@ public final class CombinedView implements
         ItemStackElement<CombinedPane>[] hotbar = this.pane.hotbarElements();
 
         for (int x = 0; x < hotbar.length; x++) {
-            Vector2 position = Vector2.at(x, 999);
-
             ItemStack currentElement = playerInventory.getItem(x);
             ItemStackElement<CombinedPane> element = hotbar[x];
 
@@ -206,23 +249,28 @@ public final class CombinedView implements
         }
     }
 
-    /**
-     * Opens a child interface.
-     *
-     * @param backing  the backing interface
-     * @param argument the argument
-     * @param <T>      the type of view
-     * @return the view
-     */
-    public @NonNull <T extends PlayerView<?>> T openChild(
+    @Override
+    public @NonNull <C extends PlayerView<?>> C openChild(
             final @NonNull Interface<?, PlayerViewer> backing,
             final @NonNull InterfaceArguments argument
     ) {
         InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
-        view.open();
 
         @SuppressWarnings("unchecked")
-        T typedView = (T) view;
+        C typedView = (C) view;
+        return typedView;
+    }
+
+    @Override
+    public <C extends PlayerView<?>> @NonNull C openChild(
+            @NonNull final ChildTitledInterface<?, PlayerViewer> backing,
+            @NonNull final InterfaceArguments argument,
+            @NonNull final Component title
+    ) {
+        InterfaceView<?, PlayerViewer> view = backing.open(this, argument, title);
+
+        @SuppressWarnings("unchecked")
+        C typedView = (C) view;
         return typedView;
     }
 
@@ -238,8 +286,37 @@ public final class CombinedView implements
 
     @Override
     public void update() {
-        this.pane = this.updatePane(false);
-        this.reapplyInventory();
+        if (!this.viewer.player().isOnline()) {
+            return;
+        }
+
+        this.backing.updateExecutor().execute(this.plugin, this::actuallyUpdate);
+    }
+
+    private void actuallyUpdate() {
+        try {
+            this.pane = this.updatePane(false);
+        } catch (final InterruptUpdateException ignored) {
+            return;
+        }
+
+        this.reApplySync();
+    }
+
+    private void reApplySync() {
+        if (Bukkit.isPrimaryThread()) {
+            this.reapplyInventory(false);
+        } else {
+            try {
+                Bukkit.getScheduler().callSyncMethod(this.plugin, () -> {
+                    this.reapplyInventory(false);
+
+                    return null;
+                }).get();
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     /**
@@ -281,7 +358,7 @@ public final class CombinedView implements
     @Override
     public void open() {
         this.viewer.open(this);
-        this.reapplyPlayerInventory();
+        this.reapplyPlayerInventory(true);
         this.emitEvent();
     }
 
@@ -317,9 +394,11 @@ public final class CombinedView implements
         ItemStackElement<CombinedPane> empty = ItemStackElement.empty();
         CombinedPane finalPane = new CombinedPane(this.backing.totalRows());
 
-        this.panes.sort(Comparator.comparingInt(pane -> pane.context().priority()));
+        List<ContextCompletedPane<CombinedPane>> completedPanes = new ArrayList<>(this.panes);
 
-        for (final var completedPane : this.panes) {
+        completedPanes.sort(Comparator.comparingInt(pane -> pane.context().priority()));
+
+        for (final var completedPane : completedPanes) {
             Map<Vector2, ItemStackElement<CombinedPane>> elements = completedPane.pane().inventoryElements();
 
             for (Vector2 position : elements.keySet()) {

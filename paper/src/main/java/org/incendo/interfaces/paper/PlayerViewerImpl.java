@@ -1,8 +1,10 @@
 package org.incendo.interfaces.paper;
 
+import org.bukkit.Bukkit;
 import net.kyori.adventure.audience.Audience;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.plugin.java.PluginClassLoader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.element.text.TextElement;
@@ -53,18 +55,34 @@ final class PlayerViewerImpl implements PlayerViewer {
 
     @Override
     public void open(final @NonNull InterfaceView<?, ?> view) {
-        if (view instanceof ChestView) {
-            this.openChestView((ChestView) view);
-        } else if (view instanceof CombinedView) {
-            this.openCombinedView((CombinedView) view);
-        } else if (view instanceof BookView) {
-            this.openBookView((BookView) view);
-        } else if (view instanceof PlayerInventoryView) {
-            this.openPlayerView((PlayerInventoryView) view);
-        } else if (view instanceof ChatView) {
-            this.openChatView((ChatView) view);
+        final Runnable runnable = () -> {
+            if (view instanceof ChestView) {
+                this.openChestView((ChestView) view);
+            } else if (view instanceof CombinedView) {
+                this.openCombinedView((CombinedView) view);
+            } else if (view instanceof BookView) {
+                this.openBookView((BookView) view);
+            } else if (view instanceof PlayerInventoryView) {
+                this.openPlayerView((PlayerInventoryView) view);
+            } else if (view instanceof ChatView) {
+                this.openChatView((ChatView) view);
+            } else {
+                throw new UnsupportedOperationException("Cannot open view of type " + view.getClass().getName() + ".");
+            }
+        };
+
+        if (Bukkit.isPrimaryThread()) {
+            runnable.run();
         } else {
-            throw new UnsupportedOperationException("Cannot open view of type " + view.getClass().getName() + ".");
+            try {
+                Bukkit.getScheduler().callSyncMethod(((PluginClassLoader) getClass().getClassLoader()).getPlugin(), () -> {
+                    runnable.run();
+
+                    return null;
+                }).get();
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

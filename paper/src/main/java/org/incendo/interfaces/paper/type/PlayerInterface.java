@@ -14,6 +14,8 @@ import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.click.InventoryClickContext;
 import org.incendo.interfaces.paper.pane.PlayerPane;
+import org.incendo.interfaces.paper.utils.DefaultInterfacesUpdateExecutor;
+import org.incendo.interfaces.paper.utils.InterfacesUpdateExecutor;
 import org.incendo.interfaces.paper.view.PlayerInventoryView;
 
 import java.util.ArrayList;
@@ -25,11 +27,12 @@ public final class PlayerInterface implements
         UpdatingInterface,
         ClickableInterface<PlayerPane, InventoryClickEvent, PlayerViewer> {
 
-    private final @NonNull List<TransformContext<?, PlayerPane, PlayerViewer>> transformationList;
+    private final @NonNull List<TransformContext<PlayerPane, PlayerViewer>> transformationList;
     private final boolean updates;
     private final int updateDelay;
     private final @NonNull ClickHandler<PlayerPane, InventoryClickEvent,
             PlayerViewer, InventoryClickContext<PlayerPane, PlayerInventoryView>> clickHandler;
+    private final @NonNull InterfacesUpdateExecutor updateExecutor;
 
     /**
      * Constructs {@code PlayerInterface}.
@@ -38,18 +41,21 @@ public final class PlayerInterface implements
      * @param updates      {@code true} if the interface is an updating interface
      * @param updateDelay  the update delay
      * @param clickHandler the handler to run on click
+     * @param updateExecutor executor in which to run update tasks from
      */
     public PlayerInterface(
-            final @NonNull List<TransformContext<?, PlayerPane, PlayerViewer>> transforms,
+            final @NonNull List<TransformContext<PlayerPane, PlayerViewer>> transforms,
             final boolean updates,
             final int updateDelay,
             final @NonNull ClickHandler<PlayerPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<PlayerPane,
-                    PlayerInventoryView>> clickHandler
+                    PlayerInventoryView>> clickHandler,
+            final @NonNull InterfacesUpdateExecutor updateExecutor
     ) {
         this.transformationList = transforms;
         this.updates = updates;
         this.updateDelay = updateDelay;
         this.clickHandler = clickHandler;
+        this.updateExecutor = updateExecutor;
     }
 
     /**
@@ -67,7 +73,6 @@ public final class PlayerInterface implements
     ) {
         this.transformationList.add(
                 TransformContext.of(
-                        InterfaceProperty.dummy(),
                         1,
                         transform
                 )
@@ -76,7 +81,7 @@ public final class PlayerInterface implements
     }
 
     @Override
-    public @NonNull List<TransformContext<?, PlayerPane, PlayerViewer>> transformations() {
+    public @NonNull List<TransformContext<PlayerPane, PlayerViewer>> transformations() {
         return List.copyOf(this.transformationList);
     }
 
@@ -131,6 +136,14 @@ public final class PlayerInterface implements
     }
 
     /**
+     * The executor in which to run update tasks on.
+     * @return the executor
+     */
+    public InterfacesUpdateExecutor updateExecutor() {
+        return this.updateExecutor;
+    }
+
+    /**
      * A class that builds a player interface.
      */
     public static final class Builder implements Interface.Builder<PlayerPane, PlayerViewer, PlayerInterface> {
@@ -138,7 +151,7 @@ public final class PlayerInterface implements
         /**
          * The list of transformations.
          */
-        private final @NonNull List<@NonNull TransformContext<?, PlayerPane, PlayerViewer>> transformsList;
+        private final @NonNull List<@NonNull TransformContext<PlayerPane, PlayerViewer>> transformsList;
 
         /**
          * True if updating interface, false if not.
@@ -149,6 +162,8 @@ public final class PlayerInterface implements
          * How many ticks to wait between interface updates.
          */
         private final int updateDelay;
+
+        private final InterfacesUpdateExecutor updateExecutor;
 
         /**
          * The top click handler.
@@ -164,19 +179,22 @@ public final class PlayerInterface implements
             this.updates = false;
             this.updateDelay = 1;
             this.clickHandler = ClickHandler.cancel();
+            this.updateExecutor = new DefaultInterfacesUpdateExecutor();
         }
 
         private Builder(
-                final @NonNull List<TransformContext<?, PlayerPane, PlayerViewer>> transformsList,
+                final @NonNull List<TransformContext<PlayerPane, PlayerViewer>> transformsList,
                 final boolean updates,
                 final int updateDelay,
                 final @NonNull ClickHandler<PlayerPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<PlayerPane,
-                        PlayerInventoryView>> clickHandler
+                        PlayerInventoryView>> clickHandler,
+                final @NonNull InterfacesUpdateExecutor updateExecutor
         ) {
             this.transformsList = Collections.unmodifiableList(transformsList);
             this.updates = updates;
             this.updateDelay = updateDelay;
             this.clickHandler = clickHandler;
+            this.updateExecutor = updateExecutor;
         }
 
         /**
@@ -186,17 +204,17 @@ public final class PlayerInterface implements
          * @return new builder instance.
          */
         @Override
-        public @NonNull <T> Builder addTransform(
-                final @NonNull InterfaceProperty<T> property,
+        public @NonNull Builder addTransform(
                 final int priority,
-                final @NonNull Transform<PlayerPane, PlayerViewer> transform
+                final @NonNull Transform<PlayerPane, PlayerViewer> transform,
+                final @NonNull InterfaceProperty<?>... properties
         ) {
-            final List<TransformContext<?, PlayerPane, PlayerViewer>> transforms = new ArrayList<>(this.transformsList);
+            final List<TransformContext<PlayerPane, PlayerViewer>> transforms = new ArrayList<>(this.transformsList);
             transforms.add(
                     TransformContext.of(
-                            property,
                             priority,
-                            transform
+                            transform,
+                            properties
                     )
             );
 
@@ -204,7 +222,8 @@ public final class PlayerInterface implements
                     transforms,
                     this.updates,
                     this.updateDelay,
-                    this.clickHandler
+                    this.clickHandler,
+                    this.updateExecutor
             );
         }
 
@@ -216,7 +235,7 @@ public final class PlayerInterface implements
          */
         @Override
         public @NonNull Builder addTransform(final @NonNull Transform<PlayerPane, PlayerViewer> transform) {
-            return this.addTransform(InterfaceProperty.dummy(), 1, transform);
+            return this.addTransform(1, transform, InterfaceProperty.dummy());
         }
 
         /**
@@ -243,7 +262,25 @@ public final class PlayerInterface implements
                     this.transformsList,
                     this.updates,
                     this.updateDelay,
-                    handler
+                    handler,
+                    this.updateExecutor
+            );
+        }
+
+        /**
+         * Set your own update executor.
+         * @see org.incendo.interfaces.paper.utils.SynchronousInterfacesUpdateExecutor
+         *
+         * @param updateExecutor the executor
+         * @return new builder instance
+         */
+        public @NonNull Builder setUpdateExecutor(final @NonNull InterfacesUpdateExecutor updateExecutor) {
+            return new Builder(
+                    this.transformsList,
+                    this.updates,
+                    this.updateDelay,
+                    this.clickHandler,
+                    updateExecutor
             );
         }
 
@@ -259,7 +296,8 @@ public final class PlayerInterface implements
                     this.transformsList,
                     updates,
                     updateDelay,
-                    this.clickHandler
+                    this.clickHandler,
+                    this.updateExecutor
             );
         }
 
@@ -274,7 +312,8 @@ public final class PlayerInterface implements
                     this.transformsList,
                     this.updates,
                     this.updateDelay,
-                    this.clickHandler
+                    this.clickHandler,
+                    this.updateExecutor
             );
         }
 

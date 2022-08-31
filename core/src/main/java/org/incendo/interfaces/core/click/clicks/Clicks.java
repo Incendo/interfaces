@@ -12,26 +12,29 @@ public final class Clicks {
     /**
      * Returns a new left-click instance
      *
-     * @param cause the click cause
-     * @param shift whether or not the click was a shift-click
+     * @param cause    the click cause
+     * @param shift    whether or not the click was a shift-click
+     * @param interact whether or nor the click was triggered by an interact event
      * @param <T> the cause type
      * @return the click
      */
     public static <T> @NonNull Click<T> leftClick(
             final @NonNull T cause,
-            final boolean shift
+            final boolean shift,
+            final boolean interact
     ) {
         return new LeftClick<>(
                 cause,
-                shift
+                shift,
+                interact
         );
     }
 
     /**
      * Returns a new middle-click instance
      *
-     * @param cause the click cause
-     * @param shift whether or not the click was a shift-click
+     * @param cause    the click cause
+     * @param shift    whether or not the click was a shift-click
      * @param <T> the cause type
      * @return the click
      */
@@ -48,18 +51,21 @@ public final class Clicks {
     /**
      * Returns a new right-click instance
      *
-     * @param cause the click cause
-     * @param shift whether or not the click was a shift-click
+     * @param cause    the click cause
+     * @param shift    whether or not the click was a shift-click
+     * @param interact whether or nor the click was triggered by an interact event
      * @param <T> the cause type
      * @return the click
      */
     public static <T> @NonNull Click<T> rightClick(
             final @NonNull T cause,
-            final boolean shift
+            final boolean shift,
+            final boolean interact
     ) {
         return new RightClick<>(
                 cause,
-                shift
+                shift,
+                interact
         );
     }
 

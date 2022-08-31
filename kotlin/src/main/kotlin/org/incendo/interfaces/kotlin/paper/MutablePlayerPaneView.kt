@@ -52,7 +52,7 @@ public data class MutablePlayerPaneView(
             internalPane.getAdjusted(slot, slotType)
 
         /**
-         * Returns the element at the given [x],[y]-coordinates.
+         * Returns the element at the given [x], [y]-coordinates.
          *
          * @return the element
          */
@@ -70,7 +70,7 @@ public data class MutablePlayerPaneView(
         }
 
         /**
-         * Sets the element at the given [x],[y]-coordinates.
+         * Sets the element at the given [x], [y]-coordinates.
          *
          * @param x the x coordinate
          * @param y the y coordinate
@@ -79,5 +79,16 @@ public data class MutablePlayerPaneView(
         public operator fun set(x: Int, y: Int, element: ItemStackElement<PlayerPane>) {
             set(PaperUtils.gridToSlot(Vector2.at(x, y)), element)
         }
+
+        /**
+         * Sets an element at the given position.
+         *
+         * @param position the vector coordinate
+         * @param element the element
+         */
+        public operator fun set(position: Vector2, element: ItemStackElement<PlayerPane>): Unit =
+            mutate {
+                element(element, position.x, position.y)
+            }
     }
 }

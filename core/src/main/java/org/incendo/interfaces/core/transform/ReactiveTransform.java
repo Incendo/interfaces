@@ -5,7 +5,7 @@ import org.incendo.interfaces.core.pane.Pane;
 import org.incendo.interfaces.core.view.InterfaceViewer;
 
 /**
- * A reactive {@link Transform} that gets updated whenever the associated {@link #property()} is updated.
+ * A reactive {@link Transform} that gets updated whenever the associated {@link #properties()} is updated.
  *
  * @param <T> the pane type
  * @param <U> the viewer type
@@ -18,6 +18,6 @@ public interface ReactiveTransform<T extends Pane, U extends InterfaceViewer, V>
      *
      * @return the property
      */
-    @NonNull InterfaceProperty<V> property();
+    @NonNull InterfaceProperty<?>[] properties();
 
 }

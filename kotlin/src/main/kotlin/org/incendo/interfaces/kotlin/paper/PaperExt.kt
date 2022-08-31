@@ -12,6 +12,8 @@ import org.incendo.interfaces.core.pane.Pane
 import org.incendo.interfaces.core.view.InterfaceView
 import org.incendo.interfaces.paper.PlayerViewer
 import org.incendo.interfaces.paper.element.ItemStackElement
+import org.incendo.interfaces.paper.pane.ChestPane
+import org.incendo.interfaces.paper.pane.CombinedPane
 import org.incendo.interfaces.paper.type.ChestInterface
 import org.incendo.interfaces.paper.type.CombinedInterface
 import org.incendo.interfaces.paper.type.PlayerInterface
@@ -90,11 +92,12 @@ public fun Player.asViewer(): PlayerViewer = PlayerViewer.of(this)
  */
 public fun <T : Pane> ItemStack.asElement(
     handler:
-        ClickHandler<
-            T,
-            InventoryClickEvent,
-            PlayerViewer,
-            ClickContext<T, InventoryClickEvent, PlayerViewer>>? =
-        null
-): ItemStackElement<T> =
-    if (handler == null) ItemStackElement.of(this) else ItemStackElement.of(this, handler)
+        GenericClickHandler<T>? = null
+): ItemStackElement<T> = if (handler == null) ItemStackElement.of(this) else ItemStackElement.of(this, handler)
+
+public typealias GenericClickHandler<P> =
+    ClickHandler<P, InventoryClickEvent, PlayerViewer, ClickContext<P, InventoryClickEvent, PlayerViewer>>
+
+public typealias ChestClickHandler = GenericClickHandler<ChestPane>
+
+public typealias CombinedClickHandler = GenericClickHandler<CombinedPane>

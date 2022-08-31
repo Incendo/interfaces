@@ -1,5 +1,13 @@
 package org.incendo.interfaces.paper;
 
+import com.google.common.cache.Cache;
+
+import com.google.common.cache.CacheBuilder;
+
+import java.util.UUID;
+
+import java.util.concurrent.TimeUnit;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -22,8 +30,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.PluginClassLoader;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.UpdatingInterface;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
@@ -34,6 +44,7 @@ import org.incendo.interfaces.paper.pane.CombinedPane;
 import org.incendo.interfaces.paper.pane.PlayerPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
 import org.incendo.interfaces.paper.type.CloseHandler;
+import org.incendo.interfaces.paper.type.CombinedInterface;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.CombinedView;
 import org.incendo.interfaces.paper.view.PlayerInventoryView;
@@ -67,6 +78,8 @@ public class PaperInterfaceListeners implements Listener {
     private final @NonNull Plugin plugin;
     private final @NonNull Map<@NonNull SelfUpdatingInterfaceView, @NonNull Integer> updatingRunnables;
 
+    private final @Nullable Cache<UUID, Long> spamPrevention;
+
     /**
      * Constructs {@code PaperInterfaceListeners}.
      *
@@ -75,6 +88,22 @@ public class PaperInterfaceListeners implements Listener {
     public PaperInterfaceListeners(final @NonNull Plugin plugin) {
         this.plugin = plugin;
         this.updatingRunnables = new HashMap<>();
+        this.spamPrevention = null;
+    }
+
+    /**
+     * Constructs {@code PaperInterfaceListeners}.
+     *
+     * @param plugin        the plugin instance to register against
+     * @param clickThrottle the minimum amount of ticks between every accepted click
+     */
+    public PaperInterfaceListeners(final @NonNull Plugin plugin, final long clickThrottle) {
+        this.plugin = plugin;
+        this.updatingRunnables = new HashMap<>();
+        this.spamPrevention = CacheBuilder.newBuilder().expireAfterWrite(
+                50L * clickThrottle,
+                TimeUnit.MILLISECONDS
+        ).build();
     }
 
     /**
@@ -154,10 +183,10 @@ public class PaperInterfaceListeners implements Listener {
 
                 if (view instanceof SelfUpdatingInterfaceView) {
                     SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
-                    runnable.runTaskTimer(this.plugin, updatingInterface.updateDelay(), updatingInterface.updateDelay());
+                    runnable.runTaskTimerAsynchronously(this.plugin, updatingInterface.updateDelay(), updatingInterface.updateDelay());
                     this.updatingRunnables.put(selfUpdating, runnable.getTaskId());
                 } else {
-                    runnable.runTaskLater(this.plugin, updatingInterface.updateDelay());
+                    runnable.runTaskLaterAsynchronously(this.plugin, updatingInterface.updateDelay());
                 }
             }
         }
@@ -188,6 +217,14 @@ public class PaperInterfaceListeners implements Listener {
                     closeHandler.accept(event, (PlayerView<ChestPane>) playerView);
                 }
             }
+
+            if (playerView.backing() instanceof CombinedInterface) {
+                final CombinedInterface combinedInterface = (CombinedInterface) playerView.backing();
+
+                for (final CloseHandler<CombinedPane> closeHandler : combinedInterface.closeHandlers()) {
+                    closeHandler.accept(event, (PlayerView<CombinedPane>) playerView);
+                }
+            }
         }
 
         if (holder instanceof InterfaceView) {
@@ -199,7 +236,10 @@ public class PaperInterfaceListeners implements Listener {
             PlayerInventoryView playerInventoryView = PlayerInventoryView.forPlayer(player);
 
             if (playerInventoryView != null && VALID_REASON.contains(event.getReason())) {
-                playerInventoryView.open();
+                Bukkit.getScheduler().runTaskAsynchronously(
+                        ((PluginClassLoader) getClass().getClassLoader()).getPlugin(),
+                        playerInventoryView::open
+                );
             }
         }
     }
@@ -280,9 +320,18 @@ public class PaperInterfaceListeners implements Listener {
                 InventoryAction.NOTHING
         );
 
-        event.setCancelled(true);
-        event.setUseItemInHand(Event.Result.DENY);
-        hotbar.clickHandler().accept(new InventoryClickContext<PlayerPane, PlayerInventoryView>(inventoryClickEvent, true));
+        InventoryClickContext<PlayerPane, PlayerInventoryView> fakeContext = new InventoryClickContext<>(
+                inventoryClickEvent,
+                true,
+                true
+        );
+
+        hotbar.clickHandler().accept(fakeContext);
+
+        if (fakeContext.cancelled()) {
+            event.setCancelled(true);
+            event.setUseItemInHand(Event.Result.DENY);
+        }
     }
 
     private void cleanUpView(final @NonNull InterfaceView<?, PlayerViewer> view) {
@@ -290,7 +339,12 @@ public class PaperInterfaceListeners implements Listener {
             SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
 
             if (selfUpdating.updates()) {
-                Bukkit.getScheduler().cancelTask(this.updatingRunnables.get(selfUpdating));
+                Integer id = this.updatingRunnables.get(selfUpdating);
+
+                if (id != null) {
+                    Bukkit.getScheduler().cancelTask(id);
+                }
+
                 this.updatingRunnables.remove(selfUpdating);
             }
         }
@@ -305,12 +359,26 @@ public class PaperInterfaceListeners implements Listener {
 
         if (view instanceof CombinedView) {
             //todo: Other ways we could handle this?
-            view.viewer().player().getInventory().clear();
+            view.viewer().player().getInventory().setStorageContents(new ItemStack[36]);
         }
 
         if (view instanceof PlayerInventoryView) {
             PlayerInventoryView.removeForPlayer(view.viewer().player());
         }
+    }
+
+    private boolean shouldThrottle(final @NonNull Player player) {
+        if (this.spamPrevention == null) {
+            return false;
+        }
+
+        if (this.spamPrevention.getIfPresent(player.getUniqueId()) != null) {
+            return true;
+        } else {
+            this.spamPrevention.put(player.getUniqueId(), System.currentTimeMillis());
+        }
+
+        return false;
     }
 
     /**
@@ -324,9 +392,17 @@ public class PaperInterfaceListeners implements Listener {
         InventoryHolder holder = inventory.getHolder();
 
         if (holder instanceof ChestView) {
-            this.handleChestViewClick(event, holder);
+            if (this.shouldThrottle((Player) event.getWhoClicked())) {
+                event.setCancelled(true);
+            } else {
+                this.handleChestViewClick(event, holder);
+            }
         } else if (holder instanceof CombinedView) {
-            this.handleCombinedViewClick(event, holder);
+            if (this.shouldThrottle((Player) event.getWhoClicked())) {
+                event.setCancelled(true);
+            } else {
+                this.handleCombinedViewClick(event, holder);
+            }
         } else if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Player) {
             this.handlePlayerViewClick(event);
         }
@@ -338,27 +414,36 @@ public class PaperInterfaceListeners implements Listener {
             return;
         }
 
-        InventoryClickContext<ChestPane, ChestView> context = new InventoryClickContext<>(event, false);
+        InventoryClickContext<ChestPane, ChestView> context = new InventoryClickContext<>(
+                event,
+                false,
+                false
+        );
 
         ChestView chestView = (ChestView) holder;
-        // Handle parent interface click event
-        chestView.backing().clickHandler().accept(context);
 
         // Handle element click event
         if (event.getSlotType() == InventoryType.SlotType.CONTAINER) {
             int slot = event.getSlot();
             int x = slot % 9;
             int y = slot / 9;
+            ChestPane pane = chestView.pane();
 
-            chestView.pane()
-                    .element(x, y)
-                    .clickHandler()
-                    .accept(context);
+            if (y < pane.rows()) {
+                // Handle parent interface click event
+                chestView.backing().clickHandler().accept(context);
+
+                pane.element(x, y).clickHandler().accept(context);
+            }
         }
     }
 
     private void handleCombinedViewClick(final @NonNull InventoryClickEvent event, final @NonNull InventoryHolder holder) {
-        InventoryClickContext<CombinedPane, CombinedView> context = new InventoryClickContext<>(event, false);
+        InventoryClickContext<CombinedPane, CombinedView> context = new InventoryClickContext<>(
+                event,
+                false,
+                false
+        );
 
         CombinedView combinedView = (CombinedView) holder;
         // Handle parent interface click event
@@ -389,13 +474,23 @@ public class PaperInterfaceListeners implements Listener {
         Inventory clickedInventory = event.getClickedInventory();
         boolean isCraftGrid = clickedInventory instanceof CraftingInventory;
 
+        if (isCraftGrid) {
+            return;
+        }
+
         if (PlayerInventoryView.forPlayer((Player) event.getWhoClicked()) == null) {
+            return;
+        }
+
+        if (this.shouldThrottle((Player) event.getWhoClicked())) {
+            event.setCancelled(true);
             return;
         }
 
         final InventoryClickContext<PlayerPane, PlayerInventoryView> context = new InventoryClickContext<>(
                 event,
-                true
+                true,
+                false
         );
 
         PlayerInventoryView playerInventoryView = context.view();
