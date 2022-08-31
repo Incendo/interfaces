@@ -69,6 +69,7 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("unused")
 public class PaperInterfaceListeners implements Listener {
 
+    public static final @NonNull String INTERFACES_COMMAND = "/interfaces_text_click";
     private static final @NonNull Set<Action> VALID_ACTIONS = EnumSet.of(
             Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK,
             Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK
@@ -425,12 +426,8 @@ public class PaperInterfaceListeners implements Listener {
     @EventHandler
     public void onTextInterfaceCommand(final @NonNull PlayerCommandPreprocessEvent event) {
         final String cmd = event.getMessage();
-        if (!(cmd.startsWith("/"))) {
-            return;
-        }
 
         final String[] parts = cmd
-                .replaceFirst("/", "")
                 .split(" ");
         if (parts.length != 2) {
 
@@ -439,7 +436,7 @@ public class PaperInterfaceListeners implements Listener {
 
         final String command = parts[0];
         final String arg = parts[1];
-        if (!command.equals("interfaces_text_click")) {
+        if (!command.equals(INTERFACES_COMMAND)) {
             return;
         }
 

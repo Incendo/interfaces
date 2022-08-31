@@ -6,6 +6,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.click.ClickContext;
 import org.incendo.interfaces.core.click.ClickHandler;
+import org.incendo.interfaces.paper.PaperInterfaceListeners;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.click.TextClickCause;
 import org.incendo.interfaces.paper.pane.TextPane;
@@ -65,7 +66,7 @@ public final class ComponentElement implements TextElement {
     public @NonNull Component text() {
         if (this.handler != null) {
             return this.text
-                    .clickEvent(ClickEvent.runCommand("/interfaces_text_click " + this.uuid));
+                    .clickEvent(ClickEvent.runCommand(PaperInterfaceListeners.INTERFACES_COMMAND + " " + this.uuid));
         } else {
             return this.text;
         }
