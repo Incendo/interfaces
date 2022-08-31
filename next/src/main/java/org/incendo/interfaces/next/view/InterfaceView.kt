@@ -31,7 +31,7 @@ public abstract class InterfaceView<I : InterfacesInventory, P : Pane>(
     protected lateinit var currentInventory: I
 
     init {
-        update(CompleteUpdate)
+        applyUpdate(CompleteUpdate)
 
         backing.transforms
             .flatMap(AppliedTransform<P>::triggers)
@@ -43,6 +43,11 @@ public abstract class InterfaceView<I : InterfacesInventory, P : Pane>(
     }
 
     public fun update(update: Update) {
+        applyUpdate(update)
+        renderAndOpen()
+    }
+
+    private fun applyUpdate(update: Update) {
         update.apply(this)
         pane = panes.collapse()
     }
@@ -99,7 +104,7 @@ public abstract class InterfaceView<I : InterfacesInventory, P : Pane>(
 
         drawPaneToInventory()
 
-        if (true || requiresPlayerUpdate()) {
+        if (requiresPlayerUpdate()) {
             player.updateInventory()
         }
 
