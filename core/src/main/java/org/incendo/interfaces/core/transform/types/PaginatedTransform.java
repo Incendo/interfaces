@@ -114,7 +114,7 @@ public final class PaginatedTransform<S extends Element, T extends GridPane<T, S
                     )
             );
         }
-        final List<@NonNull S> suppliedElements = elementsSupplier.get();
+        final List<@NonNull S> suppliedElements = this.elementsSupplier.get();
         // Pane that we're updating.
         T pane = originalPane;
         // Calculate the number of available slots.
