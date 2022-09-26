@@ -3,6 +3,7 @@ package org.incendo.interfaces.core.transform.types;
 import java.util.List;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -32,9 +33,9 @@ public final class PaginatedTransform<S extends Element, T extends GridPane<T, S
     private final Vector2 max;
     private final Vector2 dim;
 
-    private final int pages;
+    private final Supplier<Integer> pageSupplier;
 
-    private final List<@NonNull S> elements;
+    private final Supplier<List<@NonNull S>> elementsSupplier;
 
     private @NonNull Vector2 backwardElementPosition = Vector2.at(-1, -1);
     private @NonNull Vector2 forwardElementPosition = Vector2.at(-1, -1);
@@ -47,23 +48,41 @@ public final class PaginatedTransform<S extends Element, T extends GridPane<T, S
      *
      * @param min      the coordinates for the minimum (inclusive) point where the elements are rendered
      * @param max      the coordinates for the maximum (inclusive) point where the elements are rendered
+     * @param elementsSupplier the supplier of the elements
+     */
+    public PaginatedTransform(
+            final @NonNull Vector2 min,
+            final @NonNull Vector2 max,
+            final @NonNull Supplier<List<@NonNull S>> elementsSupplier
+    ) {
+        this.min = min;
+        this.max = max;
+        this.dim = Vector2.at(max.x() - min.x() + 1, max.y() - min.y() + 1);
+        this.elementsSupplier = elementsSupplier;
+        // Calculate the number of available slots.
+        final int slots = this.dim.x() * this.dim.y();
+        // Calculate the number of pages occupied by the elements.
+        this.pageSupplier = () -> {
+            final List<@NonNull S> elements = elementsSupplier.get();
+            // Calculate the number of elements.
+            final int numberOfElements = elements.size();
+            return (int) Math.ceil((double) numberOfElements / (double) slots);
+        };
+    }
+
+    /**
+     * Constructs a new paginated transform.
+     *
+     * @param min      the coordinates for the minimum (inclusive) point where the elements are rendered
+     * @param max      the coordinates for the maximum (inclusive) point where the elements are rendered
      * @param elements the elements
      */
     public PaginatedTransform(
             final @NonNull Vector2 min,
             final @NonNull Vector2 max,
             final @NonNull List<@NonNull S> elements
-    ) {
-        this.min = min;
-        this.max = max;
-        this.dim = Vector2.at(max.x() - min.x() + 1, max.y() - min.y() + 1);
-        this.elements = elements;
-        // Calculate the number of available slots.
-        final int slots = this.dim.x() * this.dim.y();
-        // Calculate the number of elements.
-        final int numberOfElements = elements.size();
-        // Calculate the number of pages occupied by the elements.
-        this.pages = (int) Math.ceil((double) numberOfElements / (double) slots);
+    )   {
+        this(min, max, () -> elements);
     }
 
     @Override
@@ -95,6 +114,7 @@ public final class PaginatedTransform<S extends Element, T extends GridPane<T, S
                     )
             );
         }
+        final List<@NonNull S> suppliedElements = elementsSupplier.get();
         // Pane that we're updating.
         T pane = originalPane;
         // Calculate the number of available slots.
@@ -102,7 +122,7 @@ public final class PaginatedTransform<S extends Element, T extends GridPane<T, S
         // Calculate the offset.
         final int offset = slots * this.page();
         // Calculate the page elements.
-        final List<S> elements = this.elements.subList(offset, this.elements.size());
+        final List<S> elements = suppliedElements.subList(offset, suppliedElements.size());
         // Index used to reference the elements.
         int elementIndex = 0;
         // Render the elements.
@@ -146,7 +166,7 @@ public final class PaginatedTransform<S extends Element, T extends GridPane<T, S
      * @return the maximum page (0-indexed)
      */
     public @IntRange(from = 0) int maxPage() {
-        return Math.max(this.pages - 1, 0);
+        return Math.max(this.pageSupplier.get() - 1, 0);
     }
 
     /**
@@ -155,7 +175,7 @@ public final class PaginatedTransform<S extends Element, T extends GridPane<T, S
      * @return the number of pages
      */
     public @IntRange(from = 1) int pages() {
-        return this.pages;
+        return this.pageSupplier.get();
     }
 
     /**
