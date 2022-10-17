@@ -380,6 +380,7 @@ public final class CombinedView implements
      */
     private @NonNull Inventory createInventory() {
         return InventoryFactory.createInventory(
+                this.viewer.player(),
                 this,
                 this.backing.chestRows() * 9,
                 this.title

@@ -324,6 +324,7 @@ public final class ChestView implements
      */
     private @NonNull Inventory createInventory() {
         final @NonNull Inventory inventory = InventoryFactory.createInventory(
+                this.viewer.player(),
                 this,
                 this.backing.rows() * 9,
                 this.title
