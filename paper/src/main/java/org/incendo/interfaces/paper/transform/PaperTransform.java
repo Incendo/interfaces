@@ -1,6 +1,8 @@
 package org.incendo.interfaces.paper.transform;
 
 
+import java.util.function.Supplier;
+
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.transform.Transform;
@@ -38,16 +40,37 @@ public interface PaperTransform {
     }
 
     /**
-     * Returns a {@link ChestPane} {@link Transform} that adds an ItemStack to the pane.
+     * Returns a {@link ChestPane} {@link Transform} that adds an {@link ItemStackElement} to the pane
+     * at the specified coordinates. The supplier allows the displayed element to be updated with the view.
+     *
+     * @param element the element supplier
+     * @param x       the x coordinate
+     * @param y       the y coordinate
+     * @return the transform
+     */
+    static @NonNull Transform<ChestPane, PlayerViewer> chestItem(
+            final @NonNull Supplier<@NonNull ItemStackElement<ChestPane>> element,
+            final int x,
+            final int y
+    ) {
+        return (pane, view) -> pane.element(element.get(), x, y);
+    }
+
+    /**
+     * Returns a {@link ChestPane} {@link Transform} that adds an {@link ItemStackElement} to the pane
+     * at the specified coordinates.
      *
      * @param element the element
      * @param x       the x coordinate
      * @param y       the y coordinate
      * @return the transform
      */
-    static @NonNull Transform<ChestPane, PlayerViewer> chestItem(final @NonNull ItemStackElement<ChestPane> element, final int x,
-                                                    final int y) {
-        return (pane, view) -> pane.element(element, x, y);
+    static @NonNull Transform<ChestPane, PlayerViewer> chestItem(
+            final @NonNull ItemStackElement<ChestPane> element,
+            final int x,
+            final int y
+    ) {
+        return chestItem(() -> element, x, y);
     }
 
     /**
