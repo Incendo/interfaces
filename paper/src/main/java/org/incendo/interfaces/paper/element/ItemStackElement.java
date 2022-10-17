@@ -33,8 +33,7 @@ public class ItemStackElement<T extends Pane> implements Element, Clickable<T, I
      */
     public ItemStackElement(final @NonNull ItemStack itemStack) {
         this.itemStack = itemStack;
-        this.handler = (ctx) -> {
-        };
+        this.handler = ClickHandler.dummy();
     }
 
     /**
