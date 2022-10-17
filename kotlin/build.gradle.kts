@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.dokka")
-    id("org.jlleitschuh.gradle.ktlint")
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.ktlint)
 }
 
 tasks {
