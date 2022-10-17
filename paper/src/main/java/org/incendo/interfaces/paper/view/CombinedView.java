@@ -25,6 +25,7 @@ import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.pane.CombinedPane;
 import org.incendo.interfaces.paper.type.ChildTitledInterface;
 import org.incendo.interfaces.paper.type.CombinedInterface;
+import org.incendo.interfaces.paper.utils.InventoryFactory;
 import org.incendo.interfaces.paper.utils.PaperUtils;
 
 import java.util.ArrayList;
@@ -378,7 +379,7 @@ public final class CombinedView implements
      * @return the inventory
      */
     private @NonNull Inventory createInventory() {
-        return Bukkit.createInventory(
+        return InventoryFactory.createInventory(
                 this,
                 this.backing.chestRows() * 9,
                 this.title

@@ -27,4 +27,6 @@ dependencies {
 
     // Needed for Paper extensions.
     compileOnly(projects.interfacesPaper)
+    compileOnly(libs.adventure.api)
+    compileOnly(libs.paper.api)
 }
