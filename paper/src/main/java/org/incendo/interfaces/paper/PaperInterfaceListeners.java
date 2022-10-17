@@ -7,6 +7,7 @@ import com.google.common.cache.CacheBuilder;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
@@ -55,7 +56,6 @@ import org.incendo.interfaces.paper.view.ViewCloseEvent;
 import org.incendo.interfaces.paper.view.ViewOpenEvent;
 
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -88,7 +88,7 @@ public class PaperInterfaceListeners implements Listener {
      */
     public PaperInterfaceListeners(final @NonNull Plugin plugin) {
         this.plugin = plugin;
-        this.updatingRunnables = new HashMap<>();
+        this.updatingRunnables = new ConcurrentHashMap<>();
         this.spamPrevention = null;
     }
 
@@ -100,7 +100,7 @@ public class PaperInterfaceListeners implements Listener {
      */
     public PaperInterfaceListeners(final @NonNull Plugin plugin, final long clickThrottle) {
         this.plugin = plugin;
-        this.updatingRunnables = new HashMap<>();
+        this.updatingRunnables = new ConcurrentHashMap<>();
         this.spamPrevention = CacheBuilder.newBuilder().expireAfterWrite(
                 50L * clickThrottle,
                 TimeUnit.MILLISECONDS
