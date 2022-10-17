@@ -93,6 +93,10 @@ public final class ChestPane implements GridPane<ChestPane, ItemStackElement<Che
             final int x,
             final int y
     ) {
+        if (y >= this.rows || x > 8) {
+            throw new IllegalArgumentException("Cannot set element outside of the bounds of this chest pane.");
+        }
+
         final Map<@NonNull Vector2, @NonNull ItemStackElement<ChestPane>> newElements = new HashMap<>(this.elements);
 
         newElements.put(Vector2.at(x, y), element);
