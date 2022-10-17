@@ -30,7 +30,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.PluginClassLoader;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -237,7 +237,7 @@ public class PaperInterfaceListeners implements Listener {
 
             if (playerInventoryView != null && VALID_REASON.contains(event.getReason())) {
                 Bukkit.getScheduler().runTaskAsynchronously(
-                        ((PluginClassLoader) getClass().getClassLoader()).getPlugin(),
+                        JavaPlugin.getProvidingPlugin(this.getClass()),
                         playerInventoryView::open
                 );
             }

@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.PluginClassLoader;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.Interface;
@@ -67,7 +67,7 @@ public final class PlayerInventoryView implements
             oldView.close();
         }
 
-        this.plugin = ((PluginClassLoader) getClass().getClassLoader()).getPlugin();
+        this.plugin = JavaPlugin.getProvidingPlugin(this.getClass());
         this.viewer = viewer;
         this.backing = backing;
         this.arguments = argument;

@@ -7,7 +7,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.PluginClassLoader;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -105,7 +105,7 @@ public final class CombinedView implements
             this.pane = new CombinedPane(this.backing.totalRows());
         }
 
-        this.plugin = ((PluginClassLoader) this.getClass().getClassLoader()).getPlugin();
+        this.plugin = JavaPlugin.getProvidingPlugin(this.getClass());
 
         if (Bukkit.isPrimaryThread()) {
             this.inventory = this.createInventory();
