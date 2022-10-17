@@ -23,6 +23,7 @@ import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
 import org.incendo.interfaces.paper.type.ChildTitledInterface;
+import org.incendo.interfaces.paper.utils.InventoryFactory;
 import org.incendo.interfaces.paper.utils.PaperUtils;
 
 import java.util.ArrayList;
@@ -322,7 +323,7 @@ public final class ChestView implements
      * @return the inventory
      */
     private @NonNull Inventory createInventory() {
-        final @NonNull Inventory inventory = Bukkit.createInventory(
+        final @NonNull Inventory inventory = InventoryFactory.createInventory(
                 this,
                 this.backing.rows() * 9,
                 this.title

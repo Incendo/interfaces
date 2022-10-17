@@ -4,6 +4,7 @@ import com.google.common.cache.Cache;
 
 import com.google.common.cache.CacheBuilder;
 
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 import java.util.concurrent.TimeUnit;
@@ -71,8 +72,8 @@ public class PaperInterfaceListeners implements Listener {
             Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK
     );
 
-    private static final @NonNull Set<InventoryCloseEvent.Reason> VALID_REASON = EnumSet.of(
-            InventoryCloseEvent.Reason.PLAYER, InventoryCloseEvent.Reason.UNKNOWN, InventoryCloseEvent.Reason.PLUGIN
+    private static final @NonNull Set<String> VALID_REASON = Set.of(
+            "PLAYER", "UNKNOWN", "PLUGIN"
     );
 
     private final @NonNull Plugin plugin;
@@ -235,7 +236,20 @@ public class PaperInterfaceListeners implements Listener {
             Player player = (Player) event.getPlayer();
             PlayerInventoryView playerInventoryView = PlayerInventoryView.forPlayer(player);
 
-            if (playerInventoryView != null && VALID_REASON.contains(event.getReason())) {
+            String reason = "UNKNOWN";
+            Method method = null;
+            try {
+                method = event.getClass().getDeclaredMethod("getReason");
+            } catch (final NoSuchMethodException ignore) {
+            }
+            if (method != null) {
+                try {
+                    reason = ((Enum<?>) method.invoke(event)).name();
+                } catch (final ReflectiveOperationException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            if (playerInventoryView != null && VALID_REASON.contains(reason)) {
                 Bukkit.getScheduler().runTaskAsynchronously(
                         JavaPlugin.getProvidingPlugin(this.getClass()),
                         playerInventoryView::open
