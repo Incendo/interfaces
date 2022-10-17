@@ -28,6 +28,7 @@ public final class InventoryFactory {
     /**
      * Create an inventory with the appropriate method for the platform.
      *
+     * @param viewer          viewer
      * @param inventoryHolder holder
      * @param size            size
      * @param title           title
