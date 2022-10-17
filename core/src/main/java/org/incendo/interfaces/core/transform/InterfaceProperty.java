@@ -23,7 +23,7 @@ public interface InterfaceProperty<T> {
      * @return the property
      */
     static @NonNull InterfaceProperty<Object> dummy() {
-        return new DummyInterfaceProperty();
+        return DummyInterfaceProperty.INSTANCE;
     }
 
     /**
@@ -46,27 +46,5 @@ public interface InterfaceProperty<T> {
      * @param consumer the consumer
      */
     void addListener(@NonNull BiConsumer<T, T> consumer);
-
-    class DummyInterfaceProperty implements InterfaceProperty<Object> {
-
-        private final Object object = new Object();
-
-        @Override
-        public @NonNull Object get() {
-            return this.object;
-        }
-
-        @Override
-        public void set(final Object value) {
-            throw new UnsupportedOperationException("Cannot update a dummy interface property");
-        }
-
-        @Override
-        public void addListener(
-                final @NonNull BiConsumer<Object, Object> consumer
-        ) {
-        }
-
-    }
 
 }
