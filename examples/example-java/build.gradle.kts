@@ -1,5 +1,5 @@
 plugins {
-    id("xyz.jpenilla.run-paper")
+    alias(libs.plugins.runPaper)
 }
 
 dependencies {
