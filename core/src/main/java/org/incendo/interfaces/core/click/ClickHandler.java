@@ -52,6 +52,20 @@ public interface ClickHandler<T extends Pane, U, V extends InterfaceViewer, W ex
     }
 
     /**
+     * Returns a {@code ClickHandler} that does nothing.
+     *
+     * @param <T> the context type
+     * @param <U> the click cause
+     * @param <V> the viewer type
+     * @param <W> the context type
+     * @return the handler
+     */
+    static @NonNull <T extends Pane, U, V extends InterfaceViewer,
+            W extends ClickContext<T, U, V>> ClickHandler<T, U, V, W> dummy() {
+        return ctx -> {};
+    }
+
+    /**
      * Returns a new {@link ClickHandler} that first executes the current handler, and then
      * executes the other handler.
      *
