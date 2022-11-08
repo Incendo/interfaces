@@ -40,14 +40,14 @@ with panes.
 
 ## Usage
 
-Snapshots of this repository are hosted at https://repo.incendo.org/content/repositories/snapshots/.
+Snapshots of this repository are hosted at https://oss.sonatype.org/content/repositories/snapshots/.
 
 Gradle example:
 
 ```kotlin
 repositories() {
     // ...
-    maven("https://repo.incendo.org/content/repositories/snapshots/")
+    maven("https://oss.sonatype.org/content/repositories/snapshots/")
     // ...
 }
 
