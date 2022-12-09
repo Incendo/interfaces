@@ -1,8 +1,12 @@
 package org.incendo.interfaces.example.next
 
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator
+import cloud.commandframework.kotlin.coroutines.extension.suspendingHandler
 import cloud.commandframework.kotlin.extension.buildAndRegister
 import cloud.commandframework.paper.PaperCommandManager
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -38,7 +42,7 @@ public class NextPlugin : JavaPlugin(), Listener {
             registerCopy {
                 literal("simple")
 
-                handler {
+                suspendingHandler {
                     val player = it.sender as Player
                     val simpleInterface = simpleInterface()
 
@@ -49,7 +53,7 @@ public class NextPlugin : JavaPlugin(), Listener {
             registerCopy {
                 literal("combined")
 
-                handler {
+                suspendingHandler {
                     val player = it.sender as Player
                     val combinedInterface = combinedInterface()
 
@@ -76,7 +80,9 @@ public class NextPlugin : JavaPlugin(), Listener {
         Bukkit.getScheduler().runTaskAsynchronously(
             this,
             Runnable {
-                playerInterface().open(e.player)
+                runBlocking {
+                    playerInterface().open(e.player)
+                }
             }
         )
     }

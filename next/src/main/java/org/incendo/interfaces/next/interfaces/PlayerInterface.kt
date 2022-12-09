@@ -19,8 +19,9 @@ public class PlayerInterface internal constructor(
 
     override fun createPane(): PlayerPane = PlayerPane()
 
-    override fun open(player: Player): PlayerInterfaceView {
+    override suspend fun open(player: Player): PlayerInterfaceView {
         val view = PlayerInterfaceView(player, this)
+        view.setup()
         view.open()
 
         return view

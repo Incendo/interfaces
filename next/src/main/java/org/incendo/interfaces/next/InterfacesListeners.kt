@@ -15,6 +15,13 @@ import org.incendo.interfaces.next.grid.GridPoint
 import org.incendo.interfaces.next.view.InterfaceView
 import org.incendo.interfaces.next.view.PlayerInterfaceView
 import java.util.EnumSet
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.newFixedThreadPoolContext
+import org.incendo.interfaces.next.Constants.SCOPE
 
 public class InterfacesListeners : Listener {
 
@@ -38,7 +45,11 @@ public class InterfacesListeners : Listener {
 
         holder.close()
 
-        if (event.reason in VALID_REASON) {
+        if (event.reason !in VALID_REASON) {
+            return
+        }
+
+        SCOPE.launch {
             PlayerInterfaceView.OPEN_VIEWS[event.player]?.open()
         }
     }

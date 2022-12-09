@@ -9,14 +9,13 @@ import org.incendo.interfaces.next.pane.ChestPane
 import org.incendo.interfaces.next.utilities.TitleState
 import org.incendo.interfaces.next.utilities.runSync
 
-public class ChestInterfaceView(
+public class ChestInterfaceView internal constructor(
     player: Player,
     backing: ChestInterface
 ) : InterfaceView<ChestInterfacesInventory, ChestPane>(
     player,
     backing
-),
-    InventoryHolder {
+), InventoryHolder {
     private val titleState = TitleState(backing.initialTitle)
 
     override fun createInventory(): ChestInterfacesInventory = ChestInterfacesInventory(

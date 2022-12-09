@@ -29,7 +29,7 @@ public class PaginationTransformation<P : Pane>(
 
     override val triggers: Array<Trigger> = arrayOf(pageProperty, valuesProperty)
 
-    override fun invoke(pane: P) {
+    override suspend fun invoke(pane: P) {
         val positions = positionGenerator.generate()
         val slots = positions.size
 

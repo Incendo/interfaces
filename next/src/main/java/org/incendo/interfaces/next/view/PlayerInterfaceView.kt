@@ -6,7 +6,7 @@ import org.incendo.interfaces.next.inventory.PlayerInterfacesInventory
 import org.incendo.interfaces.next.pane.PlayerPane
 import org.incendo.interfaces.next.utilities.PlayerDataMap
 
-public class PlayerInterfaceView(
+public class PlayerInterfaceView internal constructor(
     player: Player,
     backing: PlayerInterface
 ) : InterfaceView<PlayerInterfacesInventory, PlayerPane>(

@@ -18,8 +18,9 @@ public class CombinedInterface internal constructor(
         return CombinedPane(rows)
     }
 
-    override fun open(player: Player): CombinedInterfaceView {
+    override suspend fun open(player: Player): CombinedInterfaceView {
         val view = CombinedInterfaceView(player, this)
+        view.setup()
         view.open()
 
         return view

@@ -9,14 +9,13 @@ import org.incendo.interfaces.next.pane.CombinedPane
 import org.incendo.interfaces.next.utilities.TitleState
 import org.incendo.interfaces.next.utilities.runSync
 
-public class CombinedInterfaceView(
+public class CombinedInterfaceView internal constructor(
     player: Player,
     backing: CombinedInterface
 ) : InterfaceView<CombinedInterfacesInventory, CombinedPane>(
     player,
     backing
-),
-    InventoryHolder {
+), InventoryHolder {
     private val titleState = TitleState(backing.initialTitle)
 
     override fun createInventory(): CombinedInterfacesInventory = CombinedInterfacesInventory(

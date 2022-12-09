@@ -1,6 +1,16 @@
 package org.incendo.interfaces.next.view
 
+import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.newFixedThreadPoolContext
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import org.bukkit.entity.Player
+import org.incendo.interfaces.next.Constants.SCOPE
 import org.incendo.interfaces.next.interfaces.Interface
 import org.incendo.interfaces.next.inventory.InterfacesInventory
 import org.incendo.interfaces.next.pane.Pane
@@ -30,29 +40,31 @@ public abstract class InterfaceView<I : InterfacesInventory, P : Pane>(
 
     protected lateinit var currentInventory: I
 
-    init {
+    internal suspend fun setup() {
         applyUpdate(CompleteUpdate)
 
         backing.transforms
             .flatMap(AppliedTransform<P>::triggers)
             .forEach { trigger ->
                 trigger.addListener {
-                    update(TriggerUpdate(trigger))
+                    SCOPE.launch {
+                        update(TriggerUpdate(trigger))
+                    }
                 }
             }
     }
 
-    public fun update(update: Update) {
+    public suspend fun update(update: Update) {
         applyUpdate(update)
         renderAndOpen()
     }
 
-    private fun applyUpdate(update: Update) {
+    private suspend fun applyUpdate(update: Update) {
         update.apply(this)
         pane = panes.collapse()
     }
 
-    private fun renderAndOpen() {
+    private suspend fun renderAndOpen() {
         val requiresNewInventory = renderToInventory()
 
         if (requiresNewInventory && isOpen) {
@@ -62,7 +74,7 @@ public abstract class InterfaceView<I : InterfacesInventory, P : Pane>(
         firstPaint = false
     }
 
-    public fun open() {
+    public suspend fun open() {
         isOpen = true
         renderAndOpen()
     }
@@ -75,7 +87,7 @@ public abstract class InterfaceView<I : InterfacesInventory, P : Pane>(
 
     public abstract fun openInventory()
 
-    internal fun applyTransforms(transforms: Collection<AppliedTransform<P>>) {
+    internal suspend fun applyTransforms(transforms: Collection<AppliedTransform<P>>) {
         for (transform in transforms) {
             val pane = backing.createPane()
             transform(pane)

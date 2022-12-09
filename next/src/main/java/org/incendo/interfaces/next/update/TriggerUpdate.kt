@@ -7,7 +7,7 @@ import org.incendo.interfaces.next.view.InterfaceView
 public class TriggerUpdate(
     private val trigger: Trigger
 ) : Update {
-    override fun <P : Pane> apply(target: InterfaceView<*, P>) {
+    override suspend fun <P : Pane> apply(target: InterfaceView<*, P>) {
         val filteredTransforms = target.backing.transforms
             .filter { transform -> transform.triggers.contains(trigger) }
 

@@ -16,5 +16,5 @@ public interface Interface<P : Pane> {
 
     public fun createPane(): P
 
-    public fun open(player: Player): InterfaceView<*, P>
+    public suspend fun open(player: Player): InterfaceView<*, P>
 }
