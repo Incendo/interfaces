@@ -4,8 +4,6 @@ import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator
 import cloud.commandframework.kotlin.coroutines.extension.suspendingHandler
 import cloud.commandframework.kotlin.extension.buildAndRegister
 import cloud.commandframework.paper.PaperCommandManager
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -28,6 +26,12 @@ import org.incendo.interfaces.next.properties.interfaceProperty
 import org.incendo.interfaces.next.utilities.forEachInGrid
 
 public class NextPlugin : JavaPlugin(), Listener {
+
+    private companion object {
+        private val INTERFACES = listOf<RegistrableInterface>(
+            DelayedRequestExampleInterface()
+        )
+    }
 
     private val counterProperty = interfaceProperty(5)
     private var counter by counterProperty
@@ -60,6 +64,19 @@ public class NextPlugin : JavaPlugin(), Listener {
                     player.open(combinedInterface)
                 }
             }
+
+            for (registrableInterface in INTERFACES) {
+                registerCopy {
+                    literal(registrableInterface.subcommand)
+
+                    suspendingHandler {
+                        val player = it.sender as Player
+                        val builtInterface = registrableInterface.create()
+
+                        player.open(builtInterface)
+                    }
+                }
+            }
         }
 
         InterfacesListeners.install(this)
@@ -81,7 +98,7 @@ public class NextPlugin : JavaPlugin(), Listener {
             this,
             Runnable {
                 runBlocking {
-                    playerInterface().open(e.player)
+//                    playerInterface().open(e.player)
                 }
             }
         )
