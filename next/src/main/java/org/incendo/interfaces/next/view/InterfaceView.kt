@@ -1,13 +1,5 @@
 package org.incendo.interfaces.next.view
 
-import kotlin.coroutines.CoroutineContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
-import kotlinx.coroutines.newFixedThreadPoolContext
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.bukkit.entity.Player
@@ -84,7 +76,7 @@ public abstract class InterfaceView<I : InterfacesInventory, P : Pane>(
     public abstract fun openInventory()
 
     internal suspend fun applyTransforms(transforms: Collection<AppliedTransform<P>>) {
-        //todo(josh): could be improved? make sure renderAndOpen only happens once per tick?
+        // todo(josh): could be improved? make sure renderAndOpen only happens once per tick?
         transforms.forEach { transform ->
             SCOPE.launch {
                 val pane = backing.createPane()

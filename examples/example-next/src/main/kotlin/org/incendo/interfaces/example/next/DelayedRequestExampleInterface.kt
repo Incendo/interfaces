@@ -1,6 +1,5 @@
 package org.incendo.interfaces.example.next
 
-import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import net.kyori.adventure.text.Component.text
 import org.bukkit.Material
@@ -8,6 +7,7 @@ import org.incendo.interfaces.next.drawable.Drawable
 import org.incendo.interfaces.next.element.StaticElement
 import org.incendo.interfaces.next.interfaces.Interface
 import org.incendo.interfaces.next.interfaces.buildCombinedInterface
+import kotlin.time.Duration.Companion.seconds
 
 public class DelayedRequestExampleInterface : RegistrableInterface {
 
@@ -28,7 +28,7 @@ public class DelayedRequestExampleInterface : RegistrableInterface {
         }
 
         withTransform { pane ->
-            for (index in 0 .. 8) {
+            for (index in 0..8) {
                 pane[1, index] = BACKING_ELEMENT
             }
         }
@@ -38,5 +38,4 @@ public class DelayedRequestExampleInterface : RegistrableInterface {
         delay(3.seconds)
         return listOf(Material.GREEN_CONCRETE, Material.YELLOW_CONCRETE, Material.RED_CONCRETE)
     }
-
 }
