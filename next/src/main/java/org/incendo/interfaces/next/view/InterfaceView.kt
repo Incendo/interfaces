@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
@@ -48,23 +49,18 @@ public abstract class InterfaceView<I : InterfacesInventory, P : Pane>(
             .forEach { trigger ->
                 trigger.addListener {
                     SCOPE.launch {
-                        update(TriggerUpdate(trigger))
+                        applyUpdate(TriggerUpdate(trigger))
                     }
                 }
             }
     }
 
-    public suspend fun update(update: Update) {
-        applyUpdate(update)
-        renderAndOpen()
-    }
-
     private suspend fun applyUpdate(update: Update) {
         update.apply(this)
-        pane = panes.collapse()
     }
 
-    private suspend fun renderAndOpen() {
+    private fun renderAndOpen() {
+        pane = panes.collapse()
         val requiresNewInventory = renderToInventory()
 
         if (requiresNewInventory && isOpen) {
@@ -88,11 +84,16 @@ public abstract class InterfaceView<I : InterfacesInventory, P : Pane>(
     public abstract fun openInventory()
 
     internal suspend fun applyTransforms(transforms: Collection<AppliedTransform<P>>) {
-        for (transform in transforms) {
-            val pane = backing.createPane()
-            transform(pane)
+        //todo(josh): could be improved? make sure renderAndOpen only happens once per tick?
+        transforms.forEach { transform ->
+            SCOPE.launch {
+                val pane = backing.createPane()
+                transform(pane)
 
-            panes[transform.priority] = pane
+                panes[transform.priority] = pane
+            }.invokeOnCompletion {
+                renderAndOpen()
+            }
         }
     }
 
