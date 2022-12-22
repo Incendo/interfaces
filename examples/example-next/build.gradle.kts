@@ -3,7 +3,6 @@ plugins {
     id("org.jetbrains.dokka")
     id("com.github.johnrengelman.shadow")
     id("xyz.jpenilla.run-paper")
-    id("org.jlleitschuh.gradle.ktlint")
 }
 
 tasks {
@@ -14,10 +13,6 @@ tasks {
     compileTestKotlin {
         kotlinOptions.jvmTarget = "17"
     }
-}
-
-ktlint {
-    version.set("0.42.1")
 }
 
 kotlin {

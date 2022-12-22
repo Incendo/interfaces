@@ -26,7 +26,9 @@ public class InterfacesListeners : Listener {
         }
 
         private val VALID_REASON = EnumSet.of(
-            Reason.PLAYER, Reason.UNKNOWN, Reason.PLUGIN
+            Reason.PLAYER,
+            Reason.UNKNOWN,
+            Reason.PLUGIN
         )
     }
 

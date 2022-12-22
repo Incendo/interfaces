@@ -15,7 +15,8 @@ public class CombinedInterfaceView internal constructor(
 ) : InterfaceView<CombinedInterfacesInventory, CombinedPane>(
     player,
     backing
-), InventoryHolder {
+),
+    InventoryHolder {
     private val titleState = TitleState(backing.initialTitle)
 
     override fun createInventory(): CombinedInterfacesInventory = CombinedInterfacesInventory(

@@ -88,7 +88,8 @@ public class NextPlugin : JavaPlugin(), Listener {
             Runnable {
                 counter++
             },
-            0, 1
+            0,
+            1
         )
     }
 

@@ -15,7 +15,8 @@ public class ChestInterfaceView internal constructor(
 ) : InterfaceView<ChestInterfacesInventory, ChestPane>(
     player,
     backing
-), InventoryHolder {
+),
+    InventoryHolder {
     private val titleState = TitleState(backing.initialTitle)
 
     override fun createInventory(): ChestInterfacesInventory = ChestInterfacesInventory(

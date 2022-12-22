@@ -1,3 +1,6 @@
+import com.diffplug.gradle.spotless.SpotlessExtension
+import com.diffplug.gradle.spotless.SpotlessPlugin
+import com.diffplug.gradle.spotless.SpotlessTask
 import net.kyori.indra.IndraCheckstylePlugin
 import net.kyori.indra.IndraPlugin
 import net.kyori.indra.IndraPublishingPlugin
@@ -12,7 +15,7 @@ plugins {
 
     // Kotlin plugin prefers to be applied to parent when it's used in multiple sub-modules.
     kotlin("jvm") version "1.7.10" apply false
-    id("org.jlleitschuh.gradle.ktlint") apply false
+    id("com.diffplug.spotless") version "6.12.0"
 }
 
 group = "org.incendo.interfaces"
@@ -22,6 +25,7 @@ description = "A builder-style user interface library."
 subprojects {
     apply<IndraPlugin>()
     apply<IndraCheckstylePlugin>()
+    apply<SpotlessPlugin>()
 
     // Don't publish examples
     if (!name.startsWith("example-")) apply<IndraPublishingPlugin>()
@@ -59,6 +63,12 @@ subprojects {
                     }
                 }
             }
+        }
+    }
+
+    configure<SpotlessExtension> {
+        kotlin {
+            ktlint("0.47.1")
         }
     }
 
