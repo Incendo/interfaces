@@ -1,34 +1,24 @@
 package org.incendo.interfaces.next.transform.builtin
 
-import org.bukkit.event.inventory.ClickType
-import org.incendo.interfaces.next.drawable.Drawable
 import org.incendo.interfaces.next.element.Element
-import org.incendo.interfaces.next.element.StaticElement
-import org.incendo.interfaces.next.grid.GridPoint
 import org.incendo.interfaces.next.grid.GridPositionGenerator
 import org.incendo.interfaces.next.pane.Pane
-import org.incendo.interfaces.next.properties.DelegatedInterfaceProperty
-import org.incendo.interfaces.next.properties.InterfaceProperty
-import org.incendo.interfaces.next.properties.Trigger
-import org.incendo.interfaces.next.transform.ReactiveTransform
-import org.incendo.interfaces.next.utilities.BoundInteger
+import kotlin.properties.Delegates
 
 public class PaginationTransformation<P : Pane>(
-    default: Collection<Element>,
     private val positionGenerator: GridPositionGenerator,
-    private val back: ButtonInformation?,
-    private val forward: ButtonInformation?
-) : ReactiveTransform<P> {
+    default: Collection<Element>,
+    back: PaginationButton,
+    forward: PaginationButton
+) : PagedTransformation<P>(back, forward) {
 
-    private val boundPage = DelegatedInterfaceProperty(
-        BoundInteger(0, 1, default.size)
-    )
-    private var page by boundPage
+    private val values by Delegates.observable(default.toList()) { _, _, _ ->
+        boundPage.max = maxPages()
+    }
 
-    private val valuesProperty = InterfaceProperty(default.toList()) { entries -> boundPage.delegatedProperty.max = entries.size }
-    private val values by valuesProperty
-
-    override val triggers: Array<Trigger> = arrayOf(boundPage, valuesProperty)
+    init {
+        boundPage.max = maxPages()
+    }
 
     override suspend fun invoke(pane: P) {
         val positions = positionGenerator.generate()
@@ -40,22 +30,10 @@ public class PaginationTransformation<P : Pane>(
             pane[point] = values[index + offset]
         }
 
-        back?.let { button -> applyButton(pane, button) }
-        forward?.let { button -> applyButton(pane, button) }
+        super.invoke(pane)
     }
 
-    private fun applyButton(pane: Pane, button: ButtonInformation) {
-        val (point, drawable, increments) = button
-
-        pane[point] = StaticElement(drawable) { click ->
-            increments[click.type]?.let { increment -> page += increment }
-        }
+    private fun maxPages(): Int {
+        return values.size.floorDiv(positionGenerator.generate().size)
     }
-
-    // todo(josh): move this out
-    public data class ButtonInformation(
-        public val position: GridPoint,
-        public val drawable: Drawable,
-        public val increments: Map<ClickType, Int>
-    )
 }
