@@ -7,6 +7,7 @@ import org.incendo.interfaces.next.element.StaticElement
 import org.incendo.interfaces.next.grid.GridPoint
 import org.incendo.interfaces.next.grid.GridPositionGenerator
 import org.incendo.interfaces.next.pane.Pane
+import org.incendo.interfaces.next.properties.DelegatedInterfaceProperty
 import org.incendo.interfaces.next.properties.InterfaceProperty
 import org.incendo.interfaces.next.properties.Trigger
 import org.incendo.interfaces.next.transform.ReactiveTransform
@@ -19,15 +20,15 @@ public class PaginationTransformation<P : Pane>(
     private val forward: ButtonInformation?
 ) : ReactiveTransform<P> {
 
-    private val boundPage = BoundInteger(0, 1, default.size)
+    private val boundPage = DelegatedInterfaceProperty(
+        BoundInteger(0, 1, default.size)
+    )
     private var page by boundPage
 
-    private val pageProperty = InterfaceProperty(page)
-
-    private val valuesProperty = InterfaceProperty(default.toList()) { entries -> boundPage.max = entries.size }
+    private val valuesProperty = InterfaceProperty(default.toList()) { entries -> boundPage.delegatedProperty.max = entries.size }
     private val values by valuesProperty
 
-    override val triggers: Array<Trigger> = arrayOf(pageProperty, valuesProperty)
+    override val triggers: Array<Trigger> = arrayOf(boundPage, valuesProperty)
 
     override suspend fun invoke(pane: P) {
         val positions = positionGenerator.generate()

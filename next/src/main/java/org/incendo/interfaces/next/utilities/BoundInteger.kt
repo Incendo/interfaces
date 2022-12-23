@@ -1,19 +1,27 @@
 package org.incendo.interfaces.next.utilities
 
-import kotlin.properties.ReadWriteProperty
+import kotlin.properties.ObservableProperty
 import kotlin.reflect.KProperty
 
+// todo(josh): recalculate value when max/min changed?
 public class BoundInteger(
     initial: Int,
     public var min: Int,
     public var max: Int
-) : ReadWriteProperty<Any, Int> {
+) : ObservableProperty<Int>(initial) {
 
-    private var internal = initial
+    override fun beforeChange(property: KProperty<*>, oldValue: Int, newValue: Int): Boolean {
+        val acceptableRange = min..max
 
-    override fun getValue(thisRef: Any, property: KProperty<*>): Int = internal
+        if (newValue in acceptableRange) {
+            return oldValue == newValue
+        }
 
-    override fun setValue(thisRef: Any, property: KProperty<*>, value: Int) {
-        internal = value.coerceIn(min, max)
+        val coercedValue = newValue.coerceIn(acceptableRange)
+        var value by this
+
+        value = coercedValue
+
+        return false
     }
 }
