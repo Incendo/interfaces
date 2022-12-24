@@ -8,10 +8,12 @@ import org.incendo.interfaces.next.utilities.PlayerDataMap
 
 public class PlayerInterfaceView internal constructor(
     player: Player,
-    backing: PlayerInterface
+    backing: PlayerInterface,
+    parent: InterfaceView<*, *>?
 ) : InterfaceView<PlayerInterfacesInventory, PlayerPane>(
     player,
-    backing
+    backing,
+    parent
 ) {
     internal companion object {
         internal val OPEN_VIEWS = PlayerDataMap()

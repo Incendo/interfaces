@@ -11,10 +11,12 @@ import org.incendo.interfaces.next.utilities.runSync
 
 public class ChestInterfaceView internal constructor(
     player: Player,
-    backing: ChestInterface
+    backing: ChestInterface,
+    parent: InterfaceView<*, *>?
 ) : InterfaceView<ChestInterfacesInventory, ChestPane>(
     player,
-    backing
+    backing,
+    parent
 ),
     InventoryHolder {
     private val titleState = TitleState(backing.initialTitle)

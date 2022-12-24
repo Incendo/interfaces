@@ -11,10 +11,12 @@ import org.incendo.interfaces.next.utilities.runSync
 
 public class CombinedInterfaceView internal constructor(
     player: Player,
-    backing: CombinedInterface
+    backing: CombinedInterface,
+    parent: InterfaceView<*, *>?
 ) : InterfaceView<CombinedInterfacesInventory, CombinedPane>(
     player,
-    backing
+    backing,
+    parent
 ),
     InventoryHolder {
     private val titleState = TitleState(backing.initialTitle)

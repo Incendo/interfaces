@@ -13,7 +13,8 @@ import org.incendo.interfaces.next.utilities.CollapsablePaneMap
 
 public abstract class InterfaceView<I : InterfacesInventory, P : Pane>(
     public val player: Player,
-    public val backing: Interface<P>
+    public val backing: Interface<P>,
+    private val parent: InterfaceView<*, *>?
 ) {
 
     public companion object {
@@ -24,7 +25,7 @@ public abstract class InterfaceView<I : InterfacesInventory, P : Pane>(
 
     // todo(josh): reduce internal abuse?
     internal var isProcessingClick = false
-    internal var isOpen = true
+    private var isOpen = true
 
     private val panes = CollapsablePaneMap.create()
     internal lateinit var pane: Pane
@@ -45,6 +46,24 @@ public abstract class InterfaceView<I : InterfacesInventory, P : Pane>(
             }
     }
 
+    public fun open() {
+        isOpen = true
+        renderAndOpen()
+    }
+
+    public fun close() {
+        isOpen = false
+    }
+
+    public fun back() {
+        close()
+        parent?.open()
+    }
+
+    public abstract fun createInventory(): I
+
+    public abstract fun openInventory()
+
     private fun renderAndOpen() {
         pane = panes.collapse()
         val requiresNewInventory = renderToInventory()
@@ -55,19 +74,6 @@ public abstract class InterfaceView<I : InterfacesInventory, P : Pane>(
 
         firstPaint = false
     }
-
-    public suspend fun open() {
-        isOpen = true
-        renderAndOpen()
-    }
-
-    public fun close() {
-        isOpen = false
-    }
-
-    public abstract fun createInventory(): I
-
-    public abstract fun openInventory()
 
     internal suspend fun applyTransforms(transforms: Collection<AppliedTransform<P>>) {
         // todo(josh): could be improved? make sure renderAndOpen only happens once per tick?

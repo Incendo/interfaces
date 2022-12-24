@@ -2,10 +2,14 @@ package org.incendo.interfaces.next.utilities
 
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
+import org.bukkit.inventory.PlayerInventory
 import org.incendo.interfaces.next.grid.GridPoint
+import org.incendo.interfaces.next.view.InterfaceView
 import org.incendo.interfaces.next.view.InterfaceView.Companion.COLUMNS_IN_CHEST
+import org.incendo.interfaces.next.view.PlayerInterfaceView
 
 public fun gridPointToBukkitIndex(row: Int, column: Int): Int {
     return row * 9 + column
@@ -31,4 +35,19 @@ public fun createBukkitInventory(
     }
 
     return Bukkit.createInventory(holder, rows * COLUMNS_IN_CHEST, title)
+}
+
+public fun currentOpenInterface(player: Player): InterfaceView<*, *>? {
+    val topInventory = player.openInventory.topInventory
+    val inventoryHolder = topInventory.holder
+
+    if (inventoryHolder is InterfaceView<*, *>) {
+        return inventoryHolder
+    }
+
+    if (topInventory is PlayerInventory) {
+        return PlayerInterfaceView.OPEN_VIEWS[player]
+    }
+
+    return null
 }

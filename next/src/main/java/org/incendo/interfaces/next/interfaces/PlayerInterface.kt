@@ -4,6 +4,7 @@ import org.bukkit.entity.Player
 import org.incendo.interfaces.next.click.ClickHandler
 import org.incendo.interfaces.next.pane.PlayerPane
 import org.incendo.interfaces.next.transform.AppliedTransform
+import org.incendo.interfaces.next.utilities.currentOpenInterface
 import org.incendo.interfaces.next.view.PlayerInterfaceView
 
 public class PlayerInterface internal constructor(
@@ -20,7 +21,7 @@ public class PlayerInterface internal constructor(
     override fun createPane(): PlayerPane = PlayerPane()
 
     override suspend fun open(player: Player): PlayerInterfaceView {
-        val view = PlayerInterfaceView(player, this)
+        val view = PlayerInterfaceView(player, this, currentOpenInterface())
         view.setup()
         view.open()
 
