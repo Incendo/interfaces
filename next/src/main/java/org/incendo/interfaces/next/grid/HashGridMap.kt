@@ -19,6 +19,15 @@ public class HashGridMap<V> : GridMap<V> {
     }
 
     override fun forEach(consumer: (Int, Int, V) -> Unit) {
+        forEachInternal(consumer)
+    }
+
+    // todo(josh): investigate, workaround for kotlin suspend usage being terrible.
+    override suspend fun forEachSuspending(consumer: suspend (Int, Int, V) -> Unit) {
+        forEachInternal { row, column, value -> consumer(row, column, value) }
+    }
+
+    private inline fun forEachInternal(consumer: (Int, Int, V) -> Unit) {
         backing.forEach { (column, rowView) ->
             rowView.forEach { (row, value) ->
                 consumer(column, row, value)

@@ -9,7 +9,7 @@ import org.incendo.interfaces.next.interfaces.Interface
 import org.incendo.interfaces.next.interfaces.buildCombinedInterface
 import kotlin.time.Duration.Companion.seconds
 
-public class DelayedRequestExampleInterface : RegistrableInterface
+public class DelayedRequestExampleInterface : RegistrableInterface {
 
     private companion object {
         private val BACKING_ELEMENT = StaticElement(Drawable.drawable(Material.GRAY_CONCRETE))

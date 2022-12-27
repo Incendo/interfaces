@@ -21,4 +21,6 @@ public interface GridMap<V> {
     }
 
     public fun forEach(consumer: (row: Int, column: Int, V) -> Unit)
+
+    public suspend fun forEachSuspending(consumer: suspend (row: Int, column: Int, V) -> Unit)
 }

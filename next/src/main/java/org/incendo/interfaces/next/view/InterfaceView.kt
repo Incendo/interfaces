@@ -5,7 +5,9 @@ import org.bukkit.entity.Player
 import org.incendo.interfaces.next.Constants.SCOPE
 import org.incendo.interfaces.next.interfaces.Interface
 import org.incendo.interfaces.next.inventory.InterfacesInventory
+import org.incendo.interfaces.next.pane.CompletedPane
 import org.incendo.interfaces.next.pane.Pane
+import org.incendo.interfaces.next.pane.complete
 import org.incendo.interfaces.next.transform.AppliedTransform
 import org.incendo.interfaces.next.update.CompleteUpdate
 import org.incendo.interfaces.next.update.TriggerUpdate
@@ -28,7 +30,7 @@ public abstract class InterfaceView<I : InterfacesInventory, P : Pane>(
     private var isOpen = true
 
     private val panes = CollapsablePaneMap.create()
-    internal lateinit var pane: Pane
+    internal lateinit var pane: CompletedPane
 
     protected lateinit var currentInventory: I
 
@@ -82,7 +84,7 @@ public abstract class InterfaceView<I : InterfacesInventory, P : Pane>(
                 val pane = backing.createPane()
                 transform(pane)
 
-                panes[transform.priority] = pane
+                panes[transform.priority] = pane.complete(player)
             }.invokeOnCompletion {
                 renderAndOpen()
             }
@@ -91,8 +93,7 @@ public abstract class InterfaceView<I : InterfacesInventory, P : Pane>(
 
     private fun drawPaneToInventory() {
         pane.forEach { row, column, element ->
-            val itemStack = element.drawable().draw(player)
-            currentInventory.set(row, column, itemStack)
+            currentInventory.set(row, column, element.itemStack)
         }
     }
 

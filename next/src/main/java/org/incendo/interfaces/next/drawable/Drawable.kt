@@ -12,5 +12,5 @@ public fun interface Drawable {
         public fun drawable(material: Material): Drawable = Drawable { ItemStack(material) }
     }
 
-    public fun draw(player: Player): ItemStack
+    public suspend fun draw(player: Player): ItemStack
 }

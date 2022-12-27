@@ -76,7 +76,7 @@ public class InterfacesListeners : Listener {
             .forEach { handler -> ClickHandler.process(handler, clickContext) }
 
         val clickHandler = holder.pane[clickedPoint]
-            ?.clickHandler() ?: ClickHandler.EMPTY
+            ?.clickHandler ?: ClickHandler.EMPTY
 
         val completedClickHandler = clickHandler
             .run { CompletableClickHandler().apply { handle(clickContext) } }

@@ -3,7 +3,7 @@ package org.incendo.interfaces.next.interfaces
 import net.kyori.adventure.text.Component
 import org.incendo.interfaces.next.pane.ChestPane
 
-public class ChestInterfaceBuilder internal constructor() :
+public class ChestInterfaceBuilder :
     AbstractInterfaceBuilder<ChestPane, ChestInterface>() {
 
     public var rows: Int = 0
