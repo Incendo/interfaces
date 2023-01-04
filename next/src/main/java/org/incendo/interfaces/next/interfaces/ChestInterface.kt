@@ -5,8 +5,8 @@ import org.bukkit.entity.Player
 import org.incendo.interfaces.next.click.ClickHandler
 import org.incendo.interfaces.next.pane.ChestPane
 import org.incendo.interfaces.next.transform.AppliedTransform
-import org.incendo.interfaces.next.utilities.currentOpenInterface
 import org.incendo.interfaces.next.view.ChestInterfaceView
+import org.incendo.interfaces.next.view.InterfaceView
 
 public class ChestInterface internal constructor(
     override val rows: Int,
@@ -21,8 +21,8 @@ public class ChestInterface internal constructor(
 
     override fun createPane(): ChestPane = ChestPane()
 
-    override suspend fun open(player: Player): ChestInterfaceView {
-        val view = ChestInterfaceView(player, this, currentOpenInterface(player))
+    override suspend fun open(player: Player, parent: InterfaceView?): ChestInterfaceView {
+        val view = ChestInterfaceView(player, this, parent)
         view.setup()
         view.open()
 

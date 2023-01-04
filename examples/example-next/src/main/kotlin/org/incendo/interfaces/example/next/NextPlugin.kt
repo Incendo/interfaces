@@ -108,7 +108,7 @@ public class NextPlugin : JavaPlugin(), Listener {
     private fun simpleInterface() = buildChestInterface {
         rows = 6
 
-        withTransform { pane ->
+        withTransform { pane, _ ->
             forEachInGrid(6, 9) { row, column ->
                 val item = ItemStack(Material.WHITE_STAINED_GLASS_PANE)
                     .name("row: $row, column: $column")
@@ -117,7 +117,7 @@ public class NextPlugin : JavaPlugin(), Listener {
             }
         }
 
-        withTransform(counterProperty) { pane ->
+        withTransform(counterProperty) { pane, _ ->
             val item = ItemStack(Material.BEE_NEST)
                 .name("it's been $counter's ticks")
                 .description("click to see the ticks now")
@@ -127,7 +127,7 @@ public class NextPlugin : JavaPlugin(), Listener {
             }
         }
 
-        withTransform { pane ->
+        withTransform { pane, _ ->
             val item = ItemStack(Material.BEE_NEST)
                 .name("block the interface")
                 .description("block interaction and message in 5 seconds")
@@ -144,7 +144,7 @@ public class NextPlugin : JavaPlugin(), Listener {
     }
 
     private fun playerInterface() = buildPlayerInterface {
-        withTransform { pane ->
+        withTransform { pane, _ ->
             val item = ItemStack(Material.COMPASS).name("interfaces example")
 
             pane.hotbar[3] = StaticElement(drawable(item))
@@ -154,7 +154,7 @@ public class NextPlugin : JavaPlugin(), Listener {
     private fun combinedInterface() = buildCombinedInterface {
         rows = 6
 
-        withTransform { pane ->
+        withTransform { pane, _ ->
             forEachInGrid(10, 9) { row, column ->
                 val item = ItemStack(Material.WHITE_STAINED_GLASS_PANE)
                     .name("row: $row, column: $column")

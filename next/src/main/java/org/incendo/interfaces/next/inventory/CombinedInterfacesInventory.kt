@@ -7,7 +7,7 @@ import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
 import org.incendo.interfaces.next.utilities.createBukkitInventory
 import org.incendo.interfaces.next.utilities.gridPointToBukkitIndex
-import org.incendo.interfaces.next.view.InterfaceView.Companion.COLUMNS_IN_CHEST
+import org.incendo.interfaces.next.view.AbstractInterfaceView.Companion.COLUMNS_IN_CHEST
 
 public class CombinedInterfacesInventory(
     holder: InventoryHolder,

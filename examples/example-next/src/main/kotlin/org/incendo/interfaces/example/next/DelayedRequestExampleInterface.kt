@@ -21,13 +21,13 @@ public class DelayedRequestExampleInterface : RegistrableInterface {
         initialTitle = text(subcommand)
         rows = 2
 
-        withTransform { pane ->
+        withTransform { pane, _ ->
             suspendingData().forEachIndexed { index, material ->
                 pane[0, index] = StaticElement(Drawable.drawable(material))
             }
         }
 
-        withTransform { pane ->
+        withTransform { pane, _ ->
             for (index in 0..8) {
                 pane[1, index] = BACKING_ELEMENT
             }

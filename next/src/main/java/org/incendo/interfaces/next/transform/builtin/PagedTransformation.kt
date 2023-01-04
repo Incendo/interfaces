@@ -8,6 +8,7 @@ import org.incendo.interfaces.next.pane.Pane
 import org.incendo.interfaces.next.properties.Trigger
 import org.incendo.interfaces.next.transform.ReactiveTransform
 import org.incendo.interfaces.next.utilities.BoundInteger
+import org.incendo.interfaces.next.view.InterfaceView
 
 public abstract class PagedTransformation<P : Pane>(
     private val back: PaginationButton,
@@ -15,10 +16,9 @@ public abstract class PagedTransformation<P : Pane>(
 ) : ReactiveTransform<P> {
 
     protected val boundPage: BoundInteger = BoundInteger(0, 1, Integer.MAX_VALUE)
-
     protected var page: Int by boundPage
 
-    override suspend fun invoke(pane: P) {
+    override suspend fun invoke(pane: P, view: InterfaceView) {
         if (boundPage.hasPreceeding()) {
             applyButton(pane, back)
         }

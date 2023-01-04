@@ -5,8 +5,8 @@ import org.bukkit.entity.Player
 import org.incendo.interfaces.next.click.ClickHandler
 import org.incendo.interfaces.next.pane.CombinedPane
 import org.incendo.interfaces.next.transform.AppliedTransform
-import org.incendo.interfaces.next.utilities.currentOpenInterface
 import org.incendo.interfaces.next.view.CombinedInterfaceView
+import org.incendo.interfaces.next.view.InterfaceView
 
 public class CombinedInterface internal constructor(
     override val rows: Int,
@@ -19,8 +19,8 @@ public class CombinedInterface internal constructor(
         return CombinedPane(rows)
     }
 
-    override suspend fun open(player: Player): CombinedInterfaceView {
-        val view = CombinedInterfaceView(player, this, currentOpenInterface(player))
+    override suspend fun open(player: Player, parent: InterfaceView?): CombinedInterfaceView {
+        val view = CombinedInterfaceView(player, this, parent)
         view.setup()
         view.open()
 

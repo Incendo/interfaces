@@ -3,6 +3,7 @@ package org.incendo.interfaces.next.transform.builtin
 import org.incendo.interfaces.next.element.Element
 import org.incendo.interfaces.next.grid.GridPositionGenerator
 import org.incendo.interfaces.next.pane.Pane
+import org.incendo.interfaces.next.view.InterfaceView
 import kotlin.properties.Delegates
 
 public class PaginationTransformation<P : Pane>(
@@ -20,7 +21,7 @@ public class PaginationTransformation<P : Pane>(
         boundPage.max = maxPages()
     }
 
-    override suspend fun invoke(pane: P) {
+    override suspend fun invoke(pane: P, view: InterfaceView) {
         val positions = positionGenerator.generate()
         val slots = positions.size
 
@@ -30,7 +31,7 @@ public class PaginationTransformation<P : Pane>(
             pane[point] = values[index + offset]
         }
 
-        super.invoke(pane)
+        super.invoke(pane, view)
     }
 
     private fun maxPages(): Int {
