@@ -6,7 +6,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.PluginClassLoader;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -23,6 +23,7 @@ import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
 import org.incendo.interfaces.paper.type.ChildTitledInterface;
+import org.incendo.interfaces.paper.utils.InventoryFactory;
 import org.incendo.interfaces.paper.utils.PaperUtils;
 
 import java.util.ArrayList;
@@ -103,7 +104,7 @@ public final class ChestView implements
             this.pane = new ChestPane(this.backing.rows());
         }
 
-        this.plugin = ((PluginClassLoader) this.getClass().getClassLoader()).getPlugin();
+        this.plugin = JavaPlugin.getProvidingPlugin(this.getClass());
 
         if (Bukkit.isPrimaryThread()) {
             this.inventory = this.createInventory();
@@ -205,7 +206,6 @@ public final class ChestView implements
             final @NonNull InterfaceArguments argument
     ) {
         InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
-        view.open();
 
         @SuppressWarnings("unchecked")
         C typedView = (C) view;
@@ -219,7 +219,6 @@ public final class ChestView implements
             @NonNull final Component title
     ) {
         InterfaceView<?, PlayerViewer> view = backing.open(this, argument, title);
-        view.open();
 
         @SuppressWarnings("unchecked")
         C typedView = (C) view;
@@ -238,6 +237,10 @@ public final class ChestView implements
 
     @Override
     public void update() {
+        if (!this.viewer.player().isOnline()) {
+            return;
+        }
+
         try {
             this.pane = this.updatePane(false);
         } catch (final InterruptUpdateException ignored) {
@@ -320,7 +323,8 @@ public final class ChestView implements
      * @return the inventory
      */
     private @NonNull Inventory createInventory() {
-        final @NonNull Inventory inventory = Bukkit.createInventory(
+        final @NonNull Inventory inventory = InventoryFactory.createInventory(
+                this.viewer.player(),
                 this,
                 this.backing.rows() * 9,
                 this.title

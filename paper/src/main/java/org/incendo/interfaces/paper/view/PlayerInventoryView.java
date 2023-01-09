@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.PluginClassLoader;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.interfaces.core.Interface;
@@ -40,6 +40,7 @@ public final class PlayerInventoryView implements
     private final @NonNull PlayerInterface backing;
     private final @NonNull PlayerInventory inventory;
     private final @NonNull InterfaceArguments arguments;
+
     private @NonNull PlayerPane pane;
 
     private boolean viewing = true;
@@ -66,11 +67,7 @@ public final class PlayerInventoryView implements
             oldView.close();
         }
 
-        this.plugin = ((PluginClassLoader) getClass().getClassLoader()).getPlugin();
-
-        // Store the new view.
-        INVENTORY_VIEW_MAP.put(viewer.player(), this);
-
+        this.plugin = JavaPlugin.getProvidingPlugin(this.getClass());
         this.viewer = viewer;
         this.backing = backing;
         this.arguments = argument;
@@ -81,6 +78,9 @@ public final class PlayerInventoryView implements
         } catch (final InterruptUpdateException ignored) {
             this.pane = new PlayerPane();
         }
+
+        // Store the new view.
+        INVENTORY_VIEW_MAP.put(viewer.player(), this);
     }
 
     /**
@@ -160,6 +160,7 @@ public final class PlayerInventoryView implements
 
     @Override
     public void open() {
+        this.viewing = true;
         this.current.clear();
         this.update();
         this.emitEvent();
@@ -179,6 +180,18 @@ public final class PlayerInventoryView implements
 
     @Override
     public void update() {
+        if (!this.viewing) {
+            return;
+        }
+
+        if (!this.viewer.player().isOnline()) {
+            return;
+        }
+
+        this.backing.updateExecutor().execute(this.plugin, this::actuallyUpdate);
+    }
+
+    private void actuallyUpdate() {
         try {
             this.pane = this.updatePane(false);
         } catch (final InterruptUpdateException ignored) {

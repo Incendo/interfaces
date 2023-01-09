@@ -8,10 +8,11 @@ import net.kyori.indra.repository.sonatypeSnapshots
 import xyz.jpenilla.runpaper.task.RunServerTask
 
 plugins {
-    id("net.kyori.indra")
-    id("net.kyori.indra.publishing") apply false
-    id("net.kyori.indra.checkstyle") apply false
-    id("xyz.jpenilla.run-paper") apply false
+    alias(libs.plugins.indra)
+    alias(libs.plugins.indra.publishing) apply false
+    alias(libs.plugins.indra.publishing.sonatype)
+    alias(libs.plugins.indra.checkstyle) apply false
+    alias(libs.plugins.runPaper) apply false
 
     // Kotlin plugin prefers to be applied to parent when it's used in multiple sub-modules.
     kotlin("jvm") version "1.7.10" apply false
@@ -28,7 +29,9 @@ subprojects {
     apply<SpotlessPlugin>()
 
     // Don't publish examples
-    if (!name.startsWith("example-")) apply<IndraPublishingPlugin>()
+    if (!name.startsWith("example-")) {
+        apply<IndraPublishingPlugin>()
+    }
 
     repositories {
         mavenCentral()
@@ -42,8 +45,6 @@ subprojects {
 
     indra {
         mitLicense()
-
-        publishSnapshotsTo("incendo", "https://repo.incendo.org/content/repositories/snapshots/")
 
         javaVersions {
             minimumToolchain(17)
@@ -75,5 +76,8 @@ subprojects {
     // Configure any existing RunServerTasks
     tasks.withType<RunServerTask> {
         minecraftVersion("1.19.2")
+        jvmArgs(
+            "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
+            "-Dio.papermc.paper.suppress.sout.nags=true")
     }
 }

@@ -10,6 +10,7 @@ import org.incendo.interfaces.core.transform.TransformContext;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.InterfaceViewer;
 
+import java.util.function.Function;
 import java.util.List;
 
 /**
@@ -147,6 +148,15 @@ public interface Interface<T extends Pane, U extends InterfaceViewer> {
             return this.addTransform(1, transform, transform.properties());
         }
 
+        /**
+         * Applies a {@link Function} to this {@link Builder} and returns the result.
+         *
+         * @param op function
+         * @return the builder
+         */
+        default @NonNull Builder<T, U, V> apply(final @NonNull Function<Builder<T, U, V>, Builder<T, U, V>> op) {
+            return op.apply(this);
+        }
 
         /**
          * Builds the interface and returns it.

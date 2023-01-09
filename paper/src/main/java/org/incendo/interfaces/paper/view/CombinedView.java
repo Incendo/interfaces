@@ -7,7 +7,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.PluginClassLoader;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -25,6 +25,7 @@ import org.incendo.interfaces.paper.pane.ChestPane;
 import org.incendo.interfaces.paper.pane.CombinedPane;
 import org.incendo.interfaces.paper.type.ChildTitledInterface;
 import org.incendo.interfaces.paper.type.CombinedInterface;
+import org.incendo.interfaces.paper.utils.InventoryFactory;
 import org.incendo.interfaces.paper.utils.PaperUtils;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public final class CombinedView implements
     private @NonNull CombinedPane pane;
 
     private final @NonNull Map<Vector2, Element> current = new HashMap<>();
-    private final @NonNull List<ContextCompletedPane<CombinedPane>> panes = new ArrayList<>();
+    private @NonNull List<ContextCompletedPane<CombinedPane>> panes = new ArrayList<>();
     private final Set<Integer> tasks = new HashSet<>();
 
     private final Plugin plugin;
@@ -105,7 +106,7 @@ public final class CombinedView implements
             this.pane = new CombinedPane(this.backing.totalRows());
         }
 
-        this.plugin = ((PluginClassLoader) this.getClass().getClassLoader()).getPlugin();
+        this.plugin = JavaPlugin.getProvidingPlugin(this.getClass());
 
         if (Bukkit.isPrimaryThread()) {
             this.inventory = this.createInventory();
@@ -143,6 +144,8 @@ public final class CombinedView implements
     }
 
     private @NonNull CombinedPane updatePaneByProperty(final @NonNull InterfaceProperty<?> interfaceProperty) {
+        List<ContextCompletedPane<CombinedPane>> updatedPanes = new ArrayList<>(this.panes);
+
         for (final var transform : this.backing.transformations()) {
             if (!transform.properties().contains(interfaceProperty)) {
                 continue;
@@ -150,10 +153,11 @@ public final class CombinedView implements
 
             CombinedPane newPane = transform.transform().apply(new CombinedPane(this.backing.totalRows()), this);
 
-            this.panes.removeIf(completedPane -> completedPane.context().equals(transform));
-            this.panes.add(new ContextCompletedPane<>(transform, newPane));
+            updatedPanes.removeIf(completedPane -> completedPane.context().equals(transform));
+            updatedPanes.add(new ContextCompletedPane<>(transform, newPane));
         }
 
+        this.panes = updatedPanes;
         return this.mergePanes();
     }
 
@@ -252,7 +256,6 @@ public final class CombinedView implements
             final @NonNull InterfaceArguments argument
     ) {
         InterfaceView<?, PlayerViewer> view = backing.open(this, argument);
-        view.open();
 
         @SuppressWarnings("unchecked")
         C typedView = (C) view;
@@ -266,7 +269,6 @@ public final class CombinedView implements
             @NonNull final Component title
     ) {
         InterfaceView<?, PlayerViewer> view = backing.open(this, argument, title);
-        view.open();
 
         @SuppressWarnings("unchecked")
         C typedView = (C) view;
@@ -285,11 +287,20 @@ public final class CombinedView implements
 
     @Override
     public void update() {
+        if (!this.viewer.player().isOnline()) {
+            return;
+        }
+
+        this.backing.updateExecutor().execute(this.plugin, this::actuallyUpdate);
+    }
+
+    private void actuallyUpdate() {
         try {
             this.pane = this.updatePane(false);
         } catch (final InterruptUpdateException ignored) {
             return;
         }
+
         this.reApplySync();
     }
 
@@ -368,7 +379,8 @@ public final class CombinedView implements
      * @return the inventory
      */
     private @NonNull Inventory createInventory() {
-        return Bukkit.createInventory(
+        return InventoryFactory.createInventory(
+                this.viewer.player(),
                 this,
                 this.backing.chestRows() * 9,
                 this.title
@@ -384,9 +396,11 @@ public final class CombinedView implements
         ItemStackElement<CombinedPane> empty = ItemStackElement.empty();
         CombinedPane finalPane = new CombinedPane(this.backing.totalRows());
 
-        this.panes.sort(Comparator.comparingInt(pane -> pane.context().priority()));
+        List<ContextCompletedPane<CombinedPane>> completedPanes = new ArrayList<>(this.panes);
 
-        for (final var completedPane : this.panes) {
+        completedPanes.sort(Comparator.comparingInt(pane -> pane.context().priority()));
+
+        for (final var completedPane : completedPanes) {
             Map<Vector2, ItemStackElement<CombinedPane>> elements = completedPane.pane().inventoryElements();
 
             for (Vector2 position : elements.keySet()) {

@@ -4,8 +4,10 @@ import com.google.common.cache.Cache;
 
 import com.google.common.cache.CacheBuilder;
 
+import java.lang.reflect.Method;
 import java.util.UUID;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
@@ -30,7 +32,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.PluginClassLoader;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -44,6 +46,7 @@ import org.incendo.interfaces.paper.pane.CombinedPane;
 import org.incendo.interfaces.paper.pane.PlayerPane;
 import org.incendo.interfaces.paper.type.ChestInterface;
 import org.incendo.interfaces.paper.type.CloseHandler;
+import org.incendo.interfaces.paper.type.CombinedInterface;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.CombinedView;
 import org.incendo.interfaces.paper.view.PlayerInventoryView;
@@ -53,7 +56,6 @@ import org.incendo.interfaces.paper.view.ViewCloseEvent;
 import org.incendo.interfaces.paper.view.ViewOpenEvent;
 
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -70,8 +72,8 @@ public class PaperInterfaceListeners implements Listener {
             Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK
     );
 
-    private static final @NonNull Set<InventoryCloseEvent.Reason> VALID_REASON = EnumSet.of(
-            InventoryCloseEvent.Reason.PLAYER, InventoryCloseEvent.Reason.UNKNOWN, InventoryCloseEvent.Reason.PLUGIN
+    private static final @NonNull Set<String> VALID_REASON = Set.of(
+            "PLAYER", "UNKNOWN", "PLUGIN"
     );
 
     private final @NonNull Plugin plugin;
@@ -86,7 +88,7 @@ public class PaperInterfaceListeners implements Listener {
      */
     public PaperInterfaceListeners(final @NonNull Plugin plugin) {
         this.plugin = plugin;
-        this.updatingRunnables = new HashMap<>();
+        this.updatingRunnables = new ConcurrentHashMap<>();
         this.spamPrevention = null;
     }
 
@@ -98,7 +100,7 @@ public class PaperInterfaceListeners implements Listener {
      */
     public PaperInterfaceListeners(final @NonNull Plugin plugin, final long clickThrottle) {
         this.plugin = plugin;
-        this.updatingRunnables = new HashMap<>();
+        this.updatingRunnables = new ConcurrentHashMap<>();
         this.spamPrevention = CacheBuilder.newBuilder().expireAfterWrite(
                 50L * clickThrottle,
                 TimeUnit.MILLISECONDS
@@ -216,6 +218,14 @@ public class PaperInterfaceListeners implements Listener {
                     closeHandler.accept(event, (PlayerView<ChestPane>) playerView);
                 }
             }
+
+            if (playerView.backing() instanceof CombinedInterface) {
+                final CombinedInterface combinedInterface = (CombinedInterface) playerView.backing();
+
+                for (final CloseHandler<CombinedPane> closeHandler : combinedInterface.closeHandlers()) {
+                    closeHandler.accept(event, (PlayerView<CombinedPane>) playerView);
+                }
+            }
         }
 
         if (holder instanceof InterfaceView) {
@@ -226,9 +236,22 @@ public class PaperInterfaceListeners implements Listener {
             Player player = (Player) event.getPlayer();
             PlayerInventoryView playerInventoryView = PlayerInventoryView.forPlayer(player);
 
-            if (playerInventoryView != null && VALID_REASON.contains(event.getReason())) {
+            String reason = "UNKNOWN";
+            Method method = null;
+            try {
+                method = event.getClass().getDeclaredMethod("getReason");
+            } catch (final NoSuchMethodException ignore) {
+            }
+            if (method != null) {
+                try {
+                    reason = ((Enum<?>) method.invoke(event)).name();
+                } catch (final ReflectiveOperationException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            if (playerInventoryView != null && VALID_REASON.contains(reason)) {
                 Bukkit.getScheduler().runTaskAsynchronously(
-                        ((PluginClassLoader) getClass().getClassLoader()).getPlugin(),
+                        JavaPlugin.getProvidingPlugin(this.getClass()),
                         playerInventoryView::open
                 );
             }
@@ -330,7 +353,12 @@ public class PaperInterfaceListeners implements Listener {
             SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
 
             if (selfUpdating.updates()) {
-                Bukkit.getScheduler().cancelTask(this.updatingRunnables.get(selfUpdating));
+                Integer id = this.updatingRunnables.get(selfUpdating);
+
+                if (id != null) {
+                    Bukkit.getScheduler().cancelTask(id);
+                }
+
                 this.updatingRunnables.remove(selfUpdating);
             }
         }
@@ -390,9 +418,7 @@ public class PaperInterfaceListeners implements Listener {
                 this.handleCombinedViewClick(event, holder);
             }
         } else if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() instanceof Player) {
-            if (holder instanceof InterfaceView) {
-                this.handlePlayerViewClick(event);
-            }
+            this.handlePlayerViewClick(event);
         }
     }
 

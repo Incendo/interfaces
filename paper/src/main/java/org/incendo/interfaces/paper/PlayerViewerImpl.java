@@ -2,10 +2,10 @@ package org.incendo.interfaces.paper;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.plugin.java.PluginClassLoader;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.view.InterfaceView;
+import org.incendo.interfaces.paper.utils.PaperUtils;
 import org.incendo.interfaces.paper.view.BookView;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.CombinedView;
@@ -33,7 +33,11 @@ final class PlayerViewerImpl implements PlayerViewer {
     }
 
     private void openBookView(final @NonNull BookView bookView) {
-        this.player.openBook(bookView.book());
+        if (PaperUtils.isPaper()) {
+            this.player.openBook(bookView.book());
+        } else {
+            throw new UnsupportedOperationException("BookView is only implemented on Paper-based servers!");
+        }
     }
 
     private void openPlayerView(final @NonNull PlayerInventoryView inventoryView) {
@@ -60,7 +64,7 @@ final class PlayerViewerImpl implements PlayerViewer {
             runnable.run();
         } else {
             try {
-                Bukkit.getScheduler().callSyncMethod(((PluginClassLoader) getClass().getClassLoader()).getPlugin(), () -> {
+                Bukkit.getScheduler().callSyncMethod(JavaPlugin.getProvidingPlugin(this.getClass()), () -> {
                     runnable.run();
 
                     return null;
@@ -73,7 +77,7 @@ final class PlayerViewerImpl implements PlayerViewer {
 
     @Override
     public void close() {
-        this.player.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
+        this.player.closeInventory();
     }
 
     @Override

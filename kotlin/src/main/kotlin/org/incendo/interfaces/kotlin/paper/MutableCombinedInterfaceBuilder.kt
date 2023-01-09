@@ -14,6 +14,7 @@ import org.incendo.interfaces.paper.click.InventoryClickContext
 import org.incendo.interfaces.paper.pane.CombinedPane
 import org.incendo.interfaces.paper.type.CloseHandler
 import org.incendo.interfaces.paper.type.CombinedInterface
+import org.incendo.interfaces.paper.utils.InterfacesUpdateExecutor
 import org.incendo.interfaces.paper.view.CombinedView
 import org.incendo.interfaces.paper.view.PlayerView
 
@@ -47,6 +48,12 @@ public class MutableCombinedInterfaceBuilder :
             InventoryClickContext<CombinedPane, CombinedView>>
             get() = internalBuilder.clickHandler()
             set(value) = mutate { internalBuilder.clickHandler(value) }
+
+    /** The update executor of the interface. */
+    public var updateExecutor: InterfacesUpdateExecutor
+        get() = internalBuilder.updateExecutor()
+        set(value) = mutate { internalBuilder.updateExecutor(value) }
+
     // </editor-fold>
 
     // <editor-fold desc="Mutating Functions">
