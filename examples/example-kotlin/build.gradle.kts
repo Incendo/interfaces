@@ -16,10 +16,6 @@ tasks {
     }
 }
 
-ktlint {
-    version.set("0.42.1")
-}
-
 kotlin {
     explicitApi()
 }

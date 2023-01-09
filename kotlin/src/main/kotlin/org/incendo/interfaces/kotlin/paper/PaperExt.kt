@@ -55,10 +55,13 @@ public fun buildCombinedInterface(
  */
 public fun <T : Pane> Player.open(
     `interface`: Interface<T, PlayerViewer>,
-    arguments: InterfaceArguments? = null,
+    arguments: InterfaceArguments? = null
 ): InterfaceView<T, PlayerViewer> =
-    if (arguments == null) `interface`.open(this.asViewer())
-    else `interface`.open(this.asViewer(), arguments)
+    if (arguments == null) {
+        `interface`.open(this.asViewer())
+    } else {
+        `interface`.open(this.asViewer(), arguments)
+    }
 
 /**
  * Opens the [interface] for `this` player.
@@ -73,8 +76,11 @@ public fun <T : Pane, I : TitledInterface<T, PlayerViewer>> Player.open(
     arguments: InterfaceArguments? = null,
     title: Component = `interface`.title()
 ): InterfaceView<T, PlayerViewer> =
-    if (arguments == null) `interface`.open(this.asViewer(), title)
-    else `interface`.open(this.asViewer(), arguments, title)
+    if (arguments == null) {
+        `interface`.open(this.asViewer(), title)
+    } else {
+        `interface`.open(this.asViewer(), arguments, title)
+    }
 
 /**
  * Returns a [PlayerViewer] instance wrapping `this` player.
