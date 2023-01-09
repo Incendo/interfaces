@@ -19,7 +19,7 @@ plugins {
 }
 
 group = "org.incendo.interfaces"
-version = "1.0.0-SNAPSHOT-NEXT"
+version = "1.0.0-SNAPSHOT"
 description = "A builder-style user interface library."
 
 subprojects {
