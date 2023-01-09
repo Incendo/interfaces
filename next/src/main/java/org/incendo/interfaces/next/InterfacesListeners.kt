@@ -15,6 +15,7 @@ import org.incendo.interfaces.next.click.ClickHandler
 import org.incendo.interfaces.next.click.CompletableClickHandler
 import org.incendo.interfaces.next.grid.GridPoint
 import org.incendo.interfaces.next.view.AbstractInterfaceView
+import org.incendo.interfaces.next.view.InterfaceView
 import org.incendo.interfaces.next.view.PlayerInterfaceView
 import java.util.EnumSet
 
@@ -36,7 +37,7 @@ public class InterfacesListeners : Listener {
     public fun onClose(event: InventoryCloseEvent) {
         val holder = event.inventory.holder
 
-        if (holder !is AbstractInterfaceView<*, *>) {
+        if (holder !is InterfaceView) {
             return
         }
 

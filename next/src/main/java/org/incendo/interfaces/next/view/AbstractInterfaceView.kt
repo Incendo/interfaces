@@ -57,6 +57,10 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         isOpen = false
     }
 
+    public override fun parent(): InterfaceView? {
+        return parent
+    }
+
     public override fun back() {
         close()
         parent?.open()

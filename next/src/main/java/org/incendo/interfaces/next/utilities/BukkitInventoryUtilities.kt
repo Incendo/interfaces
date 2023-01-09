@@ -9,6 +9,7 @@ import org.bukkit.inventory.PlayerInventory
 import org.incendo.interfaces.next.grid.GridPoint
 import org.incendo.interfaces.next.view.AbstractInterfaceView
 import org.incendo.interfaces.next.view.AbstractInterfaceView.Companion.COLUMNS_IN_CHEST
+import org.incendo.interfaces.next.view.InterfaceView
 import org.incendo.interfaces.next.view.PlayerInterfaceView
 
 public fun gridPointToBukkitIndex(row: Int, column: Int): Int {
@@ -37,7 +38,7 @@ public fun createBukkitInventory(
     return Bukkit.createInventory(holder, rows * COLUMNS_IN_CHEST, title)
 }
 
-public fun currentOpenInterface(player: Player): AbstractInterfaceView<*, *>? {
+public fun currentOpenInterface(player: Player): InterfaceView? {
     val topInventory = player.openInventory.topInventory
     val inventoryHolder = topInventory.holder
 
