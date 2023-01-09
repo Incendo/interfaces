@@ -1,8 +1,8 @@
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.dokka")
-    id("com.github.johnrengelman.shadow")
-    id("xyz.jpenilla.run-paper")
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.runPaper)
 }
 
 tasks {

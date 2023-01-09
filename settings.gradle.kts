@@ -4,7 +4,7 @@ plugins {
 
 rootProject.name = "interfaces"
 
-interfacesProjects("next")
+interfacesProjects("core", "kotlin", "paper", "next")
 
 fun interfacesProjects(vararg names: String) {
     include(*names)
