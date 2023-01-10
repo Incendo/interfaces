@@ -32,7 +32,7 @@ public class DelayedRequestExampleInterface : RegistrableInterface {
                 pane[1, index] = BACKING_ELEMENT
             }
 
-            pane[0, 8] = StaticElement(Drawable.Companion.drawable(Material.ENDER_PEARL)) {
+            pane[0, 8] = StaticElement(Drawable.drawable(Material.ENDER_PEARL)) {
                 it.view.back()
             }
         }
