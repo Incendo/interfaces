@@ -99,7 +99,7 @@ public class NextPlugin : JavaPlugin(), Listener {
             this,
             Runnable {
                 runBlocking {
-//                    playerInterface().open(e.player)
+                    playerInterface().open(e.player)
                 }
             }
         )

@@ -11,6 +11,6 @@ public class PlayerPane : OrderedPane(PANE_ORDERING) {
 
     // todo(josh): introduce an actual concept of subpanes?
     public inner class Hotbar {
-        public operator fun set(slot: Int, value: Element): Unit = set(0, slot, value)
+        public operator fun set(slot: Int, value: Element): Unit = set(3, slot, value)
     }
 }
