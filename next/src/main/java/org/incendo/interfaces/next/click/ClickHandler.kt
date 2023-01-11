@@ -7,6 +7,7 @@ public fun interface ClickHandler {
 
     public companion object {
         public val EMPTY: ClickHandler = ClickHandler { }
+        public val ALLOW: ClickHandler = ClickHandler { cancelled = false }
 
         public fun process(clickHandler: ClickHandler, context: ClickContext): Unit = with(clickHandler) {
             CompletableClickHandler().handle(context)

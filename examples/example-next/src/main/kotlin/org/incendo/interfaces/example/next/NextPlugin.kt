@@ -147,7 +147,9 @@ public class NextPlugin : JavaPlugin(), Listener {
         withTransform { pane, _ ->
             val item = ItemStack(Material.COMPASS).name("interfaces example")
 
-            pane.hotbar[3] = StaticElement(drawable(item))
+            pane.hotbar[3] = StaticElement(drawable(item)) { (player) ->
+                player.sendMessage("hello")
+            }
         }
     }
 

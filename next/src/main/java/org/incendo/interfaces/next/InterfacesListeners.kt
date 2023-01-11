@@ -3,11 +3,16 @@ package org.incendo.interfaces.next
 import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import org.bukkit.event.Cancellable
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.Action
+import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryCloseEvent.Reason
+import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.InventoryHolder
 import org.bukkit.plugin.Plugin
 import org.incendo.interfaces.next.Constants.SCOPE
 import org.incendo.interfaces.next.click.ClickContext
@@ -30,6 +35,13 @@ public class InterfacesListeners : Listener {
             Reason.PLAYER,
             Reason.UNKNOWN,
             Reason.PLUGIN
+        )
+
+        private val VALID_INTERACT = EnumSet.of(
+            Action.LEFT_CLICK_AIR,
+            Action.LEFT_CLICK_BLOCK,
+            Action.RIGHT_CLICK_AIR,
+            Action.RIGHT_CLICK_BLOCK
         )
     }
 
@@ -55,38 +67,96 @@ public class InterfacesListeners : Listener {
     @EventHandler
     public fun onClick(event: InventoryClickEvent) {
         val holder = event.inventory.holder
+        val view = convertHolderToInterfaceView(holder) ?: return
 
-        if (holder !is AbstractInterfaceView<*, *>) {
+        val bukkitIndex = event.slot
+        val clickedPoint = GridPoint.at(bukkitIndex / 9, bukkitIndex % 9)
+
+        handleClick(view, clickedPoint, event.click, event)
+    }
+
+    @EventHandler
+    public fun onInteract(event: PlayerInteractEvent) {
+        if (event.action !in VALID_INTERACT) {
             return
         }
 
-        if (holder.isProcessingClick) {
+        val player = event.player
+        val view = PlayerInterfaceView.OPEN_VIEWS[player] as? AbstractInterfaceView<*, *> ?: return
+
+        val slot = player.inventory.heldItemSlot
+        val clickedPoint = GridPoint.at(0, slot)
+
+        val click = convertAction(event.action, player.isSneaking)
+
+        handleClick(view, clickedPoint, click, event)
+    }
+
+    private fun convertHolderToInterfaceView(holder: InventoryHolder?): AbstractInterfaceView<*, *>? {
+        if (holder == null) {
+            return null
+        }
+
+        if (holder is AbstractInterfaceView<*, *>) {
+            return holder
+        }
+
+        if (holder !is Player) {
+            return null
+        }
+
+        return PlayerInterfaceView.OPEN_VIEWS[holder] as? AbstractInterfaceView<*, *>
+    }
+
+    private fun handleClick(
+        view: AbstractInterfaceView<*, *>,
+        clickedPoint: GridPoint,
+        click: ClickType,
+        event: Cancellable
+    ) {
+        if (view.isProcessingClick) {
             event.isCancelled = true
             return
         }
 
-        holder.isProcessingClick = true
+        view.isProcessingClick = true
 
-        val player = event.whoClicked as Player
-        val bukkitIndex = event.slot
-        val clickedPoint = GridPoint.at(bukkitIndex / 9, bukkitIndex % 9)
+        val clickContext = ClickContext(view.player, view, click)
 
-        val clickContext = ClickContext(player, holder, event.click)
-
-        holder.backing.clickPreprocessors
+        view.backing.clickPreprocessors
             .forEach { handler -> ClickHandler.process(handler, clickContext) }
 
-        val clickHandler = holder.pane[clickedPoint]
-            ?.clickHandler ?: ClickHandler.EMPTY
+        val clickHandler = view.pane[clickedPoint]
+            ?.clickHandler ?: ClickHandler.ALLOW
 
         val completedClickHandler = clickHandler
             .run { CompletableClickHandler().apply { handle(clickContext) } }
-            .onComplete { holder.isProcessingClick = false }
+            .onComplete { view.isProcessingClick = false }
 
         if (!completedClickHandler.completingLater) {
             completedClickHandler.complete()
         }
 
         event.isCancelled = completedClickHandler.cancelled
+    }
+
+    private fun convertAction(action: Action, sneaking: Boolean): ClickType {
+        if (action.isRightClick) {
+            if (sneaking) {
+                return ClickType.SHIFT_RIGHT
+            }
+
+            return ClickType.RIGHT
+        }
+
+        if (action.isLeftClick) {
+            if (sneaking) {
+                return ClickType.SHIFT_LEFT
+            }
+
+            return ClickType.LEFT
+        }
+
+        return ClickType.UNKNOWN
     }
 }
