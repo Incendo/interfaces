@@ -19,6 +19,7 @@ import org.incendo.interfaces.next.click.ClickContext
 import org.incendo.interfaces.next.click.ClickHandler
 import org.incendo.interfaces.next.click.CompletableClickHandler
 import org.incendo.interfaces.next.grid.GridPoint
+import org.incendo.interfaces.next.pane.PlayerPane
 import org.incendo.interfaces.next.view.AbstractInterfaceView
 import org.incendo.interfaces.next.view.InterfaceView
 import org.incendo.interfaces.next.view.PlayerInterfaceView
@@ -43,6 +44,9 @@ public class InterfacesListeners : Listener {
             Action.RIGHT_CLICK_AIR,
             Action.RIGHT_CLICK_BLOCK
         )
+
+        private val PLAYER_INVENTORY_RANGE = 0..40
+        private const val OUTSIDE_CHEST_INDEX = -999
     }
 
     @EventHandler
@@ -69,10 +73,34 @@ public class InterfacesListeners : Listener {
         val holder = event.inventory.holder
         val view = convertHolderToInterfaceView(holder) ?: return
 
-        val bukkitIndex = event.rawSlot
-        val clickedPoint = GridPoint.at(bukkitIndex / 9, bukkitIndex % 9)
+        val clickedPoint = clickedPoint(event) ?: return
 
         handleClick(view, clickedPoint, event.click, event)
+    }
+
+    private fun clickedPoint(event: InventoryClickEvent): GridPoint? {
+        // not really sure why this special handling is required,
+        // the ordered pane system should solve this but this is the only
+        // place where it's become an issue.
+        if (event.inventory.holder is Player) {
+            val index = event.slot
+
+            if (index !in PLAYER_INVENTORY_RANGE) {
+                return null
+            }
+
+            val x = index / 9
+            val adjustedX = PlayerPane.PANE_ORDERING.indexOf(x)
+            return GridPoint(adjustedX, index % 9)
+        }
+
+        val index = event.rawSlot
+
+        if (index == OUTSIDE_CHEST_INDEX) {
+            return null
+        }
+
+        return GridPoint.at(index / 9, index % 9)
     }
 
     @EventHandler
@@ -85,7 +113,7 @@ public class InterfacesListeners : Listener {
         val view = PlayerInterfaceView.OPEN_VIEWS[player] as? AbstractInterfaceView<*, *> ?: return
 
         val slot = player.inventory.heldItemSlot
-        val clickedPoint = GridPoint.at(0, slot)
+        val clickedPoint = GridPoint.at(3, slot)
 
         val click = convertAction(event.action, player.isSneaking)
 

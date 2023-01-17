@@ -3,8 +3,8 @@ package org.incendo.interfaces.next.pane
 import org.incendo.interfaces.next.element.Element
 
 public class PlayerPane : OrderedPane(PANE_ORDERING) {
-    private companion object {
-        private val PANE_ORDERING = listOf(1, 2, 3, 0)
+    internal companion object {
+        internal val PANE_ORDERING = listOf(1, 2, 3, 0, 4)
     }
 
     public val hotbar: Hotbar = Hotbar()
