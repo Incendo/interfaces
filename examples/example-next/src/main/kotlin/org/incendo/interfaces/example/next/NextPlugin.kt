@@ -161,7 +161,9 @@ public class NextPlugin : JavaPlugin(), Listener {
                 val item = ItemStack(Material.WHITE_STAINED_GLASS_PANE)
                     .name("row: $row, column: $column")
 
-                pane[row, column] = StaticElement(drawable(item))
+                pane[row, column] = StaticElement(drawable(item)) { (player) ->
+                    player.sendMessage("row: $row, column: $column")
+                }
             }
         }
     }

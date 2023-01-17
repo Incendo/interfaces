@@ -69,7 +69,7 @@ public class InterfacesListeners : Listener {
         val holder = event.inventory.holder
         val view = convertHolderToInterfaceView(holder) ?: return
 
-        val bukkitIndex = event.slot
+        val bukkitIndex = event.rawSlot
         val clickedPoint = GridPoint.at(bukkitIndex / 9, bukkitIndex % 9)
 
         handleClick(view, clickedPoint, event.click, event)
@@ -126,7 +126,7 @@ public class InterfacesListeners : Listener {
         view.backing.clickPreprocessors
             .forEach { handler -> ClickHandler.process(handler, clickContext) }
 
-        val clickHandler = view.pane[clickedPoint]
+        val clickHandler = view.pane.getRaw(clickedPoint)
             ?.clickHandler ?: ClickHandler.ALLOW
 
         val completedClickHandler = clickHandler

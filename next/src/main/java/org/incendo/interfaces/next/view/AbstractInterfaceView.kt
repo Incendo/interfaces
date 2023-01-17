@@ -29,7 +29,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     internal var isProcessingClick = false
     private var isOpen = true
 
-    private val panes = CollapsablePaneMap.create()
+    private val panes = CollapsablePaneMap.create(backing.createPane())
     internal lateinit var pane: CompletedPane
 
     protected lateinit var currentInventory: I

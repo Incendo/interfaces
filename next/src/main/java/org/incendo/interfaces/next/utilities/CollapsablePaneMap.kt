@@ -1,15 +1,20 @@
 package org.incendo.interfaces.next.utilities
 
 import org.incendo.interfaces.next.pane.CompletedPane
+import org.incendo.interfaces.next.pane.Pane
+import org.incendo.interfaces.next.pane.convertToEmptyCompletedPane
 
 internal class CollapsablePaneMap private constructor(
+    // pass in a pane from the view so that we can persist
+    // ordering, used in the listeners.
+    private val basePane: Pane,
     // privately pass in a map here so that we can use
     // super methods when overriding methods in the delegate.
     private val internal: MutableMap<Int, CompletedPane>
 ) : MutableMap<Int, CompletedPane> by internal {
 
     internal companion object {
-        internal fun create() = CollapsablePaneMap(sortedMapOf(Comparator.reverseOrder()))
+        internal fun create(basePane: Pane) = CollapsablePaneMap(basePane, sortedMapOf(Comparator.reverseOrder()))
     }
 
     private var cachedPane: CompletedPane? = null
@@ -24,7 +29,7 @@ internal class CollapsablePaneMap private constructor(
             return pane
         }
 
-        val pane = CompletedPane()
+        val pane = basePane.convertToEmptyCompletedPane()
 
         values.forEach { layer ->
             layer.forEach { row, column, value ->
