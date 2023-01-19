@@ -18,11 +18,7 @@ public class InterfaceProperty<T>(
         listeners += listener
     }
 
-    override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
-        for (listener in listeners) {
-            listener(newValue)
-        }
-    }
+    override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T): Unit = trigger()
 
     override fun trigger() {
         val value by this
