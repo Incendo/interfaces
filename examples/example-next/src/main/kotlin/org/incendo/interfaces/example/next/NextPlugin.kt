@@ -5,7 +5,6 @@ import cloud.commandframework.kotlin.coroutines.extension.suspendingHandler
 import cloud.commandframework.kotlin.extension.buildAndRegister
 import cloud.commandframework.paper.PaperCommandManager
 import kotlinx.coroutines.runBlocking
-import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
@@ -28,8 +27,9 @@ import org.incendo.interfaces.next.utilities.forEachInGrid
 public class NextPlugin : JavaPlugin(), Listener {
 
     private companion object {
-        private val INTERFACES = listOf<RegistrableInterface>(
-            DelayedRequestExampleInterface()
+        private val INTERFACES = listOf(
+            DelayedRequestExampleInterface(),
+            ChangingTitleExampleInterface()
         )
     }
 
@@ -166,20 +166,6 @@ public class NextPlugin : JavaPlugin(), Listener {
                 }
             }
         }
-    }
-
-    private fun ItemStack.name(name: String): ItemStack {
-        itemMeta = itemMeta.also { meta ->
-            meta.displayName(Component.text(name))
-        }
-        return this
-    }
-
-    private fun ItemStack.description(description: String): ItemStack {
-        itemMeta = itemMeta.also { meta ->
-            meta.lore(listOf(Component.text(description)))
-        }
-        return this
     }
 
     private fun runAsync(delay: Int, runnable: Runnable) {

@@ -52,12 +52,18 @@ public class InterfacesListeners : Listener {
     @EventHandler
     public fun onClose(event: InventoryCloseEvent) {
         val holder = event.inventory.holder
+        val player = event.player
 
         if (holder !is InterfaceView) {
             return
         }
 
-        holder.close()
+        // interfaces will open (and close) inventories when it needs
+        // to update the title, we don't want to close the interface if
+        // this is the case.
+        if (holder != player.openInventory.topInventory.holder) {
+            holder.close()
+        }
 
         if (event.reason !in VALID_REASON) {
             return
