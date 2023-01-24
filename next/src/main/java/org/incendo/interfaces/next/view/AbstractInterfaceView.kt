@@ -3,6 +3,7 @@ package org.incendo.interfaces.next.view
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import org.incendo.interfaces.next.Constants.SCOPE
+import org.incendo.interfaces.next.element.Element
 import org.incendo.interfaces.next.interfaces.Interface
 import org.incendo.interfaces.next.inventory.InterfacesInventory
 import org.incendo.interfaces.next.pane.CompletedPane
@@ -29,7 +30,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     internal var isProcessingClick = false
     private var isOpen = true
 
-    private val panes = CollapsablePaneMap.create(backing.createPane())
+    private val panes = CollapsablePaneMap.create(backing.createPane(Element.EMPTY))
     internal lateinit var pane: CompletedPane
 
     protected lateinit var currentInventory: I
