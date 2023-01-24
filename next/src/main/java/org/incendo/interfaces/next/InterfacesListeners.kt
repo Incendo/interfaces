@@ -2,6 +2,7 @@ package org.incendo.interfaces.next
 
 import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
+import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.EventHandler
@@ -13,6 +14,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryCloseEvent.Reason
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.InventoryHolder
+import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
 import org.incendo.interfaces.next.Constants.SCOPE
 import org.incendo.interfaces.next.click.ClickContext
@@ -58,11 +60,9 @@ public class InterfacesListeners : Listener {
             return
         }
 
-        // interfaces will open (and close) inventories when it needs
-        // to update the title, we don't want to close the interface if
-        // this is the case.
-        if (holder != player.openInventory.topInventory.holder) {
-            holder.close()
+        // todo(josh): only do this when changing or closing interface
+        if (false) {
+            cleanup(player)
         }
 
         if (event.reason !in VALID_REASON) {
@@ -192,5 +192,10 @@ public class InterfacesListeners : Listener {
         }
 
         return ClickType.UNKNOWN
+    }
+
+    private fun cleanup(player: HumanEntity) {
+        println("cleaning")
+        player.inventory.storageContents = arrayOfNulls<ItemStack>(36)
     }
 }

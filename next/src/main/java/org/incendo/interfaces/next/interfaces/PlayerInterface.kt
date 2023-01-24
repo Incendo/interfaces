@@ -2,7 +2,6 @@ package org.incendo.interfaces.next.interfaces
 
 import org.bukkit.entity.Player
 import org.incendo.interfaces.next.click.ClickHandler
-import org.incendo.interfaces.next.element.Element
 import org.incendo.interfaces.next.pane.PlayerPane
 import org.incendo.interfaces.next.transform.AppliedTransform
 import org.incendo.interfaces.next.view.InterfaceView
@@ -19,7 +18,7 @@ public class PlayerInterface internal constructor(
 
     override val rows: Int = 4
 
-    override fun createPane(element: Element?): PlayerPane = PlayerPane()
+    override fun createPane(): PlayerPane = PlayerPane()
 
     override suspend fun open(player: Player, parent: InterfaceView?): PlayerInterfaceView {
         val view = PlayerInterfaceView(player, this)

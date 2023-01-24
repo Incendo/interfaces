@@ -2,8 +2,8 @@ package org.incendo.interfaces.next.view
 
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryType
 import org.incendo.interfaces.next.Constants.SCOPE
-import org.incendo.interfaces.next.element.Element
 import org.incendo.interfaces.next.interfaces.Interface
 import org.incendo.interfaces.next.inventory.InterfacesInventory
 import org.incendo.interfaces.next.pane.CompletedPane
@@ -28,9 +28,8 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
     // todo(josh): reduce internal abuse?
     internal var isProcessingClick = false
-    private var isOpen = true
 
-    private val panes = CollapsablePaneMap.create(backing.createPane(Element.EMPTY))
+    private val panes = CollapsablePaneMap.create(backing.createPane())
     internal lateinit var pane: CompletedPane
 
     protected lateinit var currentInventory: I
@@ -50,12 +49,13 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     }
 
     public override fun open() {
-        isOpen = true
         renderAndOpen()
     }
 
     public override fun close() {
-        isOpen = false
+        if (player.openInventory.topInventory.holder == this) {
+            player.closeInventory()
+        }
     }
 
     public override fun parent(): InterfaceView? {
@@ -74,6 +74,9 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     private fun renderAndOpen() {
         pane = panes.collapse()
         val requiresNewInventory = renderToInventory()
+
+        val topInventory = player.openInventory.topInventory
+        val isOpen = topInventory.holder == this || topInventory.type == InventoryType.CRAFTING
 
         if (requiresNewInventory && isOpen) {
             openInventory()

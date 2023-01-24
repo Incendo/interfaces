@@ -3,7 +3,6 @@ package org.incendo.interfaces.next.interfaces
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 import org.incendo.interfaces.next.click.ClickHandler
-import org.incendo.interfaces.next.element.Element
 import org.incendo.interfaces.next.pane.ChestPane
 import org.incendo.interfaces.next.transform.AppliedTransform
 import org.incendo.interfaces.next.view.ChestInterfaceView
@@ -20,7 +19,7 @@ public class ChestInterface internal constructor(
         public const val NUMBER_OF_COLUMNS: Int = 9
     }
 
-    override fun createPane(element: Element?): ChestPane = ChestPane()
+    override fun createPane(): ChestPane = ChestPane()
 
     override suspend fun open(player: Player, parent: InterfaceView?): ChestInterfaceView {
         val view = ChestInterfaceView(player, this, parent)

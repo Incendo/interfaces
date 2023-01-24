@@ -2,7 +2,6 @@ package org.incendo.interfaces.next.interfaces
 
 import org.bukkit.entity.Player
 import org.incendo.interfaces.next.click.ClickHandler
-import org.incendo.interfaces.next.element.Element
 import org.incendo.interfaces.next.pane.Pane
 import org.incendo.interfaces.next.transform.AppliedTransform
 import org.incendo.interfaces.next.utilities.currentOpenInterface
@@ -16,7 +15,7 @@ public interface Interface<P : Pane> {
 
     public val clickPreprocessors: Collection<ClickHandler>
 
-    public fun createPane(element: Element? = null): P
+    public fun createPane(): P
 
     /**
      * Opens an [InterfaceView] from this [Interface].
