@@ -76,8 +76,6 @@ subprojects {
     // Configure any existing RunServerTasks
     tasks.withType<RunServerTask> {
         minecraftVersion("1.19.3")
-        jvmArgs(
-            "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
-            "-Dio.papermc.paper.suppress.sout.nags=true")
+        jvmArgs("-Dio.papermc.paper.suppress.sout.nags=true")
     }
 }
