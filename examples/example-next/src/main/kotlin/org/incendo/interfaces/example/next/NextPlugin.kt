@@ -29,7 +29,8 @@ public class NextPlugin : JavaPlugin(), Listener {
     private companion object {
         private val INTERFACES = listOf(
             DelayedRequestExampleInterface(),
-            ChangingTitleExampleInterface()
+            ChangingTitleExampleInterface(),
+            CatalogueExampleInterface()
         )
     }
 
