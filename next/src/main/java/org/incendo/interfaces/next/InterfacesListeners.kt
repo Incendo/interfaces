@@ -26,10 +26,13 @@ import org.incendo.interfaces.next.view.AbstractInterfaceView
 import org.incendo.interfaces.next.view.InterfaceView
 import org.incendo.interfaces.next.view.PlayerInterfaceView
 import java.util.EnumSet
+import java.util.UUID
 
 public class InterfacesListeners : Listener {
 
     public companion object {
+        internal val PLAYERS_OPENING_INTERFACES = mutableSetOf<UUID>()
+
         public fun install(plugin: Plugin) {
             Bukkit.getPluginManager().registerEvents(InterfacesListeners(), plugin)
         }
@@ -60,8 +63,7 @@ public class InterfacesListeners : Listener {
             return
         }
 
-        // todo(josh): only do this when changing or closing interface
-        if (false) {
+        if (player.uniqueId in PLAYERS_OPENING_INTERFACES) {
             cleanup(player)
         }
 
