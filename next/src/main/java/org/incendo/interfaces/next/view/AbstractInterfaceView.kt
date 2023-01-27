@@ -15,6 +15,7 @@ import org.incendo.interfaces.next.update.CompleteUpdate
 import org.incendo.interfaces.next.update.TriggerUpdate
 import org.incendo.interfaces.next.utilities.CollapsablePaneMap
 import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     public val player: Player,
@@ -77,9 +78,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
     public abstract fun openInventory()
 
-    private fun renderAndOpen(forceOpen: Boolean) {
-        lock.lock()
-
+    private fun renderAndOpen(forceOpen: Boolean) = lock.withLock {
         pane = panes.collapse()
         val requiresNewInventory = renderToInventory()
 
@@ -91,7 +90,6 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         }
 
         firstPaint = false
-        lock.unlock()
     }
 
     internal suspend fun applyTransforms(transforms: Collection<AppliedTransform<P>>) {
