@@ -34,8 +34,6 @@ public class CombinedInterfaceView internal constructor(
     )
 
     override fun openInventory() {
-        titleState.hasChanged = false
-
         runSync {
             player.openInventory(this.inventory)
         }

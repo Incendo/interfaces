@@ -9,6 +9,10 @@ internal class TitleState(initialState: Component?) {
             hasChanged = true
             field = value
         }
+        get() {
+            hasChanged = false
+            return field
+        }
 
     internal var hasChanged = false
 }

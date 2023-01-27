@@ -4,6 +4,7 @@ import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
 import org.incendo.interfaces.next.Constants.SCOPE
+import org.incendo.interfaces.next.InterfacesListeners.Companion.PLAYERS_OPENING_INTERFACES
 import org.incendo.interfaces.next.interfaces.Interface
 import org.incendo.interfaces.next.inventory.InterfacesInventory
 import org.incendo.interfaces.next.pane.CompletedPane
@@ -13,6 +14,7 @@ import org.incendo.interfaces.next.transform.AppliedTransform
 import org.incendo.interfaces.next.update.CompleteUpdate
 import org.incendo.interfaces.next.update.TriggerUpdate
 import org.incendo.interfaces.next.utilities.CollapsablePaneMap
+import java.util.concurrent.locks.ReentrantLock
 
 public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     public val player: Player,
@@ -23,6 +25,8 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     public companion object {
         public const val COLUMNS_IN_CHEST: Int = 9
     }
+
+    private val lock = ReentrantLock()
 
     protected var firstPaint: Boolean = true
 
@@ -49,7 +53,9 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     }
 
     public override fun open() {
-        renderAndOpen()
+        PLAYERS_OPENING_INTERFACES.add(player.uniqueId)
+        renderAndOpen(forceOpen = true)
+        PLAYERS_OPENING_INTERFACES.remove(player.uniqueId)
     }
 
     public override fun close() {
@@ -71,18 +77,21 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
     public abstract fun openInventory()
 
-    private fun renderAndOpen() {
+    private fun renderAndOpen(forceOpen: Boolean) {
+        lock.lock()
+
         pane = panes.collapse()
         val requiresNewInventory = renderToInventory()
 
         val topInventory = player.openInventory.topInventory
         val isOpen = topInventory.holder == this || topInventory.type == InventoryType.CRAFTING
 
-        if (requiresNewInventory && isOpen) {
+        if (requiresNewInventory && (forceOpen || isOpen)) {
             openInventory()
         }
 
         firstPaint = false
+        lock.unlock()
     }
 
     internal suspend fun applyTransforms(transforms: Collection<AppliedTransform<P>>) {
@@ -94,7 +103,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
                 panes[transform.priority] = pane.complete(player)
             }.invokeOnCompletion {
-                renderAndOpen()
+                renderAndOpen(forceOpen = false)
             }
         }
     }
