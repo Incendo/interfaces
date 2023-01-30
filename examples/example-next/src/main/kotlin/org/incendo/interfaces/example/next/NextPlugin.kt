@@ -30,7 +30,8 @@ public class NextPlugin : JavaPlugin(), Listener {
         private val INTERFACES = listOf(
             DelayedRequestExampleInterface(),
             ChangingTitleExampleInterface(),
-            CatalogueExampleInterface()
+            CatalogueExampleInterface(),
+            MovingExampleInterface()
         )
     }
 

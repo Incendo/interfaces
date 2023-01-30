@@ -20,7 +20,7 @@ public class ChestInterfacesInventory(
         return chestInventory.getItem(index)
     }
 
-    override fun setInternal(row: Int, column: Int, item: ItemStack) {
+    override fun setInternal(row: Int, column: Int, item: ItemStack?) {
         val index = gridPointToBukkitIndex(row, column)
         chestInventory.setItem(index, item)
     }

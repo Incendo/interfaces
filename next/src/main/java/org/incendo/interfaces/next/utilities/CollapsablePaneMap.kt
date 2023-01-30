@@ -2,9 +2,10 @@ package org.incendo.interfaces.next.utilities
 
 import org.incendo.interfaces.next.pane.CompletedPane
 import org.incendo.interfaces.next.pane.Pane
-import org.incendo.interfaces.next.pane.convertToEmptyCompletedPane
+import org.incendo.interfaces.next.pane.convertToEmptyCompletedPaneAndFill
 
 internal class CollapsablePaneMap private constructor(
+    private val rows: Int,
     // pass in a pane from the view so that we can persist
     // ordering, used in the listeners.
     private val basePane: Pane,
@@ -14,7 +15,11 @@ internal class CollapsablePaneMap private constructor(
 ) : MutableMap<Int, CompletedPane> by internal {
 
     internal companion object {
-        internal fun create(basePane: Pane) = CollapsablePaneMap(basePane, sortedMapOf(Comparator.reverseOrder()))
+        internal fun create(rows: Int, basePane: Pane) = CollapsablePaneMap(
+            rows,
+            basePane,
+            sortedMapOf(Comparator.reverseOrder())
+        )
     }
 
     private var cachedPane: CompletedPane? = null
@@ -29,13 +34,11 @@ internal class CollapsablePaneMap private constructor(
             return pane
         }
 
-        val pane = basePane.convertToEmptyCompletedPane()
+        val pane = basePane.convertToEmptyCompletedPaneAndFill(rows)
 
         values.forEach { layer ->
             layer.forEach { row, column, value ->
-                if (!pane.has(row, column)) {
-                    pane[row, column] = value
-                }
+                pane[row, column] = value
             }
         }
 

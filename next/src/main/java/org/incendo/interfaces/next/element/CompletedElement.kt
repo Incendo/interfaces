@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack
 import org.incendo.interfaces.next.click.ClickHandler
 
 internal data class CompletedElement(
-    public val itemStack: ItemStack,
+    public val itemStack: ItemStack?,
     public val clickHandler: ClickHandler
 )
 

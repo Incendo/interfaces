@@ -32,7 +32,7 @@ public class CombinedInterfacesInventory(
         return chestInventory.getItem(bukkitIndex)
     }
 
-    override fun setInternal(row: Int, column: Int, item: ItemStack) {
+    override fun setInternal(row: Int, column: Int, item: ItemStack?) {
         val bukkitIndex = gridPointToBukkitIndex(row, column)
 
         if (row >= rows) {

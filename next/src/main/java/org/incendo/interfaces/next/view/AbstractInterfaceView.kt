@@ -34,7 +34,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     // todo(josh): reduce internal abuse?
     internal var isProcessingClick = false
 
-    private val panes = CollapsablePaneMap.create(backing.createPane())
+    private val panes = CollapsablePaneMap.create(backing.rows, backing.createPane())
     internal lateinit var pane: CompletedPane
 
     protected lateinit var currentInventory: I

@@ -15,7 +15,7 @@ public class PlayerInterfacesInventory(
         return playerInventory.getItem(index)
     }
 
-    override fun setInternal(row: Int, column: Int, item: ItemStack) {
+    override fun setInternal(row: Int, column: Int, item: ItemStack?) {
         val index = gridPointToBukkitIndex(row, column)
         return playerInventory.setItem(index, item)
     }
