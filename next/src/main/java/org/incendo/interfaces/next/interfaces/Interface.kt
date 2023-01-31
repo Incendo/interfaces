@@ -15,6 +15,8 @@ public interface Interface<P : Pane> {
 
     public val clickPreprocessors: Collection<ClickHandler>
 
+    public fun totalRows(): Int = rows
+
     public fun createPane(): P
 
     /**

@@ -15,6 +15,8 @@ public class CombinedInterface internal constructor(
     override val clickPreprocessors: Collection<ClickHandler>
 ) : Interface<CombinedPane>, TitledInterface {
 
+    override fun totalRows(): Int = rows + 4
+
     override fun createPane(): CombinedPane = CombinedPane(rows)
 
     override suspend fun open(player: Player, parent: InterfaceView?): CombinedInterfaceView {
