@@ -36,7 +36,9 @@ internal class CollapsablePaneMap private constructor(
 
         val pane = basePane.convertToEmptyCompletedPaneAndFill(rows)
 
-        values.forEach { layer ->
+        val current = internal.toMap().values
+
+        current.forEach { layer ->
             layer.forEach { row, column, value ->
                 pane[row, column] = value
             }
