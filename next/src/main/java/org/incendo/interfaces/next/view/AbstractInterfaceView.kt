@@ -4,7 +4,6 @@ import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
 import org.incendo.interfaces.next.Constants.SCOPE
-import org.incendo.interfaces.next.InterfacesListeners.Companion.PLAYERS_OPENING_INTERFACES
 import org.incendo.interfaces.next.interfaces.Interface
 import org.incendo.interfaces.next.inventory.InterfacesInventory
 import org.incendo.interfaces.next.pane.CompletedPane
@@ -54,9 +53,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     }
 
     public override fun open() {
-        PLAYERS_OPENING_INTERFACES.add(player.uniqueId)
         renderAndOpen(forceOpen = true)
-        PLAYERS_OPENING_INTERFACES.remove(player.uniqueId)
     }
 
     public override fun close() {
@@ -93,13 +90,15 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     }
 
     internal suspend fun applyTransforms(transforms: Collection<AppliedTransform<P>>) {
-        // todo(josh): could be improved? make sure renderAndOpen only happens once per tick?
         transforms.forEach { transform ->
             SCOPE.launch {
                 val pane = backing.createPane()
                 transform(pane, this@AbstractInterfaceView)
+                val completedPane = pane.complete(player)
 
-                panes[transform.priority] = pane.complete(player)
+                lock.withLock {
+                    panes[transform.priority] = completedPane
+                }
             }.invokeOnCompletion {
                 renderAndOpen(forceOpen = false)
             }

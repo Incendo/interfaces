@@ -26,13 +26,10 @@ import org.incendo.interfaces.next.view.AbstractInterfaceView
 import org.incendo.interfaces.next.view.InterfaceView
 import org.incendo.interfaces.next.view.PlayerInterfaceView
 import java.util.EnumSet
-import java.util.UUID
 
 public class InterfacesListeners : Listener {
 
     public companion object {
-        internal val PLAYERS_OPENING_INTERFACES = mutableSetOf<UUID>()
-
         public fun install(plugin: Plugin) {
             Bukkit.getPluginManager().registerEvents(InterfacesListeners(), plugin)
         }
@@ -57,14 +54,9 @@ public class InterfacesListeners : Listener {
     @EventHandler
     public fun onClose(event: InventoryCloseEvent) {
         val holder = event.inventory.holder
-        val player = event.player
 
         if (holder !is InterfaceView) {
             return
-        }
-
-        if (player.uniqueId in PLAYERS_OPENING_INTERFACES) {
-            cleanup(player)
         }
 
         if (event.reason !in VALID_REASON) {
@@ -197,7 +189,6 @@ public class InterfacesListeners : Listener {
     }
 
     private fun cleanup(player: HumanEntity) {
-        println("cleaning")
         player.inventory.storageContents = arrayOfNulls<ItemStack>(36)
     }
 }

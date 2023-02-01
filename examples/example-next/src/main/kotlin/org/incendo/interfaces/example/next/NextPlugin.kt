@@ -31,7 +31,8 @@ public class NextPlugin : JavaPlugin(), Listener {
             DelayedRequestExampleInterface(),
             ChangingTitleExampleInterface(),
             CatalogueExampleInterface(),
-            MovingExampleInterface()
+            MovingExampleInterface(),
+            TabbedExampleInterface()
         )
     }
 
