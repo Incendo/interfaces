@@ -2,7 +2,6 @@ package org.incendo.interfaces.next.view
 
 import kotlinx.coroutines.launch
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.InventoryType
 import org.incendo.interfaces.next.Constants.SCOPE
 import org.incendo.interfaces.next.interfaces.Interface
 import org.incendo.interfaces.next.inventory.InterfacesInventory
@@ -80,9 +79,9 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         val requiresNewInventory = renderToInventory()
 
         val topInventory = player.openInventory.topInventory
-        val isOpen = topInventory.holder == this || topInventory.type == InventoryType.CRAFTING
+        val isOpen = topInventory.holder == this
 
-        if (requiresNewInventory && (forceOpen || isOpen)) {
+        if (forceOpen || (requiresNewInventory && isOpen)) {
             openInventory()
         }
 
