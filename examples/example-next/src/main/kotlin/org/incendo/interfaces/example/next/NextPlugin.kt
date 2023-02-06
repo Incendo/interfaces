@@ -153,6 +153,20 @@ public class NextPlugin : JavaPlugin(), Listener {
             pane.hotbar[3] = StaticElement(drawable(item)) { (player) ->
                 player.sendMessage("hello")
             }
+
+            pane.offHand = StaticElement(drawable(item)) { (player) ->
+                player.sendMessage("hey")
+            }
+
+            val armor = ItemStack(Material.STICK)
+
+            pane.armor.helmet = StaticElement(drawable(armor.name("helmet").clone()))
+
+            pane.armor.chest = StaticElement(drawable(armor.name("chest").clone()))
+
+            pane.armor.leggings = StaticElement(drawable(armor.name("leggings").clone()))
+
+            pane.armor.boots = StaticElement(drawable(armor.name("boots").clone()))
         }
     }
 
