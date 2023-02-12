@@ -10,6 +10,7 @@ dependencies {
     }
     compileOnlyApi(libs.guava)
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    api("org.slf4j:slf4j-api:1.7.36")
 }
 
 tasks {
