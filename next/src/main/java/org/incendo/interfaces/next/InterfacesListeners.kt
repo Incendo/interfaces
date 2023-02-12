@@ -187,8 +187,4 @@ public class InterfacesListeners : Listener {
 
         return ClickType.UNKNOWN
     }
-
-    private fun cleanup(player: HumanEntity) {
-        player.inventory.storageContents = arrayOfNulls<ItemStack>(36)
-    }
 }

@@ -1,6 +1,8 @@
 package org.incendo.interfaces.next.view
 
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.incendo.interfaces.next.Constants.SCOPE
 import org.incendo.interfaces.next.interfaces.Interface
@@ -12,8 +14,11 @@ import org.incendo.interfaces.next.transform.AppliedTransform
 import org.incendo.interfaces.next.update.CompleteUpdate
 import org.incendo.interfaces.next.update.TriggerUpdate
 import org.incendo.interfaces.next.utilities.CollapsablePaneMap
+import org.slf4j.LoggerFactory
+import java.lang.Exception
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
+import kotlin.time.Duration.Companion.seconds
 
 public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     public val player: Player,
@@ -25,6 +30,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         public const val COLUMNS_IN_CHEST: Int = 9
     }
 
+    private val logger = LoggerFactory.getLogger(AbstractInterfaceView::class.java)
     private val lock = ReentrantLock()
 
     protected var firstPaint: Boolean = true
@@ -37,16 +43,14 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
     protected lateinit var currentInventory: I
 
-    internal suspend fun setup() {
+    internal fun setup() {
         CompleteUpdate.apply(this)
 
         backing.transforms
             .flatMap(AppliedTransform<P>::triggers)
             .forEach { trigger ->
                 trigger.addListener {
-                    SCOPE.launch {
-                        TriggerUpdate(trigger).apply(this@AbstractInterfaceView)
-                    }
+                    TriggerUpdate(trigger).apply(this@AbstractInterfaceView)
                 }
             }
     }
@@ -88,19 +92,30 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         firstPaint = false
     }
 
-    internal suspend fun applyTransforms(transforms: Collection<AppliedTransform<P>>) {
+    internal fun applyTransforms(transforms: Collection<AppliedTransform<P>>) {
         transforms.forEach { transform ->
             SCOPE.launch {
-                val pane = backing.createPane()
-                transform(pane, this@AbstractInterfaceView)
-                val completedPane = pane.complete(player)
-
-                lock.withLock {
-                    panes[transform.priority] = completedPane
+                try {
+                    withTimeout(3.seconds) {
+                        runTransformAndApplyToPanes(transform)
+                    }
+                } catch (e: Exception) {
+                    logger.error("transform failed")
+                    e.printStackTrace()
                 }
             }.invokeOnCompletion {
                 renderAndOpen(forceOpen = false)
             }
+        }
+    }
+
+    private suspend fun runTransformAndApplyToPanes(transform: AppliedTransform<P>) {
+        val pane = backing.createPane()
+        transform(pane, this@AbstractInterfaceView)
+        val completedPane = pane.complete(player)
+
+        lock.withLock {
+            panes[transform.priority] = completedPane
         }
     }
 
