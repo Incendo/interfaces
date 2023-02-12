@@ -2,7 +2,6 @@ package org.incendo.interfaces.next.view
 
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.incendo.interfaces.next.Constants.SCOPE
 import org.incendo.interfaces.next.interfaces.Interface

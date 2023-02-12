@@ -2,7 +2,6 @@ package org.incendo.interfaces.next
 
 import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
-import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.EventHandler
@@ -14,7 +13,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryCloseEvent.Reason
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.InventoryHolder
-import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
 import org.incendo.interfaces.next.Constants.SCOPE
 import org.incendo.interfaces.next.click.ClickContext
