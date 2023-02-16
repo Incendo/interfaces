@@ -6,7 +6,7 @@ import org.incendo.interfaces.next.pane.Pane
 import org.incendo.interfaces.next.view.InterfaceView
 import kotlin.properties.Delegates
 
-public class PaginationTransformation<P : Pane>(
+public open class PaginationTransformation<P : Pane>(
     private val positionGenerator: GridPositionGenerator,
     default: Collection<Element>,
     back: PaginationButton,
