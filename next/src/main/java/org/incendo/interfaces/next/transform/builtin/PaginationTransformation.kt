@@ -28,7 +28,13 @@ public open class PaginationTransformation<P : Pane>(
         val offset = page * slots
 
         positions.forEachIndexed { index, point ->
-            pane[point] = values[index + offset]
+            val currentIndex = index + offset
+
+            if (currentIndex >= values.size) {
+                return@forEachIndexed
+            }
+
+            pane[point] = values[currentIndex]
         }
 
         super.invoke(pane, view)
