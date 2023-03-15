@@ -23,7 +23,6 @@ public class ChestInterface internal constructor(
 
     override suspend fun open(player: Player, parent: InterfaceView?): ChestInterfaceView {
         val view = ChestInterfaceView(player, this, parent)
-        view.setup()
         view.open()
 
         return view

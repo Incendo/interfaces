@@ -21,7 +21,6 @@ public class CombinedInterface internal constructor(
 
     override suspend fun open(player: Player, parent: InterfaceView?): CombinedInterfaceView {
         val view = CombinedInterfaceView(player, this, parent)
-        view.setup()
         view.open()
 
         return view

@@ -42,7 +42,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
     protected lateinit var currentInventory: I
 
-    internal fun setup() {
+    private fun setup() {
         CompleteUpdate.apply(this)
 
         backing.transforms
@@ -56,6 +56,12 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
     public override fun open() {
         renderAndOpen(forceOpen = true)
+
+        if (firstPaint) {
+            setup()
+        }
+
+        firstPaint = false
     }
 
     public override fun close() {
@@ -78,24 +84,26 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     public abstract fun openInventory()
 
     private fun renderAndOpen(forceOpen: Boolean) = lock.withLock {
-        pane = panes.collapse()
-        val requiresNewInventory = renderToInventory()
-
         val topInventory = player.openInventory.topInventory
         val isOpen = topInventory.holder == this
 
-        if (forceOpen || (requiresNewInventory && isOpen)) {
-            openInventory()
+        if (!forceOpen && !isOpen) {
+            return@withLock
         }
 
-        firstPaint = false
+        pane = panes.collapse()
+        val requiresNewInventory = renderToInventory()
+
+        if (forceOpen || requiresNewInventory) {
+            openInventory()
+        }
     }
 
     internal fun applyTransforms(transforms: Collection<AppliedTransform<P>>) {
         transforms.forEach { transform ->
             SCOPE.launch {
                 try {
-                    withTimeout(3.seconds) {
+                    withTimeout(6.seconds) {
                         runTransformAndApplyToPanes(transform)
                     }
                 } catch (e: Exception) {

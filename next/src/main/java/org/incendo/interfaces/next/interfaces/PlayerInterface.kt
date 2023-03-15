@@ -22,7 +22,6 @@ public class PlayerInterface internal constructor(
 
     override suspend fun open(player: Player, parent: InterfaceView?): PlayerInterfaceView {
         val view = PlayerInterfaceView(player, this)
-        view.setup()
         view.open()
 
         return view
