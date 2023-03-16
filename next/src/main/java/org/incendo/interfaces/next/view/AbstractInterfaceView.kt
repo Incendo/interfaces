@@ -65,7 +65,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     }
 
     public override fun close() {
-        if (player.openInventory.topInventory.holder == this) {
+        if (isOpen(player)) {
             player.closeInventory()
         }
     }
@@ -83,9 +83,10 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
     public abstract fun openInventory()
 
+    public abstract fun isOpen(player: Player): Boolean
+
     private fun renderAndOpen(forceOpen: Boolean) = lock.withLock {
-        val topInventory = player.openInventory.topInventory
-        val isOpen = topInventory.holder == this
+        val isOpen = isOpen(player)
 
         if (!forceOpen && !isOpen) {
             return@withLock

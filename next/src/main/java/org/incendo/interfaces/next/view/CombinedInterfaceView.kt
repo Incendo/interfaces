@@ -43,5 +43,9 @@ public class CombinedInterfaceView internal constructor(
 
     override fun requiresNewInventory(): Boolean = firstPaint || titleState.hasChanged
 
-    public override fun getInventory(): Inventory = currentInventory.chestInventory
+    override fun getInventory(): Inventory = currentInventory.chestInventory
+
+    override fun isOpen(player: Player): Boolean {
+        return player.openInventory.topInventory.holder == this
+    }
 }

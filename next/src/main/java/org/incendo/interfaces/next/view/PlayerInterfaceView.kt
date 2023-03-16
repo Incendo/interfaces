@@ -2,6 +2,7 @@ package org.incendo.interfaces.next.view
 
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryType
 import org.incendo.interfaces.next.interfaces.PlayerInterface
 import org.incendo.interfaces.next.inventory.PlayerInterfacesInventory
 import org.incendo.interfaces.next.pane.PlayerPane
@@ -32,5 +33,9 @@ public class PlayerInterfaceView internal constructor(
 
     override fun openInventory() {
         // stub: do we want the open inventory method to be abstract?
+    }
+
+    override fun isOpen(player: Player): Boolean {
+        return player.openInventory.type == InventoryType.CRAFTING
     }
 }

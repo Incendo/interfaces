@@ -43,4 +43,8 @@ public class ChestInterfaceView internal constructor(
     override fun requiresNewInventory(): Boolean = firstPaint || titleState.hasChanged
 
     override fun getInventory(): Inventory = currentInventory.chestInventory
+
+    override fun isOpen(player: Player): Boolean {
+        return player.openInventory.topInventory.holder == this
+    }
 }
