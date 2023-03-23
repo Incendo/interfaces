@@ -15,7 +15,7 @@ public abstract class PagedTransformation<P : Pane>(
     private val forward: PaginationButton
 ) : ReactiveTransform<P> {
 
-    protected val boundPage: BoundInteger = BoundInteger(0, 1, Integer.MAX_VALUE)
+    protected val boundPage: BoundInteger = BoundInteger(0, 0, Integer.MAX_VALUE)
     protected var page: Int by boundPage
 
     override suspend fun invoke(pane: P, view: InterfaceView) {
