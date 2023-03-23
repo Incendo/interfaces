@@ -14,8 +14,8 @@ public data class GridPoint(val x: Int, val y: Int) {
     }
 
     public operator fun rangeTo(other: GridPoint): Sequence<GridPoint> = sequence {
-        for (y in y..other.y) {
-            for (x in x..other.x) {
+        for (x in x..other.x) {
+            for (y in y..other.y) {
                 yield(at(x, y))
             }
         }
