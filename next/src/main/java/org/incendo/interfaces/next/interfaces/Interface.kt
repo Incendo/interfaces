@@ -1,6 +1,7 @@
 package org.incendo.interfaces.next.interfaces
 
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryCloseEvent
 import org.incendo.interfaces.next.click.ClickHandler
 import org.incendo.interfaces.next.pane.Pane
 import org.incendo.interfaces.next.transform.AppliedTransform
@@ -10,6 +11,8 @@ import org.incendo.interfaces.next.view.InterfaceView
 public interface Interface<P : Pane> {
 
     public val rows: Int
+
+    public val closeHandlers: MutableMap<InventoryCloseEvent.Reason, CloseHandler>
 
     public val transforms: Collection<AppliedTransform<P>>
 

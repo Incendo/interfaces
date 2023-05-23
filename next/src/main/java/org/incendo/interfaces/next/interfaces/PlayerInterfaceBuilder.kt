@@ -6,6 +6,7 @@ public class PlayerInterfaceBuilder :
     AbstractInterfaceBuilder<PlayerPane, PlayerInterface>() {
 
     public override fun build(): PlayerInterface = PlayerInterface(
+        closeHandlers,
         transforms,
         clickPreprocessors
     )
