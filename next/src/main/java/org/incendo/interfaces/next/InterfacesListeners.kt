@@ -52,16 +52,21 @@ public class InterfacesListeners : Listener {
     @EventHandler
     public fun onClose(event: InventoryCloseEvent) {
         val holder = event.inventory.holder
+        val reason = event.reason
 
         if (holder !is InterfaceView) {
             return
         }
 
-        if (event.reason !in VALID_REASON) {
+        if (reason !in VALID_REASON) {
             return
         }
 
         SCOPE.launch {
+            val view = convertHolderToInterfaceView(holder)
+            if (view != null) {
+                view.backing.closeHandlers[reason]?.invoke(reason, view)
+            }
             PlayerInterfaceView.OPEN_VIEWS[event.player]?.open()
         }
     }

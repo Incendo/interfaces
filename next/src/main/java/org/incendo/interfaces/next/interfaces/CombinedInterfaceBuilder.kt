@@ -12,6 +12,7 @@ public class CombinedInterfaceBuilder :
     public override fun build(): CombinedInterface = CombinedInterface(
         rows,
         initialTitle,
+        closeHandlers,
         transforms,
         clickPreprocessors
     )

@@ -12,6 +12,7 @@ public class ChestInterfaceBuilder :
     public override fun build(): ChestInterface = ChestInterface(
         rows,
         initialTitle,
+        closeHandlers,
         transforms,
         clickPreprocessors
     )
