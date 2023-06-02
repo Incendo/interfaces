@@ -1,5 +1,7 @@
 package org.incendo.interfaces.next
 
+import com.google.common.cache.Cache
+import com.google.common.cache.CacheBuilder
 import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -23,7 +25,8 @@ import org.incendo.interfaces.next.pane.PlayerPane
 import org.incendo.interfaces.next.view.AbstractInterfaceView
 import org.incendo.interfaces.next.view.InterfaceView
 import org.incendo.interfaces.next.view.PlayerInterfaceView
-import java.util.EnumSet
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 public class InterfacesListeners : Listener {
 
@@ -48,6 +51,11 @@ public class InterfacesListeners : Listener {
         private val PLAYER_INVENTORY_RANGE = 0..40
         private const val OUTSIDE_CHEST_INDEX = -999
     }
+
+    private val spamPrevention: Cache<UUID, Long> = CacheBuilder.newBuilder().expireAfterWrite(
+        50L * 3,
+        TimeUnit.MILLISECONDS
+    ).build()
 
     @EventHandler
     public fun onClose(event: InventoryCloseEvent) {
@@ -145,7 +153,7 @@ public class InterfacesListeners : Listener {
         click: ClickType,
         event: Cancellable
     ) {
-        if (view.isProcessingClick) {
+        if (view.isProcessingClick || shouldThrottle(view.player)) {
             event.isCancelled = true
             return
         }
@@ -189,5 +197,15 @@ public class InterfacesListeners : Listener {
         }
 
         return ClickType.UNKNOWN
+    }
+
+    private fun shouldThrottle(player: Player): Boolean {
+        if (spamPrevention.getIfPresent(player.uniqueId) != null) {
+            return true
+        } else {
+            spamPrevention.put(player.uniqueId, System.currentTimeMillis())
+        }
+
+        return false
     }
 }
