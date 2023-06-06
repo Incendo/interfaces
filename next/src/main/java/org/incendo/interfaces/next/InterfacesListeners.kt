@@ -1,7 +1,7 @@
 package org.incendo.interfaces.next
 
-import com.google.common.cache.Cache
-import com.google.common.cache.CacheBuilder
+import com.github.benmanes.caffeine.cache.Cache
+import com.github.benmanes.caffeine.cache.Caffeine
 import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -52,10 +52,9 @@ public class InterfacesListeners : Listener {
         private const val OUTSIDE_CHEST_INDEX = -999
     }
 
-    private val spamPrevention: Cache<UUID, Long> = CacheBuilder.newBuilder().expireAfterWrite(
-        50L * 3,
-        TimeUnit.MILLISECONDS
-    ).build()
+    private val spamPrevention: Cache<UUID, Long> = Caffeine.newBuilder()
+        .expireAfterWrite(50L * 3, TimeUnit.MILLISECONDS)
+        .build()
 
     @EventHandler
     public fun onClose(event: InventoryCloseEvent) {
