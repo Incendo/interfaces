@@ -1,5 +1,6 @@
 package org.incendo.interfaces.next.transform.builtin
 
+import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.incendo.interfaces.next.drawable.Drawable
 import org.incendo.interfaces.next.element.StaticElement
@@ -32,9 +33,9 @@ public abstract class PagedTransformation<P : Pane>(
     protected open fun applyButton(pane: Pane, button: PaginationButton) {
         val (point, drawable, increments) = button
 
-        pane[point] = StaticElement(drawable) { click ->
-            increments[click.type]?.let { increment -> page += increment }
-            button.clickHandler()
+        pane[point] = StaticElement(drawable) { (player, _, click) ->
+            increments[click]?.let { increment -> page += increment }
+            button.clickHandler(player)
         }
     }
 
@@ -45,5 +46,5 @@ public data class PaginationButton(
     public val position: GridPoint,
     public val drawable: Drawable,
     public val increments: Map<ClickType, Int>,
-    public val clickHandler: () -> Unit = {}
+    public val clickHandler: (Player) -> Unit = {}
 )
