@@ -12,7 +12,8 @@ import org.incendo.interfaces.next.view.InterfaceView
 
 public abstract class PagedTransformation<P : Pane>(
     private val back: PaginationButton,
-    private val forward: PaginationButton
+    private val forward: PaginationButton,
+    extraTriggers: Array<Trigger> = emptyArray()
 ) : ReactiveTransform<P> {
 
     protected val boundPage: BoundInteger = BoundInteger(0, 0, Integer.MAX_VALUE)
@@ -33,14 +34,16 @@ public abstract class PagedTransformation<P : Pane>(
 
         pane[point] = StaticElement(drawable) { click ->
             increments[click.type]?.let { increment -> page += increment }
+            button.clickHandler()
         }
     }
 
-    override val triggers: Array<Trigger> = arrayOf(boundPage)
+    override val triggers: Array<Trigger> = arrayOf<Trigger>(boundPage).plus(extraTriggers)
 }
 
 public data class PaginationButton(
     public val position: GridPoint,
     public val drawable: Drawable,
-    public val increments: Map<ClickType, Int>
+    public val increments: Map<ClickType, Int>,
+    public val clickHandler: () -> Unit = {}
 )
