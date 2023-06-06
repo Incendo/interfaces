@@ -14,9 +14,9 @@ import org.incendo.interfaces.next.update.CompleteUpdate
 import org.incendo.interfaces.next.update.TriggerUpdate
 import org.incendo.interfaces.next.utilities.CollapsablePaneMap
 import org.slf4j.LoggerFactory
-import java.lang.Exception
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
+import kotlin.Exception
 import kotlin.time.Duration.Companion.seconds
 
 public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
@@ -85,7 +85,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
     public abstract fun isOpen(player: Player): Boolean
 
-    private fun renderAndOpen(forceOpen: Boolean) = lock.withLock {
+    private fun renderAndOpen(forceOpen: Boolean) = lock.withLock(6, TimeUnit.SECONDS) {
         val isOpen = isOpen(player)
 
         if (!forceOpen && !isOpen) {
@@ -107,11 +107,11 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
                     withTimeout(6.seconds) {
                         runTransformAndApplyToPanes(transform)
                     }
-                } catch (e: Exception) {
-                    logger.error("transform failed")
-                    e.printStackTrace()
+                } catch (exception: Exception) {
+                    logger.error("Failed to run and apply transform: $transform", exception)
+                    return@launch
                 }
-            }.invokeOnCompletion {
+
                 renderAndOpen(forceOpen = false)
             }
         }
@@ -122,7 +122,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         transform(pane, this@AbstractInterfaceView)
         val completedPane = pane.complete(player)
 
-        lock.withLock {
+        lock.withLock(6, TimeUnit.SECONDS) {
             panes[transform.priority] = completedPane
         }
     }
