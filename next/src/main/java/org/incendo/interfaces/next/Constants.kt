@@ -12,27 +12,27 @@ internal object Constants {
 
     internal val SCOPE = CoroutineScope(
         CoroutineName("interfaces") +
-                SupervisorJob() +
-                run {
-                    val threadNumber = AtomicInteger()
-                    val factory = { runnable: Runnable ->
-                        Thread("interfaces-${threadNumber.getAndIncrement()}").apply {
-                            isDaemon = true
+            SupervisorJob() +
+            run {
+                val threadNumber = AtomicInteger()
+                val factory = { runnable: Runnable ->
+                    Thread("interfaces-${threadNumber.getAndIncrement()}").apply {
+                        isDaemon = true
+                    }
+                }
+
+                System.getProperty("org.incendo.interfaces.next.fixedPoolSize")
+                    ?.toIntOrNull()
+                    ?.coerceAtLeast(2)
+                    ?.let { size ->
+                        if (System.getProperty("org.incendo.interfaces.next.useScheduledPool").toBoolean()) {
+                            Executors.newScheduledThreadPool(size, factory)
+                        } else {
+                            Executors.newFixedThreadPool(size, factory)
                         }
                     }
-
-                    System.getProperty("org.incendo.interfaces.next.fixedPoolSize")
-                        ?.toIntOrNull()
-                        ?.coerceAtLeast(2)
-                        ?.let { size ->
-                            if (System.getProperty("org.incendo.interfaces.next.useScheduledPool").toBoolean()) {
-                                Executors.newScheduledThreadPool(size, factory)
-                            } else {
-                                Executors.newFixedThreadPool(size, factory)
-                            }
-                        }
-                        ?.asCoroutineDispatcher()
-                        ?: Dispatchers.Default
-                }
+                    ?.asCoroutineDispatcher()
+                    ?: Dispatchers.Default
+            }
     )
 }
