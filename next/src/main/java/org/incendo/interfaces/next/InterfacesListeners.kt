@@ -65,15 +65,16 @@ public class InterfacesListeners : Listener {
             return
         }
 
-        if (reason !in VALID_REASON) {
-            return
-        }
-
         SCOPE.launch {
             val view = convertHolderToInterfaceView(holder)
             if (view != null) {
                 view.backing.closeHandlers[reason]?.invoke(reason, view)
             }
+
+            if (reason !in VALID_REASON) {
+                return@launch
+            }
+
             PlayerInterfaceView.OPEN_VIEWS[event.player]?.open()
         }
     }

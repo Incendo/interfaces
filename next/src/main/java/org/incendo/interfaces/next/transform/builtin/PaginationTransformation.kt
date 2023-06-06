@@ -3,6 +3,7 @@ package org.incendo.interfaces.next.transform.builtin
 import org.incendo.interfaces.next.element.Element
 import org.incendo.interfaces.next.grid.GridPositionGenerator
 import org.incendo.interfaces.next.pane.Pane
+import org.incendo.interfaces.next.properties.Trigger
 import org.incendo.interfaces.next.view.InterfaceView
 import kotlin.properties.Delegates
 
@@ -10,8 +11,9 @@ public open class PaginationTransformation<P : Pane>(
     private val positionGenerator: GridPositionGenerator,
     default: Collection<Element>,
     back: PaginationButton,
-    forward: PaginationButton
-) : PagedTransformation<P>(back, forward) {
+    forward: PaginationButton,
+    extraTriggers: Array<Trigger> = emptyArray()
+) : PagedTransformation<P>(back, forward, extraTriggers) {
 
     private val values by Delegates.observable(default.toList()) { _, _, _ ->
         boundPage.max = maxPages()
