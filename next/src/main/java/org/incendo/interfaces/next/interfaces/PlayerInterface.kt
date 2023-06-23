@@ -2,6 +2,7 @@ package org.incendo.interfaces.next.interfaces
 
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.inventory.ItemStack
 import org.incendo.interfaces.next.click.ClickHandler
 import org.incendo.interfaces.next.pane.PlayerPane
 import org.incendo.interfaces.next.transform.AppliedTransform
@@ -11,7 +12,8 @@ import org.incendo.interfaces.next.view.PlayerInterfaceView
 public class PlayerInterface internal constructor(
     override val closeHandlers: MutableMap<InventoryCloseEvent.Reason, CloseHandler>,
     override val transforms: Collection<AppliedTransform<PlayerPane>>,
-    override val clickPreprocessors: Collection<ClickHandler>
+    override val clickPreprocessors: Collection<ClickHandler>,
+    override val itemPostProcessor: ((ItemStack) -> Unit)?
 ) : Interface<PlayerPane> {
 
     public companion object {

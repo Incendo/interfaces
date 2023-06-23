@@ -1,6 +1,7 @@
 package org.incendo.interfaces.next.interfaces
 
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.inventory.ItemStack
 import org.incendo.interfaces.next.click.ClickHandler
 import org.incendo.interfaces.next.pane.Pane
 import org.incendo.interfaces.next.properties.Trigger
@@ -21,6 +22,8 @@ public abstract class AbstractInterfaceBuilder<P : Pane, I : Interface<P>> inter
     protected val closeHandlers: MutableMap<InventoryCloseEvent.Reason, CloseHandler> = mutableMapOf()
     protected val transforms: MutableCollection<AppliedTransform<P>> = mutableListOf()
     protected val clickPreprocessors: MutableCollection<ClickHandler> = mutableListOf()
+
+    public var itemPostProcessor: ((ItemStack) -> Unit)? = null
 
     public fun withTransform(vararg triggers: Trigger, transform: Transform<P>) {
         transforms.add(AppliedTransform(transformCounter, triggers.toSet(), transform))

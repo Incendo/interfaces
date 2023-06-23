@@ -134,7 +134,8 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
     private fun drawPaneToInventory() {
         pane.forEach { row, column, element ->
-            currentInventory.set(row, column, element.itemStack)
+
+            currentInventory.set(row, column, element.itemStack.apply { this?.let { backing.itemPostProcessor?.invoke(it) } })
         }
     }
 

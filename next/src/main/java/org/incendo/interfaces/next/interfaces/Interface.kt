@@ -2,6 +2,7 @@ package org.incendo.interfaces.next.interfaces
 
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.inventory.ItemStack
 import org.incendo.interfaces.next.click.ClickHandler
 import org.incendo.interfaces.next.pane.Pane
 import org.incendo.interfaces.next.transform.AppliedTransform
@@ -17,6 +18,8 @@ public interface Interface<P : Pane> {
     public val transforms: Collection<AppliedTransform<P>>
 
     public val clickPreprocessors: Collection<ClickHandler>
+
+    public val itemPostProcessor: ((ItemStack) -> Unit)?
 
     public fun totalRows(): Int = rows
 
