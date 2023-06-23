@@ -14,6 +14,7 @@ public class CombinedInterfaceBuilder :
         initialTitle,
         closeHandlers,
         transforms,
-        clickPreprocessors
+        clickPreprocessors,
+        itemPostProcessor
     )
 }

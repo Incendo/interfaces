@@ -8,6 +8,7 @@ public class PlayerInterfaceBuilder :
     public override fun build(): PlayerInterface = PlayerInterface(
         closeHandlers,
         transforms,
-        clickPreprocessors
+        clickPreprocessors,
+        itemPostProcessor
     )
 }
