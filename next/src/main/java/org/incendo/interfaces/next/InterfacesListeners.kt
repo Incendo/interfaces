@@ -14,6 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryCloseEvent.Reason
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.InventoryHolder
 import org.bukkit.plugin.Plugin
 import org.incendo.interfaces.next.Constants.SCOPE
@@ -28,11 +29,18 @@ import org.incendo.interfaces.next.view.PlayerInterfaceView
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-public class InterfacesListeners : Listener {
+public class InterfacesListeners private constructor() : Listener {
 
     public companion object {
+        /** The current instance for interface listeners class. */
+        public lateinit var INSTANCE: InterfacesListeners
+            private set
+
+        /** Installs interfaces into this plugin. */
         public fun install(plugin: Plugin) {
-            Bukkit.getPluginManager().registerEvents(InterfacesListeners(), plugin)
+            require(!::INSTANCE.isInitialized) { "Already installed!" }
+            INSTANCE = InterfacesListeners()
+            Bukkit.getPluginManager().registerEvents(INSTANCE, plugin)
         }
 
         private val VALID_REASON = EnumSet.of(
@@ -56,6 +64,11 @@ public class InterfacesListeners : Listener {
         .expireAfterWrite(50L * 3, TimeUnit.MILLISECONDS)
         .build()
 
+    /** A cache of open player interface views, with weak values. */
+    public val openPlayerInterfaceViews: Cache<UUID, PlayerInterfaceView> = Caffeine.newBuilder()
+        .weakValues()
+        .build()
+
     @EventHandler
     public fun onClose(event: InventoryCloseEvent) {
         val holder = event.inventory.holder
@@ -75,7 +88,7 @@ public class InterfacesListeners : Listener {
                 return@launch
             }
 
-            PlayerInterfaceView.OPEN_VIEWS[event.player]?.open()
+            openPlayerInterfaceViews.getIfPresent(event.player.uniqueId)?.open()
         }
     }
 
@@ -87,6 +100,11 @@ public class InterfacesListeners : Listener {
         val clickedPoint = clickedPoint(event) ?: return
 
         handleClick(view, clickedPoint, event.click, event)
+    }
+
+    @EventHandler
+    public fun onPlayerQuit(event: PlayerQuitEvent) {
+        openPlayerInterfaceViews.invalidate(event.player.uniqueId)
     }
 
     private fun clickedPoint(event: InventoryClickEvent): GridPoint? {
@@ -121,7 +139,7 @@ public class InterfacesListeners : Listener {
         }
 
         val player = event.player
-        val view = PlayerInterfaceView.OPEN_VIEWS[player] as? AbstractInterfaceView<*, *> ?: return
+        val view = openPlayerInterfaceViews.getIfPresent(player.uniqueId) as? AbstractInterfaceView<*, *> ?: return
 
         val slot = player.inventory.heldItemSlot
         val clickedPoint = GridPoint.at(3, slot)
@@ -144,7 +162,7 @@ public class InterfacesListeners : Listener {
             return null
         }
 
-        return PlayerInterfaceView.OPEN_VIEWS[holder] as? AbstractInterfaceView<*, *>
+        return openPlayerInterfaceViews.getIfPresent(holder.uniqueId) as? AbstractInterfaceView<*, *>
     }
 
     private fun handleClick(
