@@ -14,6 +14,7 @@ import org.incendo.interfaces.next.transform.AppliedTransform
 import org.incendo.interfaces.next.update.CompleteUpdate
 import org.incendo.interfaces.next.update.TriggerUpdate
 import org.incendo.interfaces.next.utilities.CollapsablePaneMap
+import org.incendo.interfaces.next.utilities.runSync
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
@@ -23,7 +24,7 @@ import kotlin.time.Duration.Companion.seconds
 public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     public val player: Player,
     public val backing: Interface<P>,
-    private val parent: InterfaceView?
+    private val parent: InterfaceView?,
 ) : InterfaceView {
 
     public companion object {
@@ -67,7 +68,10 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
     public override fun close() {
         if (isOpen(player)) {
-            player.closeInventory()
+            // Ensure we always close on the main thread!
+            runSync {
+                player.closeInventory()
+            }
         }
     }
 
@@ -76,8 +80,11 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     }
 
     public override fun back() {
-        close()
-        parent?.open()
+        if (parent == null) {
+            close()
+        } else {
+            parent.open()
+        }
     }
 
     public abstract fun createInventory(): I
