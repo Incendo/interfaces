@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component
 
 public interface InterfaceView {
 
-    public fun open()
+    public suspend fun open()
 
     public fun close()
 
@@ -12,7 +12,7 @@ public interface InterfaceView {
     //            should we keep it?
     public fun parent(): InterfaceView?
 
-    public fun back()
+    public suspend fun back()
 
     public fun title(value: Component)
 }

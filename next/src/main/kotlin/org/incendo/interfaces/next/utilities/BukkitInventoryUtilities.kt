@@ -2,15 +2,10 @@ package org.incendo.interfaces.next.utilities
 
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
-import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
-import org.bukkit.inventory.PlayerInventory
-import org.incendo.interfaces.next.InterfacesListeners
 import org.incendo.interfaces.next.grid.GridPoint
-import org.incendo.interfaces.next.view.AbstractInterfaceView
 import org.incendo.interfaces.next.view.AbstractInterfaceView.Companion.COLUMNS_IN_CHEST
-import org.incendo.interfaces.next.view.InterfaceView
 
 public fun gridPointToBukkitIndex(row: Int, column: Int): Int {
     return row * 9 + column

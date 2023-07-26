@@ -9,7 +9,7 @@ public class CombinedInterfaceBuilder :
     public var rows: Int = 0
     public var initialTitle: Component? = null
 
-    public override fun build(): CombinedInterface = CombinedInterface(
+    override fun build(): CombinedInterface = CombinedInterface(
         rows,
         initialTitle,
         closeHandlers,

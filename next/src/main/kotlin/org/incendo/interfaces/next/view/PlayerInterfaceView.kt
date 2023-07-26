@@ -23,10 +23,19 @@ public class PlayerInterfaceView internal constructor(
         error("PlayerInventoryView's cannot have a title")
     }
 
+    override fun requiresNewInventory(): Boolean = false
+
     override fun createInventory(): PlayerInterfacesInventory = PlayerInterfacesInventory(player)
+
+    override fun drawPaneToInventory() {
+        // NEVER draw to the player's inventory if it's not allowed!
+        if (!opened) return
+        super.drawPaneToInventory()
+    }
 
     override fun openInventory() {
         // Close whatever inventory the player has open so they can look at their normal inventory!
+        // This will only continue if the menu hasn't been closed yet.
         if (!isOpen(player)) {
             runSync {
                 // First we close then we set the interface so we don't double open!
@@ -38,15 +47,16 @@ public class PlayerInterfaceView internal constructor(
     }
 
     override fun close() {
-        if (isOpen(player)) {
-            // Ensure we update the interface state in the main thread!
-            runSync {
-                InterfacesListeners.INSTANCE.setOpenInterface(player.uniqueId, null)
-            }
+        opened = false
+
+        // Ensure we update the interface state in the main thread!
+        // Even if the menu is not currently on the screen.
+        runSync {
+            InterfacesListeners.INSTANCE.setOpenInterface(player.uniqueId, null)
         }
     }
 
     override fun isOpen(player: Player): Boolean =
         player.openInventory.type == InventoryType.CRAFTING &&
-                InterfacesListeners.INSTANCE.getOpenInterface(player.uniqueId) == this
+            InterfacesListeners.INSTANCE.getOpenInterface(player.uniqueId) == this
 }

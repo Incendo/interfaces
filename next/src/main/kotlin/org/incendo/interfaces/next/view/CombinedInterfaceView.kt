@@ -39,13 +39,19 @@ public class CombinedInterfaceView internal constructor(
         }
     }
 
-    override fun requiresPlayerUpdate(): Boolean = !firstPaint && titleState.hasChanged
+    override fun requiresPlayerUpdate(): Boolean = false
 
-    override fun requiresNewInventory(): Boolean = firstPaint || titleState.hasChanged
+    override fun requiresNewInventory(): Boolean = titleState.hasChanged
 
     override fun getInventory(): Inventory = currentInventory.chestInventory
 
     override fun isOpen(player: Player): Boolean {
         return player.openInventory.topInventory.holder == this
+    }
+
+    override fun drawPaneToInventory() {
+        // NEVER draw to the player's inventory if it's not allowed!
+        if (!opened) return
+        super.drawPaneToInventory()
     }
 }

@@ -194,8 +194,7 @@ public class InterfacesListeners private constructor() : Listener {
         click: ClickType,
         event: Cancellable
     ) {
-        val throttle = shouldThrottle(view.player)
-        if (view.isProcessingClick || throttle) {
+        if (view.isProcessingClick || shouldThrottle(view.player)) {
             event.isCancelled = true
             return
         }

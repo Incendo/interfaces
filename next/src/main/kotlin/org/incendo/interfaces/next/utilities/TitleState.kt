@@ -6,6 +6,9 @@ internal class TitleState(initialState: Component?) {
 
     internal var current = initialState
         set(value) {
+            // Don't update if nothing changed
+            if (field == value) return
+
             hasChanged = true
             field = value
         }
