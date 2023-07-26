@@ -44,7 +44,6 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     private val lock = ReentrantLock()
 
     protected var firstPaint: Boolean = true
-    private var currentInventoryShown: Boolean = false
 
     internal var isProcessingClick = false
 
@@ -76,7 +75,10 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         // Store that the menu has been opened
         opened = true
 
-        if (firstPaint) {
+        // If this menu overlaps the player inventory we always
+        // need to do a brand new first paint every time!
+        if (firstPaint || overlapsPlayerInventory()) {
+            firstPaint = true
             setup()
             firstPaint = false
         } else {
@@ -128,7 +130,6 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         }
 
         if ((openIfClosed && !isOpen) || createdNewInventory) {
-            currentInventoryShown = true
             openInventory()
         }
     }
@@ -164,6 +165,9 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     }
 
     protected open fun drawPaneToInventory() {
+        // NEVER draw to the player's inventory if it's not allowed!
+        if (overlapsPlayerInventory() && !opened) return
+
         pane.forEach { row, column, element ->
             currentInventory.set(row, column, element.itemStack.apply { this?.let { backing.itemPostProcessor?.invoke(it) } })
         }
@@ -173,30 +177,26 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
     protected open fun requiresPlayerUpdate(): Boolean = false
 
+    protected open fun overlapsPlayerInventory(): Boolean = false
+
     protected open suspend fun renderToInventory(): Deferred<Boolean> {
         // If a new inventory is required we create one
         // and mark that the current one is not to be used!
-        var createdInventory = false
-        if (!::currentInventory.isInitialized || requiresNewInventory()) {
-            currentInventoryShown = false
-            createdInventory = true
+        val createdInventory = if (firstPaint || requiresNewInventory()) {
             currentInventory = createInventory()
+            true
+        } else {
+            false
         }
 
-        // If this pane is already being shown we draw synchronously!
-        return if (currentInventoryShown) {
-            val deferred = CompletableDeferred<Boolean>()
-            runSync {
-                drawPaneToInventory()
-                deferred.complete(false)
-            }
-            deferred
-        } else {
-            // This only gets used when the inventory hasn't
-            // been shown to the player yet so we can draw
-            // however we want to.
+        // Draw the contents of the inventory synchronously because
+        // we don't want it to happen in between ticks and show
+        // a half-finished inventory.
+        val deferred = CompletableDeferred<Boolean>()
+        runSync {
             drawPaneToInventory()
-            CompletableDeferred(createdInventory)
+            deferred.complete(createdInventory)
         }
+        return deferred
     }
 }
