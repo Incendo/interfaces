@@ -9,6 +9,7 @@ import kotlinx.coroutines.withTimeout
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.incendo.interfaces.next.Constants.SCOPE
+import org.incendo.interfaces.next.event.DrawPaneEvent
 import org.incendo.interfaces.next.interfaces.Interface
 import org.incendo.interfaces.next.inventory.InterfacesInventory
 import org.incendo.interfaces.next.pane.CompletedPane
@@ -186,6 +187,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         pane.forEach { row, column, element ->
             currentInventory.set(row, column, element.itemStack.apply { this?.let { backing.itemPostProcessor?.invoke(it) } })
         }
+        Bukkit.getPluginManager().callEvent(DrawPaneEvent(player))
     }
 
     protected open fun requiresNewInventory(): Boolean = firstPaint
