@@ -7,6 +7,7 @@ import org.incendo.interfaces.next.InterfacesListeners
 import org.incendo.interfaces.next.interfaces.PlayerInterface
 import org.incendo.interfaces.next.inventory.PlayerInterfacesInventory
 import org.incendo.interfaces.next.pane.PlayerPane
+import org.incendo.interfaces.next.utilities.runSync
 
 public class PlayerInterfaceView internal constructor(
     player: Player,
@@ -18,10 +19,6 @@ public class PlayerInterfaceView internal constructor(
     null,
 ) {
 
-    init {
-        InterfacesListeners.INSTANCE.openPlayerInterfaceViews.put(player.uniqueId, this)
-    }
-
     override fun title(value: Component) {
         error("PlayerInventoryView's cannot have a title")
     }
@@ -29,10 +26,27 @@ public class PlayerInterfaceView internal constructor(
     override fun createInventory(): PlayerInterfacesInventory = PlayerInterfacesInventory(player)
 
     override fun openInventory() {
-        // stub: do we want the open inventory method to be abstract?
+        // Close whatever inventory the player has open so they can look at their normal inventory!
+        if (!isOpen(player)) {
+            runSync {
+                // First we close then we set the interface so we don't double open!
+                InterfacesListeners.INSTANCE.setOpenInterface(player.uniqueId, null)
+                player.closeInventory()
+                InterfacesListeners.INSTANCE.setOpenInterface(player.uniqueId, this)
+            }
+        }
     }
 
-    override fun isOpen(player: Player): Boolean {
-        return player.openInventory.type == InventoryType.CRAFTING
+    override fun close() {
+        if (isOpen(player)) {
+            // Ensure we update the interface state in the main thread!
+            runSync {
+                InterfacesListeners.INSTANCE.setOpenInterface(player.uniqueId, null)
+            }
+        }
     }
+
+    override fun isOpen(player: Player): Boolean =
+        player.openInventory.type == InventoryType.CRAFTING &&
+                InterfacesListeners.INSTANCE.getOpenInterface(player.uniqueId) == this
 }

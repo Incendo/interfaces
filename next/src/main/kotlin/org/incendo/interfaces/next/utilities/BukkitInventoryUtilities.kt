@@ -37,18 +37,3 @@ public fun createBukkitInventory(
 
     return Bukkit.createInventory(holder, rows * COLUMNS_IN_CHEST, title)
 }
-
-public fun currentOpenInterface(player: Player): InterfaceView? {
-    val topInventory = player.openInventory.topInventory
-    val inventoryHolder = topInventory.holder
-
-    if (inventoryHolder is AbstractInterfaceView<*, *>) {
-        return inventoryHolder
-    }
-
-    if (topInventory is PlayerInventory) {
-        return InterfacesListeners.INSTANCE.openPlayerInterfaceViews.getIfPresent(player.uniqueId)
-    }
-
-    return null
-}

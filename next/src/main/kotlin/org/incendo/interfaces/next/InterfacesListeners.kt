@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryCloseEvent.Reason
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.InventoryHolder
 import org.bukkit.plugin.Plugin
 import org.incendo.interfaces.next.Constants.SCOPE
@@ -60,14 +61,27 @@ public class InterfacesListeners private constructor() : Listener {
         private const val OUTSIDE_CHEST_INDEX = -999
     }
 
-    private val spamPrevention: Cache<UUID, Long> = Caffeine.newBuilder()
-        .expireAfterWrite(50L * 3, TimeUnit.MILLISECONDS)
+    private val spamPrevention: Cache<UUID, Unit> = Caffeine.newBuilder()
+        .expireAfterWrite(150.toLong(), TimeUnit.MILLISECONDS)
         .build()
 
     /** A cache of open player interface views, with weak values. */
-    public val openPlayerInterfaceViews: Cache<UUID, PlayerInterfaceView> = Caffeine.newBuilder()
+    private val openPlayerInterfaceViews: Cache<UUID, PlayerInterfaceView> = Caffeine.newBuilder()
         .weakValues()
         .build()
+
+    /** Returns the currently open interface for [playerId]. */
+    public fun getOpenInterface(playerId: UUID): PlayerInterfaceView? =
+        openPlayerInterfaceViews.getIfPresent(playerId)
+
+    /** Updates the currently open interface for [playerId] to [view]. */
+    public fun setOpenInterface(playerId: UUID, view: PlayerInterfaceView?) {
+        if (view == null) {
+            openPlayerInterfaceViews.invalidate(playerId)
+        } else {
+            openPlayerInterfaceViews.put(playerId, view)
+        }
+    }
 
     @EventHandler
     public fun onClose(event: InventoryCloseEvent) {
@@ -88,7 +102,7 @@ public class InterfacesListeners private constructor() : Listener {
                 return@launch
             }
 
-            openPlayerInterfaceViews.getIfPresent(event.player.uniqueId)?.open()
+            getOpenInterface(event.player.uniqueId)?.open()
         }
     }
 
@@ -104,7 +118,7 @@ public class InterfacesListeners private constructor() : Listener {
 
     @EventHandler
     public fun onPlayerQuit(event: PlayerQuitEvent) {
-        openPlayerInterfaceViews.invalidate(event.player.uniqueId)
+        setOpenInterface(event.player.uniqueId, null)
     }
 
     private fun clickedPoint(event: InventoryClickEvent): GridPoint? {
@@ -137,9 +151,12 @@ public class InterfacesListeners private constructor() : Listener {
         if (event.action !in VALID_INTERACT) {
             return
         }
+        if (event.hand != EquipmentSlot.HAND) {
+            return
+        }
 
         val player = event.player
-        val view = openPlayerInterfaceViews.getIfPresent(player.uniqueId) as? AbstractInterfaceView<*, *> ?: return
+        val view = getOpenInterface(player.uniqueId) as? AbstractInterfaceView<*, *> ?: return
 
         val slot = player.inventory.heldItemSlot
         val clickedPoint = GridPoint.at(3, slot)
@@ -149,20 +166,26 @@ public class InterfacesListeners private constructor() : Listener {
         handleClick(view, clickedPoint, click, event)
     }
 
-    private fun convertHolderToInterfaceView(holder: InventoryHolder?): AbstractInterfaceView<*, *>? {
+    /**
+     * Converts an inventory holder to an [AbstractInterfaceView] if possible. If the holder is a player
+     * their currently open player interface is returned.
+     */
+    public fun convertHolderToInterfaceView(holder: InventoryHolder?): AbstractInterfaceView<*, *>? {
         if (holder == null) {
             return null
         }
 
+        // If it's an abstract view use that one
         if (holder is AbstractInterfaceView<*, *>) {
             return holder
         }
 
-        if (holder !is Player) {
-            return null
+        // If it's the player's own inventory use the held one
+        if (holder is Player) {
+            return getOpenInterface(holder.uniqueId)
         }
 
-        return openPlayerInterfaceViews.getIfPresent(holder.uniqueId) as? AbstractInterfaceView<*, *>
+        return null
     }
 
     private fun handleClick(
@@ -171,7 +194,8 @@ public class InterfacesListeners private constructor() : Listener {
         click: ClickType,
         event: Cancellable
     ) {
-        if (view.isProcessingClick || shouldThrottle(view.player)) {
+        val throttle = shouldThrottle(view.player)
+        if (view.isProcessingClick || throttle) {
             event.isCancelled = true
             return
         }
@@ -217,13 +241,11 @@ public class InterfacesListeners private constructor() : Listener {
         return ClickType.UNKNOWN
     }
 
-    private fun shouldThrottle(player: Player): Boolean {
-        if (spamPrevention.getIfPresent(player.uniqueId) != null) {
-            return true
+    private fun shouldThrottle(player: Player): Boolean =
+        if (spamPrevention.getIfPresent(player.uniqueId) == null) {
+            spamPrevention.put(player.uniqueId, Unit)
+            false
         } else {
-            spamPrevention.put(player.uniqueId, System.currentTimeMillis())
+            true
         }
-
-        return false
-    }
 }
