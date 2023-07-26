@@ -4,6 +4,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.withTimeout
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -19,8 +20,7 @@ import org.incendo.interfaces.next.update.TriggerUpdate
 import org.incendo.interfaces.next.utilities.CollapsablePaneMap
 import org.incendo.interfaces.next.utilities.runSync
 import org.slf4j.LoggerFactory
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.locks.ReentrantLock
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.Exception
 import kotlin.time.Duration.Companion.seconds
 
@@ -41,7 +41,8 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     protected var opened: Boolean = false
 
     private val logger = LoggerFactory.getLogger(AbstractInterfaceView::class.java)
-    private val lock = ReentrantLock()
+    private val semaphore = Semaphore(1)
+    private val queue = AtomicInteger(0)
 
     protected var firstPaint: Boolean = true
 
@@ -114,23 +115,36 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
     public abstract fun isOpen(player: Player): Boolean
 
-    internal suspend fun renderAndOpen(openIfClosed: Boolean) = lock.withLock(6, TimeUnit.SECONDS) {
-        val isOpen = isOpen(player)
+    internal suspend fun renderAndOpen(openIfClosed: Boolean) {
+        // If there is already queue of 2 renders we don't bother!
+        if (queue.get() >= 2) return
 
-        if (!openIfClosed && !isOpen) {
-            return@withLock
-        }
+        // Await to acquire a semaphore before starting the render
+        queue.incrementAndGet()
+        semaphore.acquire()
+        try {
+            withTimeout(6.seconds) {
+                val isOpen = isOpen(player)
 
-        pane = panes.collapse()
-        val createdNewInventory = renderToInventory().await()
+                if (!openIfClosed && !isOpen) {
+                    return@withTimeout
+                }
 
-        // send an update packet if necessary
-        if (!createdNewInventory && requiresPlayerUpdate()) {
-            player.updateInventory()
-        }
+                pane = panes.collapse()
+                val createdNewInventory = renderToInventory().await()
 
-        if ((openIfClosed && !isOpen) || createdNewInventory) {
-            openInventory()
+                // send an update packet if necessary
+                if (!createdNewInventory && requiresPlayerUpdate()) {
+                    player.updateInventory()
+                }
+
+                if ((openIfClosed && !isOpen) || createdNewInventory) {
+                    openInventory()
+                }
+            }
+        } finally {
+            semaphore.release()
+            queue.decrementAndGet()
         }
     }
 
@@ -159,9 +173,10 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         transform(pane, this@AbstractInterfaceView)
         val completedPane = pane.complete(player)
 
-        lock.withLock(6, TimeUnit.SECONDS) {
-            panes[transform.priority] = completedPane
-        }
+        // Access to the pane has to be shared through a semaphore
+        semaphore.acquire()
+        panes[transform.priority] = completedPane
+        semaphore.release()
     }
 
     protected open fun drawPaneToInventory() {
