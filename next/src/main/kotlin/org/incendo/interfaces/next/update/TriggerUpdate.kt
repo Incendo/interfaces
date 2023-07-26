@@ -5,7 +5,7 @@ import org.incendo.interfaces.next.properties.Trigger
 import org.incendo.interfaces.next.view.AbstractInterfaceView
 
 public class TriggerUpdate(
-    private val trigger: Trigger
+    private val trigger: Trigger,
 ) : Update {
     override fun <P : Pane> apply(target: AbstractInterfaceView<*, P>) {
         val filteredTransforms = target.backing.transforms

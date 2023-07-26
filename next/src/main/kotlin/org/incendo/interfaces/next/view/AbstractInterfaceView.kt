@@ -50,8 +50,8 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         backing.transforms
             .flatMap(AppliedTransform<P>::triggers)
             .forEach { trigger ->
-                trigger.addListener {
-                    TriggerUpdate(trigger).apply(this@AbstractInterfaceView)
+                trigger.addListener(this) {
+                    TriggerUpdate(trigger).apply(this@addListener)
                 }
             }
     }

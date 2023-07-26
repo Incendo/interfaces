@@ -45,6 +45,5 @@ public interface InterfaceProperty<T> {
      *
      * @param consumer the consumer
      */
-    void addListener(@NonNull BiConsumer<T, T> consumer);
-
+    <O> void addListener(O reference, @NonNull TriConsumer<O, T, T> consumer);
 }

@@ -29,7 +29,7 @@ public fun forEachInGrid(rows: Int, columns: Int, function: (row: Int, column: I
 public fun createBukkitInventory(
     holder: InventoryHolder,
     rows: Int,
-    title: Component?
+    title: Component?,
 ): Inventory {
     if (title == null) {
         return Bukkit.createInventory(holder, rows * COLUMNS_IN_CHEST)

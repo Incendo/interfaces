@@ -16,7 +16,7 @@ public class ChestInterface internal constructor(
     override val closeHandlers: MutableMap<InventoryCloseEvent.Reason, CloseHandler>,
     override val transforms: Collection<AppliedTransform<ChestPane>>,
     override val clickPreprocessors: Collection<ClickHandler>,
-    override val itemPostProcessor: ((ItemStack) -> Unit)?
+    override val itemPostProcessor: ((ItemStack) -> Unit)?,
 ) : Interface<ChestPane>, TitledInterface {
 
     public companion object {

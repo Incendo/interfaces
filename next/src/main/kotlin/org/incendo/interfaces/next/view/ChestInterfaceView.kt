@@ -13,11 +13,11 @@ import org.incendo.interfaces.next.utilities.runSync
 public class ChestInterfaceView internal constructor(
     player: Player,
     backing: ChestInterface,
-    parent: InterfaceView?
+    parent: InterfaceView?,
 ) : AbstractInterfaceView<ChestInterfacesInventory, ChestPane>(
     player,
     backing,
-    parent
+    parent,
 ),
     InventoryHolder {
     private val titleState = TitleState(backing.initialTitle)
@@ -29,7 +29,7 @@ public class ChestInterfaceView internal constructor(
     override fun createInventory(): ChestInterfacesInventory = ChestInterfacesInventory(
         this,
         titleState.current,
-        backing.rows
+        backing.rows,
     )
 
     override fun openInventory() {

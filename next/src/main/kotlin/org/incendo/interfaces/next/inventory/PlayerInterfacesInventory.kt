@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack
 import org.incendo.interfaces.next.utilities.gridPointToBukkitIndex
 
 public class PlayerInterfacesInventory(
-    private val player: Player
+    private val player: Player,
 ) : CachedInterfacesInventory() {
 
     private val playerInventory = player.inventory

@@ -10,12 +10,12 @@ import org.incendo.interfaces.next.pane.PlayerPane
 
 public class PlayerInterfaceView internal constructor(
     player: Player,
-    backing: PlayerInterface
+    backing: PlayerInterface,
 ) : AbstractInterfaceView<PlayerInterfacesInventory, PlayerPane>(
     player,
     backing,
     // todo(josh): should player interface views hold a parent?
-    null
+    null,
 ) {
 
     init {

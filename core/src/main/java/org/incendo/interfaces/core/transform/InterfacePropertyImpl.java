@@ -1,15 +1,19 @@
 package org.incendo.interfaces.core.transform;
 
+import kotlin.Pair;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiConsumer;
 
 class InterfacePropertyImpl<T> implements InterfaceProperty<T> {
 
-    private final Collection<BiConsumer<T, T>> updateListeners = new CopyOnWriteArrayList<>();
+    private final Collection<Pair<WeakReference<Object>, TriConsumer<Object, T, T>>> updateListeners =
+            ConcurrentHashMap.newKeySet();
     private T value;
 
     InterfacePropertyImpl(final T value) {
@@ -26,16 +30,28 @@ class InterfacePropertyImpl<T> implements InterfaceProperty<T> {
         T oldValue = this.value;
         this.value = value;
 
-        for (final BiConsumer<T, T> consumer : this.updateListeners) {
-            consumer.accept(oldValue, this.value);
+        var iterator = updateListeners.iterator();
+        while (iterator.hasNext()) {
+            // Check if the reference has been garbage collected or not
+            final Pair<WeakReference<Object>, TriConsumer<Object, T, T>> pair = iterator.next();
+            var object = pair.getFirst().get();
+            if (object == null) {
+                iterator.remove();
+                continue;
+            }
+            pair.getSecond().accept(object, oldValue, this.value);
         }
     }
 
     @Override
-    public void addListener(
-            final @NonNull BiConsumer<T, T> consumer
-    ) {
-        this.updateListeners.add(consumer);
+    public <O> void addListener(final O reference, @NonNull final TriConsumer<O, T, T> consumer) {
+        this.updateListeners.removeIf(f -> f.getFirst().get() == null);
+        this.updateListeners.add(
+                new Pair<>(
+                        new WeakReference<>(reference),
+                        (TriConsumer<Object, T, T>) consumer
+                )
+        );
     }
 
     @Override

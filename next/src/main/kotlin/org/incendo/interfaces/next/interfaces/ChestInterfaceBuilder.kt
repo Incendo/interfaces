@@ -15,6 +15,6 @@ public class ChestInterfaceBuilder :
         closeHandlers,
         transforms,
         clickPreprocessors,
-        itemPostProcessor
+        itemPostProcessor,
     )
 }

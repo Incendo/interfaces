@@ -15,7 +15,7 @@ internal open class CompletedPane : GridMap<CompletedElement> by HashGridMap() {
 }
 
 internal class CompletedOrderedPane(
-    private val ordering: List<Int>
+    private val ordering: List<Int>,
 ) : CompletedPane() {
     override fun getRaw(vector: GridPoint): CompletedElement? {
         return get(ordering[vector.x], vector.y)

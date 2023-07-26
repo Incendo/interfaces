@@ -24,9 +24,6 @@ public final class DummyInterfaceProperty implements InterfaceProperty<Object> {
     }
 
     @Override
-    public void addListener(
-            final @NonNull BiConsumer<Object, Object> consumer
-    ) {
+    public <O> void addListener(final O reference, @NonNull final TriConsumer<O, Object, Object> consumer) {
     }
-
 }
