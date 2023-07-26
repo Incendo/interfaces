@@ -1,31 +1,11 @@
 package org.incendo.interfaces.next.properties
 
-import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.properties.ObservableProperty
 import kotlin.reflect.KProperty
 
 public class InterfaceProperty<T>(
-    defaultValue: T
-) : ObservableProperty<T>(defaultValue), Trigger {
-
-    private val listeners: MutableList<(T) -> Unit> = CopyOnWriteArrayList()
-
-    public constructor(defaultValue: T, defaultListener: (T) -> Unit) : this(defaultValue) {
-        listeners += defaultListener
-    }
-
-    public fun addListener(listener: (T) -> Unit) {
-        listeners += listener
-    }
+    defaultValue: T,
+) : ObservableProperty<T>(defaultValue), Trigger by DelegateTrigger() {
 
     override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T): Unit = trigger()
-
-    override fun trigger() {
-        val value by this
-        listeners.forEach { listener -> listener.invoke(value) }
-    }
-
-    override fun addListener(listener: () -> Unit) {
-        listeners += { listener.invoke() }
-    }
 }

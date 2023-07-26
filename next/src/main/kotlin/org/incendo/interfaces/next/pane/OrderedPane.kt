@@ -3,7 +3,7 @@ package org.incendo.interfaces.next.pane
 import org.incendo.interfaces.next.element.Element
 
 public abstract class OrderedPane(
-    internal val ordering: List<Int>
+    internal val ordering: List<Int>,
 ) : Pane() {
 
     override fun get(row: Int, column: Int): Element? {

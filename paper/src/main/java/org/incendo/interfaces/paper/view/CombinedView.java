@@ -132,7 +132,7 @@ public final class CombinedView implements
             // we add update listeners to all the dependent properties
             if (firstApply) {
                 for (final InterfaceProperty<?> property : transform.properties()) {
-                    property.addListener((oldValue, newValue) -> this.updateByProperty(property));
+                    property.addListener(this, (reference, oldValue, newValue) -> reference.updateByProperty(property));
                 }
             }
 

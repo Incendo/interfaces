@@ -124,7 +124,7 @@ public final class PlayerInventoryView implements
             // we add update listeners to all the dependent properties
             if (firstApply) {
                 for (final InterfaceProperty<?> property : transform.properties()) {
-                    property.addListener((oldValue, newValue) -> this.update());
+                    property.addListener(this, (reference, oldValue, newValue) -> reference.update());
                 }
             }
         }

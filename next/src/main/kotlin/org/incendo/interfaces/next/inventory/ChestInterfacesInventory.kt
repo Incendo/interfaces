@@ -10,7 +10,7 @@ import org.incendo.interfaces.next.utilities.gridPointToBukkitIndex
 public class ChestInterfacesInventory(
     holder: InventoryHolder,
     title: Component?,
-    rows: Int
+    rows: Int,
 ) : CachedInterfacesInventory() {
 
     public val chestInventory: Inventory = createBukkitInventory(holder, rows, title)

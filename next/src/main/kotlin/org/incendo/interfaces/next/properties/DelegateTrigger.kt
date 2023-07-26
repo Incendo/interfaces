@@ -1,14 +1,27 @@
 package org.incendo.interfaces.next.properties
 
-public class DelegateTrigger : Trigger {
+import java.lang.ref.WeakReference
+import java.util.concurrent.ConcurrentHashMap
 
-    private val listeners = mutableListOf<() -> Unit>()
+public open class DelegateTrigger : Trigger {
+
+    private val updateListeners = ConcurrentHashMap.newKeySet<Pair<WeakReference<Any>, Any.() -> Unit>>()
 
     override fun trigger() {
-        listeners.forEach { it() }
+        val iterator = updateListeners.iterator()
+        while (iterator.hasNext()) {
+            val (reference, consumer) = iterator.next()
+            val obj = reference.get()
+            if (obj == null) {
+                iterator.remove()
+                continue
+            }
+            obj.apply(consumer)
+        }
     }
 
-    override fun addListener(listener: () -> Unit) {
-        listeners += listener
+    override fun <T : Any> addListener(reference: T, listener: T.() -> Unit) {
+        updateListeners.removeIf { it.first.get() == null }
+        updateListeners.add(WeakReference(reference) as WeakReference<Any> to listener as (Any.() -> Unit))
     }
 }

@@ -9,7 +9,7 @@ import kotlin.reflect.KProperty
 public class BoundInteger(
     initial: Int,
     public var min: Int,
-    public var max: Int
+    public var max: Int,
 ) : ObservableProperty<Int>(initial), Trigger {
 
     private val delegateTrigger = DelegateTrigger()
@@ -35,8 +35,8 @@ public class BoundInteger(
         delegateTrigger.trigger()
     }
 
-    override fun addListener(listener: () -> Unit) {
-        delegateTrigger.addListener(listener)
+    override fun <T : Any> addListener(reference: T, listener: T.() -> Unit) {
+        delegateTrigger.addListener(reference, listener)
     }
 
     public fun hasSucceeding(): Boolean {
