@@ -5,5 +5,5 @@ import org.incendo.interfaces.next.view.AbstractInterfaceView
 
 public sealed interface Update {
 
-    public fun <P : Pane> apply(target: AbstractInterfaceView<*, P>)
+    public suspend fun <P : Pane> apply(target: AbstractInterfaceView<*, P>)
 }

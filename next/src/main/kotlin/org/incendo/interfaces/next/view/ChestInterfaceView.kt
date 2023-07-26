@@ -38,9 +38,9 @@ public class ChestInterfaceView internal constructor(
         }
     }
 
-    override fun requiresPlayerUpdate(): Boolean = !firstPaint && titleState.hasChanged
+    override fun requiresPlayerUpdate(): Boolean = false
 
-    override fun requiresNewInventory(): Boolean = firstPaint || titleState.hasChanged
+    override fun requiresNewInventory(): Boolean = titleState.hasChanged
 
     override fun getInventory(): Inventory = currentInventory.chestInventory
 

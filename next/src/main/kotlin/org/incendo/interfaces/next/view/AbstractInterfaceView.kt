@@ -1,5 +1,8 @@
 package org.incendo.interfaces.next.view
 
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import org.bukkit.Bukkit
@@ -31,12 +34,18 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         public const val COLUMNS_IN_CHEST: Int = 9
     }
 
+    /**
+     * An override boolean that stores whether this menu is currently open or closed. If closed it can
+     * absolutely not make any edits whatsoever!
+     */
+    protected var opened: Boolean = false
+
     private val logger = LoggerFactory.getLogger(AbstractInterfaceView::class.java)
     private val lock = ReentrantLock()
 
     protected var firstPaint: Boolean = true
+    private var currentInventoryShown: Boolean = false
 
-    // todo(josh): reduce internal abuse?
     internal var isProcessingClick = false
 
     private val panes = CollapsablePaneMap.create(backing.totalRows(), backing.createPane())
@@ -44,29 +53,39 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
     protected lateinit var currentInventory: I
 
-    private fun setup() {
-        CompleteUpdate.apply(this)
-
+    private suspend fun setup() {
         backing.transforms
             .flatMap(AppliedTransform<P>::triggers)
             .forEach { trigger ->
                 trigger.addListener(this) {
-                    TriggerUpdate(trigger).apply(this@addListener)
+                    // Handle all trigger updates asynchronously
+                    SCOPE.launch {
+                        // If the first paint has not completed we do not perform any updates
+                        if (firstPaint) return@launch
+                        TriggerUpdate(trigger).apply(this@addListener)
+                    }
                 }
             }
+
+        // Run a complete update which draws all transforms
+        // and then opens the menu again
+        CompleteUpdate.apply(this)
     }
 
-    public override fun open() {
-        renderAndOpen(forceOpen = true)
+    override suspend fun open() {
+        // Store that the menu has been opened
+        opened = true
 
         if (firstPaint) {
             setup()
+            firstPaint = false
+        } else {
+            renderAndOpen(openIfClosed = true)
         }
-
-        firstPaint = false
     }
 
-    public override fun close() {
+    override fun close() {
+        opened = false
         if (isOpen(player)) {
             // Ensure we always close on the main thread!
             runSync {
@@ -75,11 +94,11 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         }
     }
 
-    public override fun parent(): InterfaceView? {
+    override fun parent(): InterfaceView? {
         return parent
     }
 
-    public override fun back() {
+    override suspend fun back() {
         if (parent == null) {
             close()
         } else {
@@ -93,38 +112,43 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
     public abstract fun isOpen(player: Player): Boolean
 
-    private fun renderAndOpen(forceOpen: Boolean) = lock.withLock(6, TimeUnit.SECONDS) {
+    internal suspend fun renderAndOpen(openIfClosed: Boolean) = lock.withLock(6, TimeUnit.SECONDS) {
         val isOpen = isOpen(player)
 
-        if (!forceOpen && !isOpen) {
+        if (!openIfClosed && !isOpen) {
             return@withLock
         }
 
         pane = panes.collapse()
-        val requiresNewInventory = renderToInventory()
+        val createdNewInventory = renderToInventory().await()
 
-        if (forceOpen || requiresNewInventory) {
+        // send an update packet if necessary
+        if (!createdNewInventory && requiresPlayerUpdate()) {
+            player.updateInventory()
+        }
+
+        if ((openIfClosed && !isOpen) || createdNewInventory) {
+            currentInventoryShown = true
             openInventory()
         }
     }
 
-    internal fun applyTransforms(transforms: Collection<AppliedTransform<P>>) {
+    internal fun applyTransforms(transforms: Collection<AppliedTransform<P>>): List<Deferred<Unit>> {
         if (Bukkit.isStopping()) {
-            return
+            return listOf()
         }
 
-        transforms.forEach { transform ->
-            SCOPE.launch {
+        return transforms.map { transform ->
+            SCOPE.async {
                 try {
                     withTimeout(6.seconds) {
                         runTransformAndApplyToPanes(transform)
                     }
                 } catch (exception: Exception) {
                     logger.error("Failed to run and apply transform: $transform", exception)
-                    return@launch
+                    return@async
                 }
-
-                renderAndOpen(forceOpen = false)
+                return@async
             }
         }
     }
@@ -139,9 +163,8 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         }
     }
 
-    private fun drawPaneToInventory() {
+    protected open fun drawPaneToInventory() {
         pane.forEach { row, column, element ->
-
             currentInventory.set(row, column, element.itemStack.apply { this?.let { backing.itemPostProcessor?.invoke(it) } })
         }
     }
@@ -150,19 +173,30 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
     protected open fun requiresPlayerUpdate(): Boolean = false
 
-    protected open fun renderToInventory(): Boolean {
-        val requiresNewInventory = requiresNewInventory()
-
-        if (requiresNewInventory) {
+    protected open suspend fun renderToInventory(): Deferred<Boolean> {
+        // If a new inventory is required we create one
+        // and mark that the current one is not to be used!
+        var createdInventory = false
+        if (!::currentInventory.isInitialized || requiresNewInventory()) {
+            currentInventoryShown = false
+            createdInventory = true
             currentInventory = createInventory()
         }
 
-        drawPaneToInventory()
-
-        if (requiresPlayerUpdate()) {
-            player.updateInventory()
+        // If this pane is already being shown we draw synchronously!
+        return if (currentInventoryShown) {
+            val deferred = CompletableDeferred<Boolean>()
+            runSync {
+                drawPaneToInventory()
+                deferred.complete(false)
+            }
+            deferred
+        } else {
+            // This only gets used when the inventory hasn't
+            // been shown to the player yet so we can draw
+            // however we want to.
+            drawPaneToInventory()
+            CompletableDeferred(createdInventory)
         }
-
-        return requiresNewInventory
     }
 }

@@ -9,7 +9,7 @@ public class ChestInterfaceBuilder :
     public var rows: Int = 0
     public var initialTitle: Component? = null
 
-    public override fun build(): ChestInterface = ChestInterface(
+    override fun build(): ChestInterface = ChestInterface(
         rows,
         initialTitle,
         closeHandlers,
