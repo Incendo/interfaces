@@ -6,7 +6,6 @@ import org.bukkit.inventory.ItemStack
 import org.incendo.interfaces.next.click.ClickHandler
 import org.incendo.interfaces.next.pane.Pane
 import org.incendo.interfaces.next.transform.AppliedTransform
-import org.incendo.interfaces.next.utilities.currentOpenInterface
 import org.incendo.interfaces.next.view.InterfaceView
 
 public interface Interface<P : Pane> {
@@ -29,8 +28,8 @@ public interface Interface<P : Pane> {
      * Opens an [InterfaceView] from this [Interface].
      *
      * @param player the player to show the view
-     * @param parent the parent view that is opening the interface, if null the view will be calculated by interfaces
+     * @param parent the parent view that is opening the interface
      * @return the view
      */
-    public suspend fun open(player: Player, parent: InterfaceView? = currentOpenInterface(player)): InterfaceView
+    public suspend fun open(player: Player, parent: InterfaceView?): InterfaceView
 }
