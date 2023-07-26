@@ -43,15 +43,11 @@ public class CombinedInterfaceView internal constructor(
 
     override fun requiresNewInventory(): Boolean = titleState.hasChanged
 
+    override fun overlapsPlayerInventory(): Boolean = true
+
     override fun getInventory(): Inventory = currentInventory.chestInventory
 
     override fun isOpen(player: Player): Boolean {
         return player.openInventory.topInventory.holder == this
-    }
-
-    override fun drawPaneToInventory() {
-        // NEVER draw to the player's inventory if it's not allowed!
-        if (!opened) return
-        super.drawPaneToInventory()
     }
 }

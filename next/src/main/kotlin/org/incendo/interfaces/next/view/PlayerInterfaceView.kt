@@ -23,15 +23,11 @@ public class PlayerInterfaceView internal constructor(
         error("PlayerInventoryView's cannot have a title")
     }
 
+    override fun overlapsPlayerInventory(): Boolean = true
+
     override fun requiresNewInventory(): Boolean = false
 
     override fun createInventory(): PlayerInterfacesInventory = PlayerInterfacesInventory(player)
-
-    override fun drawPaneToInventory() {
-        // NEVER draw to the player's inventory if it's not allowed!
-        if (!opened) return
-        super.drawPaneToInventory()
-    }
 
     override fun openInventory() {
         // Close whatever inventory the player has open so they can look at their normal inventory!
