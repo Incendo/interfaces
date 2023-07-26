@@ -62,7 +62,7 @@ public class InterfacesListeners private constructor() : Listener {
     }
 
     private val spamPrevention: Cache<UUID, Unit> = Caffeine.newBuilder()
-        .expireAfterWrite(150.toLong(), TimeUnit.MILLISECONDS)
+        .expireAfterWrite(200.toLong(), TimeUnit.MILLISECONDS)
         .build()
 
     /** A cache of open player interface views, with weak values. */
