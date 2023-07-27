@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import kotlinx.coroutines.launch
 import org.bukkit.Bukkit
+import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.EventHandler
@@ -181,7 +182,7 @@ public class InterfacesListeners private constructor() : Listener {
         }
 
         // If it's the player's own inventory use the held one
-        if (holder is Player) {
+        if (holder is HumanEntity) {
             return getOpenInterface(holder.uniqueId)
         }
 
