@@ -5,6 +5,7 @@ import org.incendo.interfaces.next.grid.GridPositionGenerator
 import org.incendo.interfaces.next.pane.Pane
 import org.incendo.interfaces.next.properties.Trigger
 import org.incendo.interfaces.next.view.InterfaceView
+import kotlin.math.ceil
 import kotlin.properties.Delegates
 
 public open class PaginationTransformation<P : Pane>(
@@ -43,6 +44,13 @@ public open class PaginationTransformation<P : Pane>(
     }
 
     private fun maxPages(): Int {
-        return values.size.floorDiv(positionGenerator.generate().size)
+        val amount = values.size
+        val slotsPerPage = positionGenerator.generate().size
+        val rawPages = (amount.toDouble() / slotsPerPage.toDouble())
+
+        // Round up the amount so we find the amount of pages needed
+        // then we do - 1 because we zero-index the pages. Ensure the
+        // value is at least 0 in case rawPages is 0.0.
+        return (ceil(rawPages).toInt() - 1).coerceAtLeast(0)
     }
 }
