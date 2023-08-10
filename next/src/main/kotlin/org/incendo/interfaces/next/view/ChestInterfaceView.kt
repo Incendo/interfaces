@@ -8,7 +8,6 @@ import org.incendo.interfaces.next.interfaces.ChestInterface
 import org.incendo.interfaces.next.inventory.ChestInterfacesInventory
 import org.incendo.interfaces.next.pane.ChestPane
 import org.incendo.interfaces.next.utilities.TitleState
-import org.incendo.interfaces.next.utilities.runSync
 
 public class ChestInterfaceView internal constructor(
     player: Player,
@@ -33,9 +32,7 @@ public class ChestInterfaceView internal constructor(
     )
 
     override fun openInventory() {
-        runSync {
-            player.openInventory(this.inventory)
-        }
+        player.openInventory(this.inventory)
     }
 
     override fun requiresPlayerUpdate(): Boolean = false

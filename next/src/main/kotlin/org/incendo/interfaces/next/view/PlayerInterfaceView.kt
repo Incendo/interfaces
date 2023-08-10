@@ -33,12 +33,10 @@ public class PlayerInterfaceView internal constructor(
         // Close whatever inventory the player has open so they can look at their normal inventory!
         // This will only continue if the menu hasn't been closed yet.
         if (!isOpen(player)) {
-            runSync {
-                // First we close then we set the interface so we don't double open!
-                InterfacesListeners.INSTANCE.setOpenInterface(player.uniqueId, null)
-                player.closeInventory()
-                InterfacesListeners.INSTANCE.setOpenInterface(player.uniqueId, this)
-            }
+            // First we close then we set the interface so we don't double open!
+            InterfacesListeners.INSTANCE.setOpenInterface(player.uniqueId, null)
+            player.closeInventory()
+            InterfacesListeners.INSTANCE.setOpenInterface(player.uniqueId, this)
         }
     }
 
