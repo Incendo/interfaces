@@ -1,6 +1,5 @@
 package org.incendo.interfaces.next.view
 
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -132,15 +131,15 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
                 }
 
                 pane = panes.collapse()
-                val createdNewInventory = renderToInventory().await()
+                renderToInventory { createdNewInventory ->
+                    // send an update packet if necessary
+                    if (!createdNewInventory && requiresPlayerUpdate()) {
+                        player.updateInventory()
+                    }
 
-                // send an update packet if necessary
-                if (!createdNewInventory && requiresPlayerUpdate()) {
-                    player.updateInventory()
-                }
-
-                if ((openIfClosed && !isOpen) || createdNewInventory) {
-                    openInventory()
+                    if ((openIfClosed && !isOpen) || createdNewInventory) {
+                        openInventory()
+                    }
                 }
             }
         } finally {
@@ -196,7 +195,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
     protected open fun overlapsPlayerInventory(): Boolean = false
 
-    protected open suspend fun renderToInventory(): Deferred<Boolean> {
+    protected open suspend fun renderToInventory(callback: (Boolean) -> Unit) {
         // If a new inventory is required we create one
         // and mark that the current one is not to be used!
         val createdInventory = if (firstPaint || requiresNewInventory()) {
@@ -209,11 +208,9 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         // Draw the contents of the inventory synchronously because
         // we don't want it to happen in between ticks and show
         // a half-finished inventory.
-        val deferred = CompletableDeferred<Boolean>()
         runSync {
             drawPaneToInventory()
-            deferred.complete(createdInventory)
+            callback(createdInventory)
         }
-        return deferred
     }
 }

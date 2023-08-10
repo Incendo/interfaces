@@ -8,7 +8,6 @@ import org.incendo.interfaces.next.interfaces.CombinedInterface
 import org.incendo.interfaces.next.inventory.CombinedInterfacesInventory
 import org.incendo.interfaces.next.pane.CombinedPane
 import org.incendo.interfaces.next.utilities.TitleState
-import org.incendo.interfaces.next.utilities.runSync
 
 public class CombinedInterfaceView internal constructor(
     player: Player,
@@ -34,9 +33,7 @@ public class CombinedInterfaceView internal constructor(
     )
 
     override fun openInventory() {
-        runSync {
-            player.openInventory(this.inventory)
-        }
+        player.openInventory(this.inventory)
     }
 
     override fun requiresPlayerUpdate(): Boolean = false
