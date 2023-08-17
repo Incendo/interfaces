@@ -149,13 +149,16 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     }
 
     internal fun applyTransforms(transforms: Collection<AppliedTransform<P>>): List<Deferred<Unit>> {
-        if (Bukkit.isStopping()) {
+        if (Bukkit.isStopping() || !player.isOnline) {
             return listOf()
         }
 
         return transforms.map { transform ->
             SCOPE.async {
                 try {
+                    // Don't run transforms for an offline player!
+                    if (Bukkit.isStopping() || !player.isOnline) return@async
+
                     withTimeout(6.seconds) {
                         runTransformAndApplyToPanes(transform)
                     }
