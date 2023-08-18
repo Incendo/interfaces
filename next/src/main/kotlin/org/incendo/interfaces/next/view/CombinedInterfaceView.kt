@@ -12,11 +12,11 @@ import org.incendo.interfaces.next.utilities.TitleState
 public class CombinedInterfaceView internal constructor(
     player: Player,
     backing: CombinedInterface,
-    parent: InterfaceView?,
+    parent: InterfaceView?
 ) : AbstractInterfaceView<CombinedInterfacesInventory, CombinedPane>(
     player,
     backing,
-    parent,
+    parent
 ),
     InventoryHolder {
     private val titleState = TitleState(backing.initialTitle)
@@ -29,7 +29,7 @@ public class CombinedInterfaceView internal constructor(
         this,
         player,
         titleState.current,
-        backing.rows,
+        backing.rows
     )
 
     override fun openInventory() {

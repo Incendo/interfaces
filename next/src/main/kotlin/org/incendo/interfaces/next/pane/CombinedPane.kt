@@ -1,7 +1,7 @@
 package org.incendo.interfaces.next.pane
 
 public class CombinedPane(
-    chestRows: Int,
+    chestRows: Int
 ) : OrderedPane(createMappings(chestRows)) {
 
     private companion object {

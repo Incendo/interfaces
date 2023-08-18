@@ -35,7 +35,7 @@ public abstract class AbstractInterfaceBuilder<P : Pane, I : Interface<P>> inter
 
     public fun withCloseHandler(
         reasons: Collection<InventoryCloseEvent.Reason> = DEFAULT_REASONS,
-        closeHandler: CloseHandler,
+        closeHandler: CloseHandler
     ) {
         reasons.forEach {
             closeHandlers[it] = closeHandler

@@ -13,7 +13,7 @@ public open class PaginationTransformation<P : Pane>(
     default: Collection<Element>,
     back: PaginationButton,
     forward: PaginationButton,
-    extraTriggers: Array<Trigger> = emptyArray(),
+    extraTriggers: Array<Trigger> = emptyArray()
 ) : PagedTransformation<P>(back, forward, extraTriggers) {
 
     private val values by Delegates.observable(default.toList()) { _, _, _ ->

@@ -15,8 +15,8 @@ plugins {
     alias(libs.plugins.runPaper) apply false
 
     // Kotlin plugin prefers to be applied to parent when it's used in multiple sub-modules.
-    kotlin("jvm") version "1.7.10" apply false
-    id("com.diffplug.spotless") version "6.12.0"
+    kotlin("jvm") version "1.8.21" apply false
+    id("com.diffplug.spotless") version "6.18.0"
 }
 
 group = "org.incendo.interfaces"
@@ -75,7 +75,7 @@ subprojects {
 
     // Configure any existing RunServerTasks
     tasks.withType<RunServerTask> {
-        minecraftVersion("1.19.3")
+        minecraftVersion("1.19.4")
         jvmArgs("-Dio.papermc.paper.suppress.sout.nags=true")
     }
 }

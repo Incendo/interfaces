@@ -1,6 +1,5 @@
 package org.incendo.interfaces.core.transform;
 
-import kotlin.Pair;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.lang.ref.WeakReference;

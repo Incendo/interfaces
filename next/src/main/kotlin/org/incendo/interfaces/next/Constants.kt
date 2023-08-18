@@ -33,6 +33,6 @@ internal object Constants {
                     }
                     ?.asCoroutineDispatcher()
                     ?: Dispatchers.Default
-            },
+            }
     )
 }

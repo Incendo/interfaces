@@ -14,4 +14,3 @@ public class DrawPaneEvent(player: Player) : PlayerEvent(player) {
 
     override fun getHandlers(): HandlerList = handlerList
 }
-
