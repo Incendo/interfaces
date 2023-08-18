@@ -2,8 +2,6 @@ package org.incendo.interfaces.core.transform;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.function.BiConsumer;
-
 public interface InterfaceProperty<T> {
 
     /**
@@ -43,6 +41,9 @@ public interface InterfaceProperty<T> {
     /**
      * Adds a listener that gets invoked whenever the property is updated
      *
+     * @param <O> the type of the reference
+     * @param reference an object to reference, if this object is garbage collected
+     *                  so is this listener
      * @param consumer the consumer
      */
     <O> void addListener(O reference, @NonNull TriConsumer<O, T, T> consumer);
