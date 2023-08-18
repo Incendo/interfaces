@@ -20,7 +20,6 @@ import org.incendo.interfaces.next.element.StaticElement
 import org.incendo.interfaces.next.interfaces.buildChestInterface
 import org.incendo.interfaces.next.interfaces.buildCombinedInterface
 import org.incendo.interfaces.next.interfaces.buildPlayerInterface
-import org.incendo.interfaces.next.open
 import org.incendo.interfaces.next.properties.interfaceProperty
 import org.incendo.interfaces.next.utilities.forEachInGrid
 
@@ -53,7 +52,7 @@ public class NextPlugin : JavaPlugin(), Listener {
                     val player = it.sender as Player
                     val simpleInterface = simpleInterface()
 
-                    player.open(simpleInterface)
+                    simpleInterface.open(player)
                 }
             }
 
@@ -64,7 +63,7 @@ public class NextPlugin : JavaPlugin(), Listener {
                     val player = it.sender as Player
                     val combinedInterface = combinedInterface()
 
-                    player.open(combinedInterface)
+                    combinedInterface.open(player)
                 }
             }
 
@@ -76,7 +75,7 @@ public class NextPlugin : JavaPlugin(), Listener {
                         val player = it.sender as Player
                         val builtInterface = registrableInterface.create()
 
-                        player.open(builtInterface)
+                        builtInterface.open(player)
                     }
                 }
             }

@@ -27,7 +27,7 @@ import kotlin.time.Duration.Companion.seconds
 public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     public val player: Player,
     public val backing: Interface<P>,
-    private val parent: InterfaceView?,
+    private val parent: InterfaceView?
 ) : InterfaceView {
 
     public companion object {

@@ -9,6 +9,6 @@ public class PlayerInterfaceBuilder :
         closeHandlers,
         transforms,
         clickPreprocessors,
-        itemPostProcessor,
+        itemPostProcessor
     )
 }

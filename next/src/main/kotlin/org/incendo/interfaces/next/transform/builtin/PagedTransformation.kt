@@ -14,7 +14,7 @@ import org.incendo.interfaces.next.view.InterfaceView
 public abstract class PagedTransformation<P : Pane>(
     private val back: PaginationButton,
     private val forward: PaginationButton,
-    extraTriggers: Array<Trigger> = emptyArray(),
+    extraTriggers: Array<Trigger> = emptyArray()
 ) : ReactiveTransform<P> {
 
     protected val boundPage: BoundInteger = BoundInteger(0, 0, Integer.MAX_VALUE)
@@ -46,5 +46,5 @@ public data class PaginationButton(
     public val position: GridPoint,
     public val drawable: Drawable,
     public val increments: Map<ClickType, Int>,
-    public val clickHandler: (Player) -> Unit = {},
+    public val clickHandler: (Player) -> Unit = {}
 )

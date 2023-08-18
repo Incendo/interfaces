@@ -36,6 +36,6 @@ public interface Interface<P : Pane> {
     public suspend fun open(
         player: Player,
         parent: InterfaceView? =
-            InterfacesListeners.INSTANCE.convertHolderToInterfaceView(player.openInventory.topInventory.holder),
+            InterfacesListeners.INSTANCE.convertHolderToInterfaceView(player.openInventory.topInventory.holder)
     ): InterfaceView
 }

@@ -16,7 +16,7 @@ public class CombinedInterface internal constructor(
     override val closeHandlers: MutableMap<InventoryCloseEvent.Reason, CloseHandler>,
     override val transforms: Collection<AppliedTransform<CombinedPane>>,
     override val clickPreprocessors: Collection<ClickHandler>,
-    override val itemPostProcessor: ((ItemStack) -> Unit)?,
+    override val itemPostProcessor: ((ItemStack) -> Unit)?
 ) : Interface<CombinedPane>, TitledInterface {
 
     override fun totalRows(): Int = rows + 4

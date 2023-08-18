@@ -9,7 +9,7 @@ import kotlin.reflect.KProperty
 public class BoundInteger(
     initial: Int,
     public var min: Int,
-    public var max: Int,
+    public var max: Int
 ) : ObservableProperty<Int>(initial), Trigger {
 
     private val delegateTrigger = DelegateTrigger()

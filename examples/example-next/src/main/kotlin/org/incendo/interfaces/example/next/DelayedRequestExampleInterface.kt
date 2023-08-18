@@ -1,6 +1,9 @@
 package org.incendo.interfaces.example.next
 
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component.text
 import org.bukkit.Material
 import org.incendo.interfaces.next.drawable.Drawable
@@ -17,6 +20,7 @@ public class DelayedRequestExampleInterface : RegistrableInterface {
 
     override val subcommand: String = "delayed"
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun create(): Interface<*> = buildCombinedInterface {
         initialTitle = text(subcommand)
         rows = 2
@@ -33,7 +37,11 @@ public class DelayedRequestExampleInterface : RegistrableInterface {
             }
 
             pane[0, 8] = StaticElement(Drawable.drawable(Material.ENDER_PEARL)) {
-                it.view.back()
+                // This is very unsafe, it's up to you to set up a way to reliably
+                // launch coroutines per player in a click handler.
+                GlobalScope.launch {
+                    it.view.back()
+                }
             }
         }
     }
