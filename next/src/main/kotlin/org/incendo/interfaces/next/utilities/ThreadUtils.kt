@@ -10,5 +10,5 @@ internal fun runSync(function: () -> Unit) {
     }
 
     val plugin = (function::class.java.classLoader as PluginClassLoader).plugin
-    Bukkit.getScheduler().callSyncMethod(plugin, function).get()
+    Bukkit.getScheduler().callSyncMethod(plugin!!, function)
 }
