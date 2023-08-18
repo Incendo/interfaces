@@ -6,8 +6,6 @@ import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.BiConsumer;
 
 class InterfacePropertyImpl<T> implements InterfaceProperty<T> {
 
@@ -29,7 +27,7 @@ class InterfacePropertyImpl<T> implements InterfaceProperty<T> {
         T oldValue = this.value;
         this.value = value;
 
-        var iterator = updateListeners.iterator();
+        var iterator = this.updateListeners.iterator();
         while (iterator.hasNext()) {
             // Check if the reference has been garbage collected or not
             final Pair<WeakReference<Object>, TriConsumer<Object, T, T>> pair = iterator.next();

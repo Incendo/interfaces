@@ -1,7 +1,5 @@
 package org.incendo.interfaces.core.transform;
 
-import java.util.function.BiConsumer;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class DummyInterfaceProperty implements InterfaceProperty<Object> {
