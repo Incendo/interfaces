@@ -41,8 +41,6 @@ public class PlayerInterfaceView internal constructor(
     }
 
     override fun close() {
-        opened = false
-
         // Ensure we update the interface state in the main thread!
         // Even if the menu is not currently on the screen.
         runSync {

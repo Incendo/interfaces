@@ -34,12 +34,6 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         public const val COLUMNS_IN_CHEST: Int = 9
     }
 
-    /**
-     * An override boolean that stores whether this menu is currently open or closed. If closed it can
-     * absolutely not make any edits whatsoever!
-     */
-    protected var opened: Boolean = false
-
     private val logger = LoggerFactory.getLogger(AbstractInterfaceView::class.java)
     private val semaphore = Semaphore(1)
     private val queue = AtomicInteger(0)
@@ -73,9 +67,6 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     }
 
     override suspend fun open() {
-        // Store that the menu has been opened
-        opened = true
-
         // If this menu overlaps the player inventory we always
         // need to do a brand new first paint every time!
         if (firstPaint || overlapsPlayerInventory()) {
@@ -88,7 +79,6 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     }
 
     override fun close() {
-        opened = false
         if (isOpen(player)) {
             // Ensure we always close on the main thread!
             runSync {
@@ -105,7 +95,6 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         if (parent == null) {
             close()
         } else {
-            opened = false
             parent.open()
         }
     }
@@ -129,14 +118,10 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         try {
             withTimeout(6.seconds) {
                 pane = panes.collapse()
-                renderToInventory { createdNewInventory ->
+                renderToInventory(openIfClosed) { createdNewInventory ->
                     // send an update packet if necessary
                     if (!createdNewInventory && requiresPlayerUpdate()) {
                         player.updateInventory()
-                    }
-
-                    if ((openIfClosed && !isOpen(player)) || createdNewInventory) {
-                        openInventory()
                     }
                 }
             }
@@ -180,7 +165,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         semaphore.release()
     }
 
-    protected open fun drawPaneToInventory() {
+    protected open fun drawPaneToInventory(opened: Boolean) {
         // NEVER draw to the player's inventory if it's not allowed!
         if (overlapsPlayerInventory() && !opened) return
 
@@ -196,7 +181,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
     protected open fun overlapsPlayerInventory(): Boolean = false
 
-    protected open suspend fun renderToInventory(callback: (Boolean) -> Unit) {
+    protected open suspend fun renderToInventory(openIfClosed: Boolean, callback: (Boolean) -> Unit) {
         // If a new inventory is required we create one
         // and mark that the current one is not to be used!
         val createdInventory = if (firstPaint || requiresNewInventory()) {
@@ -210,8 +195,18 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         // we don't want it to happen in between ticks and show
         // a half-finished inventory.
         runSync {
-            drawPaneToInventory()
+            // Determine if the inventory is currently open or being opened immediately,
+            // otherwise we never draw to player inventories. This ensures lingering
+            // updates on menus that have closed do not affect future menus that actually
+            // ended up being opened.
+            val isOpen = isOpen(player)
+            val openingSoon = (openIfClosed && !isOpen) || createdInventory
+            drawPaneToInventory(openingSoon || isOpen)
             callback(createdInventory)
+
+            if (openingSoon) {
+                openInventory()
+            }
         }
     }
 }
