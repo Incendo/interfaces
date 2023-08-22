@@ -105,6 +105,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         if (parent == null) {
             close()
         } else {
+            opened = false
             parent.open()
         }
     }
@@ -116,6 +117,9 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     public abstract fun isOpen(player: Player): Boolean
 
     internal suspend fun renderAndOpen(openIfClosed: Boolean) {
+        // Don't update if closed
+        if (!openIfClosed && !isOpen(player)) return
+
         // If there is already queue of 2 renders we don't bother!
         if (queue.get() >= 2) return
 
@@ -124,12 +128,6 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         semaphore.acquire()
         try {
             withTimeout(6.seconds) {
-                val isOpen = isOpen(player)
-
-                if (!openIfClosed && !isOpen) {
-                    return@withTimeout
-                }
-
                 pane = panes.collapse()
                 renderToInventory { createdNewInventory ->
                     // send an update packet if necessary
@@ -137,7 +135,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
                         player.updateInventory()
                     }
 
-                    if ((openIfClosed && !isOpen) || createdNewInventory) {
+                    if ((openIfClosed && !isOpen(player)) || createdNewInventory) {
                         openInventory()
                     }
                 }
