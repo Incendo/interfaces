@@ -23,8 +23,6 @@ public class PlayerInterfaceView internal constructor(
         error("PlayerInventoryView's cannot have a title")
     }
 
-    override fun overlapsPlayerInventory(): Boolean = true
-
     override fun requiresNewInventory(): Boolean = false
 
     override fun createInventory(): PlayerInterfacesInventory = PlayerInterfacesInventory(player)

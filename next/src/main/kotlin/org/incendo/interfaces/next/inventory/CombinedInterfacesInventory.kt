@@ -43,4 +43,6 @@ public class CombinedInterfacesInventory(
 
         chestInventory.setItem(bukkitIndex, item)
     }
+
+    override fun isPlayerInventory(row: Int, column: Int): Boolean = row >= rows
 }

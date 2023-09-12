@@ -15,4 +15,6 @@ public interface InterfaceView {
     public suspend fun back()
 
     public fun title(value: Component)
+
+    public fun onOpen()
 }

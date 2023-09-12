@@ -24,4 +24,6 @@ public class ChestInterfacesInventory(
         val index = gridPointToBukkitIndex(row, column)
         chestInventory.setItem(index, item)
     }
+
+    override fun isPlayerInventory(row: Int, column: Int): Boolean = false
 }
