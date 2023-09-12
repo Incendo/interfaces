@@ -69,7 +69,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     override suspend fun open() {
         // If this menu overlaps the player inventory we always
         // need to do a brand new first paint every time!
-        if (firstPaint || overlapsPlayerInventory()) {
+        if (firstPaint || this !is ChestInterfaceView) {
             firstPaint = true
             setup()
             firstPaint = false
@@ -166,10 +166,21 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     }
 
     protected open fun drawPaneToInventory(opened: Boolean) {
-        // NEVER draw to the player's inventory if it's not allowed!
-        if (overlapsPlayerInventory() && !opened) return
-
         pane.forEach { row, column, element ->
+            // We defer drawing of any elements in the player inventory itself
+            // for later unless the inventory is already open.
+            if (!opened && currentInventory.isPlayerInventory(row, column)) return@forEach
+            currentInventory.set(row, column, element.itemStack.apply { this?.let { backing.itemPostProcessor?.invoke(it) } })
+        }
+        Bukkit.getPluginManager().callEvent(DrawPaneEvent(player))
+    }
+
+    override fun onOpen() {
+        // Whenever we open the inventory we draw all elements in the player inventory
+        // itself. We do this in this hook because it runs after InventoryCloseEvent so
+        // it properly happens as the last possible action.
+        pane.forEach { row, column, element ->
+            if (!currentInventory.isPlayerInventory(row, column)) return@forEach
             currentInventory.set(row, column, element.itemStack.apply { this?.let { backing.itemPostProcessor?.invoke(it) } })
         }
         Bukkit.getPluginManager().callEvent(DrawPaneEvent(player))
@@ -178,8 +189,6 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     protected open fun requiresNewInventory(): Boolean = firstPaint
 
     protected open fun requiresPlayerUpdate(): Boolean = false
-
-    protected open fun overlapsPlayerInventory(): Boolean = false
 
     protected open suspend fun renderToInventory(openIfClosed: Boolean, callback: (Boolean) -> Unit) {
         // If a new inventory is required we create one
@@ -200,11 +209,10 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
             // updates on menus that have closed do not affect future menus that actually
             // ended up being opened.
             val isOpen = isOpen(player)
-            val openingSoon = (openIfClosed && !isOpen) || createdInventory
-            drawPaneToInventory(openingSoon || isOpen)
+            drawPaneToInventory(isOpen)
             callback(createdInventory)
 
-            if (openingSoon) {
+            if ((openIfClosed && !isOpen) || createdInventory) {
                 openInventory()
             }
         }

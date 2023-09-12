@@ -14,6 +14,7 @@ import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryCloseEvent.Reason
+import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.EquipmentSlot
@@ -82,6 +83,17 @@ public class InterfacesListeners private constructor() : Listener {
         } else {
             openPlayerInterfaceViews.put(playerId, view)
         }
+    }
+
+    @EventHandler
+    public fun onOpen(event: InventoryOpenEvent) {
+        val holder = event.inventory.holder
+
+        if (holder !is InterfaceView) {
+            return
+        }
+
+        holder.onOpen()
     }
 
     @EventHandler
