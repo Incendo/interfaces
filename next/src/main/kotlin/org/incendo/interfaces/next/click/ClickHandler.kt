@@ -2,6 +2,7 @@ package org.incendo.interfaces.next.click
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CompletionHandler
+import kotlinx.coroutines.cancel
 
 public fun interface ClickHandler {
 
@@ -24,7 +25,15 @@ public class CompletableClickHandler {
     public var cancelled: Boolean = true
     public var completingLater: Boolean = false
 
-    public fun complete(): Boolean = deferred.complete(Unit)
+    public fun complete(): Boolean {
+        if (deferred.isCancelled || deferred.isCompleted) return false
+        return deferred.complete(Unit)
+    }
+
+    public fun cancel() {
+        if (deferred.isCancelled || deferred.isCompleted) return
+        deferred.cancel("Cancelled click handler after 6s timeout")
+    }
 
     public fun onComplete(handler: CompletionHandler): CompletableClickHandler {
         deferred.invokeOnCompletion(handler)

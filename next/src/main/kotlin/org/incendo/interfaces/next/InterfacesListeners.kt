@@ -29,10 +29,11 @@ import org.incendo.interfaces.next.pane.PlayerPane
 import org.incendo.interfaces.next.view.AbstractInterfaceView
 import org.incendo.interfaces.next.view.InterfaceView
 import org.incendo.interfaces.next.view.PlayerInterfaceView
+import org.slf4j.LoggerFactory
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-public class InterfacesListeners private constructor() : Listener {
+public class InterfacesListeners private constructor(private val plugin: Plugin) : Listener {
 
     public companion object {
         /** The current instance for interface listeners class. */
@@ -42,7 +43,7 @@ public class InterfacesListeners private constructor() : Listener {
         /** Installs interfaces into this plugin. */
         public fun install(plugin: Plugin) {
             require(!::INSTANCE.isInitialized) { "Already installed!" }
-            INSTANCE = InterfacesListeners()
+            INSTANCE = InterfacesListeners(plugin)
             Bukkit.getPluginManager().registerEvents(INSTANCE, plugin)
         }
 
@@ -62,6 +63,8 @@ public class InterfacesListeners private constructor() : Listener {
         private val PLAYER_INVENTORY_RANGE = 0..40
         private const val OUTSIDE_CHEST_INDEX = -999
     }
+
+    private val logger = LoggerFactory.getLogger(InterfacesListeners::class.java)
 
     private val spamPrevention: Cache<UUID, Unit> = Caffeine.newBuilder()
         .expireAfterWrite(200.toLong(), TimeUnit.MILLISECONDS)
@@ -224,10 +227,22 @@ public class InterfacesListeners private constructor() : Listener {
 
         val completedClickHandler = clickHandler
             .run { CompletableClickHandler().apply { handle(clickContext) } }
-            .onComplete { view.isProcessingClick = false }
+            .onComplete { ex ->
+                if (ex != null) {
+                    logger.error("Failed to run click handler for ${view.player.name}", ex)
+                }
+                view.isProcessingClick = false
+            }
 
         if (!completedClickHandler.completingLater) {
             completedClickHandler.complete()
+        } else {
+            // Automatically cancel the click handler after 6 seconds max!
+            Bukkit.getScheduler().runTaskLaterAsynchronously(
+                plugin,
+                Runnable { completedClickHandler.cancel() },
+                120
+            )
         }
 
         event.isCancelled = completedClickHandler.cancelled
