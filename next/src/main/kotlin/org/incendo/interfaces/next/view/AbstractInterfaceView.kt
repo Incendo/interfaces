@@ -82,6 +82,9 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     }
 
     override suspend fun open() {
+        // Indicate that the menu should be opened after the next time rendering completes
+        openIfClosed = true
+
         // If this menu overlaps the player inventory we always
         // need to do a brand new first paint every time!
         if (firstPaint || this !is ChestInterfaceView) {
@@ -89,8 +92,6 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
             setup()
             firstPaint = false
         } else {
-            // Indicate that the menu should be opened after rendering completes
-            openIfClosed = true
             renderAndOpen()
         }
     }
