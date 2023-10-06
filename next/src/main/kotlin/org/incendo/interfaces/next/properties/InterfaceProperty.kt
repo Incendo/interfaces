@@ -7,5 +7,9 @@ public class InterfaceProperty<T>(
     defaultValue: T
 ) : ObservableProperty<T>(defaultValue), Trigger by DelegateTrigger() {
 
-    override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T): Unit = trigger()
+    override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
+        if (oldValue != newValue) {
+            trigger()
+        }
+    }
 }
