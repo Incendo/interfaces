@@ -216,24 +216,32 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     }
 
     protected open fun drawPaneToInventory(opened: Boolean) {
+        var madeChanges = false
         pane.forEach { row, column, element ->
             // We defer drawing of any elements in the player inventory itself
             // for later unless the inventory is already open.
             if (!opened && currentInventory.isPlayerInventory(row, column)) return@forEach
             currentInventory.set(row, column, element.itemStack.apply { this?.let { backing.itemPostProcessor?.invoke(it) } })
+            madeChanges = true
         }
-        Bukkit.getPluginManager().callEvent(DrawPaneEvent(player))
+        if (madeChanges) {
+            Bukkit.getPluginManager().callEvent(DrawPaneEvent(player))
+        }
     }
 
     override fun onOpen() {
         // Whenever we open the inventory we draw all elements in the player inventory
         // itself. We do this in this hook because it runs after InventoryCloseEvent so
         // it properly happens as the last possible action.
+        var madeChanges = false
         pane.forEach { row, column, element ->
             if (!currentInventory.isPlayerInventory(row, column)) return@forEach
             currentInventory.set(row, column, element.itemStack.apply { this?.let { backing.itemPostProcessor?.invoke(it) } })
+            madeChanges = true
         }
-        Bukkit.getPluginManager().callEvent(DrawPaneEvent(player))
+        if (madeChanges) {
+            Bukkit.getPluginManager().callEvent(DrawPaneEvent(player))
+        }
     }
 
     protected open fun requiresNewInventory(): Boolean = firstPaint

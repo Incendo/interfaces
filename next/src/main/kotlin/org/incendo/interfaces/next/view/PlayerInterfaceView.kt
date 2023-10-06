@@ -36,6 +36,9 @@ public class PlayerInterfaceView internal constructor(
             player.closeInventory()
             InterfacesListeners.INSTANCE.setOpenInterface(player.uniqueId, this)
         }
+
+        // Trigger onOpen manually because there is no real inventory being opened
+        onOpen()
     }
 
     override fun close() {
