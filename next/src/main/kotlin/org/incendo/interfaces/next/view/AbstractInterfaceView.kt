@@ -193,6 +193,13 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
                 }
             }
         }
+
+        // In the case that transforms was empty we might be able to open the menu already
+        if (pendingTransforms.isEmpty()) {
+            SCOPE.launch {
+                renderAndOpen()
+            }
+        }
         return true
     }
 
