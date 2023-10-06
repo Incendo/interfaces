@@ -29,7 +29,11 @@ public class BoundInteger(
         return false
     }
 
-    override fun afterChange(property: KProperty<*>, oldValue: Int, newValue: Int): Unit = trigger()
+    override fun afterChange(property: KProperty<*>, oldValue: Int, newValue: Int) {
+        if (oldValue != newValue) {
+            trigger()
+        }
+    }
 
     override fun trigger() {
         delegateTrigger.trigger()
