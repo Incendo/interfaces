@@ -61,9 +61,6 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         // Add listeners to all triggers and update its transforms
         for ((trigger, transforms) in triggers.asMap()) {
             trigger.addListener(this) {
-                // If the first paint has not completed we do not perform any updates
-                if (firstPaint) return@addListener
-
                 // Apply the transforms for the new ones
                 applyTransforms(transforms)
             }
@@ -90,7 +87,6 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         if (firstPaint || this !is ChestInterfaceView) {
             firstPaint = true
             setup()
-            firstPaint = false
         } else {
             renderAndOpen()
         }
@@ -251,7 +247,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     protected open suspend fun renderToInventory(callback: (Boolean) -> Unit) {
         // If a new inventory is required we create one
         // and mark that the current one is not to be used!
-        val createdInventory = if (firstPaint || requiresNewInventory()) {
+        val createdInventory = if (requiresNewInventory()) {
             currentInventory = createInventory()
             true
         } else {
@@ -273,6 +269,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
             if ((openIfClosed && !isOpen) || createdInventory) {
                 openInventory()
                 openIfClosed = false
+                firstPaint = false
             }
         }
     }

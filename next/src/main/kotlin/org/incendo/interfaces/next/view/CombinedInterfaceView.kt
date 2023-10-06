@@ -38,7 +38,7 @@ public class CombinedInterfaceView internal constructor(
 
     override fun requiresPlayerUpdate(): Boolean = false
 
-    override fun requiresNewInventory(): Boolean = titleState.hasChanged
+    override fun requiresNewInventory(): Boolean = super.requiresNewInventory() || titleState.hasChanged
 
     override fun getInventory(): Inventory = currentInventory.chestInventory
 
