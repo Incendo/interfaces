@@ -71,6 +71,13 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
 
         // Run a complete update which draws all transforms
         // and then opens the menu again
+        redrawComplete()
+    }
+
+    /**
+     * Redraws all transforms in this view.
+     */
+    public fun redrawComplete() {
         applyTransforms(backing.transforms)
     }
 
