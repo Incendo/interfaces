@@ -44,7 +44,8 @@ public class PlayerInterfaceView internal constructor(
             }
             player.openInventory.cursor = null
 
-            // Trigger onOpen manually because there is no real inventory being opened
+            // Trigger onOpen manually because there is no real inventory being opened,
+            // this will also re-draw the player inventory parts!
             onOpen()
         }
     }

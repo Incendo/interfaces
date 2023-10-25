@@ -211,12 +211,14 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         semaphore.release()
     }
 
-    protected open fun drawPaneToInventory(opened: Boolean) {
+    protected open fun drawPaneToInventory(drawNormalInventory: Boolean, drawPlayerInventory: Boolean) {
         var madeChanges = false
         pane.forEach { row, column, element ->
             // We defer drawing of any elements in the player inventory itself
             // for later unless the inventory is already open.
-            if (!opened && currentInventory.isPlayerInventory(row, column)) return@forEach
+            val isPlayerInventory = currentInventory.isPlayerInventory(row, column)
+            if (!isPlayerInventory && drawNormalInventory || isPlayerInventory && drawPlayerInventory) return@forEach
+
             currentInventory.set(row, column, element.itemStack.apply { this?.let { backing.itemPostProcessor?.invoke(it) } })
             madeChanges = true
         }
@@ -229,15 +231,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         // Whenever we open the inventory we draw all elements in the player inventory
         // itself. We do this in this hook because it runs after InventoryCloseEvent so
         // it properly happens as the last possible action.
-        var madeChanges = false
-        pane.forEach { row, column, element ->
-            if (!currentInventory.isPlayerInventory(row, column)) return@forEach
-            currentInventory.set(row, column, element.itemStack.apply { this?.let { backing.itemPostProcessor?.invoke(it) } })
-            madeChanges = true
-        }
-        if (madeChanges) {
-            Bukkit.getPluginManager().callEvent(DrawPaneEvent(player))
-        }
+        drawPaneToInventory(drawNormalInventory = false, drawPlayerInventory = true)
     }
 
     protected open fun requiresNewInventory(): Boolean = firstPaint
@@ -263,7 +257,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
             // updates on menus that have closed do not affect future menus that actually
             // ended up being opened.
             val isOpen = isOpen(player)
-            drawPaneToInventory(isOpen)
+            drawPaneToInventory(drawNormalInventory = true, drawPlayerInventory = isOpen)
             callback(createdInventory)
 
             if ((openIfClosed && !isOpen) || createdInventory) {

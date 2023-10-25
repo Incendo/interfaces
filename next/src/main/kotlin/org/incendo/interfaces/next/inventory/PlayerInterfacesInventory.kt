@@ -20,9 +20,5 @@ public class PlayerInterfacesInventory(
         return playerInventory.setItem(index, item)
     }
 
-    // Nothing in here counts as the player inventory since this is a fake
-    // inventory. The purpose of this method is to find which slots should
-    // not be drawn to until the InventoryOpenEvent, but since this is a fake
-    // inventory it is never opened this this needs to be false.
-    override fun isPlayerInventory(row: Int, column: Int): Boolean = false
+    override fun isPlayerInventory(row: Int, column: Int): Boolean = true
 }
