@@ -35,8 +35,18 @@ public class PlayerInterfaceView internal constructor(
             InterfacesListeners.INSTANCE.setOpenInterface(player.uniqueId, this)
         }
 
-        // Trigger onOpen manually because there is no real inventory being opened
-        onOpen()
+        // Double-check that this inventory is open now!
+        if (isOpen(player)) {
+            // Clear the player's inventory!
+            player.inventory.clear()
+            if (player.openInventory.topInventory.type == InventoryType.CRAFTING) {
+                player.openInventory.topInventory.clear()
+            }
+            player.openInventory.cursor = null
+
+            // Trigger onOpen manually because there is no real inventory being opened
+            onOpen()
+        }
     }
 
     override fun close() {
