@@ -4,22 +4,8 @@ plugins {
 
 rootProject.name = "interfaces"
 
-interfacesProjects("core", "kotlin", "paper", "next")
+include("library")
+include("examples")
 
-fun interfacesProjects(vararg names: String) {
-    include(*names)
+project(":library").name = "interfaces-library"
 
-    names.forEach {
-        project(":$it").name = "interfaces-$it"
-    }
-}
-
-// Add the example modules.
-//include("examples/example-java")
-//project(":examples/example-java").name = "example-java"
-//include("examples/example-kotlin")
-//project(":examples/example-kotlin").name = "example-kotlin"
-include("examples/example-next")
-project(":examples/example-next").name = "example-next"
-
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

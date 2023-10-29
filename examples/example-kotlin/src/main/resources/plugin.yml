@@ -1,7 +1,0 @@
-name: ExampleKotlinPlugin
-version: 1.0.0
-main: org.incendo.interfaces.example.kotlin.KotlinPlugin
-api-version: 1.16
-commands:
-  interfaces:
-    description: Main interface command

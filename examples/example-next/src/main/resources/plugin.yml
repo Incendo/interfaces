@@ -1,4 +1,0 @@
-name: ExampleNextPlugin
-version: 1.0.0
-main: org.incendo.interfaces.example.next.NextPlugin
-api-version: 1.16
