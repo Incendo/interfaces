@@ -28,11 +28,6 @@ subprojects {
     apply<IndraCheckstylePlugin>()
     apply<SpotlessPlugin>()
 
-    // Don't publish examples
-    if (!name.startsWith("example-")) {
-        apply<IndraPublishingPlugin>()
-    }
-
     repositories {
         mavenCentral()
         sonatypeSnapshots()
@@ -75,7 +70,7 @@ subprojects {
 
     // Configure any existing RunServerTasks
     tasks.withType<RunServerTask> {
-        minecraftVersion("1.19.4")
+        minecraftVersion("1.20.2")
         jvmArgs("-Dio.papermc.paper.suppress.sout.nags=true")
     }
 }

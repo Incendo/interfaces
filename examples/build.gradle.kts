@@ -20,7 +20,7 @@ kotlin {
 }
 
 dependencies {
-    implementation(projects.interfacesNext)
+    implementation(projects.interfacesLibrary)
     implementation("cloud.commandframework", "cloud-paper", "1.7.1")
     implementation("cloud.commandframework", "cloud-kotlin-extensions", "1.7.1")
     implementation("cloud.commandframework", "cloud-kotlin-coroutines", "1.7.1")
