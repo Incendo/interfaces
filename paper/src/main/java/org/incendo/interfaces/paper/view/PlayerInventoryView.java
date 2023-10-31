@@ -16,6 +16,7 @@ import org.incendo.interfaces.core.transform.InterfaceProperty;
 import org.incendo.interfaces.core.transform.InterruptUpdateException;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
+import org.incendo.interfaces.paper.PaperInterfaceListeners;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.PlayerPane;
@@ -28,6 +29,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.WeakHashMap;
 
 public final class PlayerInventoryView implements
@@ -67,7 +69,11 @@ public final class PlayerInventoryView implements
             oldView.close();
         }
 
-        this.plugin = JavaPlugin.getProvidingPlugin(this.getClass());
+        this.plugin = Objects.requireNonNullElseGet(
+                PaperInterfaceListeners.plugin(),
+                () -> JavaPlugin.getProvidingPlugin(this.getClass())
+        );
+
         this.viewer = viewer;
         this.backing = backing;
         this.arguments = argument;

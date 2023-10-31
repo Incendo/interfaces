@@ -19,6 +19,7 @@ import org.incendo.interfaces.core.transform.InterruptUpdateException;
 import org.incendo.interfaces.core.util.Vector2;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.core.view.SelfUpdatingInterfaceView;
+import org.incendo.interfaces.paper.PaperInterfaceListeners;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
@@ -35,6 +36,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -106,7 +108,10 @@ public final class CombinedView implements
             this.pane = new CombinedPane(this.backing.totalRows());
         }
 
-        this.plugin = JavaPlugin.getProvidingPlugin(this.getClass());
+        this.plugin = Objects.requireNonNullElseGet(
+                PaperInterfaceListeners.plugin(),
+                () -> JavaPlugin.getProvidingPlugin(this.getClass())
+        );
 
         if (Bukkit.isPrimaryThread()) {
             this.inventory = this.createInventory();

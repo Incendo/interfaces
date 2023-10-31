@@ -76,7 +76,17 @@ public class PaperInterfaceListeners implements Listener {
             "PLAYER", "UNKNOWN", "PLUGIN"
     );
 
-    private final @NonNull Plugin plugin;
+    private static Plugin targetPlugin;
+
+    /**
+     * Reference to plugin using Interfaces
+     *
+     * @return plugin reference
+     */
+    public static Plugin plugin() {
+        return targetPlugin;
+    }
+
     private final @NonNull Map<@NonNull SelfUpdatingInterfaceView, @NonNull Integer> updatingRunnables;
 
     private final @Nullable Cache<UUID, Long> spamPrevention;
@@ -87,7 +97,7 @@ public class PaperInterfaceListeners implements Listener {
      * @param plugin the plugin instance to register against
      */
     public PaperInterfaceListeners(final @NonNull Plugin plugin) {
-        this.plugin = plugin;
+        targetPlugin = plugin;
         this.updatingRunnables = new ConcurrentHashMap<>();
         this.spamPrevention = null;
     }
@@ -99,7 +109,7 @@ public class PaperInterfaceListeners implements Listener {
      * @param clickThrottle the minimum amount of ticks between every accepted click
      */
     public PaperInterfaceListeners(final @NonNull Plugin plugin, final long clickThrottle) {
-        this.plugin = plugin;
+        targetPlugin = plugin;
         this.updatingRunnables = new ConcurrentHashMap<>();
         this.spamPrevention = CacheBuilder.newBuilder().expireAfterWrite(
                 50L * clickThrottle,
@@ -123,7 +133,7 @@ public class PaperInterfaceListeners implements Listener {
      */
     @EventHandler
     public void onDisable(final @NonNull PluginDisableEvent event) {
-        if (event.getPlugin() != this.plugin) {
+        if (event.getPlugin() != targetPlugin) {
             return;
         }
 
@@ -184,10 +194,10 @@ public class PaperInterfaceListeners implements Listener {
 
                 if (view instanceof SelfUpdatingInterfaceView) {
                     SelfUpdatingInterfaceView selfUpdating = (SelfUpdatingInterfaceView) view;
-                    runnable.runTaskTimerAsynchronously(this.plugin, updatingInterface.updateDelay(), updatingInterface.updateDelay());
+                    runnable.runTaskTimerAsynchronously(targetPlugin, updatingInterface.updateDelay(), updatingInterface.updateDelay());
                     this.updatingRunnables.put(selfUpdating, runnable.getTaskId());
                 } else {
-                    runnable.runTaskLaterAsynchronously(this.plugin, updatingInterface.updateDelay());
+                    runnable.runTaskLaterAsynchronously(targetPlugin, updatingInterface.updateDelay());
                 }
             }
         }
