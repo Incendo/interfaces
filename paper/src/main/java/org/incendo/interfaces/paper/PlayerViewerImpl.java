@@ -2,6 +2,7 @@ package org.incendo.interfaces.paper;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.interfaces.core.view.InterfaceView;
@@ -10,6 +11,8 @@ import org.incendo.interfaces.paper.view.BookView;
 import org.incendo.interfaces.paper.view.ChestView;
 import org.incendo.interfaces.paper.view.CombinedView;
 import org.incendo.interfaces.paper.view.PlayerInventoryView;
+
+import java.util.Objects;
 
 final class PlayerViewerImpl implements PlayerViewer {
 
@@ -64,7 +67,12 @@ final class PlayerViewerImpl implements PlayerViewer {
             runnable.run();
         } else {
             try {
-                Bukkit.getScheduler().callSyncMethod(JavaPlugin.getProvidingPlugin(this.getClass()), () -> {
+                Plugin plugin = Objects.requireNonNullElseGet(
+                        PaperInterfaceListeners.plugin(),
+                        () -> JavaPlugin.getProvidingPlugin(this.getClass())
+                );
+
+                Bukkit.getScheduler().callSyncMethod(plugin, () -> {
                     runnable.run();
 
                     return null;

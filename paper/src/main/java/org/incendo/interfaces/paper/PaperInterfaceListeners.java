@@ -5,6 +5,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import java.lang.reflect.Method;
+import java.util.Objects;
 import java.util.UUID;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -260,8 +261,13 @@ public class PaperInterfaceListeners implements Listener {
                 }
             }
             if (playerInventoryView != null && VALID_REASON.contains(reason)) {
+                Plugin plugin = Objects.requireNonNullElseGet(
+                        PaperInterfaceListeners.plugin(),
+                        () -> JavaPlugin.getProvidingPlugin(this.getClass())
+                );
+
                 Bukkit.getScheduler().runTaskAsynchronously(
-                        JavaPlugin.getProvidingPlugin(this.getClass()),
+                        plugin,
                         playerInventoryView::open
                 );
             }
