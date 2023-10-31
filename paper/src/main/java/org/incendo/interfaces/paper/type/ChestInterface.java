@@ -36,6 +36,7 @@ public final class ChestInterface implements
     private final @NonNull Component title;
     private final boolean updates;
     private final int updateDelay;
+    private final boolean cancelClicksInPlayerInventory;
     private final @NonNull ClickHandler<ChestPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<ChestPane,
             ChestView>> clickHandler;
 
@@ -48,6 +49,7 @@ public final class ChestInterface implements
      * @param closeHandlers the close handlers to apply
      * @param updates       {@code true} if the interface is an updating interface
      * @param updateDelay   the update delay
+     * @param cancelClicksInPlayerInventory whether to cancel clicks in the players inventory
      * @param clickHandler  the handler to run on click
      */
     public ChestInterface(
@@ -57,6 +59,7 @@ public final class ChestInterface implements
             final @NonNull List<CloseHandler<ChestPane>> closeHandlers,
             final boolean updates,
             final int updateDelay,
+            final boolean cancelClicksInPlayerInventory,
             final @NonNull ClickHandler<ChestPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<ChestPane,
                     ChestView>> clickHandler
     ) {
@@ -66,6 +69,7 @@ public final class ChestInterface implements
         this.updates = updates;
         this.updateDelay = updateDelay;
         this.rows = rows;
+        this.cancelClicksInPlayerInventory = cancelClicksInPlayerInventory;
         this.clickHandler = clickHandler;
     }
 
@@ -209,6 +213,14 @@ public final class ChestInterface implements
     }
 
     /**
+     * Whether interfaces should cancel events that come from the players inventories.
+     * @return true if it should cancel the events
+     */
+    public boolean cancelClicksInPlayerInventory() {
+        return this.cancelClicksInPlayerInventory;
+    }
+
+    /**
      * A class that builds a chest interface.
      */
     public static final class Builder implements Interface.Builder<ChestPane, PlayerViewer, ChestInterface> {
@@ -243,6 +255,8 @@ public final class ChestInterface implements
          */
         private final int updateDelay;
 
+        private final boolean cancelClicksInPlayerInventory;
+
         /**
          * The top click handler.
          */
@@ -259,6 +273,7 @@ public final class ChestInterface implements
             this.title = Component.empty();
             this.updates = false;
             this.updateDelay = 1;
+            this.cancelClicksInPlayerInventory = false;
             this.clickHandler = ClickHandler.cancel();
         }
 
@@ -269,6 +284,7 @@ public final class ChestInterface implements
                 final @NonNull Component title,
                 final boolean updates,
                 final int updateDelay,
+                final boolean cancelClicksInPlayerInventory,
                 final @NonNull ClickHandler<ChestPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<ChestPane,
                         ChestView>> clickHandler
         ) {
@@ -278,6 +294,7 @@ public final class ChestInterface implements
             this.title = title;
             this.updates = updates;
             this.updateDelay = updateDelay;
+            this.cancelClicksInPlayerInventory = cancelClicksInPlayerInventory;
             this.clickHandler = clickHandler;
         }
 
@@ -304,6 +321,7 @@ public final class ChestInterface implements
                     this.title,
                     this.updates,
                     this.updateDelay,
+                    this.cancelClicksInPlayerInventory,
                     this.clickHandler
             );
         }
@@ -331,6 +349,7 @@ public final class ChestInterface implements
                     title,
                     this.updates,
                     this.updateDelay,
+                    this.cancelClicksInPlayerInventory,
                     this.clickHandler
             );
         }
@@ -352,6 +371,7 @@ public final class ChestInterface implements
                     this.title,
                     this.updates,
                     this.updateDelay,
+                    this.cancelClicksInPlayerInventory,
                     this.clickHandler
             );
         }
@@ -384,6 +404,7 @@ public final class ChestInterface implements
                     this.title,
                     this.updates,
                     this.updateDelay,
+                    this.cancelClicksInPlayerInventory,
                     this.clickHandler
             );
         }
@@ -424,6 +445,7 @@ public final class ChestInterface implements
                     this.title,
                     this.updates,
                     this.updateDelay,
+                    this.cancelClicksInPlayerInventory,
                     handler
             );
         }
@@ -443,6 +465,25 @@ public final class ChestInterface implements
                     this.title,
                     updates,
                     updateDelay,
+                    this.cancelClicksInPlayerInventory,
+                    this.clickHandler
+            );
+        }
+
+        /**
+         * Controls if the interface should stop items coming from the player's inventory.
+         * @param cancelClicksInPlayerInventory true if it should stop items.
+         * @return new builder instance
+         */
+        public @NonNull Builder cancelClicksInPlayerInventory(final boolean cancelClicksInPlayerInventory) {
+            return new Builder(
+                    this.transformsList,
+                    this.closeHandlerList,
+                    this.rows,
+                    this.title,
+                    this.updates,
+                    this.updateDelay,
+                    cancelClicksInPlayerInventory,
                     this.clickHandler
             );
         }
@@ -461,6 +502,7 @@ public final class ChestInterface implements
                     this.closeHandlerList,
                     this.updates,
                     this.updateDelay,
+                    this.cancelClicksInPlayerInventory,
                     this.clickHandler
             );
         }

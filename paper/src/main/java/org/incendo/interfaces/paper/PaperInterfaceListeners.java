@@ -433,8 +433,15 @@ public class PaperInterfaceListeners implements Listener {
     }
 
     private void handleChestViewClick(final @NonNull InventoryClickEvent event, final @NonNull InventoryHolder holder) {
+        ChestView chestView = (ChestView) holder;
+
         if (event.getSlot() != event.getRawSlot()) {
-            this.handlePlayerViewClick(event);
+            if (chestView.backing().cancelClicksInPlayerInventory()) {
+                event.setCancelled(true);
+            } else {
+                this.handlePlayerViewClick(event);
+            }
+
             return;
         }
 
@@ -444,21 +451,20 @@ public class PaperInterfaceListeners implements Listener {
                 false
         );
 
-        ChestView chestView = (ChestView) holder;
-
         // Handle element click event
-        if (event.getSlotType() == InventoryType.SlotType.CONTAINER) {
-            int slot = event.getSlot();
-            int x = slot % 9;
-            int y = slot / 9;
-            ChestPane pane = chestView.pane();
+        if (event.getSlotType() != InventoryType.SlotType.CONTAINER) {
+            return;
+        }
 
-            if (y < pane.rows()) {
-                // Handle parent interface click event
-                chestView.backing().clickHandler().accept(context);
+        int slot = event.getSlot();
+        int x = slot % 9;
+        int y = slot / 9;
+        ChestPane pane = chestView.pane();
 
-                pane.element(x, y).clickHandler().accept(context);
-            }
+        if (y < pane.rows()) {
+            // Handle parent interface click event
+            chestView.backing().clickHandler().accept(context);
+            pane.element(x, y).clickHandler().accept(context);
         }
     }
 
