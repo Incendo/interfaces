@@ -1,0 +1,21 @@
+[plugins]
+indra = { id = "net.kyori.indra", version = "2.1.1" }
+indra-publishing = { id = "net.kyori.indra.publishing", version = "2.1.1" }
+indra-publishing-sonatype = { id = "net.kyori.indra.publishing.sonatype", version = "2.1.1" }
+indra-checkstyle = { id = "net.kyori.indra.checkstyle", version = "2.1.1" }
+shadow = { id = "io.github.goooler.shadow", version = "8.1.8" }
+run-paper = { id = "xyz.jpenilla.run-paper", version = "2.3.0" }
+
+[versions]
+checker-qual = "3.14.0"
+guava = "21.0"
+
+paper-api = "1.21-R0.1-SNAPSHOT"
+cloud-paper = "2.0.0-SNAPSHOT"
+
+[libraries]
+checker-qual = { group = "org.checkerframework", name = "checker-qual", version.ref = "checker-qual" }
+guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
+
+paper-api = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper-api" }
+cloud-paper = { group = "org.incendo", name = "cloud-paper", version.ref = "cloud-paper" }

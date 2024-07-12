@@ -1,28 +1,33 @@
 package org.incendo.interfaces.utilities;
 
-
-import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectSortedMap;
 import org.incendo.interfaces.pane.CompletedPane;
 import org.incendo.interfaces.pane.Pane;
 
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.SortedMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
-public class CollapsablePaneMap extends Int2ObjectLinkedOpenHashMap<CompletedPane> {
+public final class CollapsablePaneMap extends LinkedHashMap<Integer, CompletedPane> {
 
+    private final int rows;
+    private final Pane basePane;
     private CompletedPane cachedPane = null;
 
-    private CollapsablePaneMap(int rows, Pane basePane) {
+    private CollapsablePaneMap(final int rows, final Pane basePane, final Map<Integer, CompletedPane> internal) {
+        super(internal);
+        this.rows = rows;
+        this.basePane = basePane;
+    }
 
+    public static CollapsablePaneMap create(final int rows, final Pane basePane) {
+        return new CollapsablePaneMap(rows, basePane, new TreeMap<>(Collections.reverseOrder()));
     }
 
     @Override
-    public CompletedPane put(final int k, final CompletedPane completedPane) {
+    public CompletedPane put(final Integer key, final CompletedPane value) {
         this.cachedPane = null;
-        return super.put(k, completedPane);
+        return super.put(key, value);
     }
 
     public CompletedPane collapse() {
@@ -30,18 +35,13 @@ public class CollapsablePaneMap extends Int2ObjectLinkedOpenHashMap<CompletedPan
             return this.cachedPane;
         }
 
-        val pane = basePane.convertToEmptyCompletedPaneAndFill(rows)
+        CompletedPane pane = CompletedPane.filled(this.basePane, this.rows);
 
-        val current = internal.toMap().values
-
-        current.forEach { layer ->
-                layer.forEach { row, column, value ->
-                pane[row, column] = value
-        }
+        for (CompletedPane layer : this.values()) {
+            pane.putAll(layer);
         }
 
-        return pane
+        this.cachedPane = pane;
+        return pane;
     }
-
-}
 }

@@ -1,57 +1,63 @@
 package org.incendo.interfaces.pane;
 
+import org.bukkit.entity.Player;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.interfaces.click.ClickHandler;
 import org.incendo.interfaces.element.CompletedElement;
 import org.incendo.interfaces.grid.HashGridMap;
 
+import java.util.List;
+
+import static org.incendo.interfaces.utilities.BukkitInventoryUtilities.forEachInGrid;
+import static org.incendo.interfaces.view.AbstractInterfaceView.COLUMNS_IN_CHEST;
+
 public class CompletedPane extends HashGridMap<CompletedElement> {
 
-    static CompletedPane complete(Pane pane) {
+    public static CompletedPane complete(final Pane pane, final Player player) {
+        CompletedPane empty = empty(pane);
 
+        pane.forEach((position, element) -> {
+            empty.put(position, element.complete(player));
+        });
+
+        return empty;
     }
 
-    static CompletedPane emptyCompletedPaneAndFill(Pane base, Integer rows) {
+    public static CompletedPane filled(final Pane base, final Integer rows) {
+        CompletedPane pane = empty(base);
+        CompletedElement air = new CompletedElement(null, ClickHandler.EMPTY);
 
+        forEachInGrid(rows, COLUMNS_IN_CHEST, (row, column) -> {
+            pane.put(row, column, air);
+        });
 
-        val pane = convertToEmptyCompletedPane()
-        val airElement =
-            org.incendo.interfaces.element.CompletedElement(null, org.incendo.interfaces.click.ClickHandler.EMPTY)
-
-        forEachInGrid(rows, COLUMNS_IN_CHEST) { row, column ->
-            pane[row, column] = airElement
-        }
-
-        return pane
+        return pane;
     }
 
-    static CompletedPane emptyCompletedPane(Pane base) {
+    public static CompletedPane empty(final Pane base) {
         if (base instanceof OrderedPane orderedBase) {
-            return CompletedOrderedPane(orderedBase.getOrdering$interfaces_interfaces_library_main());
+            return new CompletedOrderedPane(orderedBase.ordering());
         }
 
         return new CompletedPane();
     }
 
-}
-
-
-//    internal open fun getRaw(vector: GridPoint): org.incendo.interfaces.element.CompletedElement? = get(vector)
-
-internal class CompletedOrderedPane(
-    private val ordering: List<Int>
-) : CompletedPane() {
-    override fun getRaw(vector: GridPoint): org.incendo.interfaces.element.CompletedElement? {
-        return get(ordering[vector.x], vector.y)
-    }
-}
-
-internal suspend fun Pane.complete(player: Player): CompletedPane {
-    val pane = convertToEmptyCompletedPane()
-
-    forEachSuspending { row, column, element ->
-        pane[row, column] = element.complete(player)
+    //todo: investigate why this is needed
+    public final @Nullable CompletedElement getRaw(final int row, final int column) {
+        return super.get(row, column);
     }
 
-    return pane
+    public static final class CompletedOrderedPane extends CompletedPane {
+        private final List<Integer> ordering;
+
+        public CompletedOrderedPane(final List<Integer> ordering) {
+            this.ordering = ordering;
+        }
+
+        @Override
+        public @Nullable CompletedElement get(final int row, final int column) {
+            return super.get(this.ordering.get(row), column);
+        }
+
+    }
 }
-
-

@@ -1,8 +1,6 @@
 package org.incendo.interfaces.grid;
 
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.BiPredicate;
 
 public interface GridMap<V> extends Map<GridPoint, V> {
 

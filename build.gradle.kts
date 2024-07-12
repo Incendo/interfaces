@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.indra.publishing) apply false
     alias(libs.plugins.indra.publishing.sonatype)
     alias(libs.plugins.indra.checkstyle) apply false
-    alias(libs.plugins.runPaper) apply false
 }
 
 group = "org.incendo.interfaces"
@@ -32,7 +31,7 @@ subprojects {
         mitLicense()
 
         javaVersions {
-            target(17)
+            target(21)
         }
 
         github("incendo", "interfaces") {

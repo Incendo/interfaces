@@ -1,34 +1,42 @@
-package org.incendo.interfaces.utilities
+package org.incendo.interfaces.utilities;
 
-import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
-import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.InventoryHolder
-import org.incendo.interfaces.next.grid.GridPoint
-import org.incendo.interfaces.next.view.AbstractInterfaceView.Companion.COLUMNS_IN_CHEST
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.incendo.interfaces.grid.GridPoint;
 
-public fun gridPointToBukkitIndex(row: Int, column: Int): Int {
-    return row * 9 + column
-}
+import java.util.function.BiConsumer;
 
-public fun gridPointToBukkitIndex(gridPoint: GridPoint): Int = gridPointToBukkitIndex(gridPoint.x, gridPoint.y)
+import static org.incendo.interfaces.view.AbstractInterfaceView.COLUMNS_IN_CHEST;
 
-public fun forEachInGrid(rows: Int, columns: Int, function: (row: Int, column: Int) -> Unit) {
-    for (row in 0 until rows) {
-        for (column in 0 until columns) {
-            function(row, column)
+public final class BukkitInventoryUtilities {
+
+    private BukkitInventoryUtilities() {
+    }
+
+    public static int gridPointToBukkitIndex(final int row, final int column) {
+        return row * COLUMNS_IN_CHEST + column;
+    }
+
+    public static int gridPointToBukkitIndex(final GridPoint gridPoint) {
+        return gridPointToBukkitIndex(gridPoint.x(), gridPoint.y());
+    }
+
+    public static void forEachInGrid(final int rows, final int columns, final BiConsumer<Integer, Integer> function) {
+        for (int row = 0; row < rows; row++) {
+            for (int column = 0; column < columns; column++) {
+                function.accept(row, column);
+            }
         }
     }
-}
 
-public fun createBukkitInventory(
-    holder: InventoryHolder,
-    rows: Int,
-    title: Component?
-): Inventory {
-    if (title == null) {
-        return Bukkit.createInventory(holder, rows * COLUMNS_IN_CHEST)
+    public static Inventory createBukkitInventory(final InventoryHolder holder, final int rows, final Component title) {
+        if (title == null) {
+            return Bukkit.createInventory(holder, rows * COLUMNS_IN_CHEST);
+        }
+
+        return Bukkit.createInventory(holder, rows * COLUMNS_IN_CHEST, title);
     }
 
-    return Bukkit.createInventory(holder, rows * COLUMNS_IN_CHEST, title)
 }

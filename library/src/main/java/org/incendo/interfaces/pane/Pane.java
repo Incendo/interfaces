@@ -1,8 +1,8 @@
 package org.incendo.interfaces.pane;
 
 import org.incendo.interfaces.element.Element;
-import org.incendo.interfaces.grid.GridMap;
+import org.incendo.interfaces.grid.HashGridMap;
 
-public interface Pane extends GridMap<Element> {
+public abstract class Pane extends HashGridMap<Element> {
 
 }

@@ -1,0 +1,5 @@
+name: ExamplePlugin
+version: '1.0'
+main: org.incendo.interfaces.examples.ExamplePlugin
+api-version: '1.21'
+bootstrapper: org.incendo.interfaces.examples.ExampleBootstrapper
