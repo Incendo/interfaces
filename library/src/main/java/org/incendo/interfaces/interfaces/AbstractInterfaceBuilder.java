@@ -59,11 +59,13 @@ public abstract class AbstractInterfaceBuilder<P extends Pane, I extends Interfa
         this.clickPreprocessors = clickPreprocessors;
     }
 
+    //todo: cleanup
     public final void withTransform(final Transform<P> transform, final Trigger... triggers) {
         this.transforms.add(new AppliedTransform<>(
             this.transformCounter.next(),
             new HashSet<>(List.of(triggers)),
-            transform
+            transform,
+            false
         ));
     }
 
@@ -71,7 +73,26 @@ public abstract class AbstractInterfaceBuilder<P extends Pane, I extends Interfa
         this.transforms.add(new AppliedTransform<>(
             this.transformCounter.next(),
             Set.of(reactiveTransform.triggers()),
-            reactiveTransform
+            reactiveTransform,
+            false
+        ));
+    }
+
+    public final void withDeferredTransform(final Transform<P> transform, final Trigger... triggers) {
+        this.transforms.add(new AppliedTransform<>(
+            this.transformCounter.next(),
+            new HashSet<>(List.of(triggers)),
+            transform,
+            true
+        ));
+    }
+
+    public final void withDeferredTransform(final ReactiveTransform<P> reactiveTransform) {
+        this.transforms.add(new AppliedTransform<>(
+            this.transformCounter.next(),
+            Set.of(reactiveTransform.triggers()),
+            reactiveTransform,
+            true
         ));
     }
 

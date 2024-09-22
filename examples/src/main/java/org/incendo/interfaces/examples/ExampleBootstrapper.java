@@ -11,6 +11,7 @@ import org.incendo.cloud.paper.PaperCommandManager;
 import org.incendo.interfaces.examples.cloud.ExampleSenderMapper;
 import org.incendo.interfaces.examples.cloud.PlayerSender;
 import org.incendo.interfaces.examples.interfaces.DelayedRequestInterface;
+import org.incendo.interfaces.examples.interfaces.ReactiveInterface;
 
 import java.util.List;
 
@@ -18,7 +19,8 @@ import java.util.List;
 public final class ExampleBootstrapper implements PluginBootstrap {
 
     private static final List<RegistrableInterface> INTERFACES = List.of(
-        new DelayedRequestInterface()
+        new DelayedRequestInterface(),
+        new ReactiveInterface()
     );
 
     private PaperCommandManager.Bootstrapped<CommandSourceStack> commandManager;

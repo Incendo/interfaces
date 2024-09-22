@@ -7,6 +7,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.incendo.interfaces.interfaces.ChestInterface;
 import org.incendo.interfaces.pane.ChestPane;
 import org.incendo.interfaces.inventory.ChestInterfacesInventory;
+import org.incendo.interfaces.utilities.ThreadUtils;
 import org.incendo.interfaces.utilities.TitleState;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,17 +31,7 @@ public final class ChestInterfaceView extends AbstractInterfaceView<ChestInterfa
 
     @Override
     public void openInventory() {
-        this.player().openInventory(this.getInventory());
-    }
-
-    @Override
-    public boolean requiresPlayerUpdate() {
-        return false;
-    }
-
-    @Override
-    public boolean requiresNewInventory() {
-        return super.requiresNewInventory() || this.titleState.hasChanged();
+        ThreadUtils.runSync(() -> this.player().openInventory(this.getInventory()));
     }
 
     @Override

@@ -38,6 +38,12 @@ public abstract class PagedTransformation<P extends Pane> implements ReactiveTra
         return this.page;
     }
 
+    /**
+     * Applies the transformation to the given pane and view.
+     *
+     * @param pane the pane to apply the transformation to
+     * @param view the interface view
+     */
     @Override
     public void apply(final P pane, final InterfaceView view) {
         if (this.boundPage.hasPreceding()) {

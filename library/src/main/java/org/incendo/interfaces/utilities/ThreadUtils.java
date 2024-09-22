@@ -2,7 +2,6 @@ package org.incendo.interfaces.utilities;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.PluginClassLoader;
 import org.incendo.interfaces.InterfacesListeners;
 
 public final class ThreadUtils {

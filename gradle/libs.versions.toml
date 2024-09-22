@@ -19,3 +19,5 @@ guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
 
 paper-api = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper-api" }
 cloud-paper = { group = "org.incendo", name = "cloud-paper", version.ref = "cloud-paper" }
+
+corn-minecraft = { group = "love.broccolai.corn", name = "corn-minecraft", version = "4.0.0-SNAPSHOT" }

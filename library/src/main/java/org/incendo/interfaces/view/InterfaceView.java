@@ -13,6 +13,4 @@ public interface InterfaceView {
     void setProcessingClick(boolean processingClick);
 
     void title(Component value);
-
-    void onOpen();
 }
