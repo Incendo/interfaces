@@ -9,6 +9,28 @@ import java.lang.reflect.Field;
 @DefaultQualifier(NonNull.class)
 public final class EventUtil {
 
+    private static final Field EVENT_IS_ASYNC_FIELD;
+
+    static {
+        Field field;
+        try {
+            try {
+                field = Event.class.getDeclaredField("async");
+            } catch (final NoSuchFieldException e0) {
+                try {
+                    field = Event.class.getDeclaredField("isAsync");
+                } catch (final NoSuchFieldException e1) {
+                    e1.addSuppressed(e0);
+                    throw e1;
+                }
+            }
+            field.setAccessible(true);
+        } catch (final Throwable thr) {
+            throw new RuntimeException("Failed to find async/isAsync field in Event class", thr);
+        }
+        EVENT_IS_ASYNC_FIELD = field;
+    }
+
     private EventUtil() {
     }
 
@@ -20,9 +42,7 @@ public final class EventUtil {
      */
     public static void setAsync(final Event event, final boolean async) {
         try {
-            final Field field = Event.class.getDeclaredField("async");
-            field.setAccessible(true);
-            field.set(event, async);
+            EVENT_IS_ASYNC_FIELD.set(event, async);
         } catch (final ReflectiveOperationException ex) {
             throw new RuntimeException(ex);
         }
