@@ -31,6 +31,10 @@ subprojects {
         apply<IndraPublishingPlugin>()
     }
 
+    java {
+        disableAutoTargetJvm()
+    }
+
     repositories {
         mavenCentral()
         sonatype.snapshots()
