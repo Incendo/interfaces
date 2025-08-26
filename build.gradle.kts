@@ -1,11 +1,9 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
 import com.diffplug.gradle.spotless.SpotlessPlugin
-import com.diffplug.gradle.spotless.SpotlessTask
 import net.kyori.indra.IndraCheckstylePlugin
 import net.kyori.indra.IndraPlugin
 import net.kyori.indra.IndraPublishingPlugin
-import net.kyori.indra.repository.sonatypeSnapshots
-import xyz.jpenilla.runpaper.task.RunServerTask
+import xyz.jpenilla.runpaper.task.RunServer
 
 plugins {
     alias(libs.plugins.indra)
@@ -15,8 +13,8 @@ plugins {
     alias(libs.plugins.runPaper) apply false
 
     // Kotlin plugin prefers to be applied to parent when it's used in multiple sub-modules.
-    kotlin("jvm") version "1.8.21" apply false
-    id("com.diffplug.spotless") version "6.18.0"
+    kotlin("jvm") version "2.2.10" apply false
+    id("com.diffplug.spotless") version "7.2.1"
 }
 
 group = "org.incendo.interfaces"
@@ -35,8 +33,8 @@ subprojects {
 
     repositories {
         mavenCentral()
-        sonatypeSnapshots()
-        maven("https://papermc.io/repo/repository/maven-public/")
+        sonatype.snapshots()
+        maven("https://repo.papermc.io/repository/maven-public/")
     }
 
     dependencies {
@@ -69,12 +67,12 @@ subprojects {
 
     configure<SpotlessExtension> {
         kotlin {
-            ktlint("0.47.1")
+            ktlint("1.7.1")
         }
     }
 
     // Configure any existing RunServerTasks
-    tasks.withType<RunServerTask> {
+    tasks.withType<RunServer> {
         minecraftVersion("1.19.4")
         jvmArgs("-Dio.papermc.paper.suppress.sout.nags=true")
     }

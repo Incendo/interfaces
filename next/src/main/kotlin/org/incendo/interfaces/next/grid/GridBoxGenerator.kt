@@ -6,9 +6,7 @@ package org.incendo.interfaces.next.grid
  */
 public data class GridBoxGenerator(
     private val min: GridPoint,
-    private val max: GridPoint
+    private val max: GridPoint,
 ) : GridPositionGenerator {
-
-    override fun generate(): List<GridPoint> =
-        (min..max).toList()
+    override fun generate(): List<GridPoint> = (min..max).toList()
 }

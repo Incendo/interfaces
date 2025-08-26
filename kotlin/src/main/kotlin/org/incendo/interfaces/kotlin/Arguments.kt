@@ -38,8 +38,7 @@ public fun interfaceArgumentOf(vararg entries: ArgumentPair<*>): InterfaceArgume
  * @param T the type
  * @return the argument key
  */
-public inline fun <reified T> argumentKeyOf(key: String): ArgumentKey<T> =
-    ArgumentKey.of(key, T::class.java)
+public inline fun <reified T> argumentKeyOf(key: String): ArgumentKey<T> = ArgumentKey.of(key, T::class.java)
 
 /**
  * Creates a new [ArgumentPair] using the given type T
@@ -49,9 +48,14 @@ public inline fun <reified T> argumentKeyOf(key: String): ArgumentKey<T> =
  * @param T the type
  * @return the argument pair
  */
-public inline fun <reified T> argumentPairOf(key: String, value: T): ArgumentPair<T> =
-    argumentKeyOf<T>(key) to value
+public inline fun <reified T> argumentPairOf(
+    key: String,
+    value: T,
+): ArgumentPair<T> = argumentKeyOf<T>(key) to value
 
-public data class ArgumentPair<T>(public val key: ArgumentKey<T>, public val value: T)
+public data class ArgumentPair<T>(
+    public val key: ArgumentKey<T>,
+    public val value: T,
+)
 
 public infix fun <T> ArgumentKey<T>.to(value: T): ArgumentPair<T> = ArgumentPair(this, value)

@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     kotlin("jvm")
     alias(libs.plugins.dokka)
@@ -14,13 +16,9 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.6")
 }
 
-tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "17"
-    }
-
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "17"
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
     }
 }
 

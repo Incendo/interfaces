@@ -23,26 +23,29 @@ import org.incendo.interfaces.next.interfaces.buildPlayerInterface
 import org.incendo.interfaces.next.properties.interfaceProperty
 import org.incendo.interfaces.next.utilities.forEachInGrid
 
-public class NextPlugin : JavaPlugin(), Listener {
-
+public class NextPlugin :
+    JavaPlugin(),
+    Listener {
     private companion object {
-        private val INTERFACES = listOf(
-            DelayedRequestExampleInterface(),
-            ChangingTitleExampleInterface(),
-            CatalogueExampleInterface(),
-            MovingExampleInterface(),
-            TabbedExampleInterface()
-        )
+        private val INTERFACES =
+            listOf(
+                DelayedRequestExampleInterface(),
+                ChangingTitleExampleInterface(),
+                CatalogueExampleInterface(),
+                MovingExampleInterface(),
+                TabbedExampleInterface(),
+            )
     }
 
     private val counterProperty = interfaceProperty(5)
     private var counter by counterProperty
 
     override fun onEnable() {
-        val commandManager = PaperCommandManager.createNative(
-            this,
-            AsynchronousCommandExecutionCoordinator.newBuilder<CommandSender>().build()
-        )
+        val commandManager =
+            PaperCommandManager.createNative(
+                this,
+                AsynchronousCommandExecutionCoordinator.newBuilder<CommandSender>().build(),
+            )
 
         commandManager.buildAndRegister("interfaces") {
             registerCopy {
@@ -91,7 +94,7 @@ public class NextPlugin : JavaPlugin(), Listener {
                 counter++
             },
             0,
-            1
+            1,
         )
     }
 
@@ -103,88 +106,103 @@ public class NextPlugin : JavaPlugin(), Listener {
                 runBlocking {
                     playerInterface().open(e.player)
                 }
-            }
+            },
         )
     }
 
-    private fun simpleInterface() = buildChestInterface {
-        rows = 6
+    private fun simpleInterface() =
+        buildChestInterface {
+            rows = 6
 
-        withTransform { pane, _ ->
-            forEachInGrid(6, 9) { row, column ->
-                val item = ItemStack(Material.WHITE_STAINED_GLASS_PANE)
-                    .name("row: $row, column: $column")
+            withTransform { pane, _ ->
+                forEachInGrid(6, 9) { row, column ->
+                    val item =
+                        ItemStack(Material.WHITE_STAINED_GLASS_PANE)
+                            .name("row: $row, column: $column")
 
-                pane[row, column] = StaticElement(drawable(item))
+                    pane[row, column] = StaticElement(drawable(item))
+                }
+            }
+
+            withTransform(counterProperty) { pane, _ ->
+                val item =
+                    ItemStack(Material.BEE_NEST)
+                        .name("it's been $counter's ticks")
+                        .description("click to see the ticks now")
+
+                pane[3, 3] =
+                    StaticElement(drawable(item)) {
+                        it.player.sendMessage("it's been $counter's ticks")
+                    }
+            }
+
+            withTransform { pane, _ ->
+                val item =
+                    ItemStack(Material.BEE_NEST)
+                        .name("block the interface")
+                        .description("block interaction and message in 5 seconds")
+
+                pane[5, 3] =
+                    StaticElement(drawable(item)) {
+                        completingLater = true
+
+                        runAsync(5) {
+                            it.player.sendMessage("after blocking, it has been $counter's ticks")
+                            complete()
+                        }
+                    }
             }
         }
 
-        withTransform(counterProperty) { pane, _ ->
-            val item = ItemStack(Material.BEE_NEST)
-                .name("it's been $counter's ticks")
-                .description("click to see the ticks now")
+    private fun playerInterface() =
+        buildPlayerInterface {
+            withTransform { pane, _ ->
+                val item = ItemStack(Material.COMPASS).name("interfaces example")
 
-            pane[3, 3] = StaticElement(drawable(item)) {
-                it.player.sendMessage("it's been $counter's ticks")
+                pane.hotbar[3] =
+                    StaticElement(drawable(item)) { (player) ->
+                        player.sendMessage("hello")
+                    }
+
+                pane.offHand =
+                    StaticElement(drawable(item)) { (player) ->
+                        player.sendMessage("hey")
+                    }
+
+                val armor = ItemStack(Material.STICK)
+
+                pane.armor.helmet = StaticElement(drawable(armor.name("helmet").clone()))
+
+                pane.armor.chest = StaticElement(drawable(armor.name("chest").clone()))
+
+                pane.armor.leggings = StaticElement(drawable(armor.name("leggings").clone()))
+
+                pane.armor.boots = StaticElement(drawable(armor.name("boots").clone()))
             }
         }
 
-        withTransform { pane, _ ->
-            val item = ItemStack(Material.BEE_NEST)
-                .name("block the interface")
-                .description("block interaction and message in 5 seconds")
+    private fun combinedInterface() =
+        buildCombinedInterface {
+            rows = 6
 
-            pane[5, 3] = StaticElement(drawable(item)) {
-                completingLater = true
+            withTransform { pane, _ ->
+                forEachInGrid(10, 9) { row, column ->
+                    val item =
+                        ItemStack(Material.WHITE_STAINED_GLASS_PANE)
+                            .name("row: $row, column: $column")
 
-                runAsync(5) {
-                    it.player.sendMessage("after blocking, it has been $counter's ticks")
-                    complete()
+                    pane[row, column] =
+                        StaticElement(drawable(item)) { (player) ->
+                            player.sendMessage("row: $row, column: $column")
+                        }
                 }
             }
         }
-    }
 
-    private fun playerInterface() = buildPlayerInterface {
-        withTransform { pane, _ ->
-            val item = ItemStack(Material.COMPASS).name("interfaces example")
-
-            pane.hotbar[3] = StaticElement(drawable(item)) { (player) ->
-                player.sendMessage("hello")
-            }
-
-            pane.offHand = StaticElement(drawable(item)) { (player) ->
-                player.sendMessage("hey")
-            }
-
-            val armor = ItemStack(Material.STICK)
-
-            pane.armor.helmet = StaticElement(drawable(armor.name("helmet").clone()))
-
-            pane.armor.chest = StaticElement(drawable(armor.name("chest").clone()))
-
-            pane.armor.leggings = StaticElement(drawable(armor.name("leggings").clone()))
-
-            pane.armor.boots = StaticElement(drawable(armor.name("boots").clone()))
-        }
-    }
-
-    private fun combinedInterface() = buildCombinedInterface {
-        rows = 6
-
-        withTransform { pane, _ ->
-            forEachInGrid(10, 9) { row, column ->
-                val item = ItemStack(Material.WHITE_STAINED_GLASS_PANE)
-                    .name("row: $row, column: $column")
-
-                pane[row, column] = StaticElement(drawable(item)) { (player) ->
-                    player.sendMessage("row: $row, column: $column")
-                }
-            }
-        }
-    }
-
-    private fun runAsync(delay: Int, runnable: Runnable) {
+    private fun runAsync(
+        delay: Int,
+        runnable: Runnable,
+    ) {
         Bukkit.getScheduler().runTaskLaterAsynchronously(this, runnable, delay * 20L)
     }
 }

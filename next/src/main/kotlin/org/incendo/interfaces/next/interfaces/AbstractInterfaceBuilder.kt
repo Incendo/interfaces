@@ -10,11 +10,13 @@ import org.incendo.interfaces.next.transform.ReactiveTransform
 import org.incendo.interfaces.next.transform.Transform
 import org.incendo.interfaces.next.utilities.IncrementingInteger
 
-public abstract class AbstractInterfaceBuilder<P : Pane, I : Interface<P>> internal constructor() :
-    InterfaceBuilder<P, I>() {
-
+public abstract class AbstractInterfaceBuilder<P : Pane, I : Interface<P>> internal constructor() : InterfaceBuilder<P, I>() {
     private companion object {
-        private val DEFAULT_REASONS = InventoryCloseEvent.Reason.values().toList().minus(InventoryCloseEvent.Reason.PLUGIN)
+        private val DEFAULT_REASONS =
+            InventoryCloseEvent.Reason
+                .values()
+                .toList()
+                .minus(InventoryCloseEvent.Reason.PLUGIN)
     }
 
     private val transformCounter by IncrementingInteger()
@@ -25,7 +27,10 @@ public abstract class AbstractInterfaceBuilder<P : Pane, I : Interface<P>> inter
 
     public var itemPostProcessor: ((ItemStack) -> Unit)? = null
 
-    public fun withTransform(vararg triggers: Trigger, transform: Transform<P>) {
+    public fun withTransform(
+        vararg triggers: Trigger,
+        transform: Transform<P>,
+    ) {
         transforms.add(AppliedTransform(transformCounter, triggers.toSet(), transform))
     }
 
@@ -35,7 +40,7 @@ public abstract class AbstractInterfaceBuilder<P : Pane, I : Interface<P>> inter
 
     public fun withCloseHandler(
         reasons: Collection<InventoryCloseEvent.Reason> = DEFAULT_REASONS,
-        closeHandler: CloseHandler
+        closeHandler: CloseHandler,
     ) {
         reasons.forEach {
             closeHandlers[it] = closeHandler

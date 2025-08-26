@@ -4,7 +4,6 @@ import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap
 
 public open class DelegateTrigger : Trigger {
-
     private val updateListeners = ConcurrentHashMap.newKeySet<Pair<WeakReference<Any>, Any.() -> Unit>>()
 
     override fun trigger() {
@@ -20,7 +19,10 @@ public open class DelegateTrigger : Trigger {
         }
     }
 
-    override fun <T : Any> addListener(reference: T, listener: T.() -> Unit) {
+    override fun <T : Any> addListener(
+        reference: T,
+        listener: T.() -> Unit,
+    ) {
         updateListeners.removeIf { it.first.get() == null }
         updateListeners.add(WeakReference(reference) as WeakReference<Any> to listener as (Any.() -> Unit))
     }

@@ -5,21 +5,23 @@ import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.cancel
 
 public fun interface ClickHandler {
-
     public companion object {
         public val EMPTY: ClickHandler = ClickHandler { }
         public val ALLOW: ClickHandler = ClickHandler { cancelled = false }
 
-        public fun process(clickHandler: ClickHandler, context: ClickContext): Unit = with(clickHandler) {
-            CompletableClickHandler().handle(context)
-        }
+        public fun process(
+            clickHandler: ClickHandler,
+            context: ClickContext,
+        ): Unit =
+            with(clickHandler) {
+                CompletableClickHandler().handle(context)
+            }
     }
 
     public fun CompletableClickHandler.handle(context: ClickContext)
 }
 
 public class CompletableClickHandler {
-
     private val deferred = CompletableDeferred<Unit>(null)
 
     public var cancelled: Boolean = true

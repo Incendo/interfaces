@@ -11,9 +11,10 @@ import org.incendo.interfaces.paper.view.TaskableView
 
 public data class MutableChestPaneView(
     private var internalPane: ChestPane,
-    private val view: ChestView
-) : Pane, PlayerView<ChestPane> by view, TaskableView by view {
-
+    private val view: ChestView,
+) : Pane,
+    PlayerView<ChestPane> by view,
+    TaskableView by view {
     override fun elements(): MutableCollection<Element> = internalPane.elements()
 
     /**
@@ -23,8 +24,10 @@ public data class MutableChestPaneView(
      * @param y the y coordinate
      * @return the element
      */
-    public operator fun get(x: Int, y: Int): ItemStackElement<ChestPane> =
-        internalPane.element(x, y)
+    public operator fun get(
+        x: Int,
+        y: Int,
+    ): ItemStackElement<ChestPane> = internalPane.element(x, y)
 
     /**
      * Sets an element at the given position.
@@ -33,9 +36,14 @@ public data class MutableChestPaneView(
      * @param y the y coordinate
      * @param element the element
      */
-    public operator fun set(x: Int, y: Int, element: ItemStackElement<ChestPane>): Unit = mutate {
-        element(element, x, y)
-    }
+    public operator fun set(
+        x: Int,
+        y: Int,
+        element: ItemStackElement<ChestPane>,
+    ): Unit =
+        mutate {
+            element(element, x, y)
+        }
 
     /**
      * Sets an element at the given position.
@@ -43,7 +51,10 @@ public data class MutableChestPaneView(
      * @param position the vector coordinate
      * @param element the element
      */
-    public operator fun set(position: Vector2, element: ItemStackElement<ChestPane>): Unit =
+    public operator fun set(
+        position: Vector2,
+        element: ItemStackElement<ChestPane>,
+    ): Unit =
         mutate {
             element(element, position.x, position.y)
         }

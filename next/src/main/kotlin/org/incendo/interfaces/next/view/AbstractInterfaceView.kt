@@ -26,9 +26,8 @@ import kotlin.time.Duration.Companion.seconds
 public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     public val player: Player,
     public val backing: Interface<P>,
-    private val parent: InterfaceView?
+    private val parent: InterfaceView?,
 ) : InterfaceView {
-
     public companion object {
         public const val COLUMNS_IN_CHEST: Int = 9
     }
@@ -101,9 +100,7 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         }
     }
 
-    override fun parent(): InterfaceView? {
-        return parent
-    }
+    override fun parent(): InterfaceView? = parent
 
     override suspend fun back() {
         if (parent == null) {
@@ -211,7 +208,10 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
         semaphore.release()
     }
 
-    protected open fun drawPaneToInventory(drawNormalInventory: Boolean, drawPlayerInventory: Boolean) {
+    protected open fun drawPaneToInventory(
+        drawNormalInventory: Boolean,
+        drawPlayerInventory: Boolean,
+    ) {
         var madeChanges = false
         pane.forEach { row, column, element ->
             // We defer drawing of any elements in the player inventory itself
@@ -241,12 +241,13 @@ public abstract class AbstractInterfaceView<I : InterfacesInventory, P : Pane>(
     protected open suspend fun renderToInventory(callback: (Boolean) -> Unit) {
         // If a new inventory is required we create one
         // and mark that the current one is not to be used!
-        val createdInventory = if (requiresNewInventory()) {
-            currentInventory = createInventory()
-            true
-        } else {
-            false
-        }
+        val createdInventory =
+            if (requiresNewInventory()) {
+                currentInventory = createInventory()
+                true
+            } else {
+                false
+            }
 
         // Draw the contents of the inventory synchronously because
         // we don't want it to happen in between ticks and show

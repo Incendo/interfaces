@@ -16,14 +16,17 @@ public class CombinedInterface internal constructor(
     override val closeHandlers: MutableMap<InventoryCloseEvent.Reason, CloseHandler>,
     override val transforms: Collection<AppliedTransform<CombinedPane>>,
     override val clickPreprocessors: Collection<ClickHandler>,
-    override val itemPostProcessor: ((ItemStack) -> Unit)?
-) : Interface<CombinedPane>, TitledInterface {
-
+    override val itemPostProcessor: ((ItemStack) -> Unit)?,
+) : Interface<CombinedPane>,
+    TitledInterface {
     override fun totalRows(): Int = rows + 4
 
     override fun createPane(): CombinedPane = CombinedPane(rows)
 
-    override suspend fun open(player: Player, parent: InterfaceView?): CombinedInterfaceView {
+    override suspend fun open(
+        player: Player,
+        parent: InterfaceView?,
+    ): CombinedInterfaceView {
         val view = CombinedInterfaceView(player, this, parent)
         view.open()
 

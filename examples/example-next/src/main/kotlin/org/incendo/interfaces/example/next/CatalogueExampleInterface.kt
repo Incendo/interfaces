@@ -10,17 +10,19 @@ import org.incendo.interfaces.next.interfaces.buildCombinedInterface
 public class CatalogueExampleInterface : RegistrableInterface {
     override val subcommand: String = "catalogue"
 
-    override fun create(): Interface<*> = buildCombinedInterface {
-        rows = 1
+    override fun create(): Interface<*> =
+        buildCombinedInterface {
+            rows = 1
 
-        withTransform { pane, _ ->
-            pane[3, 3] = StaticElement(
-                Drawable.drawable(Material.STICK)
-            ) { (player) ->
-                runBlocking {
-                    ChangingTitleExampleInterface().create().open(player)
-                }
+            withTransform { pane, _ ->
+                pane[3, 3] =
+                    StaticElement(
+                        Drawable.drawable(Material.STICK),
+                    ) { (player) ->
+                        runBlocking {
+                            ChangingTitleExampleInterface().create().open(player)
+                        }
+                    }
             }
         }
-    }
 }

@@ -16,16 +16,19 @@ public class ChestInterface internal constructor(
     override val closeHandlers: MutableMap<InventoryCloseEvent.Reason, CloseHandler>,
     override val transforms: Collection<AppliedTransform<ChestPane>>,
     override val clickPreprocessors: Collection<ClickHandler>,
-    override val itemPostProcessor: ((ItemStack) -> Unit)?
-) : Interface<ChestPane>, TitledInterface {
-
+    override val itemPostProcessor: ((ItemStack) -> Unit)?,
+) : Interface<ChestPane>,
+    TitledInterface {
     public companion object {
         public const val NUMBER_OF_COLUMNS: Int = 9
     }
 
     override fun createPane(): ChestPane = ChestPane()
 
-    override suspend fun open(player: Player, parent: InterfaceView?): ChestInterfaceView {
+    override suspend fun open(
+        player: Player,
+        parent: InterfaceView?,
+    ): ChestInterfaceView {
         val view = ChestInterfaceView(player, this, parent)
         view.open()
 

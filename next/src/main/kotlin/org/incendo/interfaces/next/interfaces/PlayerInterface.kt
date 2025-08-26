@@ -13,9 +13,8 @@ public class PlayerInterface internal constructor(
     override val closeHandlers: MutableMap<InventoryCloseEvent.Reason, CloseHandler>,
     override val transforms: Collection<AppliedTransform<PlayerPane>>,
     override val clickPreprocessors: Collection<ClickHandler>,
-    override val itemPostProcessor: ((ItemStack) -> Unit)?
+    override val itemPostProcessor: ((ItemStack) -> Unit)?,
 ) : Interface<PlayerPane> {
-
     public companion object {
         public const val NUMBER_OF_COLUMNS: Int = 9
     }
@@ -24,7 +23,10 @@ public class PlayerInterface internal constructor(
 
     override fun createPane(): PlayerPane = PlayerPane()
 
-    override suspend fun open(player: Player, parent: InterfaceView?): PlayerInterfaceView {
+    override suspend fun open(
+        player: Player,
+        parent: InterfaceView?,
+    ): PlayerInterfaceView {
         val view = PlayerInterfaceView(player, this)
         view.open()
 

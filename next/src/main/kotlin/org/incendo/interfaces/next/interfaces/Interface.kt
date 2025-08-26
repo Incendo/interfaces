@@ -10,7 +10,6 @@ import org.incendo.interfaces.next.transform.AppliedTransform
 import org.incendo.interfaces.next.view.InterfaceView
 
 public interface Interface<P : Pane> {
-
     public val rows: Int
 
     public val closeHandlers: MutableMap<InventoryCloseEvent.Reason, CloseHandler>
@@ -36,6 +35,6 @@ public interface Interface<P : Pane> {
     public suspend fun open(
         player: Player,
         parent: InterfaceView? =
-            InterfacesListeners.INSTANCE.convertHolderToInterfaceView(player.openInventory.topInventory.holder)
+            InterfacesListeners.instance.convertHolderToInterfaceView(player.openInventory.topInventory.holder),
     ): InterfaceView
 }

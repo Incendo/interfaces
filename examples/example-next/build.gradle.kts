@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     kotlin("jvm")
     alias(libs.plugins.dokka)
@@ -5,13 +7,9 @@ plugins {
     alias(libs.plugins.runPaper)
 }
 
-tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "17"
-    }
-
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "17"
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
     }
 }
 

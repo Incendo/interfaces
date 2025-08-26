@@ -13,7 +13,6 @@ import org.incendo.interfaces.next.interfaces.buildCombinedInterface
 import kotlin.time.Duration.Companion.seconds
 
 public class DelayedRequestExampleInterface : RegistrableInterface {
-
     private companion object {
         private val BACKING_ELEMENT = StaticElement(Drawable.drawable(Material.GRAY_CONCRETE))
     }
@@ -21,30 +20,32 @@ public class DelayedRequestExampleInterface : RegistrableInterface {
     override val subcommand: String = "delayed"
 
     @OptIn(DelicateCoroutinesApi::class)
-    override fun create(): Interface<*> = buildCombinedInterface {
-        initialTitle = text(subcommand)
-        rows = 2
+    override fun create(): Interface<*> =
+        buildCombinedInterface {
+            initialTitle = text(subcommand)
+            rows = 2
 
-        withTransform { pane, _ ->
-            suspendingData().forEachIndexed { index, material ->
-                pane[0, index] = StaticElement(Drawable.drawable(material))
-            }
-        }
-
-        withTransform { pane, _ ->
-            for (index in 0..8) {
-                pane[1, index] = BACKING_ELEMENT
-            }
-
-            pane[0, 8] = StaticElement(Drawable.drawable(Material.ENDER_PEARL)) {
-                // This is very unsafe, it's up to you to set up a way to reliably
-                // launch coroutines per player in a click handler.
-                GlobalScope.launch {
-                    it.view.back()
+            withTransform { pane, _ ->
+                suspendingData().forEachIndexed { index, material ->
+                    pane[0, index] = StaticElement(Drawable.drawable(material))
                 }
             }
+
+            withTransform { pane, _ ->
+                for (index in 0..8) {
+                    pane[1, index] = BACKING_ELEMENT
+                }
+
+                pane[0, 8] =
+                    StaticElement(Drawable.drawable(Material.ENDER_PEARL)) {
+                        // This is very unsafe, it's up to you to set up a way to reliably
+                        // launch coroutines per player in a click handler.
+                        GlobalScope.launch {
+                            it.view.back()
+                        }
+                    }
+            }
         }
-    }
 
     private suspend fun suspendingData(): List<Material> {
         delay(3.seconds)

@@ -1,21 +1,19 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     kotlin("jvm")
     alias(libs.plugins.dokka)
     alias(libs.plugins.ktlint)
 }
 
-tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "11"
-    }
-
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "11"
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
     }
 }
 
 ktlint {
-    version.set("0.42.1")
+    version.set("1.7.1")
 }
 
 kotlin {

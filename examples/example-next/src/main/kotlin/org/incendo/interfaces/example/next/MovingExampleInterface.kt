@@ -10,17 +10,18 @@ import org.incendo.interfaces.next.utilities.BoundInteger
 public class MovingExampleInterface : RegistrableInterface {
     override val subcommand: String = "moving"
 
-    override fun create(): Interface<*> = buildCombinedInterface {
-        val countProperty = BoundInteger(4, 1, 7)
-        var count by countProperty
+    override fun create(): Interface<*> =
+        buildCombinedInterface {
+            val countProperty = BoundInteger(4, 1, 7)
+            var count by countProperty
 
-        rows = 1
+            rows = 1
 
-        withTransform(countProperty) { pane, _ ->
-            pane[0, 0] = StaticElement(drawable(Material.RED_CONCRETE)) { count-- }
-            pane[0, 8] = StaticElement(drawable(Material.GREEN_CONCRETE)) { count++ }
+            withTransform(countProperty) { pane, _ ->
+                pane[0, 0] = StaticElement(drawable(Material.RED_CONCRETE)) { count-- }
+                pane[0, 8] = StaticElement(drawable(Material.GREEN_CONCRETE)) { count++ }
 
-            pane[0, count] = StaticElement(drawable(Material.STICK))
+                pane[0, count] = StaticElement(drawable(Material.STICK))
+            }
         }
-    }
 }

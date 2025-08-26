@@ -7,7 +7,11 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @OptIn(ExperimentalContracts::class)
-internal inline fun <T> Lock.withLock(time: Long, unit: TimeUnit, action: () -> T): T? {
+internal inline fun <T> Lock.withLock(
+    time: Long,
+    unit: TimeUnit,
+    action: () -> T,
+): T? {
     contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
     return if (tryLock(time, unit)) {
         try {

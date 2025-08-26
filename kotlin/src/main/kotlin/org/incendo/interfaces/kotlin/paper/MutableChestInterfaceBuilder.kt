@@ -20,11 +20,15 @@ import org.incendo.interfaces.paper.view.PlayerView
 @Suppress("unused")
 public class MutableChestInterfaceBuilder :
     MutableInterfaceBuilder<
-        ChestPane, InventoryClickEvent, PlayerViewer, InventoryClickContext<ChestPane, ChestView>> {
-
+        ChestPane,
+        InventoryClickEvent,
+        PlayerViewer,
+        InventoryClickContext<ChestPane, ChestView>,
+    > {
     private var internalBuilder: ChestInterface.Builder = ChestInterface.builder()
 
     // <editor-fold desc="Mutable Properties">
+
     /** The number of rows for the interface. */
     public var rows: Int
         get() = internalBuilder.rows()
@@ -41,21 +45,27 @@ public class MutableChestInterfaceBuilder :
             ChestPane,
             InventoryClickEvent,
             PlayerViewer,
-            InventoryClickContext<ChestPane, ChestView>>
-            get() = internalBuilder.clickHandler()
-            set(value) = mutate { internalBuilder.clickHandler(value) }
+            InventoryClickContext<ChestPane, ChestView>,
+        >
+        get() = internalBuilder.clickHandler()
+        set(value) = mutate { internalBuilder.clickHandler(value) }
     // </editor-fold>
 
     // <editor-fold desc="Mutating Functions">
+
     /**
      * Sets whether the interface should update.
      *
      * @param toggle true if the interface should update, false if not
      * @param interval how many ticks to wait between updates
      */
-    public fun updates(toggle: Boolean = true, interval: Int = 1): Unit = mutate {
-        internalBuilder.updates(toggle, interval)
-    }
+    public fun updates(
+        toggle: Boolean = true,
+        interval: Int = 1,
+    ): Unit =
+        mutate {
+            internalBuilder.updates(toggle, interval)
+        }
 
     /**
      * Sets the click handler.
@@ -63,12 +73,12 @@ public class MutableChestInterfaceBuilder :
      * @param handler click handler
      */
     public fun clickHandler(
-        handler:
-            ClickHandler<
-                ChestPane,
-                InventoryClickEvent,
-                PlayerViewer,
-                InventoryClickContext<ChestPane, ChestView>>
+        handler: ClickHandler<
+            ChestPane,
+            InventoryClickEvent,
+            PlayerViewer,
+            InventoryClickContext<ChestPane, ChestView>,
+        >,
     ): Unit = mutate { internalBuilder.clickHandler(handler) }
 
     /**
@@ -79,14 +89,15 @@ public class MutableChestInterfaceBuilder :
      */
     public fun addTransform(
         transform: Transform<ChestPane, PlayerViewer>,
-        priority: Int = 1
-    ): Unit = mutate {
-        if (transform is ReactiveTransform<ChestPane, PlayerViewer, *>) {
-            internalBuilder.addReactiveTransform(priority, transform) as ChestInterface.Builder
-        } else {
-            internalBuilder.addTransform(priority, transform, InterfaceProperty.dummy())
+        priority: Int = 1,
+    ): Unit =
+        mutate {
+            if (transform is ReactiveTransform<ChestPane, PlayerViewer, *>) {
+                internalBuilder.addReactiveTransform(priority, transform) as ChestInterface.Builder
+            } else {
+                internalBuilder.addTransform(priority, transform, InterfaceProperty.dummy())
+            }
         }
-    }
 
     /**
      * Adds the given [transform] to the interface.
@@ -97,14 +108,15 @@ public class MutableChestInterfaceBuilder :
     public fun addTransform(
         priority: Int = 1,
         vararg properties: InterfaceProperty<*>,
-        transform: (ChestPane, ChestView) -> ChestPane
-    ): Unit = mutate {
-        return@mutate internalBuilder.addTransform(
-            priority,
-            transform as (ChestPane, InterfaceView<ChestPane, *>) -> ChestPane,
-            *properties
-        )
-    }
+        transform: (ChestPane, ChestView) -> ChestPane,
+    ): Unit =
+        mutate {
+            return@mutate internalBuilder.addTransform(
+                priority,
+                transform as (ChestPane, InterfaceView<ChestPane, *>) -> ChestPane,
+                *properties,
+            )
+        }
 
     /**
      * Adds the given [transform] to the interface.
@@ -114,7 +126,7 @@ public class MutableChestInterfaceBuilder :
     public fun withTransform(
         priority: Int = 1,
         vararg properties: InterfaceProperty<*>,
-        transform: (MutableChestPaneView) -> Unit
+        transform: (MutableChestPaneView) -> Unit,
     ) {
         addTransform(priority, *properties) { chestPane, interfaceView ->
             MutableChestPaneView(chestPane, interfaceView).also(transform).toChestPane()
@@ -126,9 +138,10 @@ public class MutableChestInterfaceBuilder :
      *
      * @param handler close handler to add
      */
-    public fun addCloseHandler(handler: CloseHandler<ChestPane>): Unit = mutate {
-        internalBuilder.addCloseHandler(handler)
-    }
+    public fun addCloseHandler(handler: CloseHandler<ChestPane>): Unit =
+        mutate {
+            internalBuilder.addCloseHandler(handler)
+        }
 
     /**
      * Adds the given [handler] to the interface.

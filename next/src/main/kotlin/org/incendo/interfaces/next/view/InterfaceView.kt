@@ -3,7 +3,6 @@ package org.incendo.interfaces.next.view
 import net.kyori.adventure.text.Component
 
 public interface InterfaceView {
-
     public suspend fun open()
 
     public fun close()

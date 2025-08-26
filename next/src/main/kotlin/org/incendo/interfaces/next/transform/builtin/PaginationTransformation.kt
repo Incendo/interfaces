@@ -13,9 +13,8 @@ public open class PaginationTransformation<P : Pane>(
     default: Collection<Element>,
     back: PaginationButton,
     forward: PaginationButton,
-    extraTriggers: Array<Trigger> = emptyArray()
+    extraTriggers: Array<Trigger> = emptyArray(),
 ) : PagedTransformation<P>(back, forward, extraTriggers) {
-
     private val values by Delegates.observable(default.toList()) { _, _, _ ->
         boundPage.max = maxPages()
     }
@@ -24,7 +23,10 @@ public open class PaginationTransformation<P : Pane>(
         boundPage.max = maxPages()
     }
 
-    override suspend fun invoke(pane: P, view: InterfaceView) {
+    override suspend fun invoke(
+        pane: P,
+        view: InterfaceView,
+    ) {
         val positions = positionGenerator.generate()
         val slots = positions.size
 

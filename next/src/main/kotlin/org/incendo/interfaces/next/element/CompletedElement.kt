@@ -6,10 +6,11 @@ import org.incendo.interfaces.next.click.ClickHandler
 
 internal data class CompletedElement(
     public val itemStack: ItemStack?,
-    public val clickHandler: ClickHandler
+    public val clickHandler: ClickHandler,
 )
 
-internal suspend fun Element.complete(player: Player) = CompletedElement(
-    drawable().draw(player),
-    clickHandler()
-)
+internal suspend fun Element.complete(player: Player) =
+    CompletedElement(
+        drawable().draw(player),
+        clickHandler(),
+    )

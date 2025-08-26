@@ -13,5 +13,10 @@ import org.incendo.interfaces.core.view.InterfaceViewer
  * @return a combination of this and the given click handler
  */
 public operator fun <T : Pane, U, V : InterfaceViewer, W : ClickContext<T, U, V>> ClickHandler<
-    T, U, V, W>.plus(other: ClickHandler<T, U, V, W>): ClickHandler<T, U, V, W> =
-    this.andThen(other)
+    T,
+    U,
+    V,
+    W,
+>.plus(
+    other: ClickHandler<T, U, V, W>,
+): ClickHandler<T, U, V, W> = this.andThen(other)

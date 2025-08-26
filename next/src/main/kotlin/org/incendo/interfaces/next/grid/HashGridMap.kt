@@ -3,17 +3,27 @@ package org.incendo.interfaces.next.grid
 public class HashGridMap<V> : GridMap<V> {
     private val backing: MutableMap<Int, MutableMap<Int, V>> = HashMap()
 
-    override fun set(row: Int, column: Int, value: V) {
+    override fun set(
+        row: Int,
+        column: Int,
+        value: V,
+    ) {
         val rowView = backing.computeIfAbsent(row) { HashMap() }
         rowView[column] = value
     }
 
-    override fun get(row: Int, column: Int): V? {
+    override fun get(
+        row: Int,
+        column: Int,
+    ): V? {
         val rowView = backing[row] ?: return null
         return rowView[column]
     }
 
-    override fun has(row: Int, column: Int): Boolean {
+    override fun has(
+        row: Int,
+        column: Int,
+    ): Boolean {
         val rowView = backing[row] ?: return false
         return rowView.containsKey(column)
     }

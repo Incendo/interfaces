@@ -3,8 +3,11 @@ package org.incendo.interfaces.next.inventory
 import org.bukkit.inventory.ItemStack
 
 public abstract class CachedInterfacesInventory : InterfacesInventory {
-
-    final override fun set(row: Int, column: Int, item: ItemStack?): Boolean {
+    final override fun set(
+        row: Int,
+        column: Int,
+        item: ItemStack?,
+    ): Boolean {
         val current = get(row, column)
 
         if (current == item) {
@@ -15,5 +18,9 @@ public abstract class CachedInterfacesInventory : InterfacesInventory {
         return true
     }
 
-    protected abstract fun setInternal(row: Int, column: Int, item: ItemStack?)
+    protected abstract fun setInternal(
+        row: Int,
+        column: Int,
+        item: ItemStack?,
+    )
 }

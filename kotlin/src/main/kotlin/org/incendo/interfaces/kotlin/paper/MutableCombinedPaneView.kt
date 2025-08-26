@@ -11,9 +11,10 @@ import org.incendo.interfaces.paper.view.TaskableView
 
 public data class MutableCombinedPaneView(
     private var internalPane: CombinedPane,
-    private val view: CombinedView
-) : Pane, PlayerView<CombinedPane> by view, TaskableView by view {
-
+    private val view: CombinedView,
+) : Pane,
+    PlayerView<CombinedPane> by view,
+    TaskableView by view {
     override fun elements(): MutableCollection<Element> = internalPane.elements()
 
     /**
@@ -23,8 +24,10 @@ public data class MutableCombinedPaneView(
      * @param y the y coordinate
      * @return the element
      */
-    public operator fun get(x: Int, y: Int): ItemStackElement<CombinedPane> =
-        internalPane.element(x, y)
+    public operator fun get(
+        x: Int,
+        y: Int,
+    ): ItemStackElement<CombinedPane> = internalPane.element(x, y)
 
     /**
      * Sets an element at the given position.
@@ -33,7 +36,11 @@ public data class MutableCombinedPaneView(
      * @param y the y coordinate
      * @param element the element
      */
-    public operator fun set(x: Int, y: Int, element: ItemStackElement<CombinedPane>): Unit =
+    public operator fun set(
+        x: Int,
+        y: Int,
+        element: ItemStackElement<CombinedPane>,
+    ): Unit =
         mutate {
             element(element, x, y)
         }
@@ -44,16 +51,23 @@ public data class MutableCombinedPaneView(
      * @param position the vector coordinate
      * @param element the element
      */
-    public operator fun set(position: Vector2, element: ItemStackElement<CombinedPane>): Unit =
+    public operator fun set(
+        position: Vector2,
+        element: ItemStackElement<CombinedPane>,
+    ): Unit =
         mutate {
             element(element, position.x, position.y)
         }
 
     public fun hotbar(x: Int): ItemStackElement<CombinedPane> = internalPane.hotbar(x)
 
-    public fun hotbar(x: Int, element: ItemStackElement<CombinedPane>): Unit = mutate {
-        hotbar(element, x)
-    }
+    public fun hotbar(
+        x: Int,
+        element: ItemStackElement<CombinedPane>,
+    ): Unit =
+        mutate {
+            hotbar(element, x)
+        }
 
     private fun mutate(mutator: CombinedPane.() -> CombinedPane) {
         this.internalPane = internalPane.mutator()

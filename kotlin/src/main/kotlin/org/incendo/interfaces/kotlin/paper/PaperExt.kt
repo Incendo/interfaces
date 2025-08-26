@@ -32,20 +32,19 @@ public fun buildChestInterface(builder: MutableChestInterfaceBuilder.() -> Unit)
  *
  * @return build interface
  */
-public fun buildPlayerInterface(
-    builder: MutablePlayerInterfaceBuilder.() -> Unit
-): PlayerInterface = MutablePlayerInterfaceBuilder().also(builder).toBuilder().build()
+public fun buildPlayerInterface(builder: MutablePlayerInterfaceBuilder.() -> Unit): PlayerInterface =
+    MutablePlayerInterfaceBuilder().also(builder).toBuilder().build()
 
 /**
  * Builds a new [CombinedInterface] using the given builder.
  *
  * @return build interface
  */
-public fun buildCombinedInterface(
-    builder: MutableCombinedInterfaceBuilder.() -> Unit
-): CombinedInterface = MutableCombinedInterfaceBuilder().also(builder).toBuilder().build()
+public fun buildCombinedInterface(builder: MutableCombinedInterfaceBuilder.() -> Unit): CombinedInterface =
+    MutableCombinedInterfaceBuilder().also(builder).toBuilder().build()
 
 // <editor-fold desc="Player Extensions">
+
 /**
  * Opens the [interface] for `this` player.
  *
@@ -55,7 +54,7 @@ public fun buildCombinedInterface(
  */
 public fun <T : Pane> Player.open(
     `interface`: Interface<T, PlayerViewer>,
-    arguments: InterfaceArguments? = null
+    arguments: InterfaceArguments? = null,
 ): InterfaceView<T, PlayerViewer> =
     if (arguments == null) {
         `interface`.open(this.asViewer())
@@ -74,7 +73,7 @@ public fun <T : Pane> Player.open(
 public fun <T : Pane, I : TitledInterface<T, PlayerViewer>> Player.open(
     `interface`: I,
     arguments: InterfaceArguments? = null,
-    title: Component = `interface`.title()
+    title: Component = `interface`.title(),
 ): InterfaceView<T, PlayerViewer> =
     if (arguments == null) {
         `interface`.open(this.asViewer(), title)
@@ -96,10 +95,8 @@ public fun Player.asViewer(): PlayerViewer = PlayerViewer.of(this)
  * @param handler optional click handler
  * @return element instance
  */
-public fun <T : Pane> ItemStack.asElement(
-    handler:
-        GenericClickHandler<T>? = null
-): ItemStackElement<T> = if (handler == null) ItemStackElement.of(this) else ItemStackElement.of(this, handler)
+public fun <T : Pane> ItemStack.asElement(handler: GenericClickHandler<T>? = null): ItemStackElement<T> =
+    if (handler == null) ItemStackElement.of(this) else ItemStackElement.of(this, handler)
 
 public typealias GenericClickHandler<P> =
     ClickHandler<P, InventoryClickEvent, PlayerViewer, ClickContext<P, InventoryClickEvent, PlayerViewer>>

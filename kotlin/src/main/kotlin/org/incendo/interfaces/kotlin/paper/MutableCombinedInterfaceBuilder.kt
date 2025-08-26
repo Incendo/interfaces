@@ -24,11 +24,12 @@ public class MutableCombinedInterfaceBuilder :
         CombinedPane,
         InventoryClickEvent,
         PlayerViewer,
-        InventoryClickContext<CombinedPane, CombinedView>> {
-
+        InventoryClickContext<CombinedPane, CombinedView>,
+    > {
     private var internalBuilder: CombinedInterface.Builder = CombinedInterface.builder()
 
     // <editor-fold desc="Mutable Properties">
+
     /** The number of rows for the interface. */
     public var chestRows: Int
         get() = internalBuilder.chestRows()
@@ -45,9 +46,10 @@ public class MutableCombinedInterfaceBuilder :
             CombinedPane,
             InventoryClickEvent,
             PlayerViewer,
-            InventoryClickContext<CombinedPane, CombinedView>>
-            get() = internalBuilder.clickHandler()
-            set(value) = mutate { internalBuilder.clickHandler(value) }
+            InventoryClickContext<CombinedPane, CombinedView>,
+        >
+        get() = internalBuilder.clickHandler()
+        set(value) = mutate { internalBuilder.clickHandler(value) }
 
     /** The update executor of the interface. */
     public var updateExecutor: InterfacesUpdateExecutor
@@ -57,15 +59,20 @@ public class MutableCombinedInterfaceBuilder :
     // </editor-fold>
 
     // <editor-fold desc="Mutating Functions">
+
     /**
      * Sets whether the interface should update.
      *
      * @param toggle true if the interface should update, false if not
      * @param interval how many ticks to wait between updates
      */
-    public fun updates(toggle: Boolean = true, interval: Int = 1): Unit = mutate {
-        internalBuilder.updates(toggle, interval)
-    }
+    public fun updates(
+        toggle: Boolean = true,
+        interval: Int = 1,
+    ): Unit =
+        mutate {
+            internalBuilder.updates(toggle, interval)
+        }
 
     /**
      * Sets the click handler.
@@ -73,12 +80,12 @@ public class MutableCombinedInterfaceBuilder :
      * @param handler click handler
      */
     public fun clickHandler(
-        handler:
-            ClickHandler<
-                CombinedPane,
-                InventoryClickEvent,
-                PlayerViewer,
-                InventoryClickContext<CombinedPane, CombinedView>>
+        handler: ClickHandler<
+            CombinedPane,
+            InventoryClickEvent,
+            PlayerViewer,
+            InventoryClickContext<CombinedPane, CombinedView>,
+        >,
     ): Unit = mutate { internalBuilder.clickHandler(handler) }
 
     /**
@@ -89,14 +96,15 @@ public class MutableCombinedInterfaceBuilder :
      */
     public fun addTransform(
         transform: Transform<CombinedPane, PlayerViewer>,
-        priority: Int = 1
-    ): Unit = mutate {
-        if (transform is ReactiveTransform<CombinedPane, PlayerViewer, *>) {
-            internalBuilder.addReactiveTransform(priority, transform) as CombinedInterface.Builder
-        } else {
-            internalBuilder.addTransform(priority, transform)
+        priority: Int = 1,
+    ): Unit =
+        mutate {
+            if (transform is ReactiveTransform<CombinedPane, PlayerViewer, *>) {
+                internalBuilder.addReactiveTransform(priority, transform) as CombinedInterface.Builder
+            } else {
+                internalBuilder.addTransform(priority, transform)
+            }
         }
-    }
 
     /**
      * Adds the given [transform] to the interface.
@@ -107,14 +115,15 @@ public class MutableCombinedInterfaceBuilder :
     public fun addTransform(
         priority: Int = 1,
         vararg properties: InterfaceProperty<*>,
-        transform: (CombinedPane, CombinedView) -> CombinedPane
-    ): Unit = mutate {
-        internalBuilder.addTransform(
-            priority,
-            transform as (CombinedPane, InterfaceView<CombinedPane, *>) -> CombinedPane,
-            *properties
-        )
-    }
+        transform: (CombinedPane, CombinedView) -> CombinedPane,
+    ): Unit =
+        mutate {
+            internalBuilder.addTransform(
+                priority,
+                transform as (CombinedPane, InterfaceView<CombinedPane, *>) -> CombinedPane,
+                *properties,
+            )
+        }
 
     /**
      * Adds the given [transform] to the interface.
@@ -124,7 +133,7 @@ public class MutableCombinedInterfaceBuilder :
     public fun withTransform(
         priority: Int = 1,
         vararg properties: InterfaceProperty<*>,
-        transform: (MutableCombinedPaneView) -> Unit
+        transform: (MutableCombinedPaneView) -> Unit,
     ) {
         addTransform(priority, *properties) { combinedPane, interfaceView ->
             MutableCombinedPaneView(combinedPane, interfaceView).also(transform).toCombinedPane()
@@ -136,9 +145,10 @@ public class MutableCombinedInterfaceBuilder :
      *
      * @param handler close handler to add
      */
-    public fun addCloseHandler(handler: CloseHandler<CombinedPane>): Unit = mutate {
-        internalBuilder.addCloseHandler(handler)
-    }
+    public fun addCloseHandler(handler: CloseHandler<CombinedPane>): Unit =
+        mutate {
+            internalBuilder.addCloseHandler(handler)
+        }
 
     /**
      * Adds the given [handler] to the interface.

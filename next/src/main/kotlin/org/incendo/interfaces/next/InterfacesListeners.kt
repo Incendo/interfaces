@@ -30,35 +30,39 @@ import org.incendo.interfaces.next.view.AbstractInterfaceView
 import org.incendo.interfaces.next.view.InterfaceView
 import org.incendo.interfaces.next.view.PlayerInterfaceView
 import org.slf4j.LoggerFactory
-import java.util.*
+import java.util.EnumSet
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-public class InterfacesListeners private constructor(private val plugin: Plugin) : Listener {
-
+public class InterfacesListeners private constructor(
+    private val plugin: Plugin,
+) : Listener {
     public companion object {
         /** The current instance for interface listeners class. */
-        public lateinit var INSTANCE: InterfacesListeners
+        public lateinit var instance: InterfacesListeners
             private set
 
         /** Installs interfaces into this plugin. */
         public fun install(plugin: Plugin) {
-            require(!::INSTANCE.isInitialized) { "Already installed!" }
-            INSTANCE = InterfacesListeners(plugin)
-            Bukkit.getPluginManager().registerEvents(INSTANCE, plugin)
+            require(!::instance.isInitialized) { "Already installed!" }
+            instance = InterfacesListeners(plugin)
+            Bukkit.getPluginManager().registerEvents(instance, plugin)
         }
 
-        private val VALID_REASON = EnumSet.of(
-            Reason.PLAYER,
-            Reason.UNKNOWN,
-            Reason.PLUGIN
-        )
+        private val VALID_REASON =
+            EnumSet.of(
+                Reason.PLAYER,
+                Reason.UNKNOWN,
+                Reason.PLUGIN,
+            )
 
-        private val VALID_INTERACT = EnumSet.of(
-            Action.LEFT_CLICK_AIR,
-            Action.LEFT_CLICK_BLOCK,
-            Action.RIGHT_CLICK_AIR,
-            Action.RIGHT_CLICK_BLOCK
-        )
+        private val VALID_INTERACT =
+            EnumSet.of(
+                Action.LEFT_CLICK_AIR,
+                Action.LEFT_CLICK_BLOCK,
+                Action.RIGHT_CLICK_AIR,
+                Action.RIGHT_CLICK_BLOCK,
+            )
 
         private val PLAYER_INVENTORY_RANGE = 0..40
         private const val OUTSIDE_CHEST_INDEX = -999
@@ -66,21 +70,27 @@ public class InterfacesListeners private constructor(private val plugin: Plugin)
 
     private val logger = LoggerFactory.getLogger(InterfacesListeners::class.java)
 
-    private val spamPrevention: Cache<UUID, Unit> = Caffeine.newBuilder()
-        .expireAfterWrite(200.toLong(), TimeUnit.MILLISECONDS)
-        .build()
+    private val spamPrevention: Cache<UUID, Unit> =
+        Caffeine
+            .newBuilder()
+            .expireAfterWrite(200.toLong(), TimeUnit.MILLISECONDS)
+            .build()
 
     /** A cache of open player interface views, with weak values. */
-    private val openPlayerInterfaceViews: Cache<UUID, PlayerInterfaceView> = Caffeine.newBuilder()
-        .weakValues()
-        .build()
+    private val openPlayerInterfaceViews: Cache<UUID, PlayerInterfaceView> =
+        Caffeine
+            .newBuilder()
+            .weakValues()
+            .build()
 
     /** Returns the currently open interface for [playerId]. */
-    public fun getOpenInterface(playerId: UUID): PlayerInterfaceView? =
-        openPlayerInterfaceViews.getIfPresent(playerId)
+    public fun getOpenInterface(playerId: UUID): PlayerInterfaceView? = openPlayerInterfaceViews.getIfPresent(playerId)
 
     /** Updates the currently open interface for [playerId] to [view]. */
-    public fun setOpenInterface(playerId: UUID, view: PlayerInterfaceView?) {
+    public fun setOpenInterface(
+        playerId: UUID,
+        view: PlayerInterfaceView?,
+    ) {
         if (view == null) {
             openPlayerInterfaceViews.invalidate(playerId)
         } else {
@@ -208,7 +218,7 @@ public class InterfacesListeners private constructor(private val plugin: Plugin)
         view: AbstractInterfaceView<*, *>,
         clickedPoint: GridPoint,
         click: ClickType,
-        event: Cancellable
+        event: Cancellable,
     ) {
         if (view.isProcessingClick || shouldThrottle(view.player)) {
             event.isCancelled = true
@@ -222,17 +232,20 @@ public class InterfacesListeners private constructor(private val plugin: Plugin)
         view.backing.clickPreprocessors
             .forEach { handler -> ClickHandler.process(handler, clickContext) }
 
-        val clickHandler = view.pane.getRaw(clickedPoint)
-            ?.clickHandler ?: ClickHandler.ALLOW
+        val clickHandler =
+            view.pane
+                .getRaw(clickedPoint)
+                ?.clickHandler ?: ClickHandler.ALLOW
 
-        val completedClickHandler = clickHandler
-            .run { CompletableClickHandler().apply { handle(clickContext) } }
-            .onComplete { ex ->
-                if (ex != null) {
-                    logger.error("Failed to run click handler for ${view.player.name}", ex)
+        val completedClickHandler =
+            clickHandler
+                .run { CompletableClickHandler().apply { handle(clickContext) } }
+                .onComplete { ex ->
+                    if (ex != null) {
+                        logger.error("Failed to run click handler for ${view.player.name}", ex)
+                    }
+                    view.isProcessingClick = false
                 }
-                view.isProcessingClick = false
-            }
 
         if (!completedClickHandler.completingLater) {
             completedClickHandler.complete()
@@ -241,14 +254,17 @@ public class InterfacesListeners private constructor(private val plugin: Plugin)
             Bukkit.getScheduler().runTaskLaterAsynchronously(
                 plugin,
                 Runnable { completedClickHandler.cancel() },
-                120
+                120,
             )
         }
 
         event.isCancelled = completedClickHandler.cancelled
     }
 
-    private fun convertAction(action: Action, sneaking: Boolean): ClickType {
+    private fun convertAction(
+        action: Action,
+        sneaking: Boolean,
+    ): ClickType {
         if (action.isRightClick) {
             if (sneaking) {
                 return ClickType.SHIFT_RIGHT

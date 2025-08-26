@@ -11,14 +11,13 @@ import org.incendo.interfaces.next.utilities.runSync
 
 public class PlayerInterfaceView internal constructor(
     player: Player,
-    backing: PlayerInterface
+    backing: PlayerInterface,
 ) : AbstractInterfaceView<PlayerInterfacesInventory, PlayerPane>(
-    player,
-    backing,
-    // todo(josh): should player interface views hold a parent?
-    null
-) {
-
+        player,
+        backing,
+        // todo(josh): should player interface views hold a parent?
+        null,
+    ) {
     override fun title(value: Component) {
         error("PlayerInventoryView's cannot have a title")
     }
@@ -30,9 +29,9 @@ public class PlayerInterfaceView internal constructor(
         // This will only continue if the menu hasn't been closed yet.
         if (!isOpen(player)) {
             // First we close then we set the interface so we don't double open!
-            InterfacesListeners.INSTANCE.setOpenInterface(player.uniqueId, null)
+            InterfacesListeners.instance.setOpenInterface(player.uniqueId, null)
             player.closeInventory()
-            InterfacesListeners.INSTANCE.setOpenInterface(player.uniqueId, this)
+            InterfacesListeners.instance.setOpenInterface(player.uniqueId, this)
         }
 
         // Double-check that this inventory is open now!
@@ -54,11 +53,11 @@ public class PlayerInterfaceView internal constructor(
         // Ensure we update the interface state in the main thread!
         // Even if the menu is not currently on the screen.
         runSync {
-            InterfacesListeners.INSTANCE.setOpenInterface(player.uniqueId, null)
+            InterfacesListeners.instance.setOpenInterface(player.uniqueId, null)
         }
     }
 
     override fun isOpen(player: Player): Boolean =
         player.openInventory.type == InventoryType.CRAFTING &&
-            InterfacesListeners.INSTANCE.getOpenInterface(player.uniqueId) == this
+            InterfacesListeners.instance.getOpenInterface(player.uniqueId) == this
 }

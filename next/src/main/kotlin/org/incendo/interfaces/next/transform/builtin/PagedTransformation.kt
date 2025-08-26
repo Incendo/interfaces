@@ -14,13 +14,15 @@ import org.incendo.interfaces.next.view.InterfaceView
 public abstract class PagedTransformation<P : Pane>(
     private val back: PaginationButton,
     private val forward: PaginationButton,
-    extraTriggers: Array<Trigger> = emptyArray()
+    extraTriggers: Array<Trigger> = emptyArray(),
 ) : ReactiveTransform<P> {
-
     protected val boundPage: BoundInteger = BoundInteger(0, 0, Integer.MAX_VALUE)
     protected var page: Int by boundPage
 
-    override suspend fun invoke(pane: P, view: InterfaceView) {
+    override suspend fun invoke(
+        pane: P,
+        view: InterfaceView,
+    ) {
         if (boundPage.hasPreceeding()) {
             applyButton(pane, back)
         }
@@ -30,13 +32,17 @@ public abstract class PagedTransformation<P : Pane>(
         }
     }
 
-    protected open fun applyButton(pane: Pane, button: PaginationButton) {
+    protected open fun applyButton(
+        pane: Pane,
+        button: PaginationButton,
+    ) {
         val (point, drawable, increments) = button
 
-        pane[point] = StaticElement(drawable) { (player, _, click) ->
-            increments[click]?.let { increment -> page += increment }
-            button.clickHandler(player)
-        }
+        pane[point] =
+            StaticElement(drawable) { (player, _, click) ->
+                increments[click]?.let { increment -> page += increment }
+                button.clickHandler(player)
+            }
     }
 
     override val triggers: Array<Trigger> = arrayOf<Trigger>(boundPage).plus(extraTriggers)
@@ -46,5 +52,5 @@ public data class PaginationButton(
     public val position: GridPoint,
     public val drawable: Drawable,
     public val increments: Map<ClickType, Int>,
-    public val clickHandler: (Player) -> Unit = {}
+    public val clickHandler: (Player) -> Unit = {},
 )
